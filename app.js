@@ -1,10 +1,9 @@
-/* =========================================================
-   NOVASHOP - APP.JS COMPLET
-========================================================= */
+// ============================================================
+// NOVASHOP - APP.JS COMPLET
+// Firebase Auth + Firestore
+// ============================================================
 
-import {
-  initializeApp
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 
 import {
   getAuth,
@@ -28,12 +27,12 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 
-/* =========================================================
-   FIREBASE
-========================================================= */
+// ============================================================
+// FIREBASE
+// ============================================================
 
 const firebaseConfig = {
-   apiKey: "AIzaSyAZ5vAkAEfIBpfLyhxgO7uvNdJ67KYKWD0",
+  apiKey: "AIzaSyAZ5vAkAEfIBpfLyhxgO7uvNdJ67KYKWD0",
   authDomain: "novashop-4ee63.firebaseapp.com",
   projectId: "novashop-4ee63",
   storageBucket: "novashop-4ee63.firebasestorage.app",
@@ -42,24 +41,14 @@ const firebaseConfig = {
   measurementId: "G-XNY5X2VMY9"
 };
 
-let app = null;
-let auth = null;
-let db = null;
-let firebaseReady = false;
-
-try {
-  app = initializeApp(firebaseConfig);
-  auth = getAuth(app);
-  db = getFirestore(app);
-  firebaseReady = true;
-} catch (error) {
-  console.error("Firebase initialization error:", error);
-}
+const firebaseApp = initializeApp(firebaseConfig);
+const auth = getAuth(firebaseApp);
+const db = getFirestore(firebaseApp);
 
 
-/* =========================================================
-   CONFIG
-========================================================= */
+// ============================================================
+// CONFIGURATION
+// ============================================================
 
 const ADMIN_EMAIL = "pc2alex.les@gmail.com";
 const ADMIN_CODE = "NOVA-ADMIN-2026";
@@ -69,15 +58,17 @@ const FALLBACK_IMAGE =
   "https://placehold.co/800x800/111827/ffffff?text=NovaShop";
 
 
-/* =========================================================
-   DOM
-========================================================= */
+// ============================================================
+// DOM
+// ============================================================
 
 const $ = id => document.getElementById(id);
 
 const searchInput = $("searchInput");
 const categoriesEl = $("categories");
 const productsGrid = $("productGrid");
+const productCount = $("productCount");
+
 const cartBtn = $("cartBtn");
 const cartBadge = $("cartBadge");
 const cartOverlay = $("overlay");
@@ -86,376 +77,380 @@ const cartClose = $("closeCart");
 const cartItems = $("cartItems");
 const cartTotal = $("cartTotal");
 const checkoutBtn = $("checkoutBtn");
+
 const settingsBtn = $("settingsBtn");
 const accountBtn = $("accountBtn");
 const ordersBtn = $("ordersBtn");
 const adminBtn = $("adminBtn");
+
 const modal = $("modalLayer");
 const modalContent = $("modalContent");
 const modalClose = $("modalClose");
 const modalTitle = $("modalTitle");
+
 const toastContainer = $("toast");
+
 const heroCartBtn = $("heroCartBtn");
 const sortSelect = $("sortSelect");
 
 
-/* =========================================================
-   PRODUCTS
-========================================================= */
+// ============================================================
+// PRODUITS
+// ============================================================
 
 const products = [
 
   {
-    id:"p1",
-    name:"Gigabyte B650 AORUS Elite AX",
-    category:"Composants",
-    price:189.99,
-    image:"https://m.media-amazon.com/images/I/81JFKzNyl+L._AC_SL1500_.jpg"
+    id: "p1",
+    name: "Gigabyte B650 AORUS Elite AX",
+    category: "Composants",
+    price: 189.99,
+    image: "https://m.media-amazon.com/images/I/81JFKzNyl+L._AC_SL1500_.jpg"
   },
 
   {
-    id:"p2",
-    name:"PC Gamer AMD Ryzen 7 7800X3D | RX 9070 XT | 32 Go DDR5",
-    category:"PC Gamer",
-    price:2237.65,
-    image:"https://www.memorypc.fr/thumbnail/53/79/73/1786604635/019f8f1c2c6972a8a3ea1ee9516a0652_1784812416_800x800.png"
+    id: "p2",
+    name: "PC Gamer AMD Ryzen 7 7800X3D | RX 9070 XT | 32 Go DDR5",
+    category: "PC Gamer",
+    price: 2237.65,
+    image: "https://www.memorypc.fr/thumbnail/53/79/73/1786604635/019f8f1c2c6972a8a3ea1ee9516a0652_1784812416_800x800.png"
   },
 
   {
-    id:"p3",
-    name:"HyperX Cloud II",
-    category:"Casques",
-    price:49.99,
-    image:"https://fr.hyperx.com/cdn/shop/files/hyperx_cloud_ii_red_1_main.jpg?v=1764129756"
+    id: "p3",
+    name: "HyperX Cloud II",
+    category: "Casques",
+    price: 49.99,
+    image: "https://fr.hyperx.com/cdn/shop/files/hyperx_cloud_ii_red_1_main.jpg?v=1764129756"
   },
 
   {
-    id:"p4",
-    name:"TECORS Clavier Gamer Mécanique 60% AZERTY",
-    category:"Claviers",
-    price:30,
-    image:"https://m.media-amazon.com/images/I/71-lhAU97VL._AC_SL1500_.jpg"
+    id: "p4",
+    name: "TECORS Clavier Gamer Mécanique 60% AZERTY",
+    category: "Claviers",
+    price: 30,
+    image: "https://m.media-amazon.com/images/I/71-lhAU97VL._AC_SL1500_.jpg"
   },
 
   {
-    id:"p5",
-    name:"Clavier Magnétique 65% Celshading Noir",
-    category:"Claviers",
-    price:120.90,
-    image:"https://tryhard-gear.com/cdn/shop/files/TestCelshadingnoirV2.webp?v=1762273866&width=832"
+    id: "p5",
+    name: "Clavier Magnétique 65% Celshading Noir",
+    category: "Claviers",
+    price: 120.90,
+    image: "https://tryhard-gear.com/cdn/shop/files/TestCelshadingnoirV2.webp?v=1762273866&width=832"
   },
 
   {
-    id:"p6",
-    name:"Ajazz AJ199 MAX Carbon Fiber Wireless Gaming Mouse",
-    category:"Souris",
-    price:49.99,
-    image:"https://ae-pic-a1.aliexpress-media.com/kf/S1e981b53ccfe4e1391cd5b5deb4fce87o.png_960x960.png_.avif"
+    id: "p6",
+    name: "Ajazz AJ199 MAX Carbon Fiber Wireless Gaming Mouse",
+    category: "Souris",
+    price: 49.99,
+    image: "https://ae-pic-a1.aliexpress-media.com/kf/S1e981b53ccfe4e1391cd5b5deb4fce87o.png_960x960.png_.avif"
   },
 
   {
-    id:"p7",
-    name:"Logitech G PRO X2 Superstrike Blanc et Noir",
-    category:"Souris",
-    price:150.99,
-    image:"https://static.fnac-static.com/multimedia/Images/FR/MDM/7a/34/bc/29111418/1540-1.jpg"
+    id: "p7",
+    name: "Logitech G PRO X2 Superstrike Blanc et Noir",
+    category: "Souris",
+    price: 150.99,
+    image: "https://static.fnac-static.com/multimedia/Images/FR/MDM/7a/34/bc/29111418/1540-1.jpg"
   },
 
   {
-    id:"p8",
-    name:"Samsung 990 PRO 1TB",
-    category:"Stockage",
-    price:249.99,
-    image:"https://content.pearl.fr/media/cache/default/article_ultralarge_high_nocrop/shared/images/articles/M/MW1/disque-dur-interne-ssd-990-pro-pcie-nvme-m-2-2280-1-to-ref_MW1148_2.jpg"
+    id: "p8",
+    name: "Samsung 990 PRO 1TB",
+    category: "Stockage",
+    price: 249.99,
+    image: "https://content.pearl.fr/media/cache/default/article_ultralarge_high_nocrop/shared/images/articles/M/MW1/disque-dur-interne-ssd-990-pro-pcie-nvme-m-2-2280-1-to-ref_MW1148_2.jpg"
   },
 
   {
-    id:"p9",
-    name:"Samsung 990 PRO 2TB",
-    category:"Stockage",
-    price:199.93,
-    image:"https://pc.comparer.fr/500x500/310191422.webp"
+    id: "p9",
+    name: "Samsung 990 PRO 2TB",
+    category: "Stockage",
+    price: 199.93,
+    image: "https://pc.comparer.fr/500x500/310191422.webp"
   },
 
   {
-    id:"p10",
-    name:"CORSAIR RM1000x EU",
-    category:"Alimentations",
-    price:159.90,
-    image:"https://assets.corsair.com/image/upload/c_pad,q_85,h_608,w_608,f_auto/products/Power-Supply-Units/base-rmx-2024-config/gallery/black/1000/RM1000x_2024_01.webp"
+    id: "p10",
+    name: "CORSAIR RM1000x EU",
+    category: "Alimentations",
+    price: 159.90,
+    image: "https://assets.corsair.com/image/upload/c_pad,q_85,h_608,w_608,f_auto/products/Power-Supply-Units/base-rmx-2024-config/gallery/black/1000/RM1000x_2024_01.webp"
   },
 
   {
-    id:"p11",
-    name:"CORSAIR RM850x EU",
-    category:"Alimentations",
-    price:134.90,
-    image:"https://assets.corsair.com/image/upload/c_pad,q_85,h_608,w_608,f_auto/products/Power-Supply-Units/base-rmx-2024-config/gallery/black/850/RM850x_2024_01.webp"
+    id: "p11",
+    name: "CORSAIR RM850x EU",
+    category: "Alimentations",
+    price: 134.90,
+    image: "https://assets.corsair.com/image/upload/c_pad,q_85,h_608,w_608,f_auto/products/Power-Supply-Units/base-rmx-2024-config/gallery/black/850/RM850x_2024_01.webp"
   },
 
   {
-    id:"p12",
-    name:"Corsair Frame 5000D RS ARGB Noir",
-    category:"Boîtiers",
-    price:159.90,
-    image:"https://media.ldlc.com/r1600/ld/products/00/06/26/05/LD0006260502.jpg"
+    id: "p12",
+    name: "Corsair Frame 5000D RS ARGB Noir",
+    category: "Boîtiers",
+    price: 159.90,
+    image: "https://media.ldlc.com/r1600/ld/products/00/06/26/05/LD0006260502.jpg"
   },
 
   {
-    id:"p13",
-    name:"ARCTIC Liquid Freezer III Pro 360 A-RGB Black",
-    category:"Refroidissement",
-    price:129.90,
-    image:"https://cdn.idealo.com/folder/Product/206182/0/206182034/s4_produktbild_gross/arctic-liquid-freezer-iii-pro-360-a-rgb-black.jpg"
+    id: "p13",
+    name: "ARCTIC Liquid Freezer III Pro 360 A-RGB Black",
+    category: "Refroidissement",
+    price: 129.90,
+    image: "https://cdn.idealo.com/folder/Product/206182/0/206182034/s4_produktbild_gross/arctic-liquid-freezer-iii-pro-360-a-rgb-black.jpg"
   },
 
   {
-    id:"p14",
-    name:"Samsung 27 QD-OLED Odyssey G6",
-    category:"Écrans",
-    price:399.95,
-    image:"https://media.ldlc.com/r705/ld/products/00/06/32/99/LD0006329977.jpg"
+    id: "p14",
+    name: "Samsung 27 QD-OLED Odyssey G6",
+    category: "Écrans",
+    price: 399.95,
+    image: "https://media.ldlc.com/r705/ld/products/00/06/32/99/LD0006329977.jpg"
   },
 
   {
-    id:"p15",
-    name:"ELGATO Wave Mic Arm Pro",
-    category:"Streaming",
-    price:229.90,
-    image:"https://www.digit-photo.com/images/produits/ELGATO10AAT9901/1.jpg"
+    id: "p15",
+    name: "ELGATO Wave Mic Arm Pro",
+    category: "Streaming",
+    price: 229.90,
+    image: "https://www.digit-photo.com/images/produits/ELGATO10AAT9901/1.jpg"
   },
 
   {
-    id:"p16",
-    name:"Sony DualSense Cosmic Red PS5/PC",
-    category:"Manettes",
-    price:74.90,
-    image:"https://media.carrefour.fr/media/referential/media/cc07d7de4b9e4bea8c063e8f9bb46d94/p_200x200/0711719023005_0.jpg"
+    id: "p16",
+    name: "Sony DualSense Cosmic Red PS5/PC",
+    category: "Manettes",
+    price: 74.90,
+    image: "https://media.carrefour.fr/media/referential/media/cc07d7de4b9e4bea8c063e8f9bb46d94/p_200x200/0711719023005_0.jpg"
   },
 
   {
-    id:"p17",
-    name:"ASUS TUF Gaming B650-PLUS",
-    category:"Composants",
-    price:179.90,
-    image:"https://media.materiel.net/r550/products/MN0005986139.jpg"
+    id: "p17",
+    name: "ASUS TUF Gaming B650-PLUS",
+    category: "Composants",
+    price: 179.90,
+    image: "https://media.materiel.net/r550/products/MN0005986139.jpg"
   },
 
   {
-    id:"p18",
-    name:"MSI MAG B650 Tomahawk WiFi",
-    category:"Composants",
-    price:189.90,
-    image:"https://m.media-amazon.com/images/I/71TYAcZ4J8L._AC_SL1200_.jpg"
+    id: "p18",
+    name: "MSI MAG B650 Tomahawk WiFi",
+    category: "Composants",
+    price: 189.90,
+    image: "https://m.media-amazon.com/images/I/71TYAcZ4J8L._AC_SL1200_.jpg"
   },
 
   {
-    id:"p19",
-    name:"KOORUI Ecran PC Gamer 27 Pouces 200Hz IPS QHD HDR400 1ms",
-    category:"Écrans",
-    price:74.99,
-    image:"https://m.media-amazon.com/images/I/71CJ1DF-8sL._AC_SL1500_.jpg"
+    id: "p19",
+    name: "KOORUI Ecran PC Gamer 27 Pouces 200Hz IPS QHD HDR400 1ms",
+    category: "Écrans",
+    price: 74.99,
+    image: "https://m.media-amazon.com/images/I/71CJ1DF-8sL._AC_SL1500_.jpg"
   },
 
   {
-    id:"p20",
-    name:"iiyama 23.8 LED - G-Master GB2471HS-B1 Red Eagle",
-    category:"Écrans",
-    price:65.99,
-    image:"https://media.ldlc.com/r1600/ld/products/00/06/34/20/LD0006342033.jpg"
+    id: "p20",
+    name: 'iiyama 23.8" LED - G-Master GB2471HS-B1 Red Eagle',
+    category: "Écrans",
+    price: 65.99,
+    image: "https://media.ldlc.com/r1600/ld/products/00/06/34/20/LD0006342033.jpg"
   },
 
   {
-    id:"p21",
-    name:"SONGMICS Chaise de jeu ergonomique avec repose-pieds 150 kg gris ardoise",
-    category:"Chaises gaming",
-    price:129.99,
-    image:"https://static.songmics.fr/fit-in/1000x1000/image/Product/B34OBG077G01/B34OBG077G01-1.jpg"
+    id: "p21",
+    name: "SONGMICS Chaise de jeu ergonomique avec repose-pieds 150 kg gris ardoise",
+    category: "Chaises gaming",
+    price: 129.99,
+    image: "https://static.songmics.fr/fit-in/1000x1000/image/Product/B34OBG077G01/B34OBG077G01-1.jpg"
   },
 
   {
-    id:"p22",
-    name:"Dowinx Série Luxe Suède LS-66D68E Blanc",
-    category:"Chaises gaming",
-    price:79.99,
-    image:"https://eu.dowinx.com/cdn/shop/files/11_5f72b693-5f79-4d06-b48a-7cb2b2f0244a.png?v=1752139814&width=1220"
+    id: "p22",
+    name: "Dowinx Série Luxe Suède LS-66D68E Blanc",
+    category: "Chaises gaming",
+    price: 79.99,
+    image: "https://eu.dowinx.com/cdn/shop/files/11_5f72b693-5f79-4d06-b48a-7cb2b2f0244a.png?v=1752139814&width=1220"
   },
 
   {
-    id:"p23",
-    name:"Chaise GTPLAYER Ergonomique Gaming Soutien Lombaire Repose-pieds",
-    category:"Chaises gaming",
-    price:109.99,
-    image:"https://thumb.pccomponentes.com/w-530-530/articles/1118/11186247/167-silla-gaming-gtplayer-ergonomica-con-reposapies-y-soporte-lumbar-4d.jpg"
+    id: "p23",
+    name: "Chaise GTPLAYER Ergonomique Gaming Soutien Lombaire Repose-pieds",
+    category: "Chaises gaming",
+    price: 109.99,
+    image: "https://thumb.pccomponentes.com/w-530-530/articles/1118/11186247/167-silla-gaming-gtplayer-ergonomica-con-reposapies-y-soporte-lumbar-4d.jpg"
   },
 
   {
-    id:"p24",
-    name:"Desk Lite - Height-Adjustable Desk",
-    category:"Bureaux gaming",
-    price:110.99,
-    image:"https://yaasa.com/cdn/shop/files/yaasa-desk-lite_nr01_black_100_01-04545-01_1200x.jpg?v=1753169928"
+    id: "p24",
+    name: "Desk Lite - Height-Adjustable Desk",
+    category: "Bureaux gaming",
+    price: 110.99,
+    image: "https://yaasa.com/cdn/shop/files/yaasa-desk-lite_nr01_black_100_01-04545-01_1200x.jpg?v=1753169928"
   },
 
   {
-    id:"p25",
-    name:"EUREKA ERGONOMIC Bureau Gaming LED 182x76cm en Forme d'Aile",
-    category:"Bureaux gaming",
-    price:86.99,
-    image:"https://m.media-amazon.com/images/I/71Gd5G3wRsL._AC_SL1500_.jpg"
+    id: "p25",
+    name: "EUREKA ERGONOMIC Bureau Gaming LED 182x76cm en Forme d'Aile",
+    category: "Bureaux gaming",
+    price: 86.99,
+    image: "https://m.media-amazon.com/images/I/71Gd5G3wRsL._AC_SL1500_.jpg"
   },
 
   {
-    id:"p26",
-    name:"Bureau gaming d’angle HOMCOM réversible support écran",
-    category:"Bureaux gaming",
-    price:44.99,
-    image:"https://cdn.manomano.com/pim-media/images/medium/74eca1cb1cefa063c8f600ee293ae6ee826794f8.jpg"
+    id: "p26",
+    name: "Bureau gaming d’angle HOMCOM réversible support écran",
+    category: "Bureaux gaming",
+    price: 44.99,
+    image: "https://cdn.manomano.com/pim-media/images/medium/74eca1cb1cefa063c8f600ee293ae6ee826794f8.jpg"
   },
 
   {
-    id:"p27",
-    name:"Logitech G Pro X 2 Lightspeed Noir + Repose casque",
-    category:"Casques",
-    price:99.99,
-    image:"https://static.fnac-static.com/multimedia/Images/FR/MDMFR/MDM/6d/e9/6e/24045933/1540-1/tsp20260429154901/Casque-PC-gaming-sans-fil-Logitech-G-Pro-X-2-Lightspeed-Noir-Repose-casque.jpg"
+    id: "p27",
+    name: "Logitech G Pro X 2 Lightspeed Noir + Repose casque",
+    category: "Casques",
+    price: 99.99,
+    image: "https://static.fnac-static.com/multimedia/Images/FR/MDMFR/MDM/6d/e9/6e/24045933/1540-1/tsp20260429154901/Casque-PC-gaming-sans-fil-Logitech-G-Pro-X-2-Lightspeed-Noir-Repose-casque.jpg"
   },
 
   {
-    id:"p28",
-    name:"Razer BlackShark V2 Pro 2023 Noir",
-    category:"Casques",
-    price:75.99,
-    image:"https://media.ldlc.com/r1600/ld/products/00/06/07/71/LD0006077125.jpg"
+    id: "p28",
+    name: "Razer BlackShark V2 Pro 2023 Noir",
+    category: "Casques",
+    price: 75.99,
+    image: "https://media.ldlc.com/r1600/ld/products/00/06/07/71/LD0006077125.jpg"
   },
 
   {
-    id:"p29",
-    name:"beyerdynamic DT-990 Pro 250 Ohm",
-    category:"Casques",
-    price:60.99,
-    image:"https://thumbs.static-thomann.de/thumb/padthumb600x600/pics/bdb/_10/106865/18443258_800.jpg"
+    id: "p29",
+    name: "beyerdynamic DT-990 Pro 250 Ohm",
+    category: "Casques",
+    price: 60.99,
+    image: "https://thumbs.static-thomann.de/thumb/padthumb600x600/pics/bdb/_10/106865/18443258_800.jpg"
   },
 
   {
-    id:"p30",
-    name:"Logitech PRO X TKL Rapid Noir, filaire AZERTY",
-    category:"Claviers",
-    price:78.99,
-    image:"https://static.fnac-static.com/multimedia/Images/FR/MDM/6a/89/8f/26184042/1540-1.jpg"
+    id: "p30",
+    name: "Logitech PRO X TKL Rapid Noir, filaire AZERTY",
+    category: "Claviers",
+    price: 78.99,
+    image: "https://static.fnac-static.com/multimedia/Images/FR/MDM/6a/89/8f/26184042/1540-1.jpg"
   },
 
   {
-    id:"p31",
-    name:"QwertyKey75 HE Striker, Magnetic Hall Effect, Rapid Trigger, Snap Tap",
-    category:"Claviers",
-    price:56.99,
-    image:"https://cdn.shopify.com/s/files/1/0814/2530/1746/files/QK75-HE-STRIKER-qwertykey-tastatura-mecanica-gaming-hotswap-2025_1eee355b-72ca-46e6-a458-751384d0595c_1800x.webp?v=1771799537"
+    id: "p31",
+    name: "QwertyKey75 HE Striker, Magnetic Hall Effect, Rapid Trigger, Snap Tap",
+    category: "Claviers",
+    price: 56.99,
+    image: "https://cdn.shopify.com/s/files/1/0814/2530/1746/files/QK75-HE-STRIKER-qwertykey-tastatura-mecanica-gaming-hotswap-2025_1eee355b-72ca-46e6-a458-751384d0595c_1800x.webp?v=1771799537"
   },
 
   {
-    id:"p32",
-    name:"GravaStar Mercury K1 Clavier Gamer sans Fil en Aluminium, Noir Dégradé",
-    category:"Claviers",
-    price:91.99,
-    image:"https://m.media-amazon.com/images/I/6144lt2l5JL._AC_SL1200_.jpg"
+    id: "p32",
+    name: "GravaStar Mercury K1 Clavier Gamer sans Fil en Aluminium, Noir Dégradé",
+    category: "Claviers",
+    price: 91.99,
+    image: "https://m.media-amazon.com/images/I/6144lt2l5JL._AC_SL1200_.jpg"
   },
 
   {
-    id:"p33",
-    name:"ATTACK SHARK R11 Ultra, fibre de carbone, 8000Hz, 49g, 42000 DPI",
-    category:"Souris",
-    price:26.99,
-    image:"https://m.media-amazon.com/images/I/71bMz15SqcL._AC_SL1500_.jpg"
+    id: "p33",
+    name: "ATTACK SHARK R11 Ultra, fibre de carbone, 8000Hz, 49g, 42000 DPI",
+    category: "Souris",
+    price: 26.99,
+    image: "https://m.media-amazon.com/images/I/71bMz15SqcL._AC_SL1500_.jpg"
   },
 
   {
-    id:"p34",
-    name:"HyperX QuadCast 2 – Microphone USB – RGB",
-    category:"Microphones",
-    price:98.99,
-    image:"https://fr.hyperx.com/cdn/shop/files/hyperx_quadcast_2_872v1aa_main_1_2d47a555-f537-457b-9002-8b9e9010dc00.jpg?v=1763067608"
+    id: "p34",
+    name: "HyperX QuadCast 2 – Microphone USB – RGB",
+    category: "Microphones",
+    price: 98.99,
+    image: "https://fr.hyperx.com/cdn/shop/files/hyperx_quadcast_2_872v1aa_main_1_2d47a555-f537-457b-9002-8b9e9010dc00.jpg?v=1763067608"
   },
 
   {
-    id:"p35",
-    name:"Shure SM7 dB",
-    category:"Microphones",
-    price:121.99,
-    image:"https://thumbs.static-thomann.de/thumb/padthumb600x600/pics/bdb/_57/573672/18492412_800.jpg"
+    id: "p35",
+    name: "Shure SM7 dB",
+    category: "Microphones",
+    price: 121.99,
+    image: "https://thumbs.static-thomann.de/thumb/padthumb600x600/pics/bdb/_57/573672/18492412_800.jpg"
   },
 
   {
-    id:"p36",
-    name:"Razer Seiren V3 Chroma Noir",
-    category:"Microphones",
-    price:13.99,
-    image:"https://media.ldlc.com/r1600/ld/products/00/06/13/25/LD0006132588.jpg"
+    id: "p36",
+    name: "Razer Seiren V3 Chroma Noir",
+    category: "Microphones",
+    price: 13.99,
+    image: "https://media.ldlc.com/r1600/ld/products/00/06/13/25/LD0006132588.jpg"
   },
 
   {
-    id:"p37",
-    name:"Stairville LED Pixel Rail 40 RGB MKII",
-    category:"Éclairage RGB",
-    price:18.90,
-    image:"https://thumbs.static-thomann.de/thumb/padthumb600x600/pics/bdb/_44/449739/14448905_800.jpg"
+    id: "p37",
+    name: "Stairville LED Pixel Rail 40 RGB MKII",
+    category: "Éclairage RGB",
+    price: 18.90,
+    image: "https://thumbs.static-thomann.de/thumb/padthumb600x600/pics/bdb/_44/449739/14448905_800.jpg"
   },
 
   {
-    id:"p38",
-    name:"Govee LED Strip Light RGBIC Wi-Fi + Bluetooth 5m Matter",
-    category:"Éclairage RGB",
-    price:8,
-    image:"https://static.fnac-static.com/multimedia/Images/FR/MDM/ab/7a/9d/27097771/1520-2/tsp20260429155350/Ruban-LED-Govee-LED-Strip-Light-RGBIC-Wi-Fi-avec-BT-5M-Matter.jpg"
+    id: "p38",
+    name: "Govee LED Strip Light RGBIC Wi-Fi + Bluetooth 5m Matter",
+    category: "Éclairage RGB",
+    price: 8,
+    image: "https://static.fnac-static.com/multimedia/Images/FR/MDM/ab/7a/9d/27097771/1520-2/tsp20260429155350/Ruban-LED-Govee-LED-Strip-Light-RGBIC-Wi-Fi-avec-BT-5M-Matter.jpg"
   },
 
   {
-    id:"p39",
-    name:"Lampe de plafond hexagone nid d’abeille LED 2.4m x 4.8m contour bleu",
-    category:"Éclairage RGB",
-    price:91.10,
-    image:"https://www.discount-autosport.com/wp-content/webp-express/webp-images/uploads/2025/02/lampe-hexagone-plafond-led-4m80-contour-bleu-.jpg.webp"
+    id: "p39",
+    name: "Lampe de plafond hexagone nid d’abeille LED 2.4m x 4.8m contour bleu",
+    category: "Éclairage RGB",
+    price: 91.10,
+    image: "https://www.discount-autosport.com/wp-content/webp-express/webp-images/uploads/2025/02/lampe-hexagone-plafond-led-4m80-contour-bleu-.jpg.webp"
   },
 
   {
-    id:"p40",
-    name:"GIGABYTE GeForce RTX 5050 WINDFORCE OC 8G",
-    category:"Cartes graphiques",
-    price:147,
-    image:"https://m.media-amazon.com/images/I/41kmHFMFPOL._SL500_.jpg"
+    id: "p40",
+    name: "GIGABYTE GeForce RTX 5050 WINDFORCE OC 8G",
+    category: "Cartes graphiques",
+    price: 147,
+    image: "https://m.media-amazon.com/images/I/41kmHFMFPOL._SL500_.jpg"
   },
 
   {
-    id:"p41",
-    name:"MSI GeForce RTX 3050 LP E 6G OC",
-    category:"Cartes graphiques",
-    price:100,
-    image:"https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcTCe_rha_tAAHPWnQ8VV7GIvF-uSqUaEyU61TSnwgM4CK8g3-x_3Hq4wOgH36Ri63eAiWHsvhmRJHzVrUQR9-IwMx31WH0w"
+    id: "p41",
+    name: "MSI GeForce RTX 3050 LP E 6G OC",
+    category: "Cartes graphiques",
+    price: 100,
+    image: "https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcTCe_rha_tAAHPWnQ8VV7GIvF-uSqUaEyU61TSnwgM4CK8g3-x_3Hq4wOgH36Ri63eAiWHsvhmRJHzVrUQR9-IwMx31WH0w"
   },
 
   {
-    id:"p42",
-    name:"ASUS Dual Radeon RX 7600 EVO OC Edition 8GB GDDR6",
-    category:"Cartes graphiques",
-    price:140,
-    image:"https://m.media-amazon.com/images/I/81QItJufypL._AC_SL1500_.jpg"
+    id: "p42",
+    name: "ASUS Dual Radeon RX 7600 EVO OC Edition 8GB GDDR6",
+    category: "Cartes graphiques",
+    price: 140,
+    image: "https://m.media-amazon.com/images/I/81QItJufypL._AC_SL1500_.jpg"
   },
 
   {
-    id:"p43",
-    name:"PC Gamer Fixe, Ryzen 7 5700G, Vega 8, 16G DDR4, 1T SSD",
-    category:"PC Gamer",
-    price:650,
-    image:"https://m.media-amazon.com/images/I/81M3iU5S4QL._AC_SL1500_.jpg",
-    new:true
+    id: "p43",
+    name: "PC Gamer Fixe, Ryzen 7 5700G, Vega 8, 16G DDR4, 1T SSD",
+    category: "PC Gamer",
+    price: 650,
+    image: "https://m.media-amazon.com/images/I/81M3iU5S4QL._AC_SL1500_.jpg",
+    new: true
   }
 
 ];
 
 
-/* =========================================================
-   STATE
-========================================================= */
+// ============================================================
+// ÉTAT
+// ============================================================
 
 let currentUser = null;
 let selectedCategory = "Tous";
@@ -465,255 +460,254 @@ let cart = [];
 let reviewsCache = {};
 
 try {
-  const saved = JSON.parse(
-    localStorage.getItem("novaCart") || "[]"
-  );
+  cart = JSON.parse(localStorage.getItem("novaCart") || "[]");
 
-  if(Array.isArray(saved)){
-    cart = saved;
+  if (!Array.isArray(cart)) {
+    cart = [];
   }
-} catch(error){
+} catch {
   cart = [];
 }
 
 
-/* =========================================================
-   HELPERS
-========================================================= */
+// ============================================================
+// UTILITAIRES
+// ============================================================
 
-function escapeHTML(value){
+function money(value) {
+  const number = Number(value) || 0;
 
-  return String(value ?? "")
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
-}
-
-function escapeAttribute(value){
-  return escapeHTML(value);
-}
-
-function money(value){
-
-  const n = Number(value) || 0;
-
-  if(n === 0){
+  if (number === 0) {
     return "Gratuit";
   }
 
-  return n.toLocaleString(
-    "fr-FR",
-    {
-      style:"currency",
-      currency:"EUR"
-    }
-  );
+  return number.toLocaleString("fr-FR", {
+    style: "currency",
+    currency: "EUR"
+  });
 }
 
-function saveCart(){
 
-  try{
-    localStorage.setItem(
-      "novaCart",
-      JSON.stringify(cart)
-    );
-  }catch(error){
-    console.error("Cart save error:",error);
+function escapeHTML(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+
+function randomRating(id) {
+  let hash = 0;
+
+  for (let i = 0; i < id.length; i++) {
+    hash = ((hash << 5) - hash) + id.charCodeAt(i);
+    hash |= 0;
   }
+
+  const rating = 4.2 + (Math.abs(hash) % 9) / 10;
+
+  return Math.min(4.9, Number(rating.toFixed(1)));
 }
 
-function toast(message){
 
-  if(!toastContainer){
+function stars(rating) {
+  const rounded = Math.round(rating);
+
+  return "★".repeat(rounded) + "☆".repeat(5 - rounded);
+}
+
+
+function saveCart() {
+  localStorage.setItem("novaCart", JSON.stringify(cart));
+}
+
+
+function getProduct(id) {
+  return products.find(product => product.id === id);
+}
+
+
+function getCartCount() {
+  return cart.reduce((total, item) => total + Number(item.quantity || 0), 0);
+}
+
+
+function getCartSubtotal() {
+  return cart.reduce((total, item) => {
+    const product = getProduct(item.id);
+
+    if (!product) {
+      return total;
+    }
+
+    return total + product.price * Number(item.quantity || 0);
+  }, 0);
+}
+
+
+// ============================================================
+// TOAST
+// ============================================================
+
+function toast(message, type = "normal") {
+
+  if (!toastContainer) {
     alert(message);
     return;
   }
 
-  const item =
-    document.createElement("div");
+  const item = document.createElement("div");
 
-  item.className = "toast-item";
-  item.textContent = message;
+  item.className = `toast-item ${type}`;
+
+  item.innerHTML = `
+    <span>${escapeHTML(message)}</span>
+    <button type="button" aria-label="Fermer">×</button>
+  `;
 
   toastContainer.appendChild(item);
 
-  setTimeout(()=>{
+  const close = item.querySelector("button");
+
+  close?.addEventListener("click", () => {
     item.remove();
-  },3200);
+  });
+
+  setTimeout(() => {
+    item.remove();
+  }, 4000);
 }
 
-function showModal(title,html){
 
-  if(!modal || !modalContent || !modalTitle){
+// ============================================================
+// MODAL
+// ============================================================
+
+function showModal(title, html) {
+
+  if (!modal || !modalContent) {
     return;
   }
 
-  modalTitle.textContent = title;
+  if (modalTitle) {
+    modalTitle.textContent = title;
+  }
+
   modalContent.innerHTML = html;
-  modal.classList.add("show");
-}
 
-function closeModal(){
-
-  if(modal){
-    modal.classList.remove("show");
-  }
-}
-
-function openCart(){
-
-  if(cartOverlay){
-    cartOverlay.classList.add("show");
-  }
-
-  if(cartDrawer){
-    cartDrawer.classList.add("open");
-  }
-}
-
-function closeCart(){
-
-  if(cartOverlay){
-    cartOverlay.classList.remove("show");
-  }
-
-  if(cartDrawer){
-    cartDrawer.classList.remove("open");
-  }
-}
-
-function starsHTML(rating){
-
-  const full =
-    Math.max(0,Math.min(5,Math.round(rating)));
-
-  return (
-    "★".repeat(full) +
-    "☆".repeat(5-full)
-  );
-}
-
-function randomRating(productId){
-
-  if(reviewsCache[productId]){
-    return reviewsCache[productId];
-  }
-
-  let hash = 0;
-
-  for(const char of productId){
-
-    hash =
-      ((hash << 5) - hash) +
-      char.charCodeAt(0);
-
-    hash |= 0;
-  }
-
-  const rating =
-    4 + (Math.abs(hash) % 11) / 10;
-
-  reviewsCache[productId] =
-    Math.min(
-      5,
-      Number(rating.toFixed(1))
-    );
-
-  return reviewsCache[productId];
-}
-
-function productById(id){
-
-  return products.find(
-    product => product.id === id
-  );
+  modal.classList.add("open");
+  modal.style.display = "flex";
+  document.body.classList.add("modal-open");
 }
 
 
-/* =========================================================
-   CATEGORIES
-========================================================= */
+function closeModal() {
 
-function renderCategories(){
+  if (!modal) {
+    return;
+  }
 
-  if(!categoriesEl){
+  modal.classList.remove("open");
+  modal.style.display = "";
+  document.body.classList.remove("modal-open");
+}
+
+
+modalClose?.addEventListener("click", closeModal);
+
+
+// ============================================================
+// CATÉGORIES
+// ============================================================
+
+function renderCategories() {
+
+  if (!categoriesEl) {
     return;
   }
 
   const categories = [
     "Tous",
-    ...new Set(
-      products.map(product=>product.category)
-    )
+    ...new Set(products.map(product => product.category))
   ];
 
-  categoriesEl.innerHTML =
-    categories.map(category=>`
-
-      <button
-        class="category ${
-          selectedCategory === category
-            ? "active"
-            : ""
-        }"
-        data-category="${escapeAttribute(category)}"
-      >
-        ${escapeHTML(category)}
-      </button>
-
-    `).join("");
+  categoriesEl.innerHTML = categories.map(category => `
+    <button
+      type="button"
+      class="category-btn ${selectedCategory === category ? "active" : ""}"
+      data-category="${escapeHTML(category)}"
+    >
+      ${escapeHTML(category)}
+    </button>
+  `).join("");
 }
 
 
-/* =========================================================
-   FILTER
-========================================================= */
+categoriesEl?.addEventListener("click", event => {
 
-function filteredProducts(){
+  const button = event.target.closest("[data-category]");
 
-  let list = products.filter(product=>{
+  if (!button) {
+    return;
+  }
 
-    const categoryOK =
-      selectedCategory === "Tous" ||
-      product.category === selectedCategory;
+  selectedCategory = button.dataset.category || "Tous";
 
-    const text =
-      `${product.name} ${product.category}`
-        .toLowerCase();
+  renderCategories();
+  renderProducts();
+});
 
-    const searchOK =
-      !searchValue ||
-      text.includes(
-        searchValue.toLowerCase()
+
+// ============================================================
+// PRODUITS
+// ============================================================
+
+function getFilteredProducts() {
+
+  let list = [...products];
+
+  if (selectedCategory !== "Tous") {
+    list = list.filter(
+      product => product.category === selectedCategory
+    );
+  }
+
+  if (searchValue.trim()) {
+
+    const search = searchValue
+      .trim()
+      .toLowerCase();
+
+    list = list.filter(product => {
+
+      return (
+        product.name.toLowerCase().includes(search) ||
+        product.category.toLowerCase().includes(search)
       );
 
-    return categoryOK && searchOK;
-  });
-
-  if(sortValue === "priceAsc"){
-
-    list.sort(
-      (a,b)=>a.price-b.price
-    );
+    });
   }
 
-  if(sortValue === "priceDesc"){
+  if (sortValue === "price-low") {
 
-    list.sort(
-      (a,b)=>b.price-a.price
+    list.sort((a, b) => a.price - b.price);
+
+  } else if (sortValue === "price-high") {
+
+    list.sort((a, b) => b.price - a.price);
+
+  } else if (sortValue === "name") {
+
+    list.sort((a, b) =>
+      a.name.localeCompare(b.name, "fr")
     );
-  }
 
-  if(sortValue === "name"){
+  } else if (sortValue === "new") {
 
-    list.sort(
-      (a,b)=>
-        a.name.localeCompare(
-          b.name,
-          "fr"
-        )
+    list.sort((a, b) =>
+      Number(Boolean(b.new)) - Number(Boolean(a.new))
     );
   }
 
@@ -721,424 +715,453 @@ function filteredProducts(){
 }
 
 
-/* =========================================================
-   PRODUCTS
-========================================================= */
+function renderProducts() {
 
-function renderProducts(){
-
-  if(!productsGrid){
-    console.error(
-      "NovaShop: #productGrid introuvable."
-    );
+  if (!productsGrid) {
     return;
   }
 
-  const list = filteredProducts();
+  const list = getFilteredProducts();
 
-  if(!list.length){
+  if (productCount) {
+    productCount.textContent =
+      `${list.length} produit${list.length > 1 ? "s" : ""}`;
+  }
+
+  if (!list.length) {
 
     productsGrid.innerHTML = `
-      <div class="empty">
-        😕 Aucun produit trouvé.
+      <div class="empty-products">
+        <div style="font-size:42px">🔎</div>
+        <h3>Aucun produit trouvé</h3>
+        <p>Essaie une autre recherche ou une autre catégorie.</p>
       </div>
     `;
 
     return;
   }
 
-  productsGrid.innerHTML =
-    list.map(product=>{
+  productsGrid.innerHTML = list.map(product => {
 
-      const rating =
-        randomRating(product.id);
+    const rating = randomRating(product.id);
 
-      return `
+    return `
+      <article class="product" data-product-id="${product.id}">
 
-        <article
-          class="product"
-          data-id="${escapeAttribute(product.id)}"
-        >
+        <div class="product-img">
 
           ${
             product.new
-              ? `
-                <span class="new-badge">
-                  NOUVEAU
-                </span>
-              `
+              ? `<span class="new-badge">NOUVEAU</span>`
               : ""
           }
 
           <img
-            class="product-img"
-            src="${escapeAttribute(product.image)}"
-            alt="${escapeAttribute(product.name)}"
+            src="${escapeHTML(product.image)}"
+            alt="${escapeHTML(product.name)}"
             loading="lazy"
-            onerror="
-              this.onerror=null;
-              this.src='${FALLBACK_IMAGE}';
-            "
+            onerror="this.onerror=null;this.src='${FALLBACK_IMAGE}'"
           >
 
-          <div class="product-body">
+        </div>
 
-            <div class="product-cat">
-              ${escapeHTML(product.category)}
-            </div>
-
-            <h3>
-              ${escapeHTML(product.name)}
-            </h3>
-
-            <div class="rating">
-
-              <span class="stars">
-                ${starsHTML(rating)}
-              </span>
-
-              ${rating.toFixed(1)}/5
-
-            </div>
-
-            <div class="price">
-              ${money(product.price)}
-            </div>
-
-            <div class="product-actions">
-
-              <button
-                class="view-btn"
-                data-id="${escapeAttribute(product.id)}"
-              >
-                Voir
-              </button>
-
-              <button
-                class="add-btn"
-                data-id="${escapeAttribute(product.id)}"
-              >
-                Ajouter
-              </button>
-
-            </div>
-
-          </div>
-
-        </article>
-
-      `;
-
-    }).join("");
-}
-
-
-/* =========================================================
-   PRODUCT MODAL
-========================================================= */
-
-function openProduct(productId){
-
-  const product =
-    productById(productId);
-
-  if(!product){
-    return;
-  }
-
-  const rating =
-    randomRating(product.id);
-
-  showModal(
-    product.name,
-    `
-
-      <div class="product-modal">
-
-        <img
-          src="${escapeAttribute(product.image)}"
-          alt="${escapeAttribute(product.name)}"
-          onerror="
-            this.onerror=null;
-            this.src='${FALLBACK_IMAGE}';
-          "
-        >
-
-        <div>
+        <div class="product-body">
 
           <div class="product-cat">
             ${escapeHTML(product.category)}
           </div>
 
-          <h1 style="margin:10px 0">
+          <h3>
             ${escapeHTML(product.name)}
-          </h1>
+          </h3>
 
           <div class="rating">
-            ${starsHTML(rating)}
-            ${rating.toFixed(1)}/5
+            <span class="stars">${stars(rating)}</span>
+            <span>${rating}</span>
           </div>
 
           <div class="price">
             ${money(product.price)}
           </div>
 
-          <p class="muted">
-            Produit disponible sur NovaShop.
-          </p>
-
-          <div class="actions-row">
+          <div class="product-actions">
 
             <button
-              class="primary"
-              id="modalAddProduct"
+              type="button"
+              class="view-btn"
+              data-action="view"
+              data-id="${product.id}"
             >
-              🛒 Ajouter au panier
+              Voir
+            </button>
+
+            <button
+              type="button"
+              class="add-btn"
+              data-action="add"
+              data-id="${product.id}"
+            >
+              Ajouter
             </button>
 
           </div>
 
         </div>
 
-      </div>
+      </article>
+    `;
 
-    `
-  );
-
-  const button =
-    $("modalAddProduct");
-
-  if(button){
-
-    button.onclick = ()=>{
-
-      addToCart(product.id);
-
-      closeModal();
-      openCart();
-
-    };
-  }
+  }).join("");
 }
 
 
-/* =========================================================
-   CART
-========================================================= */
+productsGrid?.addEventListener("click", event => {
 
-function cartDetailed(){
+  const button = event.target.closest("[data-action]");
 
-  return cart
-    .map(item=>{
-
-      const product =
-        productById(item.id);
-
-      if(!product){
-        return null;
-      }
-
-      return {
-        ...product,
-        qty:Math.max(
-          1,
-          Number(item.qty) || 1
-        )
-      };
-
-    })
-    .filter(Boolean);
-}
-
-function addToCart(id){
-
-  const product =
-    productById(id);
-
-  if(!product){
+  if (!button) {
     return;
   }
 
-  const existing =
-    cart.find(
-      item=>item.id === id
-    );
+  const id = button.dataset.id;
 
-  if(existing){
+  if (!id) {
+    return;
+  }
 
-    existing.qty++;
+  if (button.dataset.action === "add") {
+    addToCart(id);
+  }
 
-  }else{
+  if (button.dataset.action === "view") {
+    openProduct(id);
+  }
+});
 
+
+// ============================================================
+// RECHERCHE / TRI
+// ============================================================
+
+searchInput?.addEventListener("input", event => {
+
+  searchValue = event.target.value || "";
+
+  renderProducts();
+});
+
+
+sortSelect?.addEventListener("change", event => {
+
+  sortValue = event.target.value || "default";
+
+  renderProducts();
+});
+
+
+// ============================================================
+// PRODUIT DÉTAIL
+// ============================================================
+
+function openProduct(id) {
+
+  const product = getProduct(id);
+
+  if (!product) {
+    return;
+  }
+
+  const rating = randomRating(product.id);
+
+  showModal(
+    product.name,
+    `
+      <div class="product-detail">
+
+        <img
+          src="${escapeHTML(product.image)}"
+          alt="${escapeHTML(product.name)}"
+          onerror="this.onerror=null;this.src='${FALLBACK_IMAGE}'"
+          style="
+            width:100%;
+            max-width:420px;
+            max-height:380px;
+            object-fit:contain;
+            display:block;
+            margin:0 auto 20px;
+            border-radius:18px;
+          "
+        >
+
+        <div class="product-cat">
+          ${escapeHTML(product.category)}
+        </div>
+
+        <h2>
+          ${escapeHTML(product.name)}
+        </h2>
+
+        <div class="rating">
+          <span class="stars">${stars(rating)}</span>
+          ${rating}/5
+        </div>
+
+        <div class="price" style="font-size:28px;margin:18px 0;">
+          ${money(product.price)}
+        </div>
+
+        <button
+          type="button"
+          class="add-btn"
+          id="modalAddProduct"
+          style="width:100%;"
+        >
+          Ajouter au panier
+        </button>
+
+      </div>
+    `
+  );
+
+  $("modalAddProduct")?.addEventListener("click", () => {
+
+    addToCart(product.id);
+
+    closeModal();
+  });
+}
+
+
+// ============================================================
+// PANIER
+// ============================================================
+
+function addToCart(id, quantity = 1) {
+
+  const product = getProduct(id);
+
+  if (!product) {
+    return;
+  }
+
+  const existing = cart.find(item => item.id === id);
+
+  if (existing) {
+    existing.quantity += quantity;
+  } else {
     cart.push({
       id,
-      qty:1
+      quantity
     });
   }
 
   saveCart();
   renderCart();
 
-  toast(
-    `${product.name} ajouté au panier 🛒`
-  );
+  toast(`${product.name} ajouté au panier 🛒`, "success");
 }
 
-function updateCartQty(id,delta){
 
-  const item =
-    cart.find(
-      x=>x.id === id
-    );
+function removeFromCart(id) {
 
-  if(!item){
+  const product = getProduct(id);
+
+  cart = cart.filter(item => item.id !== id);
+
+  saveCart();
+  renderCart();
+
+  if (product) {
+    toast(`${product.name} retiré du panier`);
+  }
+}
+
+
+function changeCartQuantity(id, amount) {
+
+  const item = cart.find(item => item.id === id);
+
+  if (!item) {
     return;
   }
 
-  item.qty += delta;
+  item.quantity += amount;
 
-  if(item.qty <= 0){
-
-    cart =
-      cart.filter(
-        x=>x.id !== id
-      );
+  if (item.quantity <= 0) {
+    removeFromCart(id);
+    return;
   }
 
   saveCart();
   renderCart();
 }
 
-function removeFromCart(id){
 
-  cart =
-    cart.filter(
-      x=>x.id !== id
-    );
+function renderCart() {
 
-  saveCart();
-  renderCart();
-}
+  const count = getCartCount();
 
-function renderCart(){
-
-  if(!cartItems){
-    return;
-  }
-
-  const items =
-    cartDetailed();
-
-  const count =
-    items.reduce(
-      (sum,item)=>sum+item.qty,
-      0
-    );
-
-  if(cartBadge){
+  if (cartBadge) {
     cartBadge.textContent = count;
+    cartBadge.style.display = count > 0 ? "flex" : "none";
   }
 
-  if(!items.length){
+  if (!cartItems) {
+    return;
+  }
+
+  if (!cart.length) {
 
     cartItems.innerHTML = `
-      <div class="empty">
-        🛒 Ton panier est vide.
+      <div class="empty-cart">
+        <div style="font-size:50px">🛒</div>
+        <h3>Ton panier est vide</h3>
+        <p>Ajoute des produits pour commencer.</p>
       </div>
     `;
 
-    if(cartTotal){
-      cartTotal.textContent =
-        money(0);
-    }
+  } else {
 
-    return;
-  }
+    cartItems.innerHTML = cart.map(item => {
 
-  let total = 0;
+      const product = getProduct(item.id);
 
-  cartItems.innerHTML =
-    items.map(item=>{
+      if (!product) {
+        return "";
+      }
 
-      total +=
-        item.price * item.qty;
+      const quantity = Number(item.quantity || 1);
 
       return `
-
-        <div class="cart-item">
+        <div class="cart-item" data-cart-id="${product.id}">
 
           <img
-            src="${escapeAttribute(item.image)}"
-            alt=""
-            onerror="
-              this.onerror=null;
-              this.src='${FALLBACK_IMAGE}';
-            "
+            src="${escapeHTML(product.image)}"
+            alt="${escapeHTML(product.name)}"
+            onerror="this.onerror=null;this.src='${FALLBACK_IMAGE}'"
           >
 
-          <div>
+          <div class="cart-item-info">
 
-            <div class="cart-name">
-              ${escapeHTML(item.name)}
-            </div>
+            <strong>
+              ${escapeHTML(product.name)}
+            </strong>
 
-            <div class="cart-price">
-              ${money(item.price * item.qty)}
-            </div>
+            <span>
+              ${money(product.price)}
+            </span>
 
-            <div class="qty">
+            <div class="cart-quantity">
 
               <button
-                data-action="minus"
-                data-id="${escapeAttribute(item.id)}"
+                type="button"
+                data-cart-action="minus"
+                data-id="${product.id}"
               >
                 −
               </button>
 
-              <b>${item.qty}</b>
+              <span>${quantity}</span>
 
               <button
-                data-action="plus"
-                data-id="${escapeAttribute(item.id)}"
+                type="button"
+                data-cart-action="plus"
+                data-id="${product.id}"
               >
                 +
-              </button>
-
-              <button
-                class="remove"
-                data-action="remove"
-                data-id="${escapeAttribute(item.id)}"
-              >
-                Supprimer
               </button>
 
             </div>
 
           </div>
 
-        </div>
+          <button
+            type="button"
+            class="remove-cart"
+            data-cart-action="remove"
+            data-id="${product.id}"
+          >
+            ×
+          </button>
 
+        </div>
       `;
 
     }).join("");
+  }
 
-  if(cartTotal){
-    cartTotal.textContent =
-      money(total);
+  if (cartTotal) {
+    cartTotal.textContent = money(getCartSubtotal());
   }
 }
 
 
-/* =========================================================
-   AUTH ERROR
-========================================================= */
+cartItems?.addEventListener("click", event => {
 
-function authError(error){
+  const button = event.target.closest("[data-cart-action]");
 
-  const code =
-    error?.code || "";
+  if (!button) {
+    return;
+  }
 
-  const messages = {
+  const action = button.dataset.cartAction;
+  const id = button.dataset.id;
+
+  if (!id) {
+    return;
+  }
+
+  if (action === "plus") {
+    changeCartQuantity(id, 1);
+  }
+
+  if (action === "minus") {
+    changeCartQuantity(id, -1);
+  }
+
+  if (action === "remove") {
+    removeFromCart(id);
+  }
+});
+
+
+function openCart() {
+
+  cartOverlay?.classList.add("open");
+  cartDrawer?.classList.add("open");
+
+  if (cartOverlay) {
+    cartOverlay.style.display = "block";
+  }
+}
+
+
+function closeCart() {
+
+  cartOverlay?.classList.remove("open");
+  cartDrawer?.classList.remove("open");
+
+  if (cartOverlay) {
+    cartOverlay.style.display = "";
+  }
+}
+
+
+cartBtn?.addEventListener("click", openCart);
+heroCartBtn?.addEventListener("click", openCart);
+cartClose?.addEventListener("click", closeCart);
+cartOverlay?.addEventListener("click", closeCart);
+
+
+// ============================================================
+// FIREBASE AUTH ERREURS
+// ============================================================
+
+function authError(error) {
+
+  const code = error?.code || "";
+
+  const errors = {
 
     "auth/email-already-in-use":
       "Cette adresse e-mail possède déjà un compte.",
@@ -1171,7 +1194,7 @@ function authError(error){
       "Problème de connexion Internet.",
 
     "auth/operation-not-allowed":
-      "La connexion par e-mail/mot de passe n'est pas activée dans Firebase.",
+      "La connexion e-mail/mot de passe n'est pas activée dans Firebase.",
 
     "auth/unauthorized-domain":
       "Ce domaine n'est pas autorisé dans Firebase Authentication.",
@@ -1180,96 +1203,122 @@ function authError(error){
       "La clé Firebase n'est pas valide.",
 
     "auth/app-not-authorized":
-      "Cette application n'est pas autorisée par Firebase."
+      "Cette application n'est pas autorisée par Firebase.",
+
+    "auth/invalid-api-key":
+      "La clé API Firebase est invalide.",
+
+    "auth/internal-error":
+      "Firebase a rencontré une erreur interne.",
+
+    "auth/configuration-not-found":
+      "La configuration Firebase Authentication est introuvable.",
+
+    "auth/invalid-continue-uri":
+      "L'adresse de redirection Firebase est invalide."
+
   };
 
-  return (
-    messages[code] ||
-    `Erreur Firebase : ${
-      code ||
-      error?.message ||
-      "erreur inconnue"
-    }`
-  );
+  if (errors[code]) {
+    return errors[code];
+  }
+
+  const rawMessage = error?.message || "Erreur inconnue.";
+
+  return `${rawMessage} (${code || "code inconnu"})`;
 }
 
 
-/* =========================================================
-   ACCOUNT
-========================================================= */
+// ============================================================
+// COMPTE
+// ============================================================
 
-function openAccount(){
+function openAccount() {
 
-  if(currentUser){
+  if (currentUser) {
+
+    const email = currentUser.email || "";
+
+    const isAdmin =
+      email.toLowerCase() === ADMIN_EMAIL.toLowerCase();
 
     showModal(
-      "👤 Mon compte",
+      "Mon compte",
       `
+        <div class="account-panel">
 
-        <div class="admin-card">
-
-          <h3>Connecté</h3>
-
-          <p
-            class="muted"
-            style="margin-top:8px"
-          >
-            ${escapeHTML(currentUser.email)}
-          </p>
-
-          <div class="actions-row">
-
-            <button
-              class="primary"
-              id="logoutBtn"
-            >
-              Se déconnecter
-            </button>
-
-            <button
-              class="secondary"
-              id="accountOrdersBtn"
-            >
-              📦 Mes commandes
-            </button>
-
+          <div style="font-size:50px;text-align:center;">
+            👤
           </div>
 
-        </div>
+          <h3 style="text-align:center;">
+            ${escapeHTML(email)}
+          </h3>
 
+          <p style="text-align:center;margin:12px 0 20px;">
+            Ton compte NovaShop est connecté.
+          </p>
+
+          ${
+            isAdmin
+              ? `
+                <div style="
+                  padding:12px;
+                  border-radius:12px;
+                  background:rgba(255,170,0,.12);
+                  margin-bottom:12px;
+                  text-align:center;
+                ">
+                  🛡️ Compte administrateur
+                </div>
+              `
+              : ""
+          }
+
+          <button
+            type="button"
+            class="add-btn"
+            id="accountOrdersBtn"
+            style="width:100%;margin-bottom:10px;"
+          >
+            📦 Mes commandes
+          </button>
+
+          <button
+            type="button"
+            class="view-btn"
+            id="logoutBtn"
+            style="width:100%;"
+          >
+            Se déconnecter
+          </button>
+
+        </div>
       `
     );
 
-    $("logoutBtn").onclick =
-      async ()=>{
+    $("accountOrdersBtn")?.addEventListener("click", () => {
 
-        if(!auth){
-          return;
-        }
+      closeModal();
+      openOrders();
+    });
 
-        try{
+    $("logoutBtn")?.addEventListener("click", async () => {
 
-          await signOut(auth);
+      try {
 
-          closeModal();
+        await signOut(auth);
 
-          toast(
-            "Déconnexion réussie."
-          );
-
-        }catch(error){
-
-          toast(
-            authError(error)
-          );
-        }
-      };
-
-    $("accountOrdersBtn").onclick =
-      ()=>{
         closeModal();
-        openOrders();
-      };
+
+        toast("Déconnexion réussie 👋", "success");
+
+      } catch (error) {
+
+        toast(authError(error), "error");
+      }
+
+    });
 
     return;
   }
@@ -1277,1887 +1326,1475 @@ function openAccount(){
   showLoginForm();
 }
 
-function showLoginForm(){
+
+function showLoginForm() {
 
   showModal(
-    "👤 Compte NovaShop",
+    "Connexion",
     `
+      <form id="loginForm" class="auth-form">
 
-      <div class="auth-tabs">
+        <div style="margin-bottom:14px;">
+          <label for="loginEmail">
+            Adresse e-mail
+          </label>
 
-        <button
-          class="primary"
-          id="loginTab"
-        >
-          Connexion
-        </button>
+          <input
+            id="loginEmail"
+            type="email"
+            autocomplete="email"
+            required
+            placeholder="ton@email.com"
+          >
+        </div>
 
-        <button
-          class="secondary"
-          id="registerTab"
-        >
-          Créer un compte
-        </button>
+        <div style="margin-bottom:14px;">
+          <label for="loginPassword">
+            Mot de passe
+          </label>
 
-      </div>
+          <input
+            id="loginPassword"
+            type="password"
+            autocomplete="current-password"
+            required
+            placeholder="Ton mot de passe"
+          >
+        </div>
 
-      <div id="authForm"></div>
-
-    `
-  );
-
-  renderLoginForm();
-
-  $("loginTab").onclick =
-    renderLoginForm;
-
-  $("registerTab").onclick =
-    renderRegisterForm;
-}
-
-function renderLoginForm(){
-
-  $("authForm").innerHTML = `
-
-    <div class="checkout-section">
-
-      <div class="field">
-
-        <label>E-mail</label>
-
-        <input
-          id="authEmail"
-          type="email"
-          autocomplete="email"
-        >
-
-      </div>
-
-      <br>
-
-      <div class="field">
-
-        <label>Mot de passe</label>
-
-        <input
-          id="authPassword"
-          type="password"
-          autocomplete="current-password"
-        >
-
-      </div>
-
-      <div
-        id="authError"
-        style="margin-top:12px"
-      ></div>
-
-      <div class="actions-row">
+        <div
+          id="loginError"
+          style="
+            display:none;
+            padding:10px;
+            margin-bottom:12px;
+            border-radius:10px;
+            background:rgba(255,70,70,.12);
+            color:#ff7777;
+          "
+        ></div>
 
         <button
-          class="primary"
+          type="submit"
+          class="add-btn"
           id="loginSubmit"
+          style="width:100%;"
         >
           Se connecter
         </button>
 
-      </div>
+        <button
+          type="button"
+          class="view-btn"
+          id="goRegister"
+          style="width:100%;margin-top:10px;"
+        >
+          Créer un compte
+        </button>
 
-    </div>
+      </form>
+    `
+  );
 
-  `;
+  $("loginForm")?.addEventListener("submit", async event => {
 
-  $("loginSubmit").onclick =
-    async ()=>{
+    event.preventDefault();
 
-      const email =
-        $("authEmail").value.trim();
+    const email =
+      $("loginEmail")?.value.trim() || "";
 
-      const password =
-        $("authPassword").value;
+    const password =
+      $("loginPassword")?.value || "";
 
-      const errorBox =
-        $("authError");
+    const errorBox = $("loginError");
+    const submit = $("loginSubmit");
 
-      if(!email || !password){
+    if (submit) {
+      submit.disabled = true;
+      submit.textContent = "Connexion...";
+    }
 
-        errorBox.innerHTML = `
-          <small class="error">
-            Remplis tous les champs.
-          </small>
-        `;
+    if (errorBox) {
+      errorBox.style.display = "none";
+      errorBox.textContent = "";
+    }
 
-        return;
+    try {
+
+      await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
+      closeModal();
+
+      toast("Connexion réussie 👋", "success");
+
+    } catch (error) {
+
+      console.error("Firebase Login Error:", error);
+
+      if (errorBox) {
+
+        errorBox.textContent =
+          authError(error);
+
+        errorBox.style.display = "block";
       }
 
-      if(!auth){
+    } finally {
 
-        errorBox.innerHTML = `
-          <small class="error">
-            Firebase n'a pas pu être initialisé.
-          </small>
-        `;
-
-        return;
+      if (submit) {
+        submit.disabled = false;
+        submit.textContent = "Se connecter";
       }
+    }
+  });
 
-      const btn =
-        $("loginSubmit");
-
-      btn.disabled = true;
-      btn.textContent =
-        "Connexion...";
-
-      try{
-
-        await signInWithEmailAndPassword(
-          auth,
-          email,
-          password
-        );
-
-        closeModal();
-
-        toast(
-          "Connexion réussie ✅"
-        );
-
-      }catch(error){
-
-        console.error(
-          "LOGIN ERROR:",
-          error
-        );
-
-        errorBox.innerHTML = `
-          <small class="error">
-            ${escapeHTML(
-              authError(error)
-            )}
-          </small>
-        `;
-
-        btn.disabled = false;
-        btn.textContent =
-          "Se connecter";
-      }
-    };
+  $("goRegister")?.addEventListener("click", showRegisterForm);
 }
 
-function renderRegisterForm(){
 
-  $("authForm").innerHTML = `
+function showRegisterForm() {
 
-    <div class="checkout-section">
+  showModal(
+    "Créer un compte",
+    `
+      <form id="registerForm" class="auth-form">
 
-      <div class="field">
+        <div style="margin-bottom:14px;">
+          <label for="registerEmail">
+            Adresse e-mail
+          </label>
 
-        <label>E-mail</label>
+          <input
+            id="registerEmail"
+            type="email"
+            autocomplete="email"
+            required
+            placeholder="ton@email.com"
+          >
+        </div>
 
-        <input
-          id="authEmail"
-          type="email"
-          autocomplete="email"
-        >
+        <div style="margin-bottom:14px;">
+          <label for="registerPassword">
+            Mot de passe
+          </label>
 
-      </div>
+          <input
+            id="registerPassword"
+            type="password"
+            autocomplete="new-password"
+            minlength="6"
+            required
+            placeholder="Minimum 6 caractères"
+          >
+        </div>
 
-      <br>
+        <div style="margin-bottom:14px;">
+          <label for="registerPassword2">
+            Confirmer le mot de passe
+          </label>
 
-      <div class="field">
+          <input
+            id="registerPassword2"
+            type="password"
+            autocomplete="new-password"
+            minlength="6"
+            required
+            placeholder="Retape ton mot de passe"
+          >
+        </div>
 
-        <label>Mot de passe</label>
-
-        <input
-          id="authPassword"
-          type="password"
-          autocomplete="new-password"
-        >
-
-      </div>
-
-      <br>
-
-      <div class="field">
-
-        <label>Confirmer le mot de passe</label>
-
-        <input
-          id="authPassword2"
-          type="password"
-          autocomplete="new-password"
-        >
-
-      </div>
-
-      <div
-        id="authError"
-        style="margin-top:12px"
-      ></div>
-
-      <div class="actions-row">
+        <div
+          id="registerError"
+          style="
+            display:none;
+            padding:10px;
+            margin-bottom:12px;
+            border-radius:10px;
+            background:rgba(255,70,70,.12);
+            color:#ff7777;
+          "
+        ></div>
 
         <button
-          class="primary"
+          type="submit"
+          class="add-btn"
           id="registerSubmit"
+          style="width:100%;"
         >
           Créer mon compte
         </button>
 
-      </div>
-
-    </div>
-
-  `;
-
-  $("registerSubmit").onclick =
-    async ()=>{
-
-      const email =
-        $("authEmail").value.trim();
-
-      const password =
-        $("authPassword").value;
-
-      const password2 =
-        $("authPassword2").value;
-
-      const errorBox =
-        $("authError");
-
-      if(!email || !password || !password2){
-
-        errorBox.innerHTML = `
-          <small class="error">
-            Remplis tous les champs.
-          </small>
-        `;
-
-        return;
-      }
-
-      if(password !== password2){
-
-        errorBox.innerHTML = `
-          <small class="error">
-            Les mots de passe sont différents.
-          </small>
-        `;
-
-        return;
-      }
-
-      if(password.length < 6){
-
-        errorBox.innerHTML = `
-          <small class="error">
-            Le mot de passe doit contenir au moins 6 caractères.
-          </small>
-        `;
-
-        return;
-      }
-
-      if(!auth){
-
-        errorBox.innerHTML = `
-          <small class="error">
-            Firebase n'a pas pu être initialisé.
-          </small>
-        `;
-
-        return;
-      }
-
-      const btn =
-        $("registerSubmit");
-
-      btn.disabled = true;
-      btn.textContent =
-        "Création...";
-
-      try{
-
-        await createUserWithEmailAndPassword(
-          auth,
-          email,
-          password
-        );
-
-        closeModal();
-
-        toast(
-          "Compte créé avec succès ✅"
-        );
-
-      }catch(error){
-
-        console.error(
-          "REGISTER ERROR:",
-          error
-        );
-
-        errorBox.innerHTML = `
-          <small class="error">
-            ${escapeHTML(
-              authError(error)
-            )}
-          </small>
-        `;
-
-        btn.disabled = false;
-        btn.textContent =
-          "Créer mon compte";
-      }
-    };
-}
-
-
-/* =========================================================
-   SETTINGS
-========================================================= */
-
-function getTheme(){
-
-  const saved =
-    localStorage.getItem(
-      "novaThemeChoice"
-    );
-
-  if(
-    saved === "light" ||
-    saved === "dark"
-  ){
-    return saved;
-  }
-
-  if(
-    window.matchMedia &&
-    window.matchMedia(
-      "(prefers-color-scheme:light)"
-    ).matches
-  ){
-    return "light";
-  }
-
-  return "dark";
-}
-
-function applyTheme(){
-
-  document.body.classList.toggle(
-    "light",
-    getTheme() === "light"
-  );
-}
-
-function openSettings(){
-
-  showModal(
-    "⚙️ Paramètres",
-    `
-
-      <div class="checkout-section">
-
-        <h3>Apparence</h3>
-
-        <div class="actions-row">
-
-          <button
-            class="primary"
-            id="darkTheme"
-          >
-            🌙 Sombre
-          </button>
-
-          <button
-            class="secondary"
-            id="lightTheme"
-          >
-            ☀️ Claire
-          </button>
-
-          <button
-            class="secondary"
-            id="autoTheme"
-          >
-            🖥️ Automatique
-          </button>
-
-        </div>
-
-      </div>
-
-    `
-  );
-
-  $("darkTheme").onclick = ()=>{
-
-    localStorage.setItem(
-      "novaThemeChoice",
-      "dark"
-    );
-
-    applyTheme();
-
-    toast(
-      "Thème sombre activé 🌙"
-    );
-  };
-
-  $("lightTheme").onclick = ()=>{
-
-    localStorage.setItem(
-      "novaThemeChoice",
-      "light"
-    );
-
-    applyTheme();
-
-    toast(
-      "Thème clair activé ☀️"
-    );
-  };
-
-  $("autoTheme").onclick = ()=>{
-
-    localStorage.removeItem(
-      "novaThemeChoice"
-    );
-
-    applyTheme();
-
-    toast(
-      "Thème automatique activé 🖥️"
-    );
-  };
-}
-
-
-/* =========================================================
-   CHECKOUT
-========================================================= */
-
-function validateAddress(address){
-
-  return Boolean(
-    address.firstName &&
-    address.lastName &&
-    address.street &&
-    address.postalCode &&
-    address.city &&
-    address.country
-  );
-}
-
-function calculateDiscountedTotal(
-  subtotal,
-  promo
-){
-
-  if(
-    String(promo || "")
-      .trim()
-      .toUpperCase() ===
-    "NOVA100"
-  ){
-    return 0;
-  }
-
-  return subtotal;
-}
-
-function getAddressFromForm(){
-
-  return {
-
-    firstName:
-      $("firstName")?.value.trim() || "",
-
-    lastName:
-      $("lastName")?.value.trim() || "",
-
-    street:
-      $("street")?.value.trim() || "",
-
-    postalCode:
-      $("postalCode")?.value.trim() || "",
-
-    city:
-      $("city")?.value.trim() || "",
-
-    country:
-      $("country")?.value.trim() || ""
-
-  };
-}
-
-function openCheckout(){
-
-  const items =
-    cartDetailed();
-
-  if(!items.length){
-
-    toast(
-      "Ton panier est vide."
-    );
-
-    return;
-  }
-
-  if(!currentUser){
-
-    toast(
-      "Connecte-toi pour commander."
-    );
-
-    openAccount();
-
-    return;
-  }
-
-  drawCheckout();
-}
-
-function drawCheckout(
-  promoApplied = "",
-  promoMessage = ""
-){
-
-  const items =
-    cartDetailed();
-
-  const subtotal =
-    items.reduce(
-      (sum,item)=>
-        sum +
-        item.price *
-        item.qty,
-      0
-    );
-
-  const finalTotal =
-    calculateDiscountedTotal(
-      subtotal,
-      promoApplied
-    );
-
-  showModal(
-    "🧾 Finaliser la commande",
-    `
-
-      <div class="checkout-section">
-
-        <h3>📍 Adresse</h3>
-
-        <div
-          class="form-grid"
-          style="margin-top:15px"
-        >
-
-          <div class="field">
-            <label>Prénom</label>
-            <input id="firstName">
-          </div>
-
-          <div class="field">
-            <label>Nom</label>
-            <input id="lastName">
-          </div>
-
-          <div class="field full">
-            <label>Adresse</label>
-            <input id="street">
-          </div>
-
-          <div class="field">
-            <label>Code postal</label>
-            <input id="postalCode">
-          </div>
-
-          <div class="field">
-            <label>Ville</label>
-            <input id="city">
-          </div>
-
-          <div class="field full">
-            <label>Pays</label>
-            <input
-              id="country"
-              value="France"
-            >
-          </div>
-
-        </div>
-
-      </div>
-
-
-      <div class="checkout-section">
-
-        <h3>🎟️ Code promo</h3>
-
-        <div
-          style="
-            display:flex;
-            gap:8px;
-            margin-top:12px
-          "
-        >
-
-          <input
-            id="promoInput"
-            placeholder="Code promo"
-            style="
-              flex:1;
-              padding:12px;
-              border:1px solid var(--line);
-              border-radius:10px;
-              background:var(--card2);
-              color:var(--text)
-            "
-            value="${escapeAttribute(promoApplied)}"
-          >
-
-          <button
-            class="secondary"
-            id="promoBtn"
-          >
-            Appliquer
-          </button>
-
-        </div>
-
-        <div
-          id="promoMessage"
-          style="margin-top:10px"
-        >
-          ${promoMessage}
-        </div>
-
-      </div>
-
-
-      <div class="checkout-section">
-
-        <h3>💳 Paiement</h3>
-
-        <div
-          class="payment-grid"
-          style="margin-top:12px"
-        >
-
-          <button
-            class="payment-button"
-            id="paypalChoice"
-          >
-            🅿️ PayPal
-          </button>
-
-          <button
-            class="payment-button"
-            id="cardChoice"
-          >
-            💳 Carte bancaire
-          </button>
-
-        </div>
-
-        <p
-          class="muted"
-          style="
-            margin-top:10px;
-            font-size:12px
-          "
-        >
-          Le paiement CB est actuellement
-          une interface de démonstration.
-        </p>
-
-      </div>
-
-
-      <div class="checkout-section">
-
-        <div class="total-line">
-
-          <span>Sous-total</span>
-
-          <span>
-            ${money(subtotal)}
-          </span>
-
-        </div>
-
-        ${
-          String(promoApplied)
-            .toUpperCase() ===
-          "NOVA100"
-
-          ? `
-
-            <div class="total-line">
-
-              <span>Réduction</span>
-
-              <span
-                style="color:#22c55e"
-              >
-                -${money(subtotal)}
-              </span>
-
-            </div>
-
-          `
-          : ""
-        }
-
-        <div class="total-line">
-
-          <span>Total</span>
-
-          <span>
-            ${money(finalTotal)}
-          </span>
-
-        </div>
-
         <button
-          class="primary"
-          id="confirmCheckout"
-          style="width:100%"
+          type="button"
+          class="view-btn"
+          id="goLogin"
+          style="width:100%;margin-top:10px;"
         >
-          ${
-            finalTotal === 0
-              ? "Valider gratuitement"
-              : "Continuer avec PayPal"
-          }
+          J'ai déjà un compte
         </button>
 
-      </div>
-
+      </form>
     `
   );
 
-  const promoBtn =
-    $("promoBtn");
+  $("registerForm")?.addEventListener("submit", async event => {
 
-  if(promoBtn){
+    event.preventDefault();
 
-    promoBtn.onclick = ()=>{
+    const email =
+      $("registerEmail")?.value.trim() || "";
 
-      const code =
-        $("promoInput")
-          .value
-          .trim()
-          .toUpperCase();
+    const password =
+      $("registerPassword")?.value || "";
 
-      if(code === "NOVA100"){
+    const password2 =
+      $("registerPassword2")?.value || "";
 
-        drawCheckout(
-          "NOVA100",
-          `
-            <span
-              style="
-                color:#22c55e;
-                font-weight:800
-              "
-            >
-              Code NOVA100 appliqué.
-              Total à 0 € ✅
-            </span>
-          `
-        );
+    const errorBox = $("registerError");
+    const submit = $("registerSubmit");
 
-      }else{
+    if (password !== password2) {
 
-        $("promoMessage").innerHTML = `
-          <span
-            style="
-              color:#ef4444;
-              font-weight:800
-            "
-          >
-            Code promo invalide.
-          </span>
-        `;
+      if (errorBox) {
+        errorBox.textContent =
+          "Les deux mots de passe sont différents.";
+        errorBox.style.display = "block";
       }
-    };
-  }
-
-  const cardChoice =
-    $("cardChoice");
-
-  if(cardChoice){
-    cardChoice.onclick =
-      openCardPayment;
-  }
-
-  const paypalChoice =
-    $("paypalChoice");
-
-  if(paypalChoice){
-
-    paypalChoice.onclick = ()=>{
-
-      const address =
-        getAddressFromForm();
-
-      if(!validateAddress(address)){
-
-        toast(
-          "Complète ton adresse."
-        );
-
-        return;
-      }
-
-      createCheckoutOrder(
-        items,
-        subtotal,
-        finalTotal,
-        address,
-        promoApplied
-      );
-    };
-  }
-
-  const confirm =
-    $("confirmCheckout");
-
-  if(confirm){
-
-    confirm.onclick = ()=>{
-
-      const address =
-        getAddressFromForm();
-
-      if(!validateAddress(address)){
-
-        toast(
-          "Complète tous les champs de livraison."
-        );
-
-        return;
-      }
-
-      createCheckoutOrder(
-        items,
-        subtotal,
-        finalTotal,
-        address,
-        promoApplied
-      );
-    };
-  }
-}
-
-
-/* =========================================================
-   CB DEMO
-========================================================= */
-
-function openCardPayment(){
-
-  showModal(
-    "💳 Paiement par carte",
-    `
-
-      <div class="card-box checkout-section">
-
-        <p
-          class="muted"
-          style="margin-bottom:15px"
-        >
-          Paiement CB en mode démonstration.
-          Aucune donnée bancaire n'est enregistrée
-          ni envoyée.
-        </p>
-
-        <div class="field">
-
-          <label>
-            Nom sur la carte
-          </label>
-
-          <input id="cardName">
-
-        </div>
-
-        <br>
-
-        <div class="field">
-
-          <label>
-            Numéro de carte
-          </label>
-
-          <input
-            id="cardNumber"
-            inputmode="numeric"
-            maxlength="19"
-            placeholder="0000 0000 0000 0000"
-          >
-
-        </div>
-
-        <br>
-
-        <div class="form-grid">
-
-          <div class="field">
-
-            <label>
-              Expiration
-            </label>
-
-            <input
-              id="cardExpiry"
-              placeholder="MM/AA"
-            >
-
-          </div>
-
-          <div class="field">
-
-            <label>
-              CVV
-            </label>
-
-            <input
-              id="cardCvv"
-              inputmode="numeric"
-              maxlength="4"
-            >
-
-          </div>
-
-        </div>
-
-        <div class="actions-row">
-
-          <button
-            class="primary"
-            id="demoCardBtn"
-          >
-            Tester le paiement
-          </button>
-
-        </div>
-
-        <div
-          id="cardResult"
-          style="margin-top:12px"
-        ></div>
-
-      </div>
-
-    `
-  );
-
-  const demoBtn =
-    $("demoCardBtn");
-
-  if(!demoBtn){
-    return;
-  }
-
-  demoBtn.onclick = ()=>{
-
-    $("cardResult").innerHTML = `
-
-      <small class="error">
-
-        Paiement CB non disponible :
-        cette interface est uniquement une démo.
-
-      </small>
-
-    `;
-
-    $("cardNumber").value = "";
-    $("cardExpiry").value = "";
-    $("cardCvv").value = "";
-  };
-}
-
-
-/* =========================================================
-   CREATE ORDER
-========================================================= */
-
-async function createCheckoutOrder(
-  items,
-  subtotal,
-  finalTotal,
-  address,
-  promoApplied
-){
-
-  if(!currentUser){
-
-    toast(
-      "Connecte-toi pour commander."
-    );
-
-    return;
-  }
-
-  if(!db){
-
-    toast(
-      "Firebase Firestore n'est pas disponible."
-    );
-
-    return;
-  }
-
-  const button =
-    $("confirmCheckout");
-
-  if(button){
-
-    button.disabled = true;
-
-    button.textContent =
-      "Enregistrement...";
-  }
-
-  try{
-
-    const orderData = {
-
-      userId:
-        currentUser.uid,
-
-      email:
-        currentUser.email || "",
-
-      items:
-        items.map(item=>({
-
-          id:item.id,
-          name:item.name,
-          price:item.price,
-          qty:item.qty,
-          image:item.image
-
-        })),
-
-      subtotal:
-        Number(
-          subtotal.toFixed(2)
-        ),
-
-      total:
-        Number(
-          finalTotal.toFixed(2)
-        ),
-
-      promoCode:
-        promoApplied || "",
-
-      discount:
-        Number(
-          (subtotal-finalTotal)
-            .toFixed(2)
-        ),
-
-      address,
-
-      status:
-        "Enregistrée",
-
-      paymentMethod:
-        finalTotal === 0
-          ? "NOVA100"
-          : "PayPal.Me",
-
-      paymentStatus:
-        finalTotal === 0
-          ? "free"
-          : "pending",
-
-      createdAt:
-        serverTimestamp()
-    };
-
-    const ref =
-      await addDoc(
-        collection(db,"orders"),
-        orderData
-      );
-
-    if(finalTotal === 0){
-
-      cart = [];
-
-      saveCart();
-      renderCart();
-
-      closeModal();
-      closeCart();
-
-      toast(
-        "Commande enregistrée gratuitement ✅"
-      );
-
-      setTimeout(()=>{
-
-        printInvoiceHTML({
-          ...orderData,
-          id:ref.id,
-          createdAt:new Date()
-        });
-
-      },300);
 
       return;
     }
 
-    const amount =
-      Number(finalTotal)
-        .toFixed(2);
+    if (submit) {
+      submit.disabled = true;
+      submit.textContent = "Création...";
+    }
 
-    const paypalURL =
-      `https://paypal.me/SH0PNOVA/${amount}EUR`;
+    if (errorBox) {
+      errorBox.style.display = "none";
+      errorBox.textContent = "";
+    }
 
-    cart = [];
+    try {
 
-    saveCart();
-    renderCart();
+      await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
 
-    closeModal();
-    closeCart();
+      closeModal();
 
-    toast(
-      "Commande créée. Ouverture de PayPal..."
-    );
+      toast("Compte créé avec succès 🎉", "success");
 
-    setTimeout(()=>{
+    } catch (error) {
 
-      window.location.href =
-        paypalURL;
+      console.error("Firebase Register Error:", error);
 
-    },700);
+      if (errorBox) {
 
-  }catch(error){
+        errorBox.textContent =
+          authError(error);
 
-    console.error(
-      "ORDER ERROR:",
-      error
-    );
+        errorBox.style.display = "block";
+      }
 
-    toast(
-      "Erreur commande : " +
-      (
-        error?.code ||
-        error?.message ||
-        "inconnue"
-      )
-    );
+    } finally {
 
-    if(button){
+      if (submit) {
+        submit.disabled = false;
+        submit.textContent = "Créer mon compte";
+      }
+    }
+  });
 
-      button.disabled = false;
+  $("goLogin")?.addEventListener("click", showLoginForm);
+}
 
-      button.textContent =
-        finalTotal === 0
-          ? "Valider gratuitement"
-          : "Continuer avec PayPal";
+
+accountBtn?.addEventListener("click", openAccount);
+
+
+// ============================================================
+// AUTH STATE
+// ============================================================
+
+onAuthStateChanged(auth, user => {
+
+  currentUser = user;
+
+  if (accountBtn) {
+
+    if (user) {
+
+      const email = user.email || "";
+
+      const username =
+        email.split("@")[0] || "Compte";
+
+      accountBtn.textContent =
+        `👤 ${username}`;
+
+    } else {
+
+      accountBtn.textContent =
+        "👤 Compte";
     }
   }
-}
 
+  if (adminBtn) {
 
-/* =========================================================
-   TIMESTAMPS
-========================================================= */
+    const isAdmin =
+      !!user &&
+      (user.email || "").toLowerCase() ===
+      ADMIN_EMAIL.toLowerCase();
 
-function getTimestampValue(value){
-
-  if(!value){
-    return 0;
+    adminBtn.style.display =
+      isAdmin ? "" : "none";
   }
 
-  if(
-    typeof value.toMillis ===
-    "function"
-  ){
-    return value.toMillis();
-  }
-
-  if(value.seconds){
-
-    return (
-      value.seconds * 1000
-    );
-  }
-
-  if(value instanceof Date){
-
-    return value.getTime();
-  }
-
-  const n =
-    Date.parse(value);
-
-  return Number.isNaN(n)
-    ? 0
-    : n;
-}
-
-function formatTimestamp(value){
-
-  const timestamp =
-    getTimestampValue(value);
-
-  if(!timestamp){
-    return "Date inconnue";
-  }
-
-  return new Date(
-    timestamp
-  ).toLocaleString(
-    "fr-FR",
-    {
-      dateStyle:"medium",
-      timeStyle:"short"
-    }
-  );
-}
+});
 
 
-/* =========================================================
-   ORDERS
-========================================================= */
+// ============================================================
+// COMMANDES
+// ============================================================
 
-async function openOrders(){
+ordersBtn?.addEventListener("click", openOrders);
 
-  if(!currentUser){
 
-    toast(
-      "Connecte-toi pour voir tes commandes."
-    );
+async function openOrders() {
 
-    openAccount();
+  if (!currentUser) {
 
-    return;
-  }
-
-  if(!db){
-
-    showModal(
-      "📦 Mes commandes",
-      `
-        <div class="empty">
-          Firebase Firestore n'est pas disponible.
-        </div>
-      `
-    );
+    showLoginForm();
 
     return;
   }
 
   showModal(
-    "📦 Mes commandes",
+    "Mes commandes",
     `
-      <div class="empty">
-        Chargement...
+      <div id="ordersLoading" style="text-align:center;padding:30px;">
+        Chargement des commandes...
       </div>
+
+      <div id="ordersList"></div>
     `
   );
 
-  try{
+  try {
 
-    const q =
-      query(
-        collection(db,"orders"),
-        where(
-          "userId",
-          "==",
-          currentUser.uid
-        )
-      );
-
-    const snapshot =
-      await getDocs(q);
-
-    const orders =
-      snapshot.docs.map(d=>({
-        id:d.id,
-        ...d.data()
-      }));
-
-    orders.sort(
-      (a,b)=>
-        getTimestampValue(
-          b.createdAt
-        ) -
-        getTimestampValue(
-          a.createdAt
-        )
+    const ordersQuery = query(
+      collection(db, "orders"),
+      where("userId", "==", currentUser.uid)
     );
 
-    if(!orders.length){
+    const snapshot =
+      await getDocs(ordersQuery);
 
-      modalContent.innerHTML = `
-        <div class="empty">
-          📦 Aucune commande pour le moment.
+    const orders = [];
+
+    snapshot.forEach(item => {
+
+      orders.push({
+        id: item.id,
+        ...item.data()
+      });
+
+    });
+
+    orders.sort((a, b) => {
+
+      const dateA =
+        a.createdAt?.seconds || 0;
+
+      const dateB =
+        b.createdAt?.seconds || 0;
+
+      return dateB - dateA;
+    });
+
+    const loading = $("ordersLoading");
+    const list = $("ordersList");
+
+    if (loading) {
+      loading.remove();
+    }
+
+    if (!list) {
+      return;
+    }
+
+    if (!orders.length) {
+
+      list.innerHTML = `
+        <div style="text-align:center;padding:30px;">
+          <div style="font-size:50px;">📦</div>
+          <h3>Aucune commande</h3>
+          <p>Tu n'as pas encore passé de commande.</p>
         </div>
       `;
 
       return;
     }
 
-    modalContent.innerHTML =
-      orders.map(order=>{
+    list.innerHTML = orders.map(order => {
 
-        const total =
-          Number(order.total) || 0;
+      const total =
+        Number(order.total || 0);
 
-        return `
+      const status =
+        order.status || "Enregistrée";
 
-          <div class="order">
+      return `
+        <div
+          class="order-card"
+          style="
+            padding:16px;
+            margin-bottom:12px;
+            border:1px solid rgba(255,255,255,.08);
+            border-radius:16px;
+          "
+        >
 
-            <h3>
-              Commande #${
-                escapeHTML(
-                  order.id.slice(0,8)
-                )
-              }
-            </h3>
+          <div style="
+            display:flex;
+            justify-content:space-between;
+            gap:10px;
+            margin-bottom:8px;
+          ">
 
-            <p class="muted">
-              ${formatTimestamp(
-                order.createdAt
-              )}
-            </p>
+            <strong>
+              Commande #${escapeHTML(order.id.slice(0, 8))}
+            </strong>
 
-            <p style="margin-top:8px">
-              ${
-                order.items?.length || 0
-              }
-              produit(s)
-            </p>
-
-            <p
-              style="
-                margin-top:8px;
-                font-weight:900
-              "
-            >
+            <strong>
               ${money(total)}
-            </p>
-
-            <p style="margin-top:8px">
-
-              <span class="status">
-                ${escapeHTML(
-                  order.status ||
-                  "Enregistrée"
-                )}
-              </span>
-
-            </p>
-
-            <p
-              class="muted"
-              style="margin-top:8px"
-            >
-              Paiement :
-              ${escapeHTML(
-                order.paymentStatus ||
-                "pending"
-              )}
-            </p>
-
-            ${
-              order.address?.city
-              ? `
-                <p class="muted">
-                  Livraison :
-                  ${escapeHTML(
-                    order.address.city
-                  )}
-                </p>
-              `
-              : ""
-            }
-
-            ${
-              order.trackingNumber
-              ? `
-                <p style="margin-top:8px">
-                  📍 Suivi :
-                  <b>
-                    ${escapeHTML(
-                      order.trackingNumber
-                    )}
-                  </b>
-                </p>
-              `
-              : ""
-            }
-
-            <div class="actions-row">
-
-              <button
-                class="primary"
-                data-order-details="${
-                  escapeAttribute(order.id)
-                }"
-              >
-                Voir les détails
-              </button>
-
-              <button
-                class="secondary"
-                data-order-invoice="${
-                  escapeAttribute(order.id)
-                }"
-              >
-                🧾 Facture
-              </button>
-
-            </div>
+            </strong>
 
           </div>
 
-        `;
+          <div style="margin-bottom:12px;">
+            Statut :
+            <strong>${escapeHTML(status)}</strong>
+          </div>
 
-      }).join("");
+          <button
+            type="button"
+            class="view-btn"
+            data-order-id="${escapeHTML(order.id)}"
+          >
+            Voir la commande
+          </button>
 
-    modalContent
-      .querySelectorAll(
-        "[data-order-details]"
-      )
-      .forEach(btn=>{
+        </div>
+      `;
 
-        btn.onclick = ()=>{
-          openOrderDetails(
-            btn.dataset.orderDetails
-          );
-        };
+    }).join("");
 
-      });
+    list.addEventListener("click", event => {
 
-    modalContent
-      .querySelectorAll(
-        "[data-order-invoice]"
-      )
-      .forEach(btn=>{
+      const button =
+        event.target.closest("[data-order-id]");
 
-        btn.onclick = ()=>{
+      if (!button) {
+        return;
+      }
 
-          const order =
-            orders.find(
-              o =>
-                o.id ===
-                btn.dataset.orderInvoice
-            );
+      const order =
+        orders.find(
+          item => item.id === button.dataset.orderId
+        );
 
-          if(order){
-            printInvoiceHTML(order);
-          }
-        };
+      if (order) {
+        openOrderDetails(order);
+      }
 
-      });
+    });
 
-  }catch(error){
+  } catch (error) {
 
-    console.error(
-      "ORDERS ERROR:",
-      error
-    );
+    console.error("Firestore Orders Error:", error);
 
-    modalContent.innerHTML = `
+    const loading = $("ordersLoading");
 
-      <div class="empty">
+    if (loading) {
 
-        <b>
-          Erreur lors du chargement.
-        </b>
+      loading.innerHTML = `
+        <div style="color:#ff7777;">
+          Impossible de charger les commandes.
+          <br><br>
+          ${escapeHTML(error.message || "")}
+        </div>
+      `;
 
-        <p
-          class="muted"
-          style="margin-top:8px"
-        >
-          ${escapeHTML(
-            error?.code ||
-            error?.message ||
-            ""
-          )}
-        </p>
-
-      </div>
-
-    `;
+    }
   }
 }
 
 
-/* =========================================================
-   ORDER DETAILS
-========================================================= */
+// ============================================================
+// DÉTAIL COMMANDE
+// ============================================================
 
-async function openOrderDetails(orderId){
+function openOrderDetails(order) {
 
-  if(!currentUser || !db){
-    return;
-  }
+  const items =
+    Array.isArray(order.items)
+      ? order.items
+      : [];
 
-  try{
+  const status =
+    order.status || "Enregistrée";
 
-    const q =
-      query(
-        collection(db,"orders"),
-        where(
-          "userId",
-          "==",
-          currentUser.uid
-        )
+  const timeline = [
+    "Enregistrée",
+    "Acceptée",
+    "Préparation",
+    "En transit",
+    "Livraison proche",
+    "Livrée"
+  ];
+
+  const currentIndex =
+    timeline.indexOf(status);
+
+  const productsHTML = items.map(item => {
+
+    const product =
+      getProduct(item.id);
+
+    const name =
+      product?.name ||
+      item.name ||
+      "Produit";
+
+    const price =
+      Number(
+        product?.price ??
+        item.price ??
+        0
       );
 
-    const snapshot =
-      await getDocs(q);
+    const quantity =
+      Number(item.quantity || 1);
 
-    const orderDoc =
-      snapshot.docs.find(
-        d => d.id === orderId
-      );
+    return `
+      <div style="
+        display:flex;
+        justify-content:space-between;
+        gap:12px;
+        padding:10px 0;
+        border-bottom:1px solid rgba(255,255,255,.07);
+      ">
+        <span>
+          ${escapeHTML(name)}
+          × ${quantity}
+        </span>
 
-    if(!orderDoc){
+        <strong>
+          ${money(price * quantity)}
+        </strong>
+      </div>
+    `;
 
-      toast(
-        "Commande introuvable."
-      );
+  }).join("");
 
-      return;
-    }
-
-    const order = {
-      id:orderDoc.id,
-      ...orderDoc.data()
-    };
-
-    const statuses = [
-
-      "Enregistrée",
-      "Acceptée",
-      "Préparation",
-      "En transit",
-      "Livraison proche",
-      "Livrée"
-
-    ];
-
-    const currentIndex =
-      statuses.indexOf(
-        order.status
-      );
-
-    showModal(
-      `📦 Commande #${order.id.slice(0,8)}`,
+  const timelineHTML =
+    status === "Annulée"
+      ? `
+        <div style="
+          padding:12px;
+          border-radius:12px;
+          background:rgba(255,60,60,.12);
+          color:#ff7777;
+        ">
+          ❌ Commande annulée
+        </div>
       `
+      : timeline.map((step, index) => {
 
-        <div class="order">
+          const active =
+            currentIndex >= index;
 
-          <h3>
-            État de la commande
-          </h3>
+          return `
+            <div style="
+              display:flex;
+              align-items:center;
+              gap:10px;
+              margin:8px 0;
+              opacity:${active ? 1 : .4};
+            ">
+              <span>
+                ${active ? "●" : "○"}
+              </span>
 
-          <div
-            style="margin-top:15px"
-          >
+              <span>
+                ${step}
+              </span>
+            </div>
+          `;
 
-            ${
-              statuses.map(
-                (status,index)=>`
+        }).join("");
 
-                  <div
-                    style="
-                      display:flex;
-                      gap:10px;
-                      align-items:center;
-                      padding:9px 0;
-                      color:${
-                        index <= currentIndex
-                          ? "var(--text)"
-                          : "var(--muted)"
-                      }
-                    "
-                  >
+  showModal(
+    `Commande #${order.id.slice(0, 8)}`,
+    `
+      <div>
 
-                    <span
-                      style="
-                        width:25px;
-                        height:25px;
-                        display:grid;
-                        place-items:center;
-                        border-radius:50%;
-                        background:${
-                          index <= currentIndex
-                            ? "var(--accent)"
-                            : "var(--card)"
-                        };
-                        border:1px solid var(--line);
-                      "
-                    >
-                      ${
-                        index <= currentIndex
-                          ? "✓"
-                          : index+1
-                      }
-                    </span>
+        <div style="
+          padding:16px;
+          border-radius:16px;
+          background:rgba(80,120,255,.08);
+          margin-bottom:18px;
+        ">
 
-                    <span>
-                      ${escapeHTML(
-                        status
-                      )}
-                    </span>
-
-                  </div>
-
-                `
-              ).join("")
-            }
-
-          </div>
-
-        </div>
-
-
-        <div class="order">
-
-          <h3>
-            Produits
-          </h3>
+          <strong>
+            Statut : ${escapeHTML(status)}
+          </strong>
 
           ${
-            (order.items || [])
-              .map(item=>`
-
-                <div
-                  style="
-                    display:flex;
-                    justify-content:space-between;
-                    gap:10px;
-                    padding:10px 0;
-                    border-bottom:1px solid var(--line)
-                  "
-                >
-
-                  <span>
-                    ${escapeHTML(
-                      item.name
-                    )}
-                    × ${item.qty}
-                  </span>
-
-                  <b>
-                    ${money(
-                      item.price *
-                      item.qty
-                    )}
-                  </b>
-
+            order.tracking
+              ? `
+                <div style="margin-top:8px;">
+                  Suivi : ${escapeHTML(order.tracking)}
                 </div>
-
-              `).join("")
-          }
-
-        </div>
-
-
-        <div class="order">
-
-          <h3>
-            Livraison
-          </h3>
-
-          <p class="muted">
-            ${escapeHTML(
-              order.address?.firstName || ""
-            )}
-            ${escapeHTML(
-              order.address?.lastName || ""
-            )}
-          </p>
-
-          <p class="muted">
-            ${escapeHTML(
-              order.address?.street || ""
-            )}
-          </p>
-
-          <p class="muted">
-            ${escapeHTML(
-              order.address?.postalCode || ""
-            )}
-            ${escapeHTML(
-              order.address?.city || ""
-            )}
-          </p>
-
-          ${
-            order.trackingNumber
-            ? `
-              <p style="margin-top:10px">
-                📍 Numéro de suivi :
-                <b>
-                  ${escapeHTML(
-                    order.trackingNumber
-                  )}
-                </b>
-              </p>
-            `
-            : ""
+              `
+              : ""
           }
 
           ${
             order.estimatedDelivery
-            ? `
-              <p style="margin-top:8px">
-                🗓️ Livraison estimée :
-                <b>
-                  ${escapeHTML(
-                    order.estimatedDelivery
-                  )}
-                </b>
-              </p>
-            `
-            : ""
+              ? `
+                <div style="margin-top:8px;">
+                  Livraison estimée :
+                  ${escapeHTML(order.estimatedDelivery)}
+                </div>
+              `
+              : ""
           }
 
         </div>
 
+        <h3>Suivi</h3>
 
-        <div class="actions-row">
+        <div style="margin:12px 0 20px;">
+          ${timelineHTML}
+        </div>
+
+        <h3>Produits</h3>
+
+        <div style="margin:10px 0 20px;">
+          ${productsHTML}
+        </div>
+
+        ${
+          order.address
+            ? `
+              <h3>Livraison</h3>
+              <p style="margin:8px 0 20px;">
+                ${escapeHTML(order.address)}
+              </p>
+            `
+            : ""
+        }
+
+        <div style="
+          display:flex;
+          justify-content:space-between;
+          font-size:20px;
+          padding-top:15px;
+          border-top:1px solid rgba(255,255,255,.1);
+        ">
+          <strong>Total</strong>
+          <strong>${money(order.total || 0)}</strong>
+        </div>
+
+        <button
+          type="button"
+          class="add-btn"
+          id="invoiceBtn"
+          style="width:100%;margin-top:18px;"
+        >
+          🧾 Voir la facture
+        </button>
+
+      </div>
+    `
+  );
+
+  $("invoiceBtn")?.addEventListener(
+    "click",
+    () => printInvoice(order)
+  );
+}
+
+
+// ============================================================
+// CHECKOUT
+// ============================================================
+
+checkoutBtn?.addEventListener("click", openCheckout);
+
+
+function openCheckout() {
+
+  if (!cart.length) {
+
+    toast("Ton panier est vide 🛒");
+
+    return;
+  }
+
+  if (!currentUser) {
+
+    toast("Connecte-toi pour commander.");
+
+    showLoginForm();
+
+    return;
+  }
+
+  const subtotal = getCartSubtotal();
+
+  showModal(
+    "Finaliser la commande",
+    `
+      <form id="checkoutForm">
+
+        <div style="margin-bottom:14px;">
+
+          <label for="checkoutAddress">
+            Adresse de livraison
+          </label>
+
+          <textarea
+            id="checkoutAddress"
+            required
+            rows="4"
+            placeholder="Adresse complète"
+          ></textarea>
+
+        </div>
+
+        <div style="margin-bottom:14px;">
+
+          <label for="promoCode">
+            Code promo
+          </label>
+
+          <input
+            id="promoCode"
+            type="text"
+            placeholder="Code promo"
+          >
+
+          <small>
+            Entre NOVA100 pour bénéficier de la promotion.
+          </small>
+
+        </div>
+
+        <div
+          id="promoResult"
+          style="margin:10px 0;"
+        ></div>
+
+        <div style="
+          padding:15px;
+          border-radius:14px;
+          background:rgba(255,255,255,.05);
+          margin:15px 0;
+        ">
+
+          <div style="
+            display:flex;
+            justify-content:space-between;
+          ">
+            <span>Sous-total</span>
+            <strong id="checkoutSubtotal">
+              ${money(subtotal)}
+            </strong>
+          </div>
+
+          <div style="
+            display:flex;
+            justify-content:space-between;
+            margin-top:8px;
+          ">
+            <span>Réduction</span>
+            <strong id="checkoutDiscount">
+              ${money(0)}
+            </strong>
+          </div>
+
+          <div style="
+            display:flex;
+            justify-content:space-between;
+            margin-top:12px;
+            font-size:22px;
+          ">
+            <span>Total</span>
+            <strong id="checkoutFinal">
+              ${money(subtotal)}
+            </strong>
+          </div>
+
+        </div>
+
+        <h3>Mode de paiement</h3>
+
+        <div style="
+          display:grid;
+          gap:10px;
+          margin:12px 0 18px;
+        ">
 
           <button
-            class="secondary"
-            id="backOrders"
+            type="button"
+            class="view-btn payment-choice"
+            data-payment="paypal"
           >
-            ← Retour
+            🅿️ PayPal
           </button>
 
           <button
-            class="primary"
-            id="invoiceOrder"
+            type="button"
+            class="view-btn payment-choice"
+            data-payment="card"
           >
-            🧾 Facture
+            💳 Carte bancaire
           </button>
 
         </div>
 
-      `
-    );
+        <input
+          type="hidden"
+          id="paymentMethod"
+          value=""
+        >
 
-    const back =
-      $("backOrders");
+        <div
+          id="paymentInfo"
+          style="margin-bottom:14px;"
+        ></div>
 
-    if(back){
-      back.onclick =
-        openOrders;
+        <button
+          type="submit"
+          class="add-btn"
+          id="checkoutSubmit"
+          style="width:100%;"
+        >
+          Continuer
+        </button>
+
+        <div
+          id="checkoutError"
+          style="
+            display:none;
+            color:#ff7777;
+            margin-top:12px;
+          "
+        ></div>
+
+      </form>
+    `
+  );
+
+  let promoApplied = false;
+  let paymentMethod = "";
+
+  const promoInput = $("promoCode");
+  const promoResult = $("promoResult");
+
+  const subtotalEl = $("checkoutSubtotal");
+  const discountEl = $("checkoutDiscount");
+  const finalEl = $("checkoutFinal");
+
+  function updateCheckout() {
+
+    const subtotal = getCartSubtotal();
+
+    const discount =
+      promoApplied ? subtotal : 0;
+
+    const final =
+      Math.max(0, subtotal - discount);
+
+    if (subtotalEl) {
+      subtotalEl.textContent = money(subtotal);
     }
 
-    const invoice =
-      $("invoiceOrder");
-
-    if(invoice){
-
-      invoice.onclick = ()=>{
-        printInvoiceHTML(order);
-      };
+    if (discountEl) {
+      discountEl.textContent = money(discount);
     }
 
-  }catch(error){
-
-    console.error(
-      "ORDER DETAILS ERROR:",
-      error
-    );
-
-    toast(
-      "Impossible d'ouvrir la commande."
-    );
+    if (finalEl) {
+      finalEl.textContent = money(final);
+    }
   }
+
+  promoInput?.addEventListener("input", () => {
+
+    const code =
+      promoInput.value
+        .trim()
+        .toUpperCase();
+
+    promoApplied =
+      code === "NOVA100";
+
+    if (promoApplied) {
+
+      promoResult.innerHTML = `
+        <span style="color:#4ade80;">
+          ✅ Code NOVA100 appliqué
+        </span>
+      `;
+
+    } else if (code) {
+
+      promoResult.innerHTML = `
+        <span style="color:#ff7777;">
+          ❌ Code promo invalide
+        </span>
+      `;
+
+    } else {
+
+      promoResult.innerHTML = "";
+    }
+
+    updateCheckout();
+  });
+
+
+  document
+    .querySelectorAll(".payment-choice")
+    .forEach(button => {
+
+      button.addEventListener("click", () => {
+
+        paymentMethod =
+          button.dataset.payment || "";
+
+        const input =
+          $("paymentMethod");
+
+        if (input) {
+          input.value = paymentMethod;
+        }
+
+        document
+          .querySelectorAll(".payment-choice")
+          .forEach(item => {
+            item.classList.remove("selected");
+          });
+
+        button.classList.add("selected");
+
+        const info = $("paymentInfo");
+
+        if (!info) {
+          return;
+        }
+
+        if (paymentMethod === "paypal") {
+
+          info.innerHTML = `
+            <div style="
+              padding:12px;
+              border-radius:12px;
+              background:rgba(60,130,255,.1);
+            ">
+              Tu seras redirigé vers PayPal pour effectuer
+              le paiement.
+            </div>
+          `;
+
+        } else {
+
+          info.innerHTML = `
+            <div style="
+              padding:12px;
+              border-radius:12px;
+              background:rgba(255,180,0,.1);
+            ">
+              💳 Le paiement CB direct est actuellement
+              en mode démonstration.
+            </div>
+          `;
+        }
+      });
+
+    });
+
+
+  $("checkoutForm")?.addEventListener(
+    "submit",
+    async event => {
+
+      event.preventDefault();
+
+      const address =
+        $("checkoutAddress")?.value.trim() || "";
+
+      const errorBox =
+        $("checkoutError");
+
+      if (!address) {
+
+        if (errorBox) {
+          errorBox.textContent =
+            "Indique ton adresse de livraison.";
+          errorBox.style.display = "block";
+        }
+
+        return;
+      }
+
+      if (!paymentMethod) {
+
+        if (errorBox) {
+          errorBox.textContent =
+            "Choisis un moyen de paiement.";
+          errorBox.style.display = "block";
+        }
+
+        return;
+      }
+
+      const submit =
+        $("checkoutSubmit");
+
+      if (submit) {
+        submit.disabled = true;
+        submit.textContent = "Création...";
+      }
+
+      try {
+
+        const subtotal =
+          getCartSubtotal();
+
+        const discount =
+          promoApplied ? subtotal : 0;
+
+        const total =
+          Math.max(0, subtotal - discount);
+
+        const orderItems =
+          cart.map(item => {
+
+            const product =
+              getProduct(item.id);
+
+            return {
+              id: item.id,
+              name: product?.name || "Produit",
+              price: product?.price || 0,
+              quantity: item.quantity
+            };
+
+          });
+
+        const orderData = {
+
+          userId: currentUser.uid,
+
+          userEmail:
+            currentUser.email || "",
+
+          items: orderItems,
+
+          subtotal,
+
+          discount,
+
+          total,
+
+          promoCode:
+            promoApplied ? "NOVA100" : "",
+
+          address,
+
+          status:
+            "Enregistrée",
+
+          paymentMethod,
+
+          paymentStatus:
+            total === 0
+              ? "Payé"
+              : "En attente",
+
+          tracking: "",
+
+          city: "",
+
+          estimatedDelivery: "",
+
+          createdAt:
+            serverTimestamp()
+        };
+
+        const orderRef =
+          await addDoc(
+            collection(db, "orders"),
+            orderData
+          );
+
+        cart = [];
+
+        saveCart();
+        renderCart();
+
+        closeModal();
+
+        toast(
+          `Commande #${orderRef.id.slice(0, 8)} créée 🎉`,
+          "success"
+        );
+
+        if (paymentMethod === "paypal" && total > 0) {
+
+          const paypalUrl =
+            `https://paypal.me/SH0PNOVA/${encodeURIComponent(total.toFixed(2))}EUR`;
+
+          setTimeout(() => {
+
+            window.open(
+              paypalUrl,
+              "_blank",
+              "noopener,noreferrer"
+            );
+
+          }, 400);
+
+        } else if (
+          paymentMethod === "card" &&
+          total > 0
+        ) {
+
+          showModal(
+            "Paiement CB",
+            `
+              <div style="text-align:center;padding:20px;">
+
+                <div style="font-size:60px;">
+                  💳
+                </div>
+
+                <h3>
+                  Paiement bancaire
+                </h3>
+
+                <p style="margin:15px 0;">
+                  Le paiement CB direct est actuellement
+                  en mode démonstration.
+                </p>
+
+                <p style="opacity:.7;">
+                  Aucune donnée bancaire n'est enregistrée
+                  par NovaShop.
+                </p>
+
+                <button
+                  type="button"
+                  class="add-btn"
+                  id="closePaymentDemo"
+                  style="width:100%;margin-top:15px;"
+                >
+                  Fermer
+                </button>
+
+              </div>
+            `
+          );
+
+          $("closePaymentDemo")
+            ?.addEventListener(
+              "click",
+              closeModal
+            );
+        }
+
+      } catch (error) {
+
+        console.error(
+          "Firestore Checkout Error:",
+          error
+        );
+
+        if (errorBox) {
+
+          errorBox.textContent =
+            `Erreur : ${error.message || error.code || "inconnue"}`;
+
+          errorBox.style.display = "block";
+        }
+
+      } finally {
+
+        if (submit) {
+          submit.disabled = false;
+          submit.textContent = "Continuer";
+        }
+      }
+    }
+  );
 }
 
 
-/* =========================================================
-   ADMIN
-========================================================= */
+// ============================================================
+// FACTURE
+// ============================================================
 
-function isAdmin(){
+function printInvoice(order) {
 
-  return Boolean(
+  const items =
+    Array.isArray(order.items)
+      ? order.items
+      : [];
+
+  const rows = items.map(item => {
+
+    const product =
+      getProduct(item.id);
+
+    const name =
+      product?.name ||
+      item.name ||
+      "Produit";
+
+    const price =
+      Number(
+        product?.price ??
+        item.price ??
+        0
+      );
+
+    const quantity =
+      Number(item.quantity || 1);
+
+    return `
+      <tr>
+        <td>${escapeHTML(name)}</td>
+        <td>${quantity}</td>
+        <td>${money(price)}</td>
+        <td>${money(price * quantity)}</td>
+      </tr>
+    `;
+
+  }).join("");
+
+  const invoiceWindow =
+    window.open(
+      "",
+      "_blank",
+      "width=900,height=700"
+    );
+
+  if (!invoiceWindow) {
+
+    toast("La fenêtre de facture a été bloquée.");
+
+    return;
+  }
+
+  invoiceWindow.document.write(`
+    <!DOCTYPE html>
+
+    <html lang="fr">
+
+    <head>
+
+      <meta charset="UTF-8">
+
+      <title>
+        Facture NovaShop
+      </title>
+
+      <style>
+
+        body {
+          font-family: Arial, sans-serif;
+          padding: 40px;
+          color: #111827;
+        }
+
+        h1 {
+          margin-bottom: 5px;
+        }
+
+        .top {
+          display:flex;
+          justify-content:space-between;
+          margin-bottom:40px;
+        }
+
+        table {
+          width:100%;
+          border-collapse:collapse;
+          margin-top:30px;
+        }
+
+        th,
+        td {
+          border-bottom:1px solid #ddd;
+          padding:12px;
+          text-align:left;
+        }
+
+        .total {
+          margin-top:30px;
+          text-align:right;
+          font-size:24px;
+          font-weight:bold;
+        }
+
+        .small {
+          color:#666;
+          margin-top:30px;
+        }
+
+      </style>
+
+    </head>
+
+    <body>
+
+      <div class="top">
+
+        <div>
+          <h1>NovaShop</h1>
+          <p>Boutique gaming</p>
+        </div>
+
+        <div>
+          <strong>
+            Facture
+          </strong>
+
+          <p>
+            Commande #${escapeHTML(order.id)}
+          </p>
+        </div>
+
+      </div>
+
+      <h3>Client</h3>
+
+      <p>
+        ${escapeHTML(order.userEmail || "")}
+      </p>
+
+      <p>
+        ${escapeHTML(order.address || "")}
+      </p>
+
+      <h3>
+        Produits
+      </h3>
+
+      <table>
+
+        <thead>
+
+          <tr>
+            <th>Produit</th>
+            <th>Qté</th>
+            <th>Prix</th>
+            <th>Total</th>
+          </tr>
+
+        </thead>
+
+        <tbody>
+          ${rows}
+        </tbody>
+
+      </table>
+
+      ${
+        order.promoCode
+          ? `
+            <p>
+              Code promo :
+              <strong>
+                ${escapeHTML(order.promoCode)}
+              </strong>
+            </p>
+          `
+          : ""
+      }
+
+      <div class="total">
+        Total :
+        ${money(order.total || 0)}
+      </div>
+
+      <p class="small">
+        Statut :
+        ${escapeHTML(order.status || "Enregistrée")}
+      </p>
+
+      <script>
+        window.onload = function() {
+          window.print();
+        };
+      <\/script>
+
+    </body>
+
+    </html>
+  `);
+
+  invoiceWindow.document.close();
+}
+
+
+// ============================================================
+// ADMIN
+// ============================================================
+
+adminBtn?.addEventListener("click", openAdmin);
+
+
+function isAdminUser() {
+
+  return (
     currentUser &&
-    String(
-      currentUser.email || ""
-    ).toLowerCase() ===
+    (currentUser.email || "").toLowerCase() ===
     ADMIN_EMAIL.toLowerCase()
   );
 }
 
-function adminAuthorized(){
 
-  return (
-    localStorage.getItem(
-      ADMIN_ACCESS_KEY
-    ) === "true"
-  );
-}
+function openAdmin() {
 
-const ORDER_STATUSES = [
+  if (!isAdminUser()) {
 
-  "Enregistrée",
-  "Acceptée",
-  "Préparation",
-  "En transit",
-  "Livraison proche",
-  "Livrée",
-  "Annulée",
-  "Remboursement en cours"
-
-];
-
-async function openAdmin(){
-
-  if(!currentUser){
-
-    toast(
-      "Connecte-toi d'abord."
-    );
-
-    openAccount();
+    toast("Accès administrateur refusé.");
 
     return;
   }
 
-  if(!isAdmin()){
+  const authorized =
+    localStorage.getItem(ADMIN_ACCESS_KEY) === "true";
 
-    toast(
-      "Accès admin refusé."
-    );
-
-    return;
-  }
-
-  if(!adminAuthorized()){
+  if (!authorized) {
 
     const code =
-      prompt(
-        "Code administrateur NovaShop :"
-      );
+      prompt("Code administrateur NovaShop :");
 
-    if(code !== ADMIN_CODE){
+    if (code !== ADMIN_CODE) {
 
-      toast(
-        "Code admin incorrect."
-      );
+      toast("Code administrateur incorrect.", "error");
 
       return;
     }
@@ -3168,1264 +2805,792 @@ async function openAdmin(){
     );
   }
 
-  renderAdmin();
+  loadAdmin();
 }
 
-async function renderAdmin(){
 
-  if(!db){
-
-    showModal(
-      "🛠️ Administration NovaShop",
-      `
-        <div class="empty">
-          Firebase Firestore n'est pas disponible.
-        </div>
-      `
-    );
-
-    return;
-  }
+async function loadAdmin() {
 
   showModal(
-    "🛠️ Administration NovaShop",
+    "Administration NovaShop",
     `
-      <div class="empty">
+      <div id="adminLoading" style="text-align:center;padding:30px;">
         Chargement...
       </div>
+
+      <div id="adminContent"></div>
     `
   );
 
-  try{
+  try {
 
     const snapshot =
       await getDocs(
-        collection(db,"orders")
+        collection(db, "orders")
       );
 
-    const orders =
-      snapshot.docs.map(d=>({
-        id:d.id,
-        ...d.data()
-      }));
+    const orders = [];
 
-    orders.sort(
-      (a,b)=>
-        getTimestampValue(
-          b.createdAt
-        ) -
-        getTimestampValue(
-          a.createdAt
-        )
-    );
+    snapshot.forEach(item => {
 
-    modalContent.innerHTML = `
-
-      <div class="admin-card">
-
-        <h3>
-          Administration
-        </h3>
-
-        <p
-          class="muted"
-          style="margin-top:7px"
-        >
-          ${orders.length}
-          commande(s)
-        </p>
-
-        <div class="actions-row">
-
-          <button
-            class="danger-btn"
-            id="deleteAllOrders"
-          >
-            🗑️ Supprimer toutes les commandes
-          </button>
-
-          <button
-            class="secondary"
-            id="adminLogout"
-          >
-            Quitter
-          </button>
-
-        </div>
-
-      </div>
-
-      ${
-        orders.length
-        ? orders
-            .map(order =>
-              adminOrderHTML(order)
-            )
-            .join("")
-        : `
-          <div class="empty">
-            Aucune commande.
-          </div>
-        `
-      }
-
-    `;
-
-    const deleteAll =
-      $("deleteAllOrders");
-
-    if(deleteAll){
-
-      deleteAll.onclick =
-        async ()=>{
-
-          if(!confirm(
-            "Supprimer TOUTES les commandes ?"
-          )){
-            return;
-          }
-
-          try{
-
-            for(
-              const order of orders
-            ){
-
-              await deleteDoc(
-                doc(
-                  db,
-                  "orders",
-                  order.id
-                )
-              );
-            }
-
-            toast(
-              "Commandes supprimées."
-            );
-
-            renderAdmin();
-
-          }catch(error){
-
-            toast(
-              "Erreur : " +
-              (
-                error?.code ||
-                error?.message ||
-                ""
-              )
-            );
-          }
-        };
-    }
-
-    const adminLogout =
-      $("adminLogout");
-
-    if(adminLogout){
-
-      adminLogout.onclick = ()=>{
-
-        localStorage.removeItem(
-          ADMIN_ACCESS_KEY
-        );
-
-        closeModal();
-
-        toast(
-          "Mode admin fermé."
-        );
-      };
-    }
-
-    modalContent
-      .querySelectorAll(
-        "[data-admin-save]"
-      )
-      .forEach(btn=>{
-
-        btn.onclick = ()=>{
-          saveAdminOrder(
-            btn.dataset.adminSave
-          );
-        };
-
+      orders.push({
+        id: item.id,
+        ...item.data()
       });
 
-    modalContent
-      .querySelectorAll(
-        "[data-admin-pay]"
-      )
-      .forEach(btn=>{
+    });
 
-        btn.onclick = ()=>{
-          acceptPaypalOrder(
-            btn.dataset.adminPay
-          );
-        };
+    orders.sort((a, b) => {
 
-      });
+      const aTime =
+        a.createdAt?.seconds || 0;
 
-    modalContent
-      .querySelectorAll(
-        "[data-admin-invoice]"
-      )
-      .forEach(btn=>{
+      const bTime =
+        b.createdAt?.seconds || 0;
 
-        btn.onclick = ()=>{
+      return bTime - aTime;
+    });
 
-          const order =
-            orders.find(
-              o =>
-                o.id ===
-                btn.dataset.adminInvoice
-            );
+    renderAdmin(orders);
 
-          if(order){
-            printInvoiceHTML(order);
-          }
-        };
-
-      });
-
-  }catch(error){
+  } catch (error) {
 
     console.error(
-      "ADMIN ERROR:",
+      "Admin Firestore Error:",
       error
     );
 
-    modalContent.innerHTML = `
+    const loading =
+      $("adminLoading");
 
-      <div class="empty">
+    if (loading) {
 
-        <b>
-          Erreur Firebase.
-        </b>
-
-        <p
-          class="muted"
-          style="margin-top:8px"
-        >
-          ${escapeHTML(
-            error?.code ||
-            error?.message ||
-            ""
-          )}
-        </p>
-
-      </div>
-
-    `;
+      loading.innerHTML = `
+        <div style="color:#ff7777;">
+          Erreur Firestore :
+          ${escapeHTML(error.message || "")}
+        </div>
+      `;
+    }
   }
 }
 
-function adminOrderHTML(order){
 
-  return `
+function renderAdmin(orders) {
 
-    <div class="admin-card">
+  const loading =
+    $("adminLoading");
 
-      <h3>
-        Commande #${
-          escapeHTML(
-            order.id.slice(0,8)
-          )
-        }
-      </h3>
+  const content =
+    $("adminContent");
 
-      <p class="muted">
-        ${escapeHTML(
-          order.email || ""
-        )}
+  loading?.remove();
+
+  if (!content) {
+    return;
+  }
+
+  const statuses = [
+    "Enregistrée",
+    "Acceptée",
+    "Préparation",
+    "En transit",
+    "Livraison proche",
+    "Livrée",
+    "Annulée",
+    "Remboursement en cours"
+  ];
+
+  content.innerHTML = `
+
+    <div style="
+      padding:15px;
+      margin-bottom:18px;
+      border-radius:16px;
+      background:rgba(80,120,255,.08);
+    ">
+
+      <strong>
+        🛡️ Administration
+      </strong>
+
+      <p style="margin-top:6px;">
+        ${orders.length} commande${orders.length > 1 ? "s" : ""}
       </p>
-
-      <p style="margin-top:8px">
-
-        Total :
-        <b>
-          ${money(order.total)}
-        </b>
-
-      </p>
-
-      <p style="margin-top:6px">
-
-        Statut :
-
-        <span class="status">
-          ${escapeHTML(
-            order.status ||
-            "Enregistrée"
-          )}
-        </span>
-
-      </p>
-
-      <p
-        class="muted"
-        style="margin-top:6px"
-      >
-
-        Paiement :
-        ${escapeHTML(
-          order.paymentStatus ||
-          "pending"
-        )}
-
-      </p>
-
-      <div
-        class="admin-grid"
-        style="margin-top:15px"
-      >
-
-        <div class="field">
-
-          <label>
-            Statut
-          </label>
-
-          <select
-            id="status-${escapeAttribute(order.id)}"
-          >
-
-            ${
-              ORDER_STATUSES
-                .map(status=>`
-
-                  <option
-                    value="${escapeAttribute(status)}"
-                    ${
-                      status ===
-                      order.status
-                      ? "selected"
-                      : ""
-                    }
-                  >
-                    ${escapeHTML(status)}
-                  </option>
-
-                `).join("")
-            }
-
-          </select>
-
-        </div>
-
-
-        <div class="field">
-
-          <label>
-            Ville
-          </label>
-
-          <input
-            id="city-${escapeAttribute(order.id)}"
-            value="${escapeAttribute(
-              order.packageCity ||
-              order.address?.city ||
-              ""
-            )}"
-          >
-
-        </div>
-
-
-        <div class="field">
-
-          <label>
-            Numéro de suivi
-          </label>
-
-          <input
-            id="tracking-${escapeAttribute(order.id)}"
-            value="${escapeAttribute(
-              order.trackingNumber ||
-              ""
-            )}"
-          >
-
-        </div>
-
-
-        <div class="field">
-
-          <label>
-            Délai de livraison
-          </label>
-
-          <input
-            id="duration-${escapeAttribute(order.id)}"
-            value="${escapeAttribute(
-              order.deliveryDuration ||
-              ""
-            )}"
-            placeholder="ex : 2-4 jours"
-          >
-
-        </div>
-
-
-        <div class="field">
-
-          <label>
-            Livraison estimée
-          </label>
-
-          <input
-            id="estimated-${escapeAttribute(order.id)}"
-            value="${escapeAttribute(
-              order.estimatedDelivery ||
-              ""
-            )}"
-          >
-
-        </div>
-
-      </div>
-
-
-      <div class="actions-row">
-
-        ${
-          order.paymentStatus !==
-            "accepted" &&
-          Number(order.total) > 0
-          ? `
-
-            <button
-              class="primary"
-              data-admin-pay="${escapeAttribute(order.id)}"
-            >
-              💳 Accepter le paiement
-            </button>
-
-          `
-          : ""
-        }
-
-        <button
-          class="primary"
-          data-admin-save="${escapeAttribute(order.id)}"
-        >
-          💾 Enregistrer
-        </button>
-
-        <button
-          class="secondary"
-          data-admin-invoice="${escapeAttribute(order.id)}"
-        >
-          🧾 Facture
-        </button>
-
-      </div>
 
     </div>
 
+    <div style="
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-bottom:20px;
+    ">
+
+      <button
+        type="button"
+        class="view-btn"
+        id="adminRefresh"
+      >
+        🔄 Actualiser
+      </button>
+
+      <button
+        type="button"
+        class="view-btn"
+        id="adminLogout"
+      >
+        🔐 Quitter admin
+      </button>
+
+    </div>
+
+    <div id="adminOrders">
+
+      ${
+        orders.length
+          ? orders.map(order => {
+
+              const items =
+                Array.isArray(order.items)
+                  ? order.items
+                  : [];
+
+              const productsText =
+                items
+                  .map(item =>
+                    `${item.name || item.id} ×${item.quantity || 1}`
+                  )
+                  .join(", ");
+
+              return `
+                <div
+                  class="admin-order"
+                  style="
+                    padding:16px;
+                    margin-bottom:15px;
+                    border:1px solid rgba(255,255,255,.1);
+                    border-radius:16px;
+                  "
+                >
+
+                  <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    gap:10px;
+                    flex-wrap:wrap;
+                  ">
+
+                    <strong>
+                      #${escapeHTML(order.id.slice(0, 8))}
+                    </strong>
+
+                    <strong>
+                      ${money(order.total || 0)}
+                    </strong>
+
+                  </div>
+
+                  <p style="margin:8px 0;">
+                    👤 ${escapeHTML(order.userEmail || "Inconnu")}
+                  </p>
+
+                  <p style="margin:8px 0;">
+                    💳 ${escapeHTML(order.paymentMethod || "N/A")}
+                    |
+                    ${
+                      escapeHTML(
+                        order.paymentStatus || "En attente"
+                      )
+                    }
+                  </p>
+
+                  <p style="
+                    margin:8px 0;
+                    opacity:.8;
+                  ">
+                    ${escapeHTML(productsText)}
+                  </p>
+
+                  <label>
+                    Statut
+                  </label>
+
+                  <select
+                    class="admin-status"
+                    data-id="${escapeHTML(order.id)}"
+                    style="width:100%;margin:6px 0 10px;"
+                  >
+
+                    ${
+                      statuses.map(status => `
+                        <option
+                          value="${escapeHTML(status)}"
+                          ${
+                            order.status === status
+                              ? "selected"
+                              : ""
+                          }
+                        >
+                          ${escapeHTML(status)}
+                        </option>
+                      `).join("")
+                    }
+
+                  </select>
+
+                  <input
+                    class="admin-city"
+                    data-id="${escapeHTML(order.id)}"
+                    value="${escapeHTML(order.city || "")}"
+                    placeholder="Ville"
+                    style="width:100%;margin-bottom:8px;"
+                  >
+
+                  <input
+                    class="admin-tracking"
+                    data-id="${escapeHTML(order.id)}"
+                    value="${escapeHTML(order.tracking || "")}"
+                    placeholder="Numéro de suivi"
+                    style="width:100%;margin-bottom:8px;"
+                  >
+
+                  <input
+                    class="admin-delivery"
+                    data-id="${escapeHTML(order.id)}"
+                    value="${escapeHTML(order.estimatedDelivery || "")}"
+                    placeholder="Livraison estimée"
+                    style="width:100%;margin-bottom:10px;"
+                  >
+
+                  <div style="
+                    display:flex;
+                    gap:8px;
+                    flex-wrap:wrap;
+                  ">
+
+                    <button
+                      type="button"
+                      class="add-btn admin-save"
+                      data-id="${escapeHTML(order.id)}"
+                    >
+                      💾 Enregistrer
+                    </button>
+
+                    <button
+                      type="button"
+                      class="view-btn admin-paid"
+                      data-id="${escapeHTML(order.id)}"
+                    >
+                      💰 Marquer payé
+                    </button>
+
+                    <button
+                      type="button"
+                      class="view-btn admin-invoice"
+                      data-id="${escapeHTML(order.id)}"
+                    >
+                      🧾 Facture
+                    </button>
+
+                  </div>
+
+                </div>
+              `;
+
+            }).join("")
+          : `
+            <div style="text-align:center;padding:30px;">
+              <div style="font-size:50px;">📦</div>
+              <h3>Aucune commande</h3>
+            </div>
+          `
+      }
+
+    </div>
   `;
-}
 
-async function acceptPaypalOrder(orderId){
 
-  if(!db){
-    return;
-  }
-
-  try{
-
-    await updateDoc(
-      doc(
-        db,
-        "orders",
-        orderId
-      ),
-      {
-        paymentStatus:
-          "accepted",
-
-        paymentAcceptedAt:
-          serverTimestamp(),
-
-        status:
-          "Acceptée",
-
-        updatedAt:
-          serverTimestamp()
-      }
-    );
-
-    toast(
-      "Paiement accepté ✅"
-    );
-
-    renderAdmin();
-
-  }catch(error){
-
-    console.error(error);
-
-    toast(
-      "Erreur : " +
-      (
-        error?.code ||
-        error?.message ||
-        ""
-      )
-    );
-  }
-}
-
-async function saveAdminOrder(orderId){
-
-  if(!db){
-    return;
-  }
-
-  try{
-
-    const status =
-      $(`status-${orderId}`).value;
-
-    const packageCity =
-      $(`city-${orderId}`)
-        .value
-        .trim();
-
-    const trackingNumber =
-      $(`tracking-${orderId}`)
-        .value
-        .trim();
-
-    const deliveryDuration =
-      $(`duration-${orderId}`)
-        .value
-        .trim();
-
-    const estimatedDelivery =
-      $(`estimated-${orderId}`)
-        .value
-        .trim();
-
-    await updateDoc(
-      doc(
-        db,
-        "orders",
-        orderId
-      ),
-      {
-
-        status,
-
-        packageCity,
-
-        trackingNumber,
-
-        deliveryDuration,
-
-        estimatedDelivery,
-
-        updatedAt:
-          serverTimestamp()
-
-      }
-    );
-
-    toast(
-      "Commande mise à jour ✅"
-    );
-
-    renderAdmin();
-
-  }catch(error){
-
-    console.error(error);
-
-    toast(
-      "Erreur : " +
-      (
-        error?.code ||
-        error?.message ||
-        ""
-      )
-    );
-  }
-}
-
-
-/* =========================================================
-   INVOICE
-========================================================= */
-
-function printInvoiceHTML(order){
-
-  const items =
-    order.items || [];
-
-  const itemsHTML =
-    items.map(item=>`
-
-      <tr>
-
-        <td>
-          ${escapeHTML(
-            item.name
-          )}
-        </td>
-
-        <td>
-          ${item.qty}
-        </td>
-
-        <td>
-          ${money(item.price)}
-        </td>
-
-        <td>
-          ${money(
-            item.price *
-            item.qty
-          )}
-        </td>
-
-      </tr>
-
-    `).join("");
-
-  const html = `
-
-<!DOCTYPE html>
-
-<html lang="fr">
-
-<head>
-
-<meta charset="UTF-8">
-
-<title>
-Facture NovaShop
-</title>
-
-<style>
-
-body{
-  font-family:Arial,sans-serif;
-  padding:40px;
-  color:#111827;
-}
-
-h1{
-  font-size:34px
-}
-
-.header{
-  display:flex;
-  justify-content:space-between;
-  margin-bottom:35px
-}
-
-table{
-  width:100%;
-  border-collapse:collapse;
-  margin-top:25px
-}
-
-th,td{
-  padding:12px;
-  border-bottom:1px solid #ddd;
-  text-align:left
-}
-
-.total{
-  margin-top:25px;
-  text-align:right;
-  font-size:22px;
-  font-weight:900
-}
-
-.box{
-  padding:15px;
-  background:#f4f4f5;
-  border-radius:10px;
-  margin-top:15px
-}
-
-</style>
-
-</head>
-
-<body>
-
-<div class="header">
-
-  <div>
-
-    <h1>
-      NovaShop
-    </h1>
-
-    <p>
-      Facture
-    </p>
-
-  </div>
-
-  <div>
-
-    <b>
-      Commande
-    </b>
-
-    <br>
-
-    #${escapeHTML(
-      order.id || ""
-    )}
-
-    <br>
-
-    ${formatTimestamp(
-      order.createdAt
-    )}
-
-  </div>
-
-</div>
-
-
-<div class="box">
-
-  <b>
-    Client
-  </b>
-
-  <br>
-
-  ${escapeHTML(
-    order.address?.firstName || ""
-  )}
-
-  ${escapeHTML(
-    order.address?.lastName || ""
-  )}
-
-  <br>
-
-  ${escapeHTML(
-    order.address?.street || ""
-  )}
-
-  <br>
-
-  ${escapeHTML(
-    order.address?.postalCode || ""
-  )}
-
-  ${escapeHTML(
-    order.address?.city || ""
-  )}
-
-  <br>
-
-  ${escapeHTML(
-    order.address?.country || ""
-  )}
-
-</div>
-
-
-<table>
-
-<thead>
-
-<tr>
-
-  <th>
-    Produit
-  </th>
-
-  <th>
-    Qté
-  </th>
-
-  <th>
-    Prix
-  </th>
-
-  <th>
-    Total
-  </th>
-
-</tr>
-
-</thead>
-
-<tbody>
-
-${itemsHTML}
-
-</tbody>
-
-</table>
-
-
-<div class="box">
-
-  Paiement :
-  <b>
-    ${escapeHTML(
-      order.paymentMethod || ""
-    )}
-  </b>
-
-  <br>
-
-  Statut :
-  <b>
-    ${escapeHTML(
-      order.status || ""
-    )}
-  </b>
-
-  ${
-    order.promoCode
-      ? `
-        <br>
-        Code promo :
-        <b>
-          ${escapeHTML(
-            order.promoCode
-          )}
-        </b>
-      `
-      : ""
-  }
-
-</div>
-
-
-<div class="total">
-
-  Total :
-  ${money(order.total)}
-
-</div>
-
-
-<script>
-
-window.onload = () =>
-  window.print();
-
-<\/script>
-
-</body>
-
-</html>
-
-`;
-
-  const win =
-    window.open(
-      "",
-      "_blank",
-      "width=900,height=700"
-    );
-
-  if(!win){
-
-    toast(
-      "Autorise les fenêtres pop-up pour imprimer."
-    );
-
-    return;
-  }
-
-  win.document.open();
-
-  win.document.write(
-    html
-  );
-
-  win.document.close();
-}
-
-
-/* =========================================================
-   EVENTS
-========================================================= */
-
-if(categoriesEl){
-
-  categoriesEl.addEventListener(
+  $("adminRefresh")?.addEventListener(
     "click",
-    event=>{
-
-      const button =
-        event.target.closest(
-          "[data-category]"
-        );
-
-      if(!button){
-        return;
-      }
-
-      selectedCategory =
-        button.dataset.category;
-
-      renderCategories();
-      renderProducts();
-    }
+    loadAdmin
   );
-}
 
 
-if(productsGrid){
-
-  productsGrid.addEventListener(
+  $("adminLogout")?.addEventListener(
     "click",
-    event=>{
+    () => {
 
-      const view =
-        event.target.closest(
-          ".view-btn"
-        );
-
-      const add =
-        event.target.closest(
-          ".add-btn"
-        );
-
-      if(view){
-
-        openProduct(
-          view.dataset.id
-        );
-
-        return;
-      }
-
-      if(add){
-
-        addToCart(
-          add.dataset.id
-        );
-      }
-    }
-  );
-}
-
-
-if(cartItems){
-
-  cartItems.addEventListener(
-    "click",
-    event=>{
-
-      const button =
-        event.target.closest(
-          "[data-action]"
-        );
-
-      if(!button){
-        return;
-      }
-
-      const id =
-        button.dataset.id;
-
-      const action =
-        button.dataset.action;
-
-      if(action === "plus"){
-        updateCartQty(id,1);
-      }
-
-      if(action === "minus"){
-        updateCartQty(id,-1);
-      }
-
-      if(action === "remove"){
-        removeFromCart(id);
-      }
-    }
-  );
-}
-
-
-if(searchInput){
-
-  searchInput.addEventListener(
-    "input",
-    ()=>{
-
-      searchValue =
-        searchInput.value.trim();
-
-      renderProducts();
-    }
-  );
-}
-
-
-if(sortSelect){
-
-  sortSelect.addEventListener(
-    "change",
-    ()=>{
-
-      sortValue =
-        sortSelect.value;
-
-      renderProducts();
-    }
-  );
-}
-
-
-if(cartBtn){
-  cartBtn.onclick =
-    openCart;
-}
-
-
-if(heroCartBtn){
-
-  heroCartBtn.onclick = ()=>{
-
-    const grid =
-      $("productGrid");
-
-    if(grid){
-
-      grid.scrollIntoView({
-        behavior:"smooth"
-      });
-
-    }
-  };
-}
-
-
-if(cartClose){
-  cartClose.onclick =
-    closeCart;
-}
-
-
-if(cartOverlay){
-
-  cartOverlay.onclick =
-    event=>{
-
-      if(
-        event.target ===
-        cartOverlay
-      ){
-        closeCart();
-      }
-    };
-}
-
-
-if(modalClose){
-  modalClose.onclick =
-    closeModal;
-}
-
-
-if(modal){
-
-  modal.onclick =
-    event=>{
-
-      if(
-        event.target ===
-        modal
-      ){
-        closeModal();
-      }
-    };
-}
-
-
-if(settingsBtn){
-  settingsBtn.onclick =
-    openSettings;
-}
-
-
-if(accountBtn){
-  accountBtn.onclick =
-    openAccount;
-}
-
-
-if(ordersBtn){
-  ordersBtn.onclick =
-    openOrders;
-}
-
-
-if(adminBtn){
-  adminBtn.onclick =
-    openAdmin;
-}
-
-
-if(checkoutBtn){
-  checkoutBtn.onclick =
-    openCheckout;
-}
-
-
-document.addEventListener(
-  "keydown",
-  event=>{
-
-    if(event.key === "Escape"){
+      localStorage.removeItem(
+        ADMIN_ACCESS_KEY
+      );
 
       closeModal();
-      closeCart();
+
+      toast("Mode admin fermé.");
+    }
+  );
+
+
+  document
+    .querySelectorAll(".admin-save")
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        async () => {
+
+          await saveAdminOrder(
+            button.dataset.id
+          );
+
+        }
+      );
+
+    });
+
+
+  document
+    .querySelectorAll(".admin-paid")
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        async () => {
+
+          await markOrderPaid(
+            button.dataset.id
+          );
+
+        }
+      );
+
+    });
+
+
+  document
+    .querySelectorAll(".admin-invoice")
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          const order =
+            orders.find(
+              item =>
+                item.id ===
+                button.dataset.id
+            );
+
+          if (order) {
+            printInvoice(order);
+          }
+
+        }
+      );
+
+    });
+
+}
+
+
+async function saveAdminOrder(id) {
+
+  try {
+
+    const status =
+      document.querySelector(
+        `.admin-status[data-id="${CSS.escape(id)}"]`
+      )?.value || "Enregistrée";
+
+    const city =
+      document.querySelector(
+        `.admin-city[data-id="${CSS.escape(id)}"]`
+      )?.value || "";
+
+    const tracking =
+      document.querySelector(
+        `.admin-tracking[data-id="${CSS.escape(id)}"]`
+      )?.value || "";
+
+    const estimatedDelivery =
+      document.querySelector(
+        `.admin-delivery[data-id="${CSS.escape(id)}"]`
+      )?.value || "";
+
+    await updateDoc(
+      doc(db, "orders", id),
+      {
+        status,
+        city,
+        tracking,
+        estimatedDelivery
+      }
+    );
+
+    toast(
+      "Commande mise à jour ✅",
+      "success"
+    );
+
+  } catch (error) {
+
+    console.error(error);
+
+    toast(
+      `Erreur : ${error.message || error.code}`,
+      "error"
+    );
+  }
+}
+
+
+async function markOrderPaid(id) {
+
+  try {
+
+    await updateDoc(
+      doc(db, "orders", id),
+      {
+        paymentStatus: "Payé"
+      }
+    );
+
+    toast(
+      "Paiement marqué comme payé 💰",
+      "success"
+    );
+
+    loadAdmin();
+
+  } catch (error) {
+
+    console.error(error);
+
+    toast(
+      `Erreur : ${error.message || error.code}`,
+      "error"
+    );
+  }
+}
+
+
+// ============================================================
+// SETTINGS
+// ============================================================
+
+settingsBtn?.addEventListener(
+  "click",
+  openSettings
+);
+
+
+function getTheme() {
+
+  return (
+    localStorage.getItem(
+      "novaThemeChoice"
+    ) || "dark"
+  );
+}
+
+
+function applyTheme() {
+
+  const theme =
+    getTheme();
+
+  if (theme === "light") {
+
+    document.documentElement.dataset.theme =
+      "light";
+
+  } else if (theme === "dark") {
+
+    document.documentElement.dataset.theme =
+      "dark";
+
+  } else {
+
+    const prefersDark =
+      window.matchMedia &&
+      window.matchMedia(
+        "(prefers-color-scheme: dark)"
+      ).matches;
+
+    document.documentElement.dataset.theme =
+      prefersDark ? "dark" : "light";
+  }
+}
+
+
+function openSettings() {
+
+  const current =
+    getTheme();
+
+  showModal(
+    "Paramètres",
+    `
+      <div>
+
+        <h3>
+          Apparence
+        </h3>
+
+        <div style="
+          display:grid;
+          gap:10px;
+          margin-top:12px;
+        ">
+
+          <button
+            type="button"
+            class="view-btn theme-choice"
+            data-theme="dark"
+          >
+            🌙 Mode sombre
+          </button>
+
+          <button
+            type="button"
+            class="view-btn theme-choice"
+            data-theme="light"
+          >
+            ☀️ Mode clair
+          </button>
+
+          <button
+            type="button"
+            class="view-btn theme-choice"
+            data-theme="auto"
+          >
+            🖥️ Automatique
+          </button>
+
+        </div>
+
+        <p style="
+          margin-top:20px;
+          opacity:.7;
+        ">
+          Thème actuel :
+          ${escapeHTML(current)}
+        </p>
+
+      </div>
+    `
+  );
+
+  document
+    .querySelectorAll(".theme-choice")
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          localStorage.setItem(
+            "novaThemeChoice",
+            button.dataset.theme
+          );
+
+          applyTheme();
+
+          toast(
+            "Thème mis à jour ✨",
+            "success"
+          );
+
+          closeModal();
+
+        }
+      );
+
+    });
+}
+
+
+// ============================================================
+// NOVA100
+// ============================================================
+
+function handleNova100() {
+
+  const code =
+    prompt(
+      "Entre ton code promotionnel :"
+    );
+
+  if (!code) {
+    return;
+  }
+
+  if (
+    code.trim().toUpperCase() ===
+    "NOVA100"
+  ) {
+
+    if (!cart.length) {
+
+      toast(
+        "Ajoute d'abord un produit au panier."
+      );
+
+      return;
+    }
+
+    toast(
+      "NOVA100 est disponible au checkout 🎉",
+      "success"
+    );
+
+    openCart();
+
+  } else {
+
+    toast(
+      "Code promotionnel invalide.",
+      "error"
+    );
+  }
+}
+
+
+// Détection de NOVA100 dans la recherche
+searchInput?.addEventListener(
+  "keydown",
+  event => {
+
+    if (
+      event.key === "Enter" &&
+      searchInput.value
+        .trim()
+        .toUpperCase() === "NOVA100"
+    ) {
+
+      event.preventDefault();
+
+      handleNova100();
     }
   }
 );
 
 
-/* =========================================================
-   AUTH STATE
-========================================================= */
+// ============================================================
+// ESC
+// ============================================================
 
-if(auth){
+document.addEventListener(
+  "keydown",
+  event => {
 
-  onAuthStateChanged(
-    auth,
-    user=>{
-
-      currentUser =
-        user;
-
-      if(user){
-
-        if(accountBtn){
-
-          accountBtn.textContent =
-            "👤 " +
-            (
-              user.email
-                ?.split("@")[0] ||
-              "Compte"
-            );
-        }
-
-        if(adminBtn){
-
-          adminBtn.style.display =
-            isAdmin()
-              ? ""
-              : "none";
-        }
-
-      }else{
-
-        if(accountBtn){
-
-          accountBtn.textContent =
-            "👤 Compte";
-        }
-
-        if(adminBtn){
-
-          adminBtn.style.display =
-            "none";
-        }
-      }
+    if (event.key !== "Escape") {
+      return;
     }
-  );
 
-}
+    closeModal();
+    closeCart();
 
-
-/* =========================================================
-   INITIALISATION
-========================================================= */
-
-/*
-   IMPORTANT :
-   Le catalogue est initialisé indépendamment
-   de Firebase.
-*/
-
-try {
-
-  applyTheme();
-
-  renderCategories();
-
-  renderProducts();
-
-  renderCart();
-
-  console.log(
-    `NovaShop chargé : ${products.length} produits`
-  );
-
-} catch(error) {
-
-  console.error(
-    "NOVASHOP START ERROR:",
-    error
-  );
-
-  if(productsGrid){
-
-    productsGrid.innerHTML = `
-
-      <div class="empty">
-
-        <h2>
-          ⚠️ Erreur NovaShop
-        </h2>
-
-        <p
-          style="margin-top:10px"
-        >
-          ${escapeHTML(
-            error?.message ||
-            "Erreur JavaScript inconnue"
-          )}
-        </p>
-
-      </div>
-
-    `;
   }
-}
+);
 
 
-/* =========================================================
-   PUBLIC API
-========================================================= */
+// ============================================================
+// CLIC EN DEHORS DU MODAL
+// ============================================================
+
+modal?.addEventListener(
+  "click",
+  event => {
+
+    if (event.target === modal) {
+      closeModal();
+    }
+
+  }
+);
+
+
+// ============================================================
+// ERREURS GLOBALES FIREBASE
+// ============================================================
+
+window.addEventListener(
+  "unhandledrejection",
+  event => {
+
+    const error =
+      event.reason;
+
+    console.error(
+      "Unhandled Promise Rejection:",
+      error
+    );
+
+    if (
+      error?.code?.startsWith("auth/")
+    ) {
+
+      toast(
+        authError(error),
+        "error"
+      );
+    }
+
+  }
+);
+
+
+// ============================================================
+// INITIALISATION
+// ============================================================
+
+applyTheme();
+renderCategories();
+renderProducts();
+renderCart();
+
+
+// ============================================================
+// API PUBLIQUE
+// ============================================================
 
 window.NovaShop = {
 
   products,
 
+  get currentUser() {
+    return currentUser;
+  },
+
   addToCart,
+  removeFromCart,
+  changeCartQuantity,
 
   openCart,
+  closeCart,
+
+  openProduct,
 
   openAccount,
-
   openOrders,
 
-  openAdmin,
-
-  openCheckout,
+  openSettings,
 
   renderProducts,
+  renderCart,
 
-  renderCart
+  getCartCount,
+  getCartSubtotal,
+
+  money,
+
+  handleNova100
 
 };
+
+console.log(
+  "NovaShop chargé avec succès 🚀"
+);
