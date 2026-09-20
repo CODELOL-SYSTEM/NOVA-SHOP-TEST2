@@ -652,6 +652,7 @@ header{
 }
 
 @media(max-width:750px){
+
   .nav{
     flex-wrap:wrap;
   }
@@ -688,6 +689,7 @@ header{
 }
 
 @media(max-width:480px){
+
   .products-grid{
     grid-template-columns:1fr;
   }
@@ -708,6 +710,11 @@ header{
   .container{
     padding:0 14px 40px;
   }
+
+  .cart-item{
+    align-items:flex-start;
+  }
+
 }
 </style>
 </head>
@@ -715,6 +722,7 @@ header{
 <body>
 
 <header>
+
   <div class="nav">
 
     <div class="logo">
@@ -722,38 +730,64 @@ header{
     </div>
 
     <div class="search">
+
       <input
         id="searchInput"
         type="search"
         placeholder="Rechercher un produit..."
         autocomplete="off"
       >
+
     </div>
 
     <div class="nav-actions">
 
-      <button class="icon-btn" id="accountBtn">
+      <button
+        class="icon-btn"
+        id="accountBtn"
+      >
         👤
       </button>
 
-      <button class="icon-btn" id="favoritesBtn">
+      <button
+        class="icon-btn"
+        id="favoritesBtn"
+      >
         ❤️
-        <span class="badge" id="favoritesCount">0</span>
+        <span
+          class="badge"
+          id="favoritesCount"
+        >
+          0
+        </span>
       </button>
 
-      <button class="icon-btn" id="dashboardBtn">
+      <button
+        class="icon-btn"
+        id="dashboardBtn"
+      >
         👑
       </button>
 
-      <button class="icon-btn" id="cartBtn">
+      <button
+        class="icon-btn"
+        id="cartBtn"
+      >
         🛒
-        <span class="badge" id="cartCount">0</span>
+        <span
+          class="badge"
+          id="cartCount"
+        >
+          0
+        </span>
       </button>
 
     </div>
 
   </div>
+
 </header>
+
 
 <main>
 
@@ -792,6 +826,7 @@ header{
 
   </section>
 
+
   <section class="container">
 
     <div class="toolbar">
@@ -805,14 +840,31 @@ header{
         class="sort"
         id="sortSelect"
       >
-        <option value="default">Trier</option>
-        <option value="priceAsc">Prix croissant</option>
-        <option value="priceDesc">Prix décroissant</option>
-        <option value="name">Nom A-Z</option>
-        <option value="new">Nouveautés</option>
+
+        <option value="default">
+          Trier
+        </option>
+
+        <option value="priceAsc">
+          Prix croissant
+        </option>
+
+        <option value="priceDesc">
+          Prix décroissant
+        </option>
+
+        <option value="name">
+          Nom A-Z
+        </option>
+
+        <option value="new">
+          Nouveautés
+        </option>
+
       </select>
 
     </div>
+
 
     <div
       class="products-grid"
@@ -822,6 +874,7 @@ header{
   </section>
 
 </main>
+
 
 <div
   class="modal-overlay"
@@ -837,18 +890,25 @@ header{
       ✕
     </button>
 
-    <div id="modalContent"></div>
+    <div
+      id="modalContent"
+    ></div>
 
   </div>
 
 </div>
+
 
 <div
   class="toast"
   id="toast"
 ></div>
 
-<script type="module" src="./app.js"></script>
+
+<script
+  type="module"
+  src="./app.js"
+></script>
 
 </body>
 </html>
