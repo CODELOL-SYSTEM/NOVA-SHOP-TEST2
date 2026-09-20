@@ -3,1320 +3,603 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#050912">
 <title>NovaShop</title>
 
 <style>
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
-}
-
+*{box-sizing:border-box;margin:0;padding:0}
 :root{
   --bg:#050912;
   --bg2:#09111f;
   --card:#0c1525;
-  --card2:#101b2e;
-  --text:#f4f7fb;
-  --muted:#8fa0b8;
+  --card2:#101c30;
+  --text:#f5f7fb;
+  --muted:#94a3b8;
   --line:rgba(255,255,255,.09);
-  --primary:#5b8cff;
-  --primary2:#7c5cff;
-  --success:#25d695;
-  --danger:#ff5570;
-  --shadow:0 20px 60px rgba(0,0,0,.35);
+  --accent:#4f8cff;
+  --accent2:#7c3aed;
+  --green:#22c55e;
+  --red:#ef4444;
+  --shadow:0 20px 60px rgba(0,0,0,.35)
 }
-
 body.light{
-  --bg:#f3f6fb;
-  --bg2:#ffffff;
-  --card:#ffffff;
-  --card2:#f0f3f8;
-  --text:#111827;
-  --muted:#667085;
+  --bg:#f4f7fb;
+  --bg2:#fff;
+  --card:#fff;
+  --card2:#f1f5f9;
+  --text:#101828;
+  --muted:#64748b;
   --line:rgba(15,23,42,.1);
-  --shadow:0 20px 50px rgba(15,23,42,.1);
+  --shadow:0 20px 50px rgba(15,23,42,.12)
 }
-
-html{
-  scroll-behavior:smooth;
-}
-
+html{scroll-behavior:smooth}
 body{
   min-height:100vh;
-  background:
-    radial-gradient(circle at 10% 0%,rgba(91,140,255,.14),transparent 30%),
-    radial-gradient(circle at 90% 10%,rgba(124,92,255,.12),transparent 28%),
-    var(--bg);
+  background:linear-gradient(135deg,var(--bg),var(--bg2));
   color:var(--text);
-  font-family:Inter,Arial,Helvetica,sans-serif;
-  transition:.25s;
+  font-family:Inter,Arial,sans-serif;
 }
-
-button,
-input,
-select{
-  font:inherit;
-}
-
-button{
-  cursor:pointer;
-}
-
-button:disabled{
-  opacity:.55;
-  cursor:not-allowed;
-}
-
-.site-header{
+button,input,select{font:inherit}
+button{cursor:pointer}
+header{
   position:sticky;
   top:0;
   z-index:100;
-  backdrop-filter:blur(20px);
-  background:rgba(5,9,18,.78);
-  border-bottom:1px solid var(--line);
-}
-
-body.light .site-header{
-  background:rgba(255,255,255,.82);
-}
-
-.header-inner{
-  width:min(1400px,calc(100% - 32px));
-  margin:auto;
-  min-height:76px;
+  height:72px;
   display:flex;
   align-items:center;
-  gap:22px;
+  gap:18px;
+  padding:0 28px;
+  background:rgba(5,9,18,.82);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--line)
 }
-
+body.light header{background:rgba(255,255,255,.85)}
 .logo{
   display:flex;
   align-items:center;
   gap:10px;
-  color:var(--text);
-  text-decoration:none;
+  font-size:21px;
   font-weight:900;
-  font-size:22px;
-  white-space:nowrap;
+  white-space:nowrap
 }
-
 .logo-mark{
-  width:42px;
-  height:42px;
-  border-radius:13px;
-  display:grid;
-  place-items:center;
-  background:linear-gradient(135deg,var(--primary),var(--primary2));
+  width:39px;height:39px;border-radius:12px;
+  display:grid;place-items:center;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
   color:white;
-  box-shadow:0 8px 30px rgba(91,140,255,.3);
+  box-shadow:0 8px 30px rgba(79,140,255,.3)
 }
-
-.nav-actions{
-  margin-left:auto;
+.nav{
   display:flex;
-  align-items:center;
-  gap:8px;
+  gap:7px;
+  margin-left:auto;
+  flex-wrap:wrap
 }
-
-.icon-btn{
-  min-width:43px;
-  height:43px;
-  padding:0 12px;
+.nav button,.cart-button{
   border:1px solid var(--line);
-  border-radius:12px;
-  background:var(--card);
   color:var(--text);
-  transition:.2s;
+  background:var(--card);
+  border-radius:11px;
+  padding:9px 12px;
+  transition:.2s
 }
-
-.icon-btn:hover{
-  transform:translateY(-2px);
-  border-color:rgba(91,140,255,.45);
-}
-
-.cart-button{
-  position:relative;
-}
-
-.cart-badge{
+.nav button:hover,.cart-button:hover{transform:translateY(-2px);border-color:var(--accent)}
+.cart-button{position:relative}
+#cartBadge{
   position:absolute;
-  right:-4px;
-  top:-5px;
+  top:-7px;
+  right:-7px;
   min-width:20px;
   height:20px;
   padding:0 5px;
-  border-radius:99px;
   display:grid;
   place-items:center;
-  background:var(--danger);
-  color:white;
+  border-radius:20px;
+  background:var(--red);
+  color:#fff;
   font-size:11px;
-  font-weight:900;
+  font-weight:900
 }
-
-main{
-  width:min(1400px,calc(100% - 32px));
-  margin:auto;
-}
-
+main{max-width:1400px;margin:auto;padding:35px 24px 70px}
 .hero{
-  margin:30px 0;
-  min-height:350px;
+  min-height:310px;
   padding:50px;
   border:1px solid var(--line);
   border-radius:28px;
-  overflow:hidden;
-  position:relative;
   background:
-    radial-gradient(circle at 80% 20%,rgba(91,140,255,.3),transparent 30%),
-    linear-gradient(135deg,var(--card),var(--bg2));
+    radial-gradient(circle at 80% 20%,rgba(79,140,255,.25),transparent 35%),
+    radial-gradient(circle at 15% 80%,rgba(124,58,237,.2),transparent 35%),
+    var(--card);
   box-shadow:var(--shadow);
-}
-
-.hero:after{
-  content:"";
-  position:absolute;
-  width:320px;
-  height:320px;
-  right:-100px;
-  bottom:-140px;
-  border-radius:50%;
-  background:linear-gradient(135deg,rgba(91,140,255,.25),rgba(124,92,255,.05));
-  filter:blur(10px);
-}
-
-.hero-content{
-  position:relative;
-  z-index:2;
-  max-width:760px;
-}
-
-.hero-kicker{
-  color:#80a6ff;
-  font-weight:800;
-  margin-bottom:12px;
-  text-transform:uppercase;
-  letter-spacing:1.5px;
-  font-size:13px;
-}
-
-.hero h1{
-  font-size:clamp(42px,7vw,78px);
-  line-height:.95;
-  letter-spacing:-4px;
-  margin-bottom:20px;
-}
-
-.hero p{
-  color:var(--muted);
-  font-size:18px;
-  line-height:1.6;
-  max-width:680px;
-}
-
-.hero-actions{
   display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  margin-top:28px;
+  align-items:center
 }
-
-.primary,
-.secondary,
-.danger-btn{
+.hero h1{font-size:clamp(40px,6vw,74px);line-height:.95;margin-bottom:18px}
+.hero p{max-width:650px;color:var(--muted);font-size:18px;line-height:1.6}
+.hero button{
+  margin-top:25px;
+  padding:13px 19px;
   border:0;
-  border-radius:12px;
-  padding:12px 17px;
-  font-weight:800;
-  transition:.2s;
+  border-radius:13px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff;
+  font-weight:800
 }
-
-.primary{
-  color:white;
-  background:linear-gradient(135deg,var(--primary),var(--primary2));
-  box-shadow:0 10px 25px rgba(91,140,255,.2);
-}
-
-.primary:hover,
-.secondary:hover,
-.danger-btn:hover{
-  transform:translateY(-2px);
-}
-
-.secondary{
-  color:var(--text);
-  background:var(--card2);
-  border:1px solid var(--line);
-}
-
-.danger-btn{
-  background:rgba(255,85,112,.12);
-  color:#ff7188;
-  border:1px solid rgba(255,85,112,.25);
-}
-
-.section-head{
+.toolbar{
+  margin:28px 0 18px;
   display:flex;
-  justify-content:space-between;
-  align-items:end;
-  gap:15px;
-  margin:45px 0 18px;
+  gap:12px;
+  flex-wrap:wrap
 }
-
-.section-head h2{
-  font-size:28px;
-}
-
-.section-head p{
-  color:var(--muted);
-  margin-top:5px;
-}
-
-.controls{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  margin-bottom:16px;
-}
-
-.search-box{
+.search{
   flex:1;
   min-width:220px;
-  position:relative;
-}
-
-.search-box input,
-.select-control{
-  width:100%;
-  height:48px;
+  padding:13px 16px;
   border:1px solid var(--line);
-  background:var(--card);
-  color:var(--text);
   border-radius:13px;
-  padding:0 15px;
   outline:none;
+  background:var(--card);
+  color:var(--text)
 }
-
-.search-box input:focus,
-.select-control:focus,
-.field input:focus,
-.field select:focus{
-  border-color:rgba(91,140,255,.65);
-  box-shadow:0 0 0 3px rgba(91,140,255,.1);
+select{
+  padding:13px 15px;
+  border:1px solid var(--line);
+  border-radius:13px;
+  background:var(--card);
+  color:var(--text)
 }
-
-.sort-wrap{
-  width:220px;
-}
-
 .categories{
   display:flex;
-  gap:9px;
-  flex-wrap:wrap;
-  margin-bottom:28px;
+  gap:8px;
+  overflow:auto;
+  padding-bottom:12px
 }
-
 .category{
-  padding:10px 14px;
-  border-radius:99px;
+  flex:none;
   border:1px solid var(--line);
   background:var(--card);
   color:var(--muted);
-  font-weight:700;
-  transition:.2s;
+  border-radius:999px;
+  padding:9px 15px
 }
-
-.category:hover{
-  color:var(--text);
-  transform:translateY(-1px);
-}
-
 .category.active{
-  color:white;
-  border-color:transparent;
-  background:linear-gradient(135deg,var(--primary),var(--primary2));
+  color:#fff;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border-color:transparent
 }
-
 .products{
   display:grid;
-  grid-template-columns:repeat(4,minmax(0,1fr));
-  gap:16px;
+  grid-template-columns:repeat(auto-fill,minmax(235px,1fr));
+  gap:18px
 }
-
 .product{
-  min-width:0;
   position:relative;
-  border:1px solid var(--line);
-  border-radius:18px;
   overflow:hidden;
+  border:1px solid var(--line);
   background:var(--card);
-  transition:.25s;
-  box-shadow:0 8px 25px rgba(0,0,0,.08);
+  border-radius:19px;
+  transition:.22s;
+  box-shadow:0 10px 30px rgba(0,0,0,.12)
 }
-
-.product:hover{
-  transform:translateY(-5px);
-  border-color:rgba(91,140,255,.3);
-  box-shadow:var(--shadow);
-}
-
-.product-img-wrap{
-  height:240px;
-  padding:12px;
-  position:relative;
-  background:var(--card2);
-}
-
+.product:hover{transform:translateY(-5px);border-color:rgba(79,140,255,.5)}
 .product-img{
   width:100%;
-  height:100%;
-  display:block;
+  height:220px;
   object-fit:contain;
-  border-radius:12px;
+  padding:15px;
+  background:#fff
 }
-
+.product-body{padding:16px}
+.product-cat{
+  color:var(--accent);
+  font-size:12px;
+  font-weight:800;
+  text-transform:uppercase
+}
+.product h3{
+  font-size:16px;
+  margin:7px 0;
+  min-height:42px
+}
+.rating{font-size:13px;color:#fbbf24;margin:7px 0}
+.price{font-size:21px;font-weight:900;margin:10px 0}
+.product-actions{display:flex;gap:8px}
+.product-actions button{
+  flex:1;
+  padding:10px;
+  border-radius:11px;
+  border:1px solid var(--line);
+  background:var(--card2);
+  color:var(--text)
+}
+.product-actions .add-btn{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border:0;color:white;font-weight:800
+}
 .new-badge{
   position:absolute;
-  left:12px;
-  top:12px;
-  padding:6px 9px;
-  border-radius:8px;
-  background:var(--success);
-  color:#06130e;
-  font-size:11px;
-  font-weight:900;
-}
-
-.product-body{
-  padding:16px;
-}
-
-.product-cat{
-  color:#80a6ff;
-  font-size:12px;
-  font-weight:800;
-  text-transform:uppercase;
-  letter-spacing:.5px;
-}
-
-.product-name{
-  min-height:49px;
-  margin-top:7px;
-  font-size:15px;
-  line-height:1.45;
-  font-weight:800;
-}
-
-.rating{
-  display:flex;
-  gap:7px;
-  align-items:center;
-  margin-top:10px;
-}
-
-.stars{
-  letter-spacing:1px;
-  font-size:13px;
-}
-
-.rating span:last-child{
-  color:var(--muted);
-  font-size:12px;
-}
-
-.price{
-  margin-top:12px;
-  font-size:21px;
-  font-weight:900;
-}
-
-.product-actions{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:8px;
-  margin-top:14px;
-}
-
-.view-btn,
-.add-btn{
-  padding:10px;
-  border-radius:10px;
-  border:1px solid var(--line);
-  font-weight:800;
-}
-
-.view-btn{
-  background:var(--card2);
-  color:var(--text);
-}
-
-.add-btn{
+  top:12px;left:12px;
+  z-index:2;
+  background:var(--green);
   color:white;
-  border:0;
-  background:linear-gradient(135deg,var(--primary),var(--primary2));
+  font-size:11px;
+  padding:6px 9px;
+  border-radius:999px;
+  font-weight:900
 }
-
-.trust-grid{
+.trust{
   display:grid;
   grid-template-columns:repeat(3,1fr);
   gap:15px;
-  margin:55px 0;
+  margin:35px 0
 }
-
-.trust-card{
-  padding:24px;
+.trust-card,.refunds,.faq{
   border:1px solid var(--line);
   background:var(--card);
   border-radius:18px;
+  padding:22px
 }
-
-.trust-card .trust-icon{
-  font-size:30px;
-  margin-bottom:12px;
-}
-
-.trust-card h3{
-  margin-bottom:7px;
-}
-
-.trust-card p{
-  color:var(--muted);
-  line-height:1.5;
-}
-
-.refunds{
-  padding:30px;
-  border:1px solid var(--line);
-  border-radius:20px;
-  background:var(--card);
-  margin-bottom:50px;
-}
-
-.refunds p{
-  color:var(--muted);
-  line-height:1.6;
-  margin-top:8px;
-}
-
-.faq{
-  margin-bottom:70px;
-}
-
-.faq details{
-  border:1px solid var(--line);
-  background:var(--card);
-  border-radius:14px;
-  padding:17px;
-  margin-top:10px;
-}
-
-.faq summary{
-  cursor:pointer;
-  font-weight:800;
-}
-
-.faq details p{
-  color:var(--muted);
-  line-height:1.6;
-  margin-top:12px;
-}
-
+.trust-card b{display:block;margin-bottom:7px}
+.trust-card span,.refunds p,.faq p{color:var(--muted);line-height:1.55}
+.refunds{margin-bottom:25px}
+.faq details{border-bottom:1px solid var(--line);padding:15px 0}
+.faq details:last-child{border:0}
+.faq summary{cursor:pointer;font-weight:800}
+.faq p{margin-top:10px}
 footer{
-  border-top:1px solid var(--line);
-  padding:35px 16px;
-  color:var(--muted);
+  padding:30px;
   text-align:center;
+  color:var(--muted);
+  border-top:1px solid var(--line)
 }
-
-footer strong{
-  color:var(--text);
+#overlay{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.6);
+  opacity:0;pointer-events:none;
+  transition:.2s;z-index:200
 }
-
-.overlay{
+#overlay.show{opacity:1;pointer-events:auto}
+#cartDrawer{
   position:fixed;
-  inset:0;
-  z-index:300;
-  background:rgba(0,0,0,.62);
-  opacity:0;
-  pointer-events:none;
-  transition:.25s;
-}
-
-.overlay.open{
-  opacity:1;
-  pointer-events:auto;
-}
-
-.cart-drawer{
-  position:absolute;
-  right:0;
-  top:0;
-  width:min(480px,100%);
-  height:100%;
-  background:var(--bg2);
+  right:-430px;top:0;
+  width:min(430px,100%);
+  height:100vh;
+  z-index:210;
+  background:var(--card);
   border-left:1px solid var(--line);
-  transform:translateX(100%);
-  transition:.3s;
+  transition:.25s;
   display:flex;
-  flex-direction:column;
+  flex-direction:column
 }
-
-.overlay.open .cart-drawer{
-  transform:translateX(0);
-}
-
+#cartDrawer.open{right:0}
 .cart-head{
-  min-height:75px;
-  padding:18px;
   display:flex;
   align-items:center;
   justify-content:space-between;
-  border-bottom:1px solid var(--line);
+  padding:20px;
+  border-bottom:1px solid var(--line)
 }
-
-.cart-head h2{
-  font-size:21px;
-}
-
-.close-btn{
-  width:40px;
-  height:40px;
-  border:1px solid var(--line);
-  border-radius:10px;
-  background:var(--card);
+.cart-head button,.modal-close{
+  background:transparent;
   color:var(--text);
+  border:0;font-size:24px
 }
-
-.cart-items{
-  flex:1;
-  overflow:auto;
-  padding:16px;
-}
-
+#cartItems{flex:1;overflow:auto;padding:15px}
 .cart-item{
   display:grid;
-  grid-template-columns:64px 1fr auto;
+  grid-template-columns:65px 1fr;
   gap:12px;
   padding:12px 0;
-  border-bottom:1px solid var(--line);
+  border-bottom:1px solid var(--line)
 }
-
-.cart-thumb{
-  width:64px;
-  height:64px;
-  object-fit:contain;
-  border-radius:10px;
-  background:var(--card);
+.cart-item img{
+  width:65px;height:65px;
+  object-fit:contain;background:#fff;border-radius:10px
 }
-
-.cart-name{
-  font-size:14px;
-  font-weight:800;
-  line-height:1.4;
-}
-
-.cart-price{
-  margin-top:5px;
-  color:var(--muted);
-  font-size:13px;
-}
-
+.cart-name{font-weight:800;font-size:14px}
+.cart-price{font-weight:900;margin-top:4px}
 .qty{
-  display:flex;
-  align-items:center;
-  gap:5px;
-  margin-top:9px;
+  display:flex;align-items:center;gap:7px;margin-top:8px
 }
-
 .qty button{
-  width:26px;
-  height:26px;
+  width:27px;height:27px;
   border:1px solid var(--line);
-  border-radius:7px;
   background:var(--card2);
   color:var(--text);
+  border-radius:7px
 }
-
 .remove{
-  border:0;
-  background:transparent;
-  color:var(--danger);
-  font-size:12px;
-  margin-top:7px;
+  margin-left:8px;
+  color:#ef4444!important
 }
-
-.cart-foot{
-  padding:18px;
-  border-top:1px solid var(--line);
-}
-
-.cart-total{
-  display:flex;
-  justify-content:space-between;
-  font-size:21px;
-  font-weight:900;
-  margin-bottom:14px;
-}
-
-.cart-foot .primary{
-  width:100%;
-}
-
-.empty{
-  text-align:center;
-  padding:45px 20px;
-  color:var(--muted);
-}
-
-.empty h3{
-  color:var(--text);
-  margin-top:10px;
-}
-
-.modal-layer{
-  position:fixed;
-  inset:0;
-  z-index:500;
-  display:none;
-  align-items:center;
-  justify-content:center;
+.cart-bottom{
   padding:20px;
-  background:rgba(0,0,0,.7);
+  border-top:1px solid var(--line)
 }
-
-.modal-layer.open{
+.total-line{
   display:flex;
-}
-
-.modal{
-  width:min(920px,100%);
-  max-height:90vh;
-  overflow:auto;
-  border:1px solid var(--line);
-  border-radius:20px;
-  background:var(--bg2);
-  box-shadow:var(--shadow);
-}
-
-.modal-head{
-  position:sticky;
-  top:0;
-  z-index:3;
-  display:flex;
-  align-items:center;
   justify-content:space-between;
-  gap:15px;
-  padding:18px 20px;
-  background:var(--bg2);
-  border-bottom:1px solid var(--line);
-}
-
-.modal-head h2{
   font-size:20px;
+  font-weight:900;
+  margin-bottom:14px
 }
-
-.modal-content{
-  padding:20px;
+#checkoutBtn{
+  width:100%;
+  padding:14px;
+  border:0;
+  border-radius:12px;
+  color:white;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  font-weight:900
 }
-
+#modalLayer{
+  position:fixed;inset:0;
+  display:none;
+  place-items:center;
+  padding:18px;
+  z-index:300;
+  background:rgba(0,0,0,.7)
+}
+#modalLayer.show{display:grid}
+#modalBox{
+  width:min(900px,100%);
+  max-height:92vh;
+  overflow:auto;
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:22px;
+  box-shadow:var(--shadow)
+}
+.modal-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:18px 20px;
+  border-bottom:1px solid var(--line)
+}
+#modalContent{padding:20px}
 .product-modal{
   display:grid;
-  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
-  gap:25px;
+  grid-template-columns:1fr 1fr;
+  gap:25px
 }
-
-.modal-image{
+.product-modal img{
   width:100%;
-  height:420px;
+  max-height:450px;
   object-fit:contain;
-  border-radius:15px;
-  background:var(--card2);
+  background:#fff;
+  border-radius:15px
 }
-
-.modal-info{
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-}
-
-.modal-info .product-category{
-  color:#80a6ff;
-  font-weight:800;
-  font-size:13px;
-}
-
-.modal-info h2{
-  margin-top:8px;
-  line-height:1.35;
-}
-
-.modal-price{
-  margin:18px 0;
-  font-size:30px;
-  font-weight:900;
-}
-
-.btn-wide{
-  width:100%;
-}
-
-.checkout-section{
-  padding:18px;
-  border:1px solid var(--line);
-  border-radius:15px;
-  background:var(--card);
-  margin-bottom:14px;
-}
-
-.checkout-section h3{
-  margin-bottom:14px;
-}
-
 .form-grid{
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:12px;
+  gap:12px
 }
-
-.field{
-  margin-bottom:12px;
-}
-
-.field.full{
-  grid-column:1/-1;
-}
-
-.field label{
-  display:block;
-  font-size:12px;
-  color:var(--muted);
-  font-weight:800;
-  margin-bottom:7px;
-}
-
-.field input,
-.field select{
+.field{display:flex;flex-direction:column;gap:6px}
+.field.full{grid-column:1/-1}
+.field label{font-size:13px;color:var(--muted);font-weight:700}
+.field input,.field select{
   width:100%;
-  height:44px;
-  padding:0 12px;
+  padding:12px;
   border:1px solid var(--line);
   border-radius:10px;
-  outline:none;
   background:var(--card2);
   color:var(--text);
+  outline:none
 }
-
-.payment-choice{
+.primary,.secondary,.danger-btn{
+  border:0;
+  border-radius:11px;
+  padding:11px 15px;
+  font-weight:800
+}
+.primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:white}
+.secondary{background:var(--card2);color:var(--text);border:1px solid var(--line)}
+.danger-btn{background:#ef4444;color:#fff}
+.actions-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}
+.auth-tabs{
+  display:flex;gap:8px;margin-bottom:18px
+}
+.auth-tabs button{flex:1}
+.payment-grid{
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:10px;
+  gap:12px
 }
-
 .payment-button{
-  min-height:52px;
+  padding:18px;
   border:1px solid var(--line);
-  border-radius:12px;
+  border-radius:14px;
   background:var(--card2);
   color:var(--text);
-  font-weight:900;
+  font-weight:900
 }
-
-.paypal-button{
-  background:#ffc439;
-  color:#111;
-  border-color:#ffc439;
-}
-
-.error-message{
-  color:var(--danger);
-  font-size:13px;
-  min-height:20px;
-  margin:5px 0 10px;
-}
-
-.success-message{
-  color:var(--success);
-  font-size:13px;
-}
-
-.card-box{
-  max-width:560px;
-  margin:auto;
-}
-
-.card-logo{
-  min-height:210px;
-  border-radius:20px;
-  padding:25px;
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
-  background:linear-gradient(135deg,#101827,#273b62);
-  color:white;
-  margin-bottom:18px;
-  box-shadow:0 20px 45px rgba(0,0,0,.3);
-}
-
-.card-chip{
-  width:48px;
-  height:36px;
-  border-radius:7px;
-  background:linear-gradient(135deg,#d9d9d9,#858585);
-}
-
-.card-number{
-  font-size:22px;
-  letter-spacing:2px;
-}
-
-.order,
-.admin-card{
-  border:1px solid var(--line);
-  background:var(--card);
-  border-radius:15px;
+.payment-button:hover{border-color:var(--accent)}
+.checkout-section,.admin-card,.order{
   padding:16px;
-  margin-bottom:12px;
-}
-
-.order-top{
-  display:flex;
-  justify-content:space-between;
-  gap:15px;
-}
-
-.admin-grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:10px;
-  margin-top:12px;
-}
-
-.setting{
-  padding:15px;
   border:1px solid var(--line);
-  border-radius:13px;
-  background:var(--card);
-  margin-bottom:10px;
+  background:var(--card2);
+  border-radius:15px;
+  margin-bottom:14px
 }
-
-.toast{
+.order h3{margin-bottom:8px}
+.muted{color:var(--muted)}
+.status{
+  display:inline-block;
+  padding:5px 9px;
+  border-radius:999px;
+  background:rgba(79,140,255,.15);
+  color:var(--accent);
+  font-size:12px;
+  font-weight:800
+}
+.empty{
+  padding:35px;
+  text-align:center;
+  color:var(--muted)
+}
+.toast-item{
   position:fixed;
   right:20px;
   bottom:20px;
-  z-index:1000;
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-  pointer-events:none;
-}
-
-.toast-item{
-  max-width:360px;
-  padding:13px 16px;
-  border:1px solid var(--line);
+  z-index:500;
+  background:#111827;
+  color:#fff;
+  border:1px solid rgba(255,255,255,.1);
+  padding:13px 17px;
   border-radius:12px;
-  background:var(--card);
-  color:var(--text);
   box-shadow:var(--shadow);
-  animation:toastIn .25s ease;
+  animation:toastIn .2s ease
 }
-
-.fly{
-  position:fixed;
-  z-index:900;
-  width:35px;
-  height:35px;
-  border-radius:50%;
-  object-fit:contain;
-  pointer-events:none;
-  transition:transform .65s cubic-bezier(.2,.8,.2,1),opacity .65s;
-}
-
 @keyframes toastIn{
-  from{
-    transform:translateY(15px);
-    opacity:0;
-  }
-  to{
-    transform:none;
-    opacity:1;
-  }
+  from{transform:translateY(20px);opacity:0}
+  to{transform:translateY(0);opacity:1}
 }
-
-@media(max-width:1050px){
-  .products{
-    grid-template-columns:repeat(3,minmax(0,1fr));
-  }
+.admin-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px
 }
-
-@media(max-width:760px){
-  .header-inner{
-    gap:10px;
-  }
-
-  .logo span:last-child{
-    display:none;
-  }
-
-  .nav-actions{
-    gap:5px;
-  }
-
-  .icon-btn{
-    min-width:38px;
-    padding:0 8px;
-  }
-
-  .hero{
-    padding:32px 24px;
-  }
-
-  .hero h1{
-    letter-spacing:-2px;
-  }
-
-  .products{
-    grid-template-columns:repeat(2,minmax(0,1fr));
-  }
-
-  .product-img-wrap{
-    height:190px;
-  }
-
-  .trust-grid{
-    grid-template-columns:1fr;
-  }
-
-  .product-modal{
-    grid-template-columns:1fr;
-  }
-
-  .modal-image{
-    height:300px;
-  }
-
-  .form-grid,
-  .admin-grid,
-  .payment-choice{
-    grid-template-columns:1fr;
-  }
-
-  .field.full{
-    grid-column:auto;
-  }
-}
-
-@media(max-width:500px){
-  main{
-    width:min(100% - 20px,1400px);
-  }
-
-  .products{
-    grid-template-columns:1fr;
-  }
-
-  .product-img-wrap{
-    height:250px;
-  }
-
-  .hero{
-    margin-top:15px;
-  }
-
-  .hero p{
-    font-size:15px;
-  }
-
-  .section-head{
-    display:block;
-  }
-
-  .sort-wrap{
-    width:100%;
-  }
+small.error{color:#ef4444;font-weight:700}
+@media(max-width:800px){
+  header{padding:0 12px;height:auto;min-height:65px;flex-wrap:wrap;padding-bottom:10px}
+  .nav{width:100%;overflow:auto;margin:0}
+  .hero{padding:30px 22px}
+  .trust{grid-template-columns:1fr}
+  .product-modal{grid-template-columns:1fr}
+  .admin-grid,.form-grid,.payment-grid{grid-template-columns:1fr}
+  .field.full{grid-column:auto}
 }
 </style>
 </head>
 
 <body>
 
-<header class="site-header">
-  <div class="header-inner">
-
-    <a href="#" class="logo">
-      <span class="logo-mark">N</span>
-      <span>NovaShop</span>
-    </a>
-
-    <div class="nav-actions">
-
-      <button class="icon-btn" id="settingsBtn" title="Paramètres">⚙️</button>
-
-      <button class="icon-btn" id="accountBtn" title="Compte">👤</button>
-
-      <button class="icon-btn" id="ordersBtn" title="Commandes">📦</button>
-
-      <button
-        class="icon-btn"
-        id="adminBtn"
-        title="Administration"
-        style="display:none"
-      >
-        🛠️
-      </button>
-
-      <button class="icon-btn cart-button" id="cartBtn" title="Panier">
-        🛒
-        <span class="cart-badge" id="cartBadge">0</span>
-      </button>
-
-    </div>
+<header>
+  <div class="logo">
+    <div class="logo-mark">N</div>
+    <span>NovaShop</span>
   </div>
+
+  <nav class="nav">
+    <button id="settingsBtn">⚙️</button>
+    <button id="accountBtn">👤 Compte</button>
+    <button id="ordersBtn">📦 Commandes</button>
+    <button id="adminBtn" style="display:none">🛠️ Admin</button>
+    <button id="cartBtn" class="cart-button">
+      🛒 Panier
+      <span id="cartBadge">0</span>
+    </button>
+  </nav>
 </header>
 
 <main>
 
-  <section class="hero">
-
-    <div class="hero-content">
-
-      <div class="hero-kicker">
-        NovaShop • Gaming & Setup
-      </div>
-
-      <h1>
-        Ton setup.<br>
-        Ton style.
-      </h1>
-
-      <p>
-        Composants PC, périphériques, écrans, bureaux,
-        chaises gaming et accessoires pour construire
-        ton setup comme tu le veux.
-      </p>
-
-      <div class="hero-actions">
-
-        <button class="primary" id="heroCartBtn">
-          🛒 Explorer la boutique
-        </button>
-
-        <button
-          class="secondary"
-          onclick="document.getElementById('productGrid').scrollIntoView({behavior:'smooth'})"
-        >
-          Voir les produits
-        </button>
-
-      </div>
-
-    </div>
-
-  </section>
-
-
-  <section>
-
-    <div class="section-head">
-
-      <div>
-        <h2>La boutique</h2>
-        <p id="productCount"></p>
-      </div>
-
-    </div>
-
-    <div class="controls">
-
-      <div class="search-box">
-        <input
-          id="searchInput"
-          type="search"
-          placeholder="🔎 Rechercher un produit..."
-          autocomplete="off"
-        >
-      </div>
-
-      <div class="sort-wrap">
-        <select id="sortSelect" class="select-control">
-          <option value="default">Trier : recommandé</option>
-          <option value="priceAsc">Prix : croissant</option>
-          <option value="priceDesc">Prix : décroissant</option>
-          <option value="rating">Note</option>
-        </select>
-      </div>
-
-    </div>
-
-    <div class="categories" id="categories"></div>
-
-    <div class="products" id="productGrid"></div>
-
-  </section>
-
-
-  <section class="trust-grid">
-
-    <div class="trust-card">
-      <div class="trust-icon">🔐</div>
-      <h3>Paiement</h3>
-      <p>
-        Paiement PayPal disponible depuis le checkout.
-        Les paiements sont enregistrés avec leur état.
-      </p>
-    </div>
-
-    <div class="trust-card">
-      <div class="trust-icon">📦</div>
-      <h3>Suivi</h3>
-      <p>
-        Retrouve tes commandes, leur statut et les
-        informations de livraison depuis ton compte.
-      </p>
-    </div>
-
-    <div class="trust-card">
-      <div class="trust-icon">🧾</div>
-      <h3>Factures</h3>
-      <p>
-        Une facture imprimable peut être générée
-        pour chaque commande.
-      </p>
-    </div>
-
-  </section>
-
-
-  <section class="refunds">
-
-    <h2>Retours et commandes</h2>
-
+<section class="hero">
+  <div>
+    <h1>NovaShop</h1>
     <p>
-      Les informations de commande et de livraison
-      sont enregistrées dans ton espace afin de
-      pouvoir suivre ton achat.
+      Ton espace gaming pour retrouver composants PC, périphériques,
+      écrans, bureaux, éclairage RGB et matériel gaming.
     </p>
+    <button id="heroCartBtn">🛒 Explorer la boutique</button>
+  </div>
+</section>
 
-  </section>
+<section class="toolbar">
+  <input id="searchInput" class="search" placeholder="🔎 Rechercher un produit...">
+  <select id="sortSelect">
+    <option value="default">Trier : recommandé</option>
+    <option value="priceAsc">Prix croissant</option>
+    <option value="priceDesc">Prix décroissant</option>
+    <option value="name">Nom A → Z</option>
+  </select>
+</section>
 
+<div id="categories" class="categories"></div>
 
-  <section class="faq">
+<section id="productGrid" class="products"></section>
 
-    <div class="section-head">
-      <div>
-        <h2>FAQ</h2>
-        <p>Les questions fréquentes.</p>
-      </div>
-    </div>
+<section class="trust">
+  <div class="trust-card">
+    <b>🔒 Commandes sécurisées</b>
+    <span>Ton espace client et tes commandes sont gérés avec Firebase.</span>
+  </div>
+  <div class="trust-card">
+    <b>📦 Suivi des commandes</b>
+    <span>Retrouve tes commandes et leur état depuis ton compte.</span>
+  </div>
+  <div class="trust-card">
+    <b>💬 Support</b>
+    <span>Une question ? Contacte l'équipe NovaShop.</span>
+  </div>
+</section>
 
-    <details>
-      <summary>Comment commander ?</summary>
-      <p>
-        Ajoute les produits au panier, connecte-toi,
-        complète ton adresse puis choisis ton mode
-        de paiement.
-      </p>
-    </details>
+<section class="refunds">
+  <h2>💳 Paiement et commandes</h2>
+  <p>
+    Les commandes gratuites peuvent être validées directement.
+    Pour les commandes payantes, NovaShop utilise PayPal.
+    Le paiement CB présent dans l'interface est uniquement une démonstration.
+  </p>
+</section>
 
-    <details>
-      <summary>Comment suivre ma commande ?</summary>
-      <p>
-        Ouvre ton compte puis la section « Commandes ».
-        Les informations ajoutées par NovaShop y seront
-        affichées.
-      </p>
-    </details>
+<section class="faq">
+  <h2>❓ FAQ</h2>
 
-    <details>
-      <summary>Comment fonctionne le panier ?</summary>
-      <p>
-        Le panier est sauvegardé localement dans ton
-        navigateur pour conserver tes produits.
-      </p>
-    </details>
+  <details>
+    <summary>Comment commander ?</summary>
+    <p>Ajoute tes produits au panier puis ouvre le panier et lance la commande.</p>
+  </details>
 
-    <details>
-      <summary>Comment contacter NovaShop ?</summary>
-      <p>
-        Pour obtenir de l'aide, contacte le support à
-        l'adresse affichée ci-dessous.
-      </p>
-    </details>
+  <details>
+    <summary>Comment retrouver mes commandes ?</summary>
+    <p>Connecte-toi puis ouvre la section Commandes.</p>
+  </details>
 
-  </section>
+  <details>
+    <summary>Comment contacter NovaShop ?</summary>
+    <p>Tu peux contacter le support à helpy.nova.sh0p@gmail.com.</p>
+  </details>
+</section>
 
 </main>
 
-
 <footer>
-  <strong>NovaShop</strong>
-  <br>
-  Support :
-  <strong>helpy.nova.sh0p@gmail.com</strong>
+  © 2026 NovaShop • Support : helpy.nova.sh0p@gmail.com
 </footer>
 
+<div id="overlay"></div>
 
-<div class="overlay" id="overlay">
-
-  <aside class="cart-drawer" id="cartDrawer">
-
-    <div class="cart-head">
-
-      <h2>🛒 Mon panier</h2>
-
-      <button class="close-btn" id="closeCart">
-        ✕
-      </button>
-
-    </div>
-
-    <div class="cart-items" id="cartItems"></div>
-
-    <div class="cart-foot">
-
-      <div class="cart-total">
-        <span>Total</span>
-        <span id="cartTotal">0,00 €</span>
-      </div>
-
-      <button class="primary" id="checkoutBtn">
-        Passer la commande
-      </button>
-
-    </div>
-
-  </aside>
-
-</div>
-
-
-<div class="modal-layer" id="modalLayer">
-
-  <div class="modal">
-
-    <div class="modal-head">
-
-      <h2 id="modalTitle">NovaShop</h2>
-
-      <button class="close-btn" id="modalClose">
-        ✕
-      </button>
-
-    </div>
-
-    <div class="modal-content" id="modalContent"></div>
-
+<aside id="cartDrawer">
+  <div class="cart-head">
+    <h2>🛒 Panier</h2>
+    <button id="closeCart">×</button>
   </div>
 
+  <div id="cartItems"></div>
+
+  <div class="cart-bottom">
+    <div class="total-line">
+      <span>Total</span>
+      <span id="cartTotal">0,00 €</span>
+    </div>
+    <button id="checkoutBtn">Commander</button>
+  </div>
+</aside>
+
+<div id="modalLayer">
+  <div id="modalBox">
+    <div class="modal-top">
+      <h2 id="modalTitle">NovaShop</h2>
+      <button id="modalClose" class="modal-close">×</button>
+    </div>
+    <div id="modalContent"></div>
+  </div>
 </div>
 
-
-<div class="toast" id="toast"></div>
-
+<div id="toast"></div>
 
 <script type="module" src="./app.js"></script>
-
 </body>
 </html>
