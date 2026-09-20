@@ -1,7 +1,10 @@
+/* =========================================================
+   NOVASHOP - APP.JS COMPLET
+   Firebase CDN + 43 produits + boutons fonctionnels
+========================================================= */
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
-
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-analytics.js";
-
 import {
   getAuth,
   onAuthStateChanged,
@@ -41,12 +44,10 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 
-let analytics = null;
-
 try {
-  analytics = getAnalytics(app);
-} catch (error) {
-  console.warn("Analytics indisponible :", error);
+  getAnalytics(app);
+} catch (e) {
+  console.warn("Analytics indisponible :", e);
 }
 
 const auth = getAuth(app);
@@ -423,11 +424,11 @@ const products = [
    DOM
 ========================================================= */
 
-const $ = (selector, root = document) =>
-  root.querySelector(selector);
+const $ = (selector, parent = document) =>
+  parent.querySelector(selector);
 
-const $$ = (selector, root = document) =>
-  [...root.querySelectorAll(selector)];
+const $$ = (selector, parent = document) =>
+  [...parent.querySelectorAll(selector)];
 
 
 /* =========================================================
@@ -436,13 +437,8 @@ const $$ = (selector, root = document) =>
 
 let currentUser = null;
 
-let cart = JSON.parse(
-  localStorage.getItem("novaCart") || "[]"
-);
-
-let favorites = JSON.parse(
-  localStorage.getItem("novaFavorites") || "[]"
-);
+let cart = JSON.parse(localStorage.getItem("novaCart") || "[]");
+let favorites = JSON.parse(localStorage.getItem("novaFavorites") || "[]");
 
 let currentCategory = "Tous";
 let currentSort = "default";
@@ -453,12 +449,9 @@ let currentProduct = null;
 let nova100Active =
   localStorage.getItem("nova100Active") === "true";
 
-let selectedPayment = "card";
-
+let selectedPayment = null;
 let currentOrder = null;
-
-let adminMode =
-  localStorage.getItem(ADMIN_ACCESS_KEY) === "true";
+let adminMode = false;
 
 
 /* =========================================================
@@ -466,188 +459,148 @@ let adminMode =
 ========================================================= */
 
 function escapeHTML(value) {
-
   return String(value ?? "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 }
 
 
 function money(value) {
-
   return Number(value || 0).toLocaleString("fr-FR", {
     style: "currency",
     currency: "EUR"
   });
-
 }
 
 
 function saveCart() {
-
-  localStorage.setItem(
-    "novaCart",
-    JSON.stringify(cart)
-  );
-
+  localStorage.setItem("novaCart", JSON.stringify(cart));
 }
 
 
 function saveFavorites() {
-
   localStorage.setItem(
     "novaFavorites",
     JSON.stringify(favorites)
   );
-
 }
 
 
 function getProduct(id) {
-
-  return products.find(
-    product => product.id === id
-  );
-
+  return products.find(p => p.id === id);
 }
 
 
 function cartCount() {
-
   return cart.reduce(
-    (total, item) => total + Number(item.qty || 0),
+    (total, item) => total + Number(item.quantity || 0),
     0
   );
-
 }
 
 
 function cartTotal() {
-
   return cart.reduce((total, item) => {
-
     const product = getProduct(item.id);
 
     if (!product) return total;
 
     return total +
       product.price *
-      Number(item.qty || 0);
-
+      Number(item.quantity || 0);
   }, 0);
-
 }
 
 
-function toast(message, type = "info") {
+function discountedTotal() {
+  const total = cartTotal();
 
-  let container = $("#toast-container");
-
-  if (!container) {
-
-    container = document.createElement("div");
-
-    container.id = "toast-container";
-
-    container.style.position = "fixed";
-    container.style.right = "20px";
-    container.style.bottom = "20px";
-    container.style.zIndex = "99999";
-    container.style.display = "flex";
-    container.style.flexDirection = "column";
-    container.style.gap = "10px";
-
-    document.body.appendChild(container);
-
+  if (!nova100Active) {
+    return total;
   }
 
-  const element = document.createElement("div");
+  return total * 0.9;
+}
+
+
+function toast(message) {
+
+  let element = $("#nova-toast");
+
+  if (!element) {
+    element = document.createElement("div");
+    element.id = "nova-toast";
+
+    Object.assign(element.style, {
+      position: "fixed",
+      right: "20px",
+      bottom: "20px",
+      zIndex: "99999",
+      padding: "14px 18px",
+      borderRadius: "12px",
+      background: "#111827",
+      color: "white",
+      border: "1px solid rgba(255,255,255,.15)",
+      boxShadow: "0 15px 40px rgba(0,0,0,.35)",
+      fontWeight: "700",
+      transition: "opacity .25s"
+    });
+
+    document.body.appendChild(element);
+  }
 
   element.textContent = message;
+  element.style.opacity = "1";
 
-  element.style.padding = "13px 17px";
-  element.style.borderRadius = "12px";
-  element.style.background =
-    type === "error"
-      ? "#dc2626"
-      : type === "success"
-      ? "#16a34a"
-      : "#111827";
+  clearTimeout(element._timer);
 
-  element.style.color = "#fff";
-  element.style.fontWeight = "700";
-  element.style.boxShadow =
-    "0 10px 30px rgba(0,0,0,.3)";
-
-  container.appendChild(element);
-
-  setTimeout(() => {
-
+  element._timer = setTimeout(() => {
     element.style.opacity = "0";
-    element.style.transform = "translateY(8px)";
-    element.style.transition = ".25s";
-
-    setTimeout(() => element.remove(), 250);
-
-  }, 2500);
-
+  }, 2200);
 }
 
 
 /* =========================================================
-   MODALS
+   MODALES
 ========================================================= */
 
 function closeModal() {
 
-  $$(".modal, .overlay").forEach(element => {
-
-    element.classList.remove("active");
-    element.classList.remove("open");
-
+  $$(".nova-modal,.modal,.popup,.overlay").forEach(el => {
+    el.classList.remove("active");
+    el.style.display = "";
   });
 
+  document.body.classList.remove("modal-open");
 }
 
 
-function openModal(id) {
-
-  closeModal();
-
-  const element = document.getElementById(id);
+function openModal(element) {
 
   if (!element) return;
 
   element.classList.add("active");
-  element.classList.add("open");
+  element.style.display = "flex";
 
+  document.body.classList.add("modal-open");
 }
 
 
 /* =========================================================
-   CATEGORIES
+   CATÉGORIES
 ========================================================= */
 
-function categories() {
-
-  const categoriesList = [
-    "Tous",
-    ...new Set(
-      products.map(product => product.category)
-    )
-  ];
-
-  return categoriesList;
-
-}
+const categories = [
+  "Tous",
+  ...new Set(products.map(product => product.category))
+];
 
 
 /* =========================================================
-   FILTER
+   FILTRAGE
 ========================================================= */
 
 function filteredProducts() {
@@ -655,82 +608,51 @@ function filteredProducts() {
   let result = [...products];
 
   if (currentCategory !== "Tous") {
-
     result = result.filter(
-      product =>
-        product.category === currentCategory
+      product => product.category === currentCategory
     );
-
   }
 
-  if (currentSearch.trim()) {
+  const search = currentSearch
+    .trim()
+    .toLowerCase();
 
-    const search =
-      currentSearch
-        .trim()
-        .toLowerCase();
-
+  if (search) {
     result = result.filter(product =>
-
-      product.name
-        .toLowerCase()
-        .includes(search)
-
-      ||
-
-      product.category
-        .toLowerCase()
-        .includes(search)
-
+      product.name.toLowerCase().includes(search) ||
+      product.category.toLowerCase().includes(search)
     );
-
   }
 
-  if (currentSort === "price-asc") {
+  switch (currentSort) {
 
-    result.sort(
-      (a, b) => a.price - b.price
-    );
+    case "price-asc":
+      result.sort((a, b) => a.price - b.price);
+      break;
 
-  }
+    case "price-desc":
+      result.sort((a, b) => b.price - a.price);
+      break;
 
-  if (currentSort === "price-desc") {
+    case "name":
+      result.sort((a, b) =>
+        a.name.localeCompare(b.name, "fr")
+      );
+      break;
 
-    result.sort(
-      (a, b) => b.price - a.price
-    );
-
-  }
-
-  if (currentSort === "name") {
-
-    result.sort(
-      (a, b) =>
-        a.name.localeCompare(
-          b.name,
-          "fr"
-        )
-    );
-
-  }
-
-  if (currentSort === "new") {
-
-    result.sort(
-      (a, b) =>
-        Number(b.new) -
-        Number(a.new)
-    );
-
+    case "new":
+      result.sort((a, b) =>
+        Number(b.new) - Number(a.new)
+      );
+      break;
   }
 
   return result;
-
 }
 
 
 /* =========================================================
-   PRODUCT CARD
+   CARTE PRODUIT
 ========================================================= */
 
 function productCard(product) {
@@ -738,44 +660,48 @@ function productCard(product) {
   const isFavorite =
     favorites.includes(product.id);
 
-  const inCart =
-    cart.find(item => item.id === product.id);
-
   return `
+    <article class="product-card" data-product-id="${product.id}">
 
-    <article
-      class="product-card"
-      data-product="${escapeHTML(product.id)}"
-    >
-
-      <div class="product-image">
+      <div
+        class="product-image"
+        data-product="${product.id}"
+        style="
+          cursor:pointer;
+          height:240px;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          overflow:hidden;
+        "
+      >
 
         <img
           src="${escapeHTML(product.image)}"
           alt="${escapeHTML(product.name)}"
           loading="lazy"
           referrerpolicy="no-referrer"
-          onerror="this.onerror=null;this.src='${FALLBACK_IMAGE}'"
+          style="
+            width:100%;
+            height:100%;
+            object-fit:contain;
+            display:block;
+          "
+          onerror="
+            this.onerror=null;
+            this.src='${FALLBACK_IMAGE}';
+          "
         >
 
         ${
           product.new
-            ? `<span class="product-badge">NOUVEAU</span>`
+            ? `<span class="product-new">NOUVEAU</span>`
             : ""
         }
 
-        <button
-          class="favorite-btn ${isFavorite ? "active" : ""}"
-          data-favorite="${escapeHTML(product.id)}"
-          type="button"
-          aria-label="Favori"
-        >
-          ${isFavorite ? "♥" : "♡"}
-        </button>
-
       </div>
 
-      <div class="product-content">
+      <div class="product-info">
 
         <div class="product-category">
           ${escapeHTML(product.category)}
@@ -791,144 +717,153 @@ function productCard(product) {
             ${money(product.price)}
           </strong>
 
-          <button
-            class="add-cart-btn"
-            data-add-cart="${escapeHTML(product.id)}"
-            type="button"
-          >
-            ${inCart ? "AJOUTÉ" : "AJOUTER"}
-          </button>
+          <div class="product-actions">
+
+            <button
+              type="button"
+              class="favorite-btn ${isFavorite ? "active" : ""}"
+              data-favorite="${product.id}"
+              aria-label="Favori"
+            >
+              ${isFavorite ? "❤️" : "♡"}
+            </button>
+
+            <button
+              type="button"
+              class="add-cart-btn"
+              data-add-cart="${product.id}"
+            >
+              🛒 Ajouter
+            </button>
+
+          </div>
 
         </div>
 
       </div>
 
     </article>
-
   `;
-
 }
 
 
 /* =========================================================
-   RENDER PRODUCTS
+   RENDU PRODUITS
 ========================================================= */
+
+function findProductsContainer() {
+
+  return $(
+    "#products-grid, " +
+    "#product-grid, " +
+    ".products-grid, " +
+    ".product-grid, " +
+    "[data-products]"
+  );
+}
+
 
 function renderProducts() {
 
-  const grid =
-    $("#products-grid") ||
-    $("#product-grid") ||
-    $(".products-grid");
+  const container = findProductsContainer();
 
-  if (!grid) return;
+  if (!container) return;
 
-  const result =
-    filteredProducts();
+  const list = filteredProducts();
 
-  if (!result.length) {
+  if (!list.length) {
 
-    grid.innerHTML = `
-
-      <div class="empty-products">
-
-        <h3>Aucun produit trouvé</h3>
-
-        <p>
-          Essaie une autre recherche ou catégorie.
-        </p>
-
+    container.innerHTML = `
+      <div style="
+        grid-column:1/-1;
+        padding:60px 20px;
+        text-align:center;
+      ">
+        <div style="font-size:48px">🔎</div>
+        <h2>Aucun produit trouvé</h2>
+        <p>Essaie une autre recherche.</p>
       </div>
-
     `;
 
     return;
-
   }
 
-  grid.innerHTML =
-    result
-      .map(productCard)
-      .join("");
+  container.innerHTML =
+    list.map(productCard).join("");
 
   updateProductEvents();
-
 }
 
-
-/* =========================================================
-   PRODUCT EVENTS
-========================================================= */
 
 function updateProductEvents() {
 
-  $$("[data-product]").forEach(card => {
-
-    card.addEventListener(
-      "click",
-      event => {
-
-        if (
-          event.target.closest(
-            "[data-add-cart], [data-favorite]"
-          )
-        ) return;
-
-        const id =
-          card.dataset.product;
-
-        openProduct(id);
-
-      }
-    );
-
-  });
-
   $$("[data-add-cart]").forEach(button => {
 
-    button.addEventListener(
-      "click",
-      event => {
+    button.onclick = event => {
 
-        event.stopPropagation();
+      event.preventDefault();
+      event.stopPropagation();
 
-        addToCart(
-          button.dataset.addCart
-        );
-
-      }
-    );
-
+      addToCart(
+        button.dataset.addCart
+      );
+    };
   });
+
 
   $$("[data-favorite]").forEach(button => {
 
-    button.addEventListener(
-      "click",
-      event => {
+    button.onclick = event => {
 
-        event.stopPropagation();
+      event.preventDefault();
+      event.stopPropagation();
 
-        toggleFavorite(
-          button.dataset.favorite
-        );
-
-      }
-    );
-
+      toggleFavorite(
+        button.dataset.favorite
+      );
+    };
   });
 
+
+  $$("[data-product-id]").forEach(card => {
+
+    card.onclick = event => {
+
+      if (
+        event.target.closest(
+          "button,input,a,select"
+        )
+      ) return;
+
+      openProduct(
+        card.dataset.productId
+      );
+    };
+  });
+
+
+  $$("[data-product]").forEach(image => {
+
+    image.onclick = event => {
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      openProduct(
+        image.dataset.product
+      );
+    };
+  });
 }
 
 
 /* =========================================================
-   PRODUCT DETAIL
+   DÉTAIL PRODUIT
 ========================================================= */
 
 function openProduct(id) {
 
-  const product =
-    getProduct(id);
+  const product = getProduct(id);
 
   if (!product) return;
 
@@ -936,26 +871,23 @@ function openProduct(id) {
 
   const modal =
     $("#product-modal") ||
-    $("#productModal");
+    $("#productModal") ||
+    $("#product-detail-modal");
 
   if (!modal) {
-
-    addToCart(id);
-
+    toast(product.name);
     return;
-
   }
 
   modal.innerHTML = `
-
-    <div class="product-detail">
+    <div class="modal-content">
 
       <button
+        type="button"
         class="modal-close"
         data-close-modal
-        type="button"
       >
-        ×
+        ✕
       </button>
 
       <div
@@ -976,7 +908,10 @@ function openProduct(id) {
           src="${escapeHTML(product.image)}"
           alt="${escapeHTML(product.name)}"
           referrerpolicy="no-referrer"
-          onerror="this.onerror=null;this.src='${FALLBACK_IMAGE}'"
+          onerror="
+            this.onerror=null;
+            this.src='${FALLBACK_IMAGE}';
+          "
           style="
             width:100%;
             height:100%;
@@ -991,67 +926,78 @@ function openProduct(id) {
 
       <div class="product-detail-info">
 
-        <div class="product-category">
+        <small>
           ${escapeHTML(product.category)}
-        </div>
+        </small>
 
         <h2>
           ${escapeHTML(product.name)}
         </h2>
 
-        <div class="product-detail-price">
+        <div class="detail-price">
           ${money(product.price)}
         </div>
 
         <button
           type="button"
           class="add-cart-btn"
-          data-detail-add="${escapeHTML(product.id)}"
+          data-detail-add="${product.id}"
         >
-          AJOUTER AU PANIER
+          🛒 Ajouter au panier
+        </button>
+
+        <button
+          type="button"
+          class="favorite-btn"
+          data-detail-favorite="${product.id}"
+        >
+          ${
+            favorites.includes(product.id)
+              ? "❤️ Retirer des favoris"
+              : "♡ Ajouter aux favoris"
+          }
         </button>
 
       </div>
 
     </div>
-
   `;
 
-  openModal(
-    modal.id
-  );
+  openModal(modal);
 
-  const addButton =
-    modal.querySelector(
-      "[data-detail-add]"
-    );
+  const add =
+    $("[data-detail-add]", modal);
 
-  if (addButton) {
-
-    addButton.addEventListener(
-      "click",
-      () => {
-
-        addToCart(id);
-
-        closeModal();
-
-      }
-    );
-
+  if (add) {
+    add.onclick = () => {
+      addToCart(product.id);
+    };
   }
 
+  const fav =
+    $("[data-detail-favorite]", modal);
+
+  if (fav) {
+    fav.onclick = () => {
+      toggleFavorite(product.id);
+      openProduct(product.id);
+    };
+  }
+
+  $("[data-close-modal]", modal)?.addEventListener(
+    "click",
+    closeModal
+  );
 }
 
 
 /* =========================================================
-   CART
+   PANIER
 ========================================================= */
 
 function addToCart(id) {
 
-  const product =
-    getProduct(id);
+  const product = getProduct(id);
 
   if (!product) return;
 
@@ -1059,123 +1005,91 @@ function addToCart(id) {
     cart.find(item => item.id === id);
 
   if (existing) {
-
-    existing.qty =
-      Number(existing.qty || 0) + 1;
-
+    existing.quantity =
+      Number(existing.quantity || 0) + 1;
   } else {
-
     cart.push({
       id,
-      qty: 1
+      quantity: 1
     });
-
   }
 
   saveCart();
-
+  updateCartBadge();
   renderCart();
 
-  updateCartBadge();
-
-  toast(
-    "Produit ajouté au panier",
-    "success"
-  );
-
+  toast(`${product.name} ajouté au panier 🛒`);
 }
 
 
 function removeFromCart(id) {
 
-  cart =
-    cart.filter(
-      item => item.id !== id
-    );
+  cart = cart.filter(
+    item => item.id !== id
+  );
 
   saveCart();
-
-  renderCart();
-
   updateCartBadge();
-
+  renderCart();
 }
 
 
-function changeCartQty(id, amount) {
+function changeQuantity(id, quantity) {
 
   const item =
-    cart.find(
-      product => product.id === id
-    );
+    cart.find(item => item.id === id);
 
   if (!item) return;
 
-  item.qty =
-    Number(item.qty || 0) +
-    Number(amount);
+  quantity = Number(quantity);
 
-  if (item.qty <= 0) {
-
+  if (!Number.isFinite(quantity) || quantity < 1) {
     removeFromCart(id);
-
     return;
-
   }
 
+  item.quantity = Math.floor(quantity);
+
   saveCart();
-
-  renderCart();
-
   updateCartBadge();
-
+  renderCart();
 }
 
 
 function updateCartBadge() {
 
-  const count =
-    cartCount();
+  const count = cartCount();
 
   $$(
-    "#cart-count, .cart-count, [data-cart-count]"
+    "#cart-count, " +
+    ".cart-count, " +
+    "[data-cart-count]"
   ).forEach(element => {
-
-    element.textContent =
-      count;
-
+    element.textContent = count;
     element.style.display =
-      count > 0
-        ? ""
-        : "none";
-
+      count > 0 ? "" : "none";
   });
-
 }
 
 
 function renderCart() {
 
   const container =
-    $("#cart-items") ||
-    $("#cartItems");
+    $(
+      "#cart-items, " +
+      ".cart-items, " +
+      "[data-cart-items]"
+    );
 
   if (!container) return;
 
   if (!cart.length) {
 
     container.innerHTML = `
-
       <div class="empty-cart">
-
-        <h3>Ton panier est vide 🛒</h3>
-
-        <p>
-          Ajoute des produits pour commencer.
-        </p>
-
+        <div style="font-size:50px">🛒</div>
+        <h3>Ton panier est vide</h3>
       </div>
-
     `;
 
   } else {
@@ -1189,7 +1103,6 @@ function renderCart() {
         if (!product) return "";
 
         return `
-
           <div
             class="cart-item"
             data-cart-item="${product.id}"
@@ -1197,9 +1110,12 @@ function renderCart() {
 
             <img
               src="${escapeHTML(product.image)}"
-              alt="${escapeHTML(product.name)}"
+              alt=""
               referrerpolicy="no-referrer"
-              onerror="this.onerror=null;this.src='${FALLBACK_IMAGE}'"
+              onerror="
+                this.onerror=null;
+                this.src='${FALLBACK_IMAGE}';
+              "
             >
 
             <div class="cart-item-info">
@@ -1212,7 +1128,7 @@ function renderCart() {
                 ${money(product.price)}
               </span>
 
-              <div class="cart-quantity">
+              <div class="quantity-controls">
 
                 <button
                   type="button"
@@ -1221,9 +1137,12 @@ function renderCart() {
                   −
                 </button>
 
-                <span>
-                  ${item.qty}
-                </span>
+                <input
+                  type="number"
+                  min="1"
+                  value="${item.quantity}"
+                  data-cart-quantity="${product.id}"
+                >
 
                 <button
                   type="button"
@@ -1240,99 +1159,188 @@ function renderCart() {
               type="button"
               data-cart-remove="${product.id}"
             >
-              🗑
+              🗑️
             </button>
 
           </div>
-
         `;
-
       }).join("");
-
   }
 
-  const total =
-    $("#cart-total") ||
-    $("#cartTotal");
+  updateCartTotals();
+  updateCartEvents();
+}
 
-  if (total) {
 
-    total.textContent =
-      money(cartTotal());
+function updateCartTotals() {
 
-  }
+  const total = cartTotal();
+  const finalTotal = discountedTotal();
+
+  $$(
+    "#cart-total, " +
+    ".cart-total, " +
+    "[data-cart-total]"
+  ).forEach(element => {
+    element.textContent =
+      money(finalTotal);
+  });
+
+  $$(
+    "#cart-subtotal, " +
+    ".cart-subtotal, " +
+    "[data-cart-subtotal]"
+  ).forEach(element => {
+    element.textContent =
+      money(total);
+  });
+
+  $$(
+    "#cart-discount, " +
+    ".cart-discount, " +
+    "[data-cart-discount]"
+  ).forEach(element => {
+    element.textContent =
+      nova100Active
+        ? `-${money(total * 0.1)}`
+        : money(0);
+  });
+}
+
+
+function updateCartEvents() {
 
   $$("[data-cart-minus]").forEach(button => {
 
-    button.onclick = () =>
-      changeCartQty(
-        button.dataset.cartMinus,
-        -1
-      );
+    button.onclick = () => {
 
+      const id =
+        button.dataset.cartMinus;
+
+      const item =
+        cart.find(x => x.id === id);
+
+      if (item) {
+        changeQuantity(
+          id,
+          Number(item.quantity) - 1
+        );
+      }
+    };
   });
+
 
   $$("[data-cart-plus]").forEach(button => {
 
-    button.onclick = () =>
-      changeCartQty(
-        button.dataset.cartPlus,
-        1
-      );
+    button.onclick = () => {
 
+      const id =
+        button.dataset.cartPlus;
+
+      const item =
+        cart.find(x => x.id === id);
+
+      if (item) {
+        changeQuantity(
+          id,
+          Number(item.quantity) + 1
+        );
+      }
+    };
   });
+
+
+  $$("[data-cart-quantity]").forEach(input => {
+
+    input.onchange = () => {
+
+      changeQuantity(
+        input.dataset.cartQuantity,
+        input.value
+      );
+    };
+  });
+
 
   $$("[data-cart-remove]").forEach(button => {
 
-    button.onclick = () =>
+    button.onclick = () => {
+
       removeFromCart(
         button.dataset.cartRemove
       );
-
+    };
   });
-
 }
 
 
 /* =========================================================
-   FAVORITES
+   FAVORIS
 ========================================================= */
 
 function toggleFavorite(id) {
 
-  if (
-    favorites.includes(id)
-  ) {
+  const index =
+    favorites.indexOf(id);
 
-    favorites =
-      favorites.filter(
-        favorite => favorite !== id
-      );
+  if (index >= 0) {
 
-    toast(
-      "Retiré des favoris"
-    );
+    favorites.splice(index, 1);
+
+    toast("Retiré des favoris");
 
   } else {
 
     favorites.push(id);
 
-    toast(
-      "Ajouté aux favoris",
-      "success"
-    );
-
+    toast("Ajouté aux favoris ❤️");
   }
 
   saveFavorites();
 
   renderProducts();
+  renderFavorites();
+}
 
+
+function renderFavorites() {
+
+  const container =
+    $(
+      "#favorites-items, " +
+      ".favorites-items, " +
+      "[data-favorites]"
+    );
+
+  if (!container) return;
+
+  const favoriteProducts =
+    favorites
+      .map(id => getProduct(id))
+      .filter(Boolean);
+
+  if (!favoriteProducts.length) {
+
+    container.innerHTML = `
+      <div style="padding:30px;text-align:center">
+        ❤️ Aucun favori
+      </div>
+    `;
+
+    return;
+  }
+
+  container.innerHTML =
+    favoriteProducts
+      .map(productCard)
+      .join("");
+
+  updateProductEvents();
 }
 
 
 /* =========================================================
-   AUTH ERROR
+   AUTH
 ========================================================= */
 
 function authErrorMessage(error) {
@@ -1345,30 +1353,29 @@ function authErrorMessage(error) {
     "auth/invalid-credential":
       "Email ou mot de passe incorrect.",
 
-    "auth/invalid-login-credentials":
-      "Email ou mot de passe incorrect.",
+    "auth/invalid-email":
+      "Adresse email invalide.",
 
     "auth/user-not-found":
-      "Aucun compte avec cet email.",
+      "Utilisateur introuvable.",
 
     "auth/wrong-password":
       "Mot de passe incorrect.",
 
     "auth/email-already-in-use":
-      "Cet email est déjà utilisé.",
+      "Cette adresse email est déjà utilisée.",
 
     "auth/weak-password":
-      "Le mot de passe doit contenir au moins 6 caractères.",
+      "Le mot de passe est trop faible.",
 
-    "auth/invalid-email":
-      "Adresse email invalide.",
-
-    "auth/api-key-not-valid.-please-pass-a-valid-api-key.":
-      "La clé API Firebase n'est pas acceptée.",
+    "auth/api-key-not-valid":
+      "La clé API Firebase est invalide.",
 
     "auth/network-request-failed":
-      "Problème de connexion Internet."
+      "Erreur réseau.",
 
+    "auth/too-many-requests":
+      "Trop de tentatives. Réessaie plus tard."
   };
 
   return (
@@ -1376,13 +1383,8 @@ function authErrorMessage(error) {
     error?.message ||
     "Une erreur est survenue."
   );
-
 }
 
-
-/* =========================================================
-   LOGIN
-========================================================= */
 
 async function login(email, password) {
 
@@ -1394,30 +1396,16 @@ async function login(email, password) {
       password
     );
 
-    toast(
-      "Connexion réussie",
-      "success"
-    );
-
+    toast("Connexion réussie ✅");
     closeModal();
 
   } catch (error) {
 
+    toast(authErrorMessage(error));
     console.error(error);
-
-    toast(
-      authErrorMessage(error),
-      "error"
-    );
-
   }
-
 }
 
-
-/* =========================================================
-   REGISTER
-========================================================= */
 
 async function register(email, password) {
 
@@ -1429,82 +1417,41 @@ async function register(email, password) {
       password
     );
 
-    toast(
-      "Compte créé avec succès",
-      "success"
-    );
-
+    toast("Compte créé ✅");
     closeModal();
 
   } catch (error) {
 
+    toast(authErrorMessage(error));
     console.error(error);
-
-    toast(
-      authErrorMessage(error),
-      "error"
-    );
-
   }
-
 }
 
 
-/* =========================================================
-   AUTH MODAL
-========================================================= */
-
-function setupAuth() {
-
-  $$("[data-login]").forEach(button => {
-
-    button.addEventListener(
-      "click",
-      () => openAuthModal("login")
-    );
-
-  });
-
-  $$("[data-register]").forEach(button => {
-
-    button.addEventListener(
-      "click",
-      () => openAuthModal("register")
-    );
-
-  });
-
-}
-
-
-function openAuthModal(mode = "login") {
+function openAuthModal() {
 
   const modal =
     $("#auth-modal") ||
-    $("#authModal");
+    $("#authModal") ||
+    $("#login-modal");
 
   if (!modal) return;
 
-  const registerMode =
-    mode === "register";
-
   modal.innerHTML = `
 
-    <div class="auth-box">
+    <div class="modal-content">
 
       <button
         type="button"
         class="modal-close"
         data-close-modal
       >
-        ×
+        ✕
       </button>
 
-      <h2>
-        ${registerMode ? "Créer un compte" : "Connexion"}
-      </h2>
+      <h2>Connexion</h2>
 
-      <form id="auth-form">
+      <form id="nova-auth-form">
 
         <input
           id="auth-email"
@@ -1517,210 +1464,151 @@ function openAuthModal(mode = "login") {
           id="auth-password"
           type="password"
           placeholder="Mot de passe"
-          minlength="6"
           required
         >
 
         <button type="submit">
-
-          ${registerMode
-            ? "CRÉER MON COMPTE"
-            : "SE CONNECTER"}
-
+          Se connecter
         </button>
 
       </form>
 
       <button
         type="button"
-        id="switch-auth"
+        id="nova-register-btn"
       >
-
-        ${
-          registerMode
-            ? "J'ai déjà un compte"
-            : "Créer un compte"
-        }
-
+        Créer un compte
       </button>
 
     </div>
-
   `;
 
-  openModal(
-    modal.id
-  );
+  openModal(modal);
 
-  $("#auth-form")?.addEventListener(
-    "submit",
-    async event => {
+  $("[data-close-modal]", modal)
+    ?.addEventListener("click", closeModal);
+
+
+  $("#nova-auth-form", modal)
+    ?.addEventListener("submit", event => {
 
       event.preventDefault();
 
+      login(
+        $("#auth-email", modal).value.trim(),
+        $("#auth-password", modal).value
+      );
+    });
+
+
+  $("#nova-register-btn", modal)
+    ?.addEventListener("click", () => {
+
       const email =
-        $("#auth-email").value.trim();
+        $("#auth-email", modal).value.trim();
 
       const password =
-        $("#auth-password").value;
+        $("#auth-password", modal).value;
 
-      if (registerMode) {
+      if (!email || !password) {
 
-        await register(
-          email,
-          password
-        );
-
-      } else {
-
-        await login(
-          email,
-          password
-        );
-
+        toast("Entre ton email et ton mot de passe.");
+        return;
       }
 
-    }
-  );
-
-  $("#switch-auth")?.addEventListener(
-    "click",
-    () => {
-
-      openAuthModal(
-        registerMode
-          ? "login"
-          : "register"
-      );
-
-    }
-  );
-
+      register(email, password);
+    });
 }
 
 
 /* =========================================================
-   ACCOUNT
+   COMPTE
 ========================================================= */
 
-function updateAccountUI() {
+function renderAccount() {
 
   $$(
-    "[data-user-email], .user-email"
+    "#account-name, " +
+    ".account-name, " +
+    "[data-account-name]"
   ).forEach(element => {
 
     element.textContent =
       currentUser
         ? currentUser.email
-        : "Compte";
-
+        : "Mon compte";
   });
+
 
   $$(
-    "[data-logout]"
+    "[data-login], #login-btn, .login-btn"
   ).forEach(button => {
 
-    button.style.display =
-      currentUser
-        ? ""
-        : "none";
+    button.onclick = event => {
 
-  });
+      event.preventDefault();
 
-  $$(
-    "[data-login]"
-  ).forEach(button => {
-
-    button.style.display =
-      currentUser
-        ? "none"
-        : "";
-
-  });
-
-}
-
-
-function setupAccount() {
-
-  $$("[data-logout]").forEach(button => {
-
-    button.addEventListener(
-      "click",
-      async () => {
-
-        try {
-
-          await signOut(auth);
-
-          toast(
-            "Déconnexion réussie",
-            "success"
-          );
-
-        } catch (error) {
-
-          toast(
-            error.message,
-            "error"
-          );
-
-        }
-
+      if (currentUser) {
+        signOut(auth);
+      } else {
+        openAuthModal();
       }
-    );
-
+    };
   });
 
+
+  $$(
+    "[data-logout], #logout-btn, .logout-btn"
+  ).forEach(button => {
+
+    button.onclick = async () => {
+
+      try {
+        await signOut(auth);
+        toast("Déconnexion réussie");
+      } catch (error) {
+        toast("Erreur de déconnexion");
+      }
+    };
+  });
 }
 
 
 /* =========================================================
-   ORDERS
+   COMMANDES
 ========================================================= */
 
 async function getUserOrders() {
 
-  if (!currentUser)
+  if (!currentUser) {
     return [];
+  }
 
   try {
 
-    const q =
-      query(
-        collection(db, "orders"),
-        where(
-          "userId",
-          "==",
-          currentUser.uid
-        ),
-        orderBy(
-          "createdAt",
-          "desc"
-        )
-      );
+    const q = query(
+      collection(db, "orders"),
+      where("userId", "==", currentUser.uid),
+      orderBy("createdAt", "desc")
+    );
 
     const snapshot =
       await getDocs(q);
 
-    return snapshot.docs.map(
-      document => ({
-        id: document.id,
-        ...document.data()
-      })
-    );
+    return snapshot.docs.map(item => ({
+      id: item.id,
+      ...item.data()
+    }));
 
   } catch (error) {
 
     console.error(
-      "Erreur commandes :",
+      "Impossible de récupérer les commandes :",
       error
     );
 
     return [];
-
   }
-
 }
 
 
@@ -1728,10 +1616,9 @@ async function openOrders() {
 
   if (!currentUser) {
 
-    openAuthModal("login");
-
+    toast("Connecte-toi pour voir tes commandes.");
+    openAuthModal();
     return;
-
   }
 
   const modal =
@@ -1741,15 +1628,14 @@ async function openOrders() {
   if (!modal) return;
 
   modal.innerHTML = `
-
-    <div class="orders-box">
+    <div class="modal-content">
 
       <button
+        type="button"
         class="modal-close"
         data-close-modal
-        type="button"
       >
-        ×
+        ✕
       </button>
 
       <h2>Mes commandes</h2>
@@ -1759,20 +1645,18 @@ async function openOrders() {
       </div>
 
     </div>
-
   `;
 
-  openModal(
-    modal.id
-  );
+  openModal(modal);
+
+  $("[data-close-modal]", modal)
+    ?.addEventListener("click", closeModal);
 
   const orders =
     await getUserOrders();
 
   const list =
-    $("#orders-list");
-
-  if (!list) return;
+    $("#orders-list", modal);
 
   if (!orders.length) {
 
@@ -1781,7 +1665,6 @@ async function openOrders() {
     `;
 
     return;
-
   }
 
   list.innerHTML =
@@ -1789,8 +1672,8 @@ async function openOrders() {
 
       <button
         type="button"
-        class="order-card"
-        data-order-id="${order.id}"
+        class="order-row"
+        data-open-order="${order.id}"
       >
 
         <strong>
@@ -1801,176 +1684,137 @@ async function openOrders() {
           ${money(order.total)}
         </span>
 
-        <small>
-          ${escapeHTML(order.status || "En attente")}
-        </small>
+        <span>
+          ${escapeHTML(order.paymentMethod || "Non défini")}
+        </span>
+
+        <span>
+          ${escapeHTML(order.paymentStatus || "pending")}
+        </span>
 
       </button>
 
     `).join("");
 
-  $$("[data-order-id]").forEach(button => {
 
-    button.onclick = () =>
-      openOrderDetail(
-        button.dataset.orderId
-      );
+  $$("[data-open-order]", modal)
+    .forEach(button => {
 
-  });
+      button.onclick = () => {
 
+        openOrderDetail(
+          button.dataset.openOrder
+        );
+      };
+    });
 }
 
 
-/* =========================================================
-   ORDER DETAIL
-========================================================= */
-
-async function openOrderDetail(orderId) {
-
-  if (!currentUser) return;
+async function openOrderDetail(id) {
 
   try {
 
     const snapshot =
       await getDoc(
-        doc(db, "orders", orderId)
+        doc(db, "orders", id)
       );
 
     if (!snapshot.exists()) {
 
-      toast(
-        "Commande introuvable",
-        "error"
-      );
-
+      toast("Commande introuvable.");
       return;
-
     }
 
-    const order =
-      snapshot.data();
-
-    const isOwner =
-      order.userId === currentUser.uid;
-
-    const isAdminUser =
-      currentUser.email?.toLowerCase() ===
-      ADMIN_EMAIL.toLowerCase() &&
-      adminMode;
-
-    if (
-      !isOwner &&
-      !isAdminUser
-    ) {
-
-      toast(
-        "Accès refusé",
-        "error"
-      );
-
-      return;
-
-    }
-
-    currentOrder = {
+    const order = {
       id: snapshot.id,
-      ...order
+      ...snapshot.data()
     };
+
+    currentOrder = order;
 
     const modal =
       $("#order-detail-modal") ||
-      $("#orderDetailModal");
+      $("#orderDetailModal") ||
+      $("#orders-modal");
 
     if (!modal) return;
 
     modal.innerHTML = `
 
-      <div class="order-detail-box">
+      <div class="modal-content">
 
         <button
+          type="button"
           class="modal-close"
           data-close-modal
-          type="button"
         >
-          ×
+          ✕
         </button>
 
         <h2>
-          Commande #${snapshot.id.slice(0, 8)}
+          Commande #${order.id.slice(0, 8)}
         </h2>
 
         <p>
           Statut :
           <strong>
-            ${escapeHTML(order.status || "En attente")}
-          </strong>
-        </p>
-
-        <p>
-          Paiement :
-          <strong>
-            ${escapeHTML(order.paymentMethod || "Non défini")}
-          </strong>
-        </p>
-
-        <p>
-          Paiement :
-          <strong>
             ${escapeHTML(order.paymentStatus || "pending")}
           </strong>
         </p>
 
-        <div class="order-products">
+        <p>
+          Paiement :
+          ${escapeHTML(order.paymentMethod || "Non défini")}
+        </p>
 
+        <hr>
+
+        <div>
           ${
             (order.items || [])
               .map(item => `
-
-                <div class="order-product">
-
+                <div style="
+                  display:flex;
+                  justify-content:space-between;
+                  gap:15px;
+                  padding:8px 0;
+                ">
                   <span>
                     ${escapeHTML(item.name)}
-                    × ${item.qty}
+                    × ${item.quantity}
                   </span>
-
                   <strong>
-                    ${money(item.price * item.qty)}
+                    ${money(
+                      Number(item.price) *
+                      Number(item.quantity)
+                    )}
                   </strong>
-
                 </div>
-
               `)
               .join("")
           }
-
         </div>
 
-        <div class="order-total">
+        <hr>
 
+        <h3>
           Total :
           ${money(order.total)}
-
-        </div>
+        </h3>
 
       </div>
-
     `;
 
-    openModal(
-      modal.id
-    );
+    openModal(modal);
+
+    $("[data-close-modal]", modal)
+      ?.addEventListener("click", closeModal);
 
   } catch (error) {
 
     console.error(error);
-
-    toast(
-      "Impossible d'ouvrir la commande",
-      "error"
-    );
-
+    toast("Impossible de charger la commande.");
   }
-
 }
 
 
@@ -1978,41 +1822,29 @@ async function openOrderDetail(orderId) {
    NOVA100
 ========================================================= */
 
-function nova100Total() {
+function updateNova100Button() {
 
-  const total =
-    cartTotal();
+  const button =
+    $("#nova100-search-btn");
 
-  if (!nova100Active)
-    return total;
+  if (!button) return;
 
-  return Math.max(
-    0,
-    total * 0.90
-  );
+  const search =
+    currentSearch.trim().toUpperCase();
 
+  button.style.display =
+    search === "NOVA100"
+      ? "inline-flex"
+      : "none";
 }
 
 
 function activateNova100() {
 
-  const code =
-    ($("#search") ||
-     $("#search-input") ||
-     $("input[type='search']"))
-      ?.value
-      ?.trim()
-      .toUpperCase();
+  if (!cart.length) {
 
-  if (code !== "NOVA100") {
-
-    toast(
-      "Entre NOVA100 pour activer le code.",
-      "error"
-    );
-
+    toast("Ajoute au moins un produit au panier.");
     return;
-
   }
 
   nova100Active = true;
@@ -2022,13 +1854,26 @@ function activateNova100() {
     "true"
   );
 
-  toast(
-    "Code NOVA100 activé : -10% 🎉",
-    "success"
-  );
-
+  updateCartTotals();
   renderCheckout();
 
+  toast("Code NOVA100 activé : -10% 🔥");
+}
+
+
+function deactivateNova100() {
+
+  nova100Active = false;
+
+  localStorage.setItem(
+    "nova100Active",
+    "false"
+  );
+
+  updateCartTotals();
+  renderCheckout();
+
+  toast("NOVA100 retiré.");
 }
 
 
@@ -2036,411 +1881,305 @@ function activateNova100() {
    CHECKOUT
 ========================================================= */
 
-function openCheckout() {
+function renderCheckout(savedValues = {}) {
 
-  if (!currentUser) {
-
-    toast(
-      "Connecte-toi avant de commander.",
-      "error"
+  const container =
+    $(
+      "#checkout-content, " +
+      ".checkout-content, " +
+      "[data-checkout-content]"
     );
 
-    openAuthModal("login");
-
-    return;
-
-  }
-
-  if (!cart.length) {
-
-    toast(
-      "Ton panier est vide.",
-      "error"
-    );
-
-    return;
-
-  }
-
-  renderCheckout();
-
-}
-
-
-function renderCheckout(saved = {}) {
-
-  const modal =
-    $("#checkout-modal") ||
-    $("#checkoutModal");
-
-  if (!modal) return;
-
-  const subtotal =
-    cartTotal();
+  if (!container) return;
 
   const total =
-    nova100Total();
+    discountedTotal();
 
-  modal.innerHTML = `
+  container.innerHTML = `
 
     <div class="checkout-box">
 
-      <button
-        class="modal-close"
-        data-close-modal
-        type="button"
-      >
-        ×
-      </button>
-
-      <h2>
-        Finaliser la commande
-      </h2>
+      <h2>Finaliser la commande</h2>
 
       <div class="checkout-summary">
 
-        <span>
-          Sous-total
-        </span>
-
-        <strong>
-          ${money(subtotal)}
-        </strong>
+        <p>
+          Sous-total :
+          <strong>${money(cartTotal())}</strong>
+        </p>
 
         ${
           nova100Active
             ? `
-              <span>
-                NOVA100 (-10%)
-              </span>
-
-              <strong>
-                -${money(subtotal - total)}
-              </strong>
+              <p>
+                Réduction NOVA100 :
+                <strong>-10%</strong>
+              </p>
             `
             : ""
         }
 
-        <span>
-          Total
-        </span>
-
-        <strong>
-          ${money(total)}
-        </strong>
+        <p>
+          Total :
+          <strong>${money(total)}</strong>
+        </p>
 
       </div>
 
-      <form id="checkout-form">
 
+      <label>
+        Nom
         <input
           id="checkout-name"
-          type="text"
-          placeholder="Nom complet"
-          value="${escapeHTML(saved.name || "")}"
+          value="${escapeHTML(savedValues.name || "")}"
           required
         >
+      </label>
 
+
+      <label>
+        Email
         <input
           id="checkout-email"
           type="email"
-          placeholder="Email"
           value="${escapeHTML(
-            saved.email ||
+            savedValues.email ||
             currentUser?.email ||
             ""
           )}"
           required
         >
+      </label>
 
+
+      <label>
+        Adresse
         <input
           id="checkout-address"
-          type="text"
-          placeholder="Adresse"
-          value="${escapeHTML(saved.address || "")}"
+          value="${escapeHTML(savedValues.address || "")}"
           required
         >
+      </label>
 
-        <input
-          id="checkout-city"
-          type="text"
-          placeholder="Ville"
-          value="${escapeHTML(saved.city || "")}"
-          required
-        >
 
-        <input
-          id="checkout-postcode"
-          type="text"
-          placeholder="Code postal"
-          value="${escapeHTML(saved.postcode || "")}"
-          required
-        >
+      <h3>Moyen de paiement</h3>
 
-        <div class="payment-methods">
-
-          <button
-            type="button"
-            class="payment-choice ${
-              selectedPayment === "card"
-                ? "active"
-                : ""
-            }"
-            data-payment="card"
-          >
-            💳 Carte bancaire
-          </button>
-
-          <button
-            type="button"
-            class="payment-choice ${
-              selectedPayment === "paypal"
-                ? "active"
-                : ""
-            }"
-            data-payment="paypal"
-          >
-            🅿️ PayPal
-          </button>
-
-        </div>
-
-        <input
-          type="hidden"
-          id="selected-payment"
-          value="${escapeHTML(selectedPayment)}"
-        >
+      <div class="payment-buttons">
 
         <button
-          type="submit"
-          id="create-order-btn"
+          type="button"
+          data-payment="card"
+          class="${selectedPayment === "card" ? "selected" : ""}"
         >
-          CONFIRMER LA COMMANDE
+          💳 Carte bancaire
         </button>
 
-      </form>
+        <button
+          type="button"
+          data-payment="paypal"
+          class="${selectedPayment === "paypal" ? "selected" : ""}"
+        >
+          🅿️ PayPal
+        </button>
+
+      </div>
+
+
+      <button
+        type="button"
+        id="confirm-order-btn"
+      >
+        Commander ${money(total)}
+      </button>
 
     </div>
-
   `;
 
-  openModal(
-    modal.id
-  );
 
-  $$("[data-payment]", modal)
+  $$("[data-payment]", container)
     .forEach(button => {
 
-      button.addEventListener(
-        "click",
-        () => {
+      button.onclick = () => {
 
-          selectedPayment =
-            button.dataset.payment;
+        selectedPayment =
+          button.dataset.payment;
 
-          $$(
-            "[data-payment]",
-            modal
-          ).forEach(item =>
-            item.classList.remove("active")
+        $$("[data-payment]", container)
+          .forEach(item =>
+            item.classList.remove("selected")
           );
 
-          button.classList.add("active");
-
-          const hidden =
-            $("#selected-payment");
-
-          if (hidden)
-            hidden.value =
-              selectedPayment;
-
-        }
-      );
-
+        button.classList.add("selected");
+      };
     });
 
-  $("#checkout-form")
+
+  $("#confirm-order-btn", container)
     ?.addEventListener(
-      "submit",
-      async event => {
-
-        event.preventDefault();
-
-        await createOrder();
-
-      }
+      "click",
+      createOrder
     );
+}
 
+
+function openCheckout() {
+
+  if (!cart.length) {
+
+    toast("Ton panier est vide 🛒");
+    return;
+  }
+
+  if (!currentUser) {
+
+    toast("Connecte-toi avant de commander.");
+    openAuthModal();
+    return;
+  }
+
+  const modal =
+    $("#checkout-modal") ||
+    $("#checkoutModal");
+
+  if (!modal) {
+
+    toast("Fenêtre de paiement introuvable.");
+    return;
+  }
+
+  modal.innerHTML = `
+    <div class="modal-content">
+
+      <button
+        type="button"
+        class="modal-close"
+        data-close-modal
+      >
+        ✕
+      </button>
+
+      <div id="checkout-content"></div>
+
+    </div>
+  `;
+
+  openModal(modal);
+
+  $("[data-close-modal]", modal)
+    ?.addEventListener("click", closeModal);
+
+  renderCheckout();
 }
 
 
 /* =========================================================
-   CREATE ORDER
+   CRÉER COMMANDE
 ========================================================= */
 
 async function createOrder() {
 
   if (!currentUser) {
 
-    toast(
-      "Connecte-toi avant de commander.",
-      "error"
-    );
-
+    toast("Connecte-toi d'abord.");
     return;
-
   }
 
   if (!cart.length) {
 
-    toast(
-      "Ton panier est vide.",
-      "error"
-    );
-
+    toast("Panier vide.");
     return;
+  }
 
+  if (!selectedPayment) {
+
+    toast("Choisis un moyen de paiement.");
+    return;
+  }
+
+  const name =
+    $("#checkout-name")?.value.trim();
+
+  const email =
+    $("#checkout-email")?.value.trim();
+
+  const address =
+    $("#checkout-address")?.value.trim();
+
+  if (!name || !email || !address) {
+
+    toast("Remplis tous les champs.");
+    return;
   }
 
   const button =
-    $("#create-order-btn");
+    $("#confirm-order-btn");
 
   if (button) {
-
     button.disabled = true;
     button.textContent =
-      "CRÉATION...";
-
+      "Création de la commande...";
   }
+
+  const items =
+    cart.map(item => {
+
+      const product =
+        getProduct(item.id);
+
+      return {
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        quantity: Number(item.quantity)
+      };
+    });
+
+
+  const subtotal =
+    cartTotal();
+
+  const discount =
+    nova100Active
+      ? subtotal * 0.1
+      : 0;
+
+  const total =
+    subtotal - discount;
+
 
   try {
 
-    const items =
-      cart
-        .map(item => {
-
-          const product =
-            getProduct(item.id);
-
-          if (!product)
-            return null;
-
-          return {
-            id: product.id,
-            name: product.name,
-            price: product.price,
-            qty: Number(item.qty)
-          };
-
-        })
-        .filter(Boolean);
-
-    const subtotal =
-      items.reduce(
-        (sum, item) =>
-          sum +
-          item.price *
-          item.qty,
-        0
-      );
-
-    const total =
-      nova100Active
-        ? Math.max(
-            0,
-            subtotal * 0.90
-          )
-        : subtotal;
-
-    const name =
-      $("#checkout-name")?.value.trim();
-
-    const email =
-      $("#checkout-email")?.value.trim();
-
-    const address =
-      $("#checkout-address")?.value.trim();
-
-    const city =
-      $("#checkout-city")?.value.trim();
-
-    const postcode =
-      $("#checkout-postcode")?.value.trim();
-
-    if (
-      !name ||
-      !email ||
-      !address ||
-      !city ||
-      !postcode
-    ) {
-
-      toast(
-        "Remplis toutes les informations.",
-        "error"
-      );
-
-      if (button) {
-
-        button.disabled = false;
-        button.textContent =
-          "CONFIRMER LA COMMANDE";
-
-      }
-
-      return;
-
-    }
-
-    const order = {
-
-      userId:
-        currentUser.uid,
-
-      userEmail:
-        currentUser.email,
-
-      customer: {
-        name,
-        email,
-        address,
-        city,
-        postcode
-      },
-
-      items,
-
-      subtotal,
-
-      discount:
-        nova100Active
-          ? subtotal * 0.10
-          : 0,
-
-      total,
-
-      nova100:
-        nova100Active,
-
-      paymentMethod:
-        selectedPayment,
-
-      paymentStatus:
-        "pending",
-
-      status:
-        "pending",
-
-      createdAt:
-        serverTimestamp()
-
-    };
-
-    const reference =
+    const orderRef =
       await addDoc(
         collection(db, "orders"),
-        order
+        {
+          userId: currentUser.uid,
+          customer: {
+            name,
+            email,
+            address
+          },
+
+          items,
+
+          subtotal,
+          discount,
+          total,
+
+          paymentMethod:
+            selectedPayment,
+
+          paymentStatus:
+            "pending",
+
+          nova100:
+            nova100Active,
+
+          createdAt:
+            serverTimestamp()
+        }
       );
+
 
     cart = [];
 
@@ -2448,19 +2187,20 @@ async function createOrder() {
 
     nova100Active = false;
 
-    localStorage.removeItem(
-      "nova100Active"
+    localStorage.setItem(
+      "nova100Active",
+      "false"
     );
 
-    renderCart();
+    selectedPayment = null;
 
     updateCartBadge();
+    renderCart();
 
     closeModal();
 
     toast(
-      `Commande #${reference.id.slice(0, 8)} créée !`,
-      "success"
+      `Commande créée #${orderRef.id.slice(0, 8)} ✅`
     );
 
   } catch (error) {
@@ -2471,21 +2211,15 @@ async function createOrder() {
     );
 
     toast(
-      "Impossible de créer la commande.",
-      "error"
+      "Impossible de créer la commande."
     );
 
     if (button) {
-
       button.disabled = false;
-
       button.textContent =
-        "CONFIRMER LA COMMANDE";
-
+        `Commander ${money(total)}`;
     }
-
   }
-
 }
 
 
@@ -2499,9 +2233,10 @@ function isAdmin() {
     currentUser &&
     currentUser.email?.toLowerCase() ===
       ADMIN_EMAIL.toLowerCase() &&
-    adminMode
+    localStorage.getItem(
+      ADMIN_ACCESS_KEY
+    ) === "true"
   );
-
 }
 
 
@@ -2509,58 +2244,37 @@ function openAdmin() {
 
   if (!currentUser) {
 
-    toast(
-      "Connecte-toi d'abord.",
-      "error"
-    );
-
-    openAuthModal("login");
-
+    toast("Connecte-toi d'abord.");
+    openAuthModal();
     return;
-
   }
 
-  if (!adminMode) {
+  if (
+    currentUser.email?.toLowerCase() !==
+    ADMIN_EMAIL.toLowerCase()
+  ) {
 
-    const code =
-      prompt("Code administrateur NovaShop :");
-
-    if (code !== ADMIN_CODE) {
-
-      toast(
-        "Code administrateur incorrect.",
-        "error"
-      );
-
-      return;
-
-    }
-
-    if (
-      currentUser.email?.toLowerCase() !==
-      ADMIN_EMAIL.toLowerCase()
-    ) {
-
-      toast(
-        "Ce compte n'est pas administrateur.",
-        "error"
-      );
-
-      return;
-
-    }
-
-    adminMode = true;
-
-    localStorage.setItem(
-      ADMIN_ACCESS_KEY,
-      "true"
-    );
-
+    toast("Accès administrateur refusé.");
+    return;
   }
+
+  const code =
+    prompt("Code administrateur :");
+
+  if (code !== ADMIN_CODE) {
+
+    toast("Code incorrect.");
+    return;
+  }
+
+  localStorage.setItem(
+    ADMIN_ACCESS_KEY,
+    "true"
+  );
+
+  adminMode = true;
 
   renderAdminOrders();
-
 }
 
 
@@ -2568,13 +2282,8 @@ async function renderAdminOrders() {
 
   if (!isAdmin()) {
 
-    toast(
-      "Accès administrateur refusé.",
-      "error"
-    );
-
+    toast("Accès admin refusé.");
     return;
-
   }
 
   const modal =
@@ -2585,693 +2294,622 @@ async function renderAdminOrders() {
 
   modal.innerHTML = `
 
-    <div class="admin-box">
+    <div class="modal-content">
 
       <button
+        type="button"
         class="modal-close"
         data-close-modal
-        type="button"
       >
-        ×
+        ✕
       </button>
 
-      <h2>
-        NovaShop Admin
-      </h2>
+      <h2>⚙️ Administration NovaShop</h2>
 
-      <div id="admin-orders">
+      <div id="admin-orders-list">
         Chargement...
       </div>
 
     </div>
-
   `;
 
-  openModal(
-    modal.id
-  );
+  openModal(modal);
+
+  $("[data-close-modal]", modal)
+    ?.addEventListener("click", closeModal);
+
 
   try {
 
-    const q =
-      query(
-        collection(db, "orders"),
-        orderBy(
-          "createdAt",
-          "desc"
-        )
-      );
+    const q = query(
+      collection(db, "orders"),
+      orderBy("createdAt", "desc")
+    );
 
     const snapshot =
       await getDocs(q);
 
-    const container =
-      $("#admin-orders");
+    const orders =
+      snapshot.docs.map(item => ({
+        id: item.id,
+        ...item.data()
+      }));
 
-    if (!container)
-      return;
+    const list =
+      $("#admin-orders-list", modal);
 
-    if (snapshot.empty) {
+    if (!orders.length) {
 
-      container.innerHTML =
+      list.innerHTML =
         "<p>Aucune commande.</p>";
 
       return;
-
     }
 
-    container.innerHTML =
-      snapshot.docs
-        .map(document => {
 
-          const order =
-            document.data();
+    list.innerHTML =
+      orders.map(order => `
 
-          return `
+        <div
+          class="admin-order"
+          style="
+            padding:16px;
+            margin:10px 0;
+            border:1px solid rgba(255,255,255,.1);
+            border-radius:14px;
+          "
+        >
 
-            <div
-              class="admin-order"
-              data-admin-order="${document.id}"
-            >
+          <strong>
+            #${order.id.slice(0, 8)}
+          </strong>
 
-              <div>
+          <p>
+            ${escapeHTML(
+              order.customer?.name || ""
+            )}
+          </p>
 
-                <strong>
-                  #${document.id.slice(0, 8)}
-                </strong>
+          <p>
+            ${escapeHTML(
+              order.customer?.email || ""
+            )}
+          </p>
 
-                <span>
-                  ${escapeHTML(
-                    order.userEmail || ""
-                  )}
-                </span>
+          <p>
+            Total :
+            ${money(order.total)}
+          </p>
 
-              </div>
+          <p>
+            Paiement :
+            ${escapeHTML(
+              order.paymentMethod || ""
+            )}
+          </p>
 
-              <div>
+          <p>
+            Statut :
+            <strong>
+              ${escapeHTML(
+                order.paymentStatus || "pending"
+              )}
+            </strong>
+          </p>
 
-                <strong>
-                  ${money(order.total)}
-                </strong>
+          <button
+            type="button"
+            data-mark-paid="${order.id}"
+          >
+            ✅ Marquer payé
+          </button>
 
-                <span>
-                  ${escapeHTML(
-                    order.status || "pending"
-                  )}
-                </span>
+        </div>
 
-              </div>
+      `).join("");
 
-              <div>
 
-                <button
-                  type="button"
-                  data-paid="${document.id}"
-                >
-                  MARQUER PAYÉ
-                </button>
-
-                <select
-                  data-status="${document.id}"
-                >
-
-                  <option
-                    value="pending"
-                    ${
-                      order.status === "pending"
-                        ? "selected"
-                        : ""
-                    }
-                  >
-                    En attente
-                  </option>
-
-                  <option
-                    value="processing"
-                    ${
-                      order.status === "processing"
-                        ? "selected"
-                        : ""
-                    }
-                  >
-                    En préparation
-                  </option>
-
-                  <option
-                    value="shipped"
-                    ${
-                      order.status === "shipped"
-                        ? "selected"
-                        : ""
-                    }
-                  >
-                    Expédiée
-                  </option>
-
-                  <option
-                    value="completed"
-                    ${
-                      order.status === "completed"
-                        ? "selected"
-                        : ""
-                    }
-                  >
-                    Terminée
-                  </option>
-
-                  <option
-                    value="cancelled"
-                    ${
-                      order.status === "cancelled"
-                        ? "selected"
-                        : ""
-                    }
-                  >
-                    Annulée
-                  </option>
-
-                </select>
-
-              </div>
-
-            </div>
-
-          `;
-
-        })
-        .join("");
-
-    $$("[data-paid]")
+    $$("[data-mark-paid]", modal)
       .forEach(button => {
 
-        button.onclick = () =>
-          adminMarkPaid(
-            button.dataset.paid
+        button.onclick = () => {
+
+          markOrderPaid(
+            button.dataset.markPaid
           );
-
-      });
-
-    $$("[data-status]")
-      .forEach(select => {
-
-        select.onchange = () =>
-          adminUpdateStatus(
-            select.dataset.status,
-            select.value
-          );
-
+        };
       });
 
   } catch (error) {
 
     console.error(error);
 
-    const container =
-      $("#admin-orders");
-
-    if (container) {
-
-      container.innerHTML = `
-
-        <p>
-          Erreur lors du chargement des commandes.
-        </p>
-
-      `;
-
-    }
-
+    $("#admin-orders-list", modal).innerHTML =
+      `<p>Erreur : ${escapeHTML(error.message)}</p>`;
   }
-
 }
 
 
-async function adminMarkPaid(orderId) {
+async function markOrderPaid(id) {
 
   if (!isAdmin()) return;
 
   try {
 
     await updateDoc(
-      doc(db, "orders", orderId),
+      doc(db, "orders", id),
       {
-        paymentStatus: "paid"
+        paymentStatus: "paid",
+        paidAt: serverTimestamp()
       }
     );
 
-    toast(
-      "Commande marquée comme payée.",
-      "success"
-    );
+    toast("Commande marquée comme payée ✅");
 
     renderAdminOrders();
 
   } catch (error) {
 
     console.error(error);
-
-    toast(
-      "Impossible de modifier la commande.",
-      "error"
-    );
-
+    toast("Impossible de modifier la commande.");
   }
-
-}
-
-
-async function adminUpdateStatus(
-  orderId,
-  status
-) {
-
-  if (!isAdmin()) return;
-
-  try {
-
-    await updateDoc(
-      doc(db, "orders", orderId),
-      {
-        status
-      }
-    );
-
-    toast(
-      "Statut mis à jour.",
-      "success"
-    );
-
-  } catch (error) {
-
-    console.error(error);
-
-    toast(
-      "Impossible de modifier le statut.",
-      "error"
-    );
-
-  }
-
 }
 
 
 /* =========================================================
-   THEME
+   THÈME
 ========================================================= */
 
 function setupTheme() {
 
-  $$("[data-theme]").forEach(button => {
+  const saved =
+    localStorage.getItem("novaTheme");
 
-    button.addEventListener(
-      "click",
-      () => {
-
-        const theme =
-          button.dataset.theme;
-
-        document.documentElement
-          .setAttribute(
-            "data-theme",
-            theme
-          );
-
-        localStorage.setItem(
-          "novaTheme",
-          theme
-        );
-
-      }
-    );
-
-  });
-
-}
-
-
-function initTheme() {
-
-  const theme =
-    localStorage.getItem(
-      "novaTheme"
-    );
-
-  if (theme) {
-
-    document.documentElement
-      .setAttribute(
-        "data-theme",
-        theme
-      );
-
+  if (saved === "light") {
+    document.body.classList.add("light");
   }
 
+  $$(
+    "[data-theme], #theme-btn, .theme-btn"
+  ).forEach(button => {
+
+    button.onclick = () => {
+
+      document.body.classList.toggle("light");
+
+      localStorage.setItem(
+        "novaTheme",
+        document.body.classList.contains("light")
+          ? "light"
+          : "dark"
+      );
+    };
+  });
 }
 
 
 /* =========================================================
-   SEARCH
+   RECHERCHE
 ========================================================= */
 
 function setupSearch() {
 
-  const input =
-    $("#search") ||
-    $("#search-input") ||
-    $("input[type='search']");
+  const inputs =
+    $$(
+      "#search, " +
+      "#search-input, " +
+      ".search-input, " +
+      "[data-search]"
+    );
 
-  if (!input) return;
+  inputs.forEach(input => {
 
-  input.addEventListener(
-    "input",
-    () => {
+    input.addEventListener("input", () => {
 
       currentSearch =
         input.value;
 
       renderProducts();
-
       updateNova100Button();
+    });
 
-    }
-  );
 
-  input.addEventListener(
-    "keydown",
-    event => {
+    input.addEventListener("keydown", event => {
 
-      if (
-        event.key !== "Enter"
-      )
-        return;
+      if (event.key === "Enter") {
 
-      const value =
-        input.value
-          .trim()
-          .toUpperCase();
+        currentSearch =
+          input.value;
 
-      if (
-        value === "NOVA100"
-      ) {
-
-        activateNova100();
-
+        renderProducts();
+        updateNova100Button();
       }
-
-    }
-  );
-
-}
+    });
+  });
 
 
-/* =========================================================
-   NOVA100 BUTTON
-========================================================= */
-
-function updateNova100Button() {
-
-  const input =
-    $("#search") ||
-    $("#search-input") ||
-    $("input[type='search']");
-
-  if (!input) return;
-
-  const wrapper =
-    input.parentElement;
-
-  if (!wrapper) return;
-
-  let button =
+  const novaButton =
     $("#nova100-search-btn");
 
-  const isNova =
-    input.value
-      .trim()
-      .toUpperCase() ===
-    "NOVA100";
+  if (novaButton) {
 
-  if (!isNova) {
-
-    if (button)
-      button.remove();
-
-    return;
-
+    novaButton.onclick =
+      activateNova100;
   }
-
-  if (button)
-    return;
-
-  button =
-    document.createElement("button");
-
-  button.id =
-    "nova100-search-btn";
-
-  button.type =
-    "button";
-
-  button.textContent =
-    "🎁 ACTIVER NOVA100";
-
-  button.style.marginTop =
-    "8px";
-
-  button.style.padding =
-    "10px 14px";
-
-  button.style.border =
-    "0";
-
-  button.style.borderRadius =
-    "10px";
-
-  button.style.cursor =
-    "pointer";
-
-  button.style.fontWeight =
-    "800";
-
-  button.addEventListener(
-    "click",
-    activateNova100
-  );
-
-  wrapper.appendChild(button);
-
 }
 
 
 /* =========================================================
-   CATEGORIES UI
+   CATÉGORIES
 ========================================================= */
 
 function setupCategories() {
 
-  $$("[data-category]").forEach(button => {
+  $$(
+    "[data-category]"
+  ).forEach(button => {
 
-    button.addEventListener(
-      "click",
-      () => {
+    button.onclick = event => {
 
-        currentCategory =
-          button.dataset.category;
+      event.preventDefault();
 
-        $$(
-          "[data-category]"
-        ).forEach(item =>
+      currentCategory =
+        button.dataset.category;
+
+      $$("[data-category]")
+        .forEach(item =>
           item.classList.remove("active")
         );
 
-        button.classList.add("active");
+      button.classList.add("active");
 
-        renderProducts();
-
-      }
-    );
-
+      renderProducts();
+    };
   });
 
+
+  $$(
+    ".category-btn"
+  ).forEach(button => {
+
+    if (button.dataset.category) return;
+
+    button.onclick = () => {
+
+      const category =
+        button.textContent.trim();
+
+      const found =
+        categories.find(
+          c => c.toLowerCase() ===
+            category.toLowerCase()
+        );
+
+      if (found) {
+
+        currentCategory = found;
+
+        renderProducts();
+      }
+    };
+  });
 }
 
 
 /* =========================================================
-   SORT
+   TRI
 ========================================================= */
 
 function setupSort() {
 
-  const select =
-    $("#sort") ||
-    $("#sort-select");
+  $$(
+    "#sort, " +
+    "#sort-select, " +
+    "[data-sort]"
+  ).forEach(select => {
 
-  if (!select) return;
+    select.addEventListener(
+      "change",
+      () => {
 
-  select.addEventListener(
-    "change",
-    () => {
+        currentSort =
+          select.value;
 
-      currentSort =
-        select.value;
-
-      renderProducts();
-
-    }
-  );
-
+        renderProducts();
+      }
+    );
+  });
 }
 
 
 /* =========================================================
-   GLOBAL BUTTONS
+   BOUTONS GLOBAUX
 ========================================================= */
 
 function setupGlobalButtons() {
 
-  $$("[data-cart]").forEach(button => {
+  /* PANIER */
 
-    button.addEventListener(
-      "click",
-      () => {
+  $$(
+    "[data-cart], " +
+    "#cart-btn, " +
+    ".cart-btn"
+  ).forEach(button => {
 
+    button.onclick = event => {
+
+      event.preventDefault();
+
+      const modal =
+        $("#cart-modal") ||
+        $("#cartModal");
+
+      if (modal) {
+
+        openModal(modal);
         renderCart();
 
-        const modal =
-          $("#cart-modal") ||
-          $("#cartModal");
+      } else {
 
-        if (modal)
-          openModal(modal.id);
-
+        toast(
+          `Panier : ${cartCount()} article(s)`
+        );
       }
-    );
-
+    };
   });
 
-  $$("[data-checkout]").forEach(button => {
 
-    button.addEventListener(
-      "click",
-      openCheckout
-    );
+  /* CHECKOUT */
 
+  $$(
+    "[data-checkout], " +
+    "#checkout-btn, " +
+    ".checkout-btn"
+  ).forEach(button => {
+
+    button.onclick = event => {
+
+      event.preventDefault();
+
+      openCheckout();
+    };
   });
 
-  $$("[data-orders]").forEach(button => {
 
-    button.addEventListener(
-      "click",
-      openOrders
-    );
+  /* FAVORIS */
 
+  $$(
+    "[data-open-favorites], " +
+    "#favorites-btn, " +
+    ".favorites-btn"
+  ).forEach(button => {
+
+    button.onclick = event => {
+
+      event.preventDefault();
+
+      const modal =
+        $("#favorites-modal") ||
+        $("#favoritesModal");
+
+      if (modal) {
+
+        openModal(modal);
+        renderFavorites();
+
+      } else {
+
+        toast(
+          `${favorites.length} favori(s) ❤️`
+        );
+      }
+    };
   });
 
-  $$("[data-admin]").forEach(button => {
 
-    button.addEventListener(
-      "click",
-      openAdmin
-    );
+  /* COMPTE */
 
+  $$(
+    "[data-account], " +
+    "#account-btn, " +
+    ".account-btn"
+  ).forEach(button => {
+
+    button.onclick = event => {
+
+      event.preventDefault();
+
+      if (currentUser) {
+
+        renderAccount();
+
+        const modal =
+          $("#account-modal") ||
+          $("#accountModal");
+
+        if (modal) {
+          openModal(modal);
+        }
+
+      } else {
+
+        openAuthModal();
+      }
+    };
   });
 
-  $$("[data-close-modal]").forEach(button => {
 
-    button.addEventListener(
-      "click",
-      closeModal
-    );
+  /* COMMANDES */
 
+  $$(
+    "[data-orders], " +
+    "#orders-btn, " +
+    ".orders-btn"
+  ).forEach(button => {
+
+    button.onclick = event => {
+
+      event.preventDefault();
+
+      openOrders();
+    };
   });
 
+
+  /* ADMIN */
+
+  $$(
+    "[data-admin], " +
+    "#admin-btn, " +
+    ".admin-btn"
+  ).forEach(button => {
+
+    button.onclick = event => {
+
+      event.preventDefault();
+
+      openAdmin();
+    };
+  });
+
+
+  /* NOVA100 */
+
+  $$(
+    "[data-nova100], " +
+    "#nova100-btn, " +
+    ".nova100-btn"
+  ).forEach(button => {
+
+    button.onclick = event => {
+
+      event.preventDefault();
+
+      activateNova100();
+    };
+  });
+
+
+  /* FERMETURE */
+
+  $$(
+    "[data-close-modal], " +
+    ".modal-close, " +
+    ".close-modal, " +
+    ".modal-close-btn"
+  ).forEach(button => {
+
+    button.onclick = event => {
+
+      event.preventDefault();
+
+      closeModal();
+    };
+  });
+
+
+  /* OUVERTURE PRODUIT */
+
+  $$(
+    "[data-open-product]"
+  ).forEach(button => {
+
+    button.onclick = event => {
+
+      event.preventDefault();
+
+      openProduct(
+        button.dataset.openProduct
+      );
+    };
+  });
 }
 
 
 /* =========================================================
-   EXISTING CART
+   PANIER EXISTANT
 ========================================================= */
 
 function setupExistingCart() {
 
   renderCart();
+  updateCartBadge();
 
-  $$(
-    "#checkout-btn, .checkout-btn"
-  ).forEach(button => {
+  $$("[data-add-cart]").forEach(button => {
 
-    button.addEventListener(
-      "click",
-      openCheckout
-    );
+    button.onclick = event => {
 
+      event.preventDefault();
+      event.stopPropagation();
+
+      addToCart(
+        button.dataset.addCart
+      );
+    };
   });
-
 }
 
 
 /* =========================================================
-   MODAL CLOSE
-========================================================= */
-
-document.addEventListener(
-  "click",
-  event => {
-
-    if (
-      event.target.matches(
-        "[data-close-modal]"
-      )
-    ) {
-
-      closeModal();
-
-    }
-
-  }
-);
-
-
-/* =========================================================
-   ESCAPE
+   FERMETURE ESC
 ========================================================= */
 
 document.addEventListener(
   "keydown",
   event => {
 
-    if (
-      event.key === "Escape"
-    ) {
-
+    if (event.key === "Escape") {
       closeModal();
-
     }
-
   }
 );
 
 
 /* =========================================================
-   FIREBASE AUTH STATE
+   FERMETURE EN CLIQUANT L'OVERLAY
+========================================================= */
+
+document.addEventListener(
+  "click",
+  event => {
+
+    const target = event.target;
+
+    if (
+      target.classList.contains("modal") ||
+      target.classList.contains("nova-modal") ||
+      target.classList.contains("overlay")
+    ) {
+      closeModal();
+    }
+  }
+);
+
+
+/* =========================================================
+   AUTH STATE
 ========================================================= */
 
 onAuthStateChanged(
   auth,
   user => {
 
-    currentUser =
-      user || null;
+    currentUser = user;
 
-    updateAccountUI();
+    if (
+      !user ||
+      user.email?.toLowerCase() !==
+        ADMIN_EMAIL.toLowerCase()
+    ) {
 
-    console.log(
-      currentUser
-        ? "NovaShop connecté : " +
-          currentUser.email
-        : "NovaShop : utilisateur déconnecté"
-    );
+      adminMode = false;
 
+      localStorage.removeItem(
+        ADMIN_ACCESS_KEY
+      );
+    }
+
+    renderAccount();
   }
 );
 
@@ -3282,11 +2920,11 @@ onAuthStateChanged(
 
 function initNovaShop() {
 
-  initTheme();
-
   renderProducts();
 
   renderCart();
+
+  renderFavorites();
 
   updateCartBadge();
 
@@ -3296,24 +2934,26 @@ function initNovaShop() {
 
   setupSort();
 
-  setupAuth();
-
-  setupAccount();
-
-  setupTheme();
-
   setupGlobalButtons();
 
   setupExistingCart();
 
+  setupTheme();
+
   updateNova100Button();
 
+  console.log(
+    `NovaShop chargé : ${products.length} produits`
+  );
 }
 
 
+/* =========================================================
+   LANCEMENT
+========================================================= */
+
 if (
-  document.readyState ===
-  "loading"
+  document.readyState === "loading"
 ) {
 
   document.addEventListener(
@@ -3324,17 +2964,40 @@ if (
 } else {
 
   initNovaShop();
-
 }
 
 
 /* =========================================================
-   PUBLIC API
+   API PUBLIQUE
 ========================================================= */
 
 window.NovaShop = {
 
   products,
+
+  getProduct,
+
+  addToCart,
+
+  removeFromCart,
+
+  changeQuantity,
+
+  toggleFavorite,
+
+  openProduct,
+
+  openCheckout,
+
+  openAuthModal,
+
+  openOrders,
+
+  openAdmin,
+
+  activateNova100,
+
+  deactivateNova100,
 
   get cart() {
     return cart;
@@ -3344,38 +3007,12 @@ window.NovaShop = {
     return favorites;
   },
 
-  addToCart,
-
-  removeFromCart,
-
-  changeCartQty,
-
-  toggleFavorite,
-
-  openProduct,
-
-  openCheckout,
-
-  openOrders,
-
-  activateNova100,
-
-  openAdmin,
-
-  login,
-
-  register,
-
-  logout: () => signOut(auth),
-
   get currentUser() {
     return currentUser;
+  },
+
+  get total() {
+    return discountedTotal();
   }
 
 };
-
-console.log(
-  "NovaShop chargé avec",
-  products.length,
-  "produits."
-);
