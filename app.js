@@ -1,3 +1,7 @@
+/* =========================================================
+   NOVASHOP - APP.JS COMPLET
+========================================================= */
+
 import {
   initializeApp
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
@@ -38,9 +42,19 @@ const firebaseConfig = {
   measurementId: "G-XNY5X2VMY9"
 };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+let app = null;
+let auth = null;
+let db = null;
+let firebaseReady = false;
+
+try {
+  app = initializeApp(firebaseConfig);
+  auth = getAuth(app);
+  db = getFirestore(app);
+  firebaseReady = true;
+} catch (error) {
+  console.error("Firebase initialization error:", error);
+}
 
 
 /* =========================================================
@@ -451,9 +465,14 @@ let cart = [];
 let reviewsCache = {};
 
 try {
-  cart = JSON.parse(localStorage.getItem("novaCart") || "[]");
-  if (!Array.isArray(cart)) cart = [];
-} catch {
+  const saved = JSON.parse(
+    localStorage.getItem("novaCart") || "[]"
+  );
+
+  if(Array.isArray(saved)){
+    cart = saved;
+  }
+} catch(error){
   cart = [];
 }
 
@@ -463,6 +482,7 @@ try {
 ========================================================= */
 
 function escapeHTML(value){
+
   return String(value ?? "")
     .replaceAll("&","&amp;")
     .replaceAll("<","&lt;")
@@ -476,22 +496,44 @@ function escapeAttribute(value){
 }
 
 function money(value){
+
   const n = Number(value) || 0;
-  if(n === 0) return "Gratuit";
-  return n.toLocaleString("fr-FR",{
-    style:"currency",
-    currency:"EUR"
-  });
+
+  if(n === 0){
+    return "Gratuit";
+  }
+
+  return n.toLocaleString(
+    "fr-FR",
+    {
+      style:"currency",
+      currency:"EUR"
+    }
+  );
 }
 
 function saveCart(){
-  localStorage.setItem("novaCart",JSON.stringify(cart));
+
+  try{
+    localStorage.setItem(
+      "novaCart",
+      JSON.stringify(cart)
+    );
+  }catch(error){
+    console.error("Cart save error:",error);
+  }
 }
 
 function toast(message){
-  if(!toastContainer) return;
 
-  const item = document.createElement("div");
+  if(!toastContainer){
+    alert(message);
+    return;
+  }
+
+  const item =
+    document.createElement("div");
+
   item.className = "toast-item";
   item.textContent = message;
 
@@ -503,48 +545,90 @@ function toast(message){
 }
 
 function showModal(title,html){
+
+  if(!modal || !modalContent || !modalTitle){
+    return;
+  }
+
   modalTitle.textContent = title;
   modalContent.innerHTML = html;
   modal.classList.add("show");
 }
 
 function closeModal(){
-  modal.classList.remove("show");
+
+  if(modal){
+    modal.classList.remove("show");
+  }
 }
 
 function openCart(){
-  cartOverlay.classList.add("show");
-  cartDrawer.classList.add("open");
+
+  if(cartOverlay){
+    cartOverlay.classList.add("show");
+  }
+
+  if(cartDrawer){
+    cartDrawer.classList.add("open");
+  }
 }
 
 function closeCart(){
-  cartOverlay.classList.remove("show");
-  cartDrawer.classList.remove("open");
+
+  if(cartOverlay){
+    cartOverlay.classList.remove("show");
+  }
+
+  if(cartDrawer){
+    cartDrawer.classList.remove("open");
+  }
 }
 
 function starsHTML(rating){
-  const full = Math.round(rating);
-  return "★".repeat(full) + "☆".repeat(5-full);
+
+  const full =
+    Math.max(0,Math.min(5,Math.round(rating)));
+
+  return (
+    "★".repeat(full) +
+    "☆".repeat(5-full)
+  );
 }
 
 function randomRating(productId){
-  if(reviewsCache[productId]) return reviewsCache[productId];
+
+  if(reviewsCache[productId]){
+    return reviewsCache[productId];
+  }
 
   let hash = 0;
 
   for(const char of productId){
-    hash = ((hash << 5) - hash) + char.charCodeAt(0);
+
+    hash =
+      ((hash << 5) - hash) +
+      char.charCodeAt(0);
+
     hash |= 0;
   }
 
-  const rating = 4 + (Math.abs(hash) % 11) / 10;
-  reviewsCache[productId] = Math.min(5,Number(rating.toFixed(1)));
+  const rating =
+    4 + (Math.abs(hash) % 11) / 10;
+
+  reviewsCache[productId] =
+    Math.min(
+      5,
+      Number(rating.toFixed(1))
+    );
 
   return reviewsCache[productId];
 }
 
 function productById(id){
-  return products.find(p => p.id === id);
+
+  return products.find(
+    product => product.id === id
+  );
 }
 
 
@@ -554,19 +638,86 @@ function productById(id){
 
 function renderCategories(){
 
+  if(!categoriesEl){
+    return;
+  }
+
   const categories = [
     "Tous",
-    ...new Set(products.map(p => p.category))
+    ...new Set(
+      products.map(product=>product.category)
+    )
   ];
 
-  categoriesEl.innerHTML = categories.map(category => `
-    <button
-      class="category ${selectedCategory === category ? "active" : ""}"
-      data-category="${escapeAttribute(category)}"
-    >
-      ${escapeHTML(category)}
-    </button>
-  `).join("");
+  categoriesEl.innerHTML =
+    categories.map(category=>`
+
+      <button
+        class="category ${
+          selectedCategory === category
+            ? "active"
+            : ""
+        }"
+        data-category="${escapeAttribute(category)}"
+      >
+        ${escapeHTML(category)}
+      </button>
+
+    `).join("");
+}
+
+
+/* =========================================================
+   FILTER
+========================================================= */
+
+function filteredProducts(){
+
+  let list = products.filter(product=>{
+
+    const categoryOK =
+      selectedCategory === "Tous" ||
+      product.category === selectedCategory;
+
+    const text =
+      `${product.name} ${product.category}`
+        .toLowerCase();
+
+    const searchOK =
+      !searchValue ||
+      text.includes(
+        searchValue.toLowerCase()
+      );
+
+    return categoryOK && searchOK;
+  });
+
+  if(sortValue === "priceAsc"){
+
+    list.sort(
+      (a,b)=>a.price-b.price
+    );
+  }
+
+  if(sortValue === "priceDesc"){
+
+    list.sort(
+      (a,b)=>b.price-a.price
+    );
+  }
+
+  if(sortValue === "name"){
+
+    list.sort(
+      (a,b)=>
+        a.name.localeCompare(
+          b.name,
+          "fr"
+        )
+    );
+  }
+
+  return list;
 }
 
 
@@ -574,100 +725,111 @@ function renderCategories(){
    PRODUCTS
 ========================================================= */
 
-function filteredProducts(){
-
-  let list = products.filter(product => {
-
-    const categoryOK =
-      selectedCategory === "Tous" ||
-      product.category === selectedCategory;
-
-    const text =
-      `${product.name} ${product.category}`.toLowerCase();
-
-    const searchOK =
-      !searchValue ||
-      text.includes(searchValue.toLowerCase());
-
-    return categoryOK && searchOK;
-  });
-
-  if(sortValue === "priceAsc"){
-    list.sort((a,b)=>a.price-b.price);
-  }
-
-  if(sortValue === "priceDesc"){
-    list.sort((a,b)=>b.price-a.price);
-  }
-
-  if(sortValue === "name"){
-    list.sort((a,b)=>a.name.localeCompare(b.name,"fr"));
-  }
-
-  return list;
-}
-
 function renderProducts(){
+
+  if(!productsGrid){
+    console.error(
+      "NovaShop: #productGrid introuvable."
+    );
+    return;
+  }
 
   const list = filteredProducts();
 
   if(!list.length){
+
     productsGrid.innerHTML = `
       <div class="empty">
         😕 Aucun produit trouvé.
       </div>
     `;
+
     return;
   }
 
-  productsGrid.innerHTML = list.map(product => {
+  productsGrid.innerHTML =
+    list.map(product=>{
 
-    const rating = randomRating(product.id);
+      const rating =
+        randomRating(product.id);
 
-    return `
-      <article class="product" data-id="${escapeAttribute(product.id)}">
+      return `
 
-        ${product.new ? `<span class="new-badge">NOUVEAU</span>` : ""}
-
-        <img
-          class="product-img"
-          src="${escapeAttribute(product.image)}"
-          alt="${escapeAttribute(product.name)}"
-          loading="lazy"
-          onerror="this.onerror=null;this.src='${FALLBACK_IMAGE}'"
+        <article
+          class="product"
+          data-id="${escapeAttribute(product.id)}"
         >
 
-        <div class="product-body">
+          ${
+            product.new
+              ? `
+                <span class="new-badge">
+                  NOUVEAU
+                </span>
+              `
+              : ""
+          }
 
-          <div class="product-cat">
-            ${escapeHTML(product.category)}
+          <img
+            class="product-img"
+            src="${escapeAttribute(product.image)}"
+            alt="${escapeAttribute(product.name)}"
+            loading="lazy"
+            onerror="
+              this.onerror=null;
+              this.src='${FALLBACK_IMAGE}';
+            "
+          >
+
+          <div class="product-body">
+
+            <div class="product-cat">
+              ${escapeHTML(product.category)}
+            </div>
+
+            <h3>
+              ${escapeHTML(product.name)}
+            </h3>
+
+            <div class="rating">
+
+              <span class="stars">
+                ${starsHTML(rating)}
+              </span>
+
+              ${rating.toFixed(1)}/5
+
+            </div>
+
+            <div class="price">
+              ${money(product.price)}
+            </div>
+
+            <div class="product-actions">
+
+              <button
+                class="view-btn"
+                data-id="${escapeAttribute(product.id)}"
+              >
+                Voir
+              </button>
+
+              <button
+                class="add-btn"
+                data-id="${escapeAttribute(product.id)}"
+              >
+                Ajouter
+              </button>
+
+            </div>
+
           </div>
 
-          <h3>${escapeHTML(product.name)}</h3>
+        </article>
 
-          <div class="rating">
-            <span class="stars">${starsHTML(rating)}</span>
-            ${rating.toFixed(1)}/5
-          </div>
+      `;
 
-          <div class="price">
-            ${money(product.price)}
-          </div>
-
-          <div class="product-actions">
-            <button class="view-btn" data-id="${product.id}">
-              Voir
-            </button>
-
-            <button class="add-btn" data-id="${product.id}">
-              Ajouter
-            </button>
-          </div>
-
-        </div>
-      </article>
-    `;
-  }).join("");
+    }).join("");
 }
 
 
@@ -677,21 +839,29 @@ function renderProducts(){
 
 function openProduct(productId){
 
-  const product = productById(productId);
+  const product =
+    productById(productId);
 
-  if(!product) return;
+  if(!product){
+    return;
+  }
 
-  const rating = randomRating(product.id);
+  const rating =
+    randomRating(product.id);
 
   showModal(
     product.name,
     `
+
       <div class="product-modal">
 
         <img
           src="${escapeAttribute(product.image)}"
           alt="${escapeAttribute(product.name)}"
-          onerror="this.onerror=null;this.src='${FALLBACK_IMAGE}'"
+          onerror="
+            this.onerror=null;
+            this.src='${FALLBACK_IMAGE}';
+          "
         >
 
         <div>
@@ -718,22 +888,37 @@ function openProduct(productId){
           </p>
 
           <div class="actions-row">
-            <button class="primary" id="modalAddProduct">
+
+            <button
+              class="primary"
+              id="modalAddProduct"
+            >
               🛒 Ajouter au panier
             </button>
+
           </div>
 
         </div>
 
       </div>
+
     `
   );
 
-  $("modalAddProduct").onclick = ()=>{
-    addToCart(product.id);
-    closeModal();
-    openCart();
-  };
+  const button =
+    $("modalAddProduct");
+
+  if(button){
+
+    button.onclick = ()=>{
+
+      addToCart(product.id);
+
+      closeModal();
+      openCart();
+
+    };
+  }
 }
 
 
@@ -744,31 +929,47 @@ function openProduct(productId){
 function cartDetailed(){
 
   return cart
-    .map(item => {
+    .map(item=>{
 
-      const product = productById(item.id);
+      const product =
+        productById(item.id);
 
-      if(!product) return null;
+      if(!product){
+        return null;
+      }
 
       return {
         ...product,
-        qty:Math.max(1,Number(item.qty)||1)
+        qty:Math.max(
+          1,
+          Number(item.qty) || 1
+        )
       };
+
     })
     .filter(Boolean);
 }
 
 function addToCart(id){
 
-  const product = productById(id);
+  const product =
+    productById(id);
 
-  if(!product) return;
+  if(!product){
+    return;
+  }
 
-  const existing = cart.find(item => item.id === id);
+  const existing =
+    cart.find(
+      item=>item.id === id
+    );
 
   if(existing){
+
     existing.qty++;
+
   }else{
+
     cart.push({
       id,
       qty:1
@@ -778,19 +979,30 @@ function addToCart(id){
   saveCart();
   renderCart();
 
-  toast(`${product.name} ajouté au panier 🛒`);
+  toast(
+    `${product.name} ajouté au panier 🛒`
+  );
 }
 
 function updateCartQty(id,delta){
 
-  const item = cart.find(x => x.id === id);
+  const item =
+    cart.find(
+      x=>x.id === id
+    );
 
-  if(!item) return;
+  if(!item){
+    return;
+  }
 
   item.qty += delta;
 
   if(item.qty <= 0){
-    cart = cart.filter(x => x.id !== id);
+
+    cart =
+      cart.filter(
+        x=>x.id !== id
+      );
   }
 
   saveCart();
@@ -799,7 +1011,10 @@ function updateCartQty(id,delta){
 
 function removeFromCart(id){
 
-  cart = cart.filter(x => x.id !== id);
+  cart =
+    cart.filter(
+      x=>x.id !== id
+    );
 
   saveCart();
   renderCart();
@@ -807,14 +1022,22 @@ function removeFromCart(id){
 
 function renderCart(){
 
-  const items = cartDetailed();
+  if(!cartItems){
+    return;
+  }
 
-  const count = items.reduce(
-    (sum,item)=>sum+item.qty,
-    0
-  );
+  const items =
+    cartDetailed();
 
-  cartBadge.textContent = count;
+  const count =
+    items.reduce(
+      (sum,item)=>sum+item.qty,
+      0
+    );
+
+  if(cartBadge){
+    cartBadge.textContent = count;
+  }
 
   if(!items.length){
 
@@ -824,64 +1047,85 @@ function renderCart(){
       </div>
     `;
 
-    cartTotal.textContent = money(0);
+    if(cartTotal){
+      cartTotal.textContent =
+        money(0);
+    }
+
     return;
   }
 
   let total = 0;
 
-  cartItems.innerHTML = items.map(item => {
+  cartItems.innerHTML =
+    items.map(item=>{
 
-    total += item.price * item.qty;
+      total +=
+        item.price * item.qty;
 
-    return `
-      <div class="cart-item">
+      return `
 
-        <img
-          src="${escapeAttribute(item.image)}"
-          alt=""
-          onerror="this.onerror=null;this.src='${FALLBACK_IMAGE}'"
-        >
+        <div class="cart-item">
 
-        <div>
+          <img
+            src="${escapeAttribute(item.image)}"
+            alt=""
+            onerror="
+              this.onerror=null;
+              this.src='${FALLBACK_IMAGE}';
+            "
+          >
 
-          <div class="cart-name">
-            ${escapeHTML(item.name)}
-          </div>
+          <div>
 
-          <div class="cart-price">
-            ${money(item.price * item.qty)}
-          </div>
+            <div class="cart-name">
+              ${escapeHTML(item.name)}
+            </div>
 
-          <div class="qty">
+            <div class="cart-price">
+              ${money(item.price * item.qty)}
+            </div>
 
-            <button
-              data-action="minus"
-              data-id="${item.id}"
-            >−</button>
+            <div class="qty">
 
-            <b>${item.qty}</b>
+              <button
+                data-action="minus"
+                data-id="${escapeAttribute(item.id)}"
+              >
+                −
+              </button>
 
-            <button
-              data-action="plus"
-              data-id="${item.id}"
-            >+</button>
+              <b>${item.qty}</b>
 
-            <button
-              class="remove"
-              data-action="remove"
-              data-id="${item.id}"
-            >Supprimer</button>
+              <button
+                data-action="plus"
+                data-id="${escapeAttribute(item.id)}"
+              >
+                +
+              </button>
+
+              <button
+                class="remove"
+                data-action="remove"
+                data-id="${escapeAttribute(item.id)}"
+              >
+                Supprimer
+              </button>
+
+            </div>
 
           </div>
 
         </div>
 
-      </div>
-    `;
-  }).join("");
+      `;
 
-  cartTotal.textContent = money(total);
+    }).join("");
+
+  if(cartTotal){
+    cartTotal.textContent =
+      money(total);
+  }
 }
 
 
@@ -891,7 +1135,8 @@ function renderCart(){
 
 function authError(error){
 
-  const code = error?.code || "";
+  const code =
+    error?.code || "";
 
   const messages = {
 
@@ -926,7 +1171,7 @@ function authError(error){
       "Problème de connexion Internet.",
 
     "auth/operation-not-allowed":
-      "La connexion e-mail/mot de passe n'est pas activée dans Firebase.",
+      "La connexion par e-mail/mot de passe n'est pas activée dans Firebase.",
 
     "auth/unauthorized-domain":
       "Ce domaine n'est pas autorisé dans Firebase Authentication.",
@@ -938,8 +1183,14 @@ function authError(error){
       "Cette application n'est pas autorisée par Firebase."
   };
 
-  return messages[code] ||
-    `Erreur Firebase : ${code || error?.message || "erreur inconnue"}`;
+  return (
+    messages[code] ||
+    `Erreur Firebase : ${
+      code ||
+      error?.message ||
+      "erreur inconnue"
+    }`
+  );
 }
 
 
@@ -954,11 +1205,15 @@ function openAccount(){
     showModal(
       "👤 Mon compte",
       `
+
         <div class="admin-card">
 
           <h3>Connecté</h3>
 
-          <p class="muted" style="margin-top:8px">
+          <p
+            class="muted"
+            style="margin-top:8px"
+          >
             ${escapeHTML(currentUser.email)}
           </p>
 
@@ -981,24 +1236,40 @@ function openAccount(){
           </div>
 
         </div>
+
       `
     );
 
-    $("logoutBtn").onclick = async ()=>{
+    $("logoutBtn").onclick =
+      async ()=>{
 
-      try{
-        await signOut(auth);
+        if(!auth){
+          return;
+        }
+
+        try{
+
+          await signOut(auth);
+
+          closeModal();
+
+          toast(
+            "Déconnexion réussie."
+          );
+
+        }catch(error){
+
+          toast(
+            authError(error)
+          );
+        }
+      };
+
+    $("accountOrdersBtn").onclick =
+      ()=>{
         closeModal();
-        toast("Déconnexion réussie.");
-      }catch(error){
-        toast(authError(error));
-      }
-    };
-
-    $("accountOrdersBtn").onclick = ()=>{
-      closeModal();
-      openOrders();
-    };
+        openOrders();
+      };
 
     return;
   }
@@ -1011,180 +1282,334 @@ function showLoginForm(){
   showModal(
     "👤 Compte NovaShop",
     `
+
       <div class="auth-tabs">
-        <button class="primary" id="loginTab">
+
+        <button
+          class="primary"
+          id="loginTab"
+        >
           Connexion
         </button>
 
-        <button class="secondary" id="registerTab">
+        <button
+          class="secondary"
+          id="registerTab"
+        >
           Créer un compte
         </button>
+
       </div>
 
       <div id="authForm"></div>
+
     `
   );
 
   renderLoginForm();
 
-  $("loginTab").onclick = renderLoginForm;
-  $("registerTab").onclick = renderRegisterForm;
+  $("loginTab").onclick =
+    renderLoginForm;
+
+  $("registerTab").onclick =
+    renderRegisterForm;
 }
 
 function renderLoginForm(){
 
   $("authForm").innerHTML = `
+
     <div class="checkout-section">
 
       <div class="field">
+
         <label>E-mail</label>
-        <input id="authEmail" type="email" autocomplete="email">
+
+        <input
+          id="authEmail"
+          type="email"
+          autocomplete="email"
+        >
+
       </div>
 
       <br>
 
       <div class="field">
+
         <label>Mot de passe</label>
-        <input id="authPassword" type="password" autocomplete="current-password">
+
+        <input
+          id="authPassword"
+          type="password"
+          autocomplete="current-password"
+        >
+
       </div>
 
-      <div id="authError" style="margin-top:12px"></div>
+      <div
+        id="authError"
+        style="margin-top:12px"
+      ></div>
 
       <div class="actions-row">
-        <button class="primary" id="loginSubmit">
+
+        <button
+          class="primary"
+          id="loginSubmit"
+        >
           Se connecter
         </button>
+
       </div>
 
     </div>
+
   `;
 
-  $("loginSubmit").onclick = async ()=>{
+  $("loginSubmit").onclick =
+    async ()=>{
 
-    const email = $("authEmail").value.trim();
-    const password = $("authPassword").value;
+      const email =
+        $("authEmail").value.trim();
 
-    if(!email || !password){
-      $("authError").innerHTML =
-        `<small class="error">Remplis tous les champs.</small>`;
-      return;
-    }
+      const password =
+        $("authPassword").value;
 
-    const btn = $("loginSubmit");
+      const errorBox =
+        $("authError");
 
-    btn.disabled = true;
-    btn.textContent = "Connexion...";
+      if(!email || !password){
 
-    try{
+        errorBox.innerHTML = `
+          <small class="error">
+            Remplis tous les champs.
+          </small>
+        `;
 
-      await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
+        return;
+      }
 
-      closeModal();
-      toast("Connexion réussie ✅");
+      if(!auth){
 
-    }catch(error){
+        errorBox.innerHTML = `
+          <small class="error">
+            Firebase n'a pas pu être initialisé.
+          </small>
+        `;
 
-      $("authError").innerHTML =
-        `<small class="error">${escapeHTML(authError(error))}</small>`;
+        return;
+      }
 
-      btn.disabled = false;
-      btn.textContent = "Se connecter";
-    }
-  };
+      const btn =
+        $("loginSubmit");
+
+      btn.disabled = true;
+      btn.textContent =
+        "Connexion...";
+
+      try{
+
+        await signInWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+
+        closeModal();
+
+        toast(
+          "Connexion réussie ✅"
+        );
+
+      }catch(error){
+
+        console.error(
+          "LOGIN ERROR:",
+          error
+        );
+
+        errorBox.innerHTML = `
+          <small class="error">
+            ${escapeHTML(
+              authError(error)
+            )}
+          </small>
+        `;
+
+        btn.disabled = false;
+        btn.textContent =
+          "Se connecter";
+      }
+    };
 }
 
 function renderRegisterForm(){
 
   $("authForm").innerHTML = `
+
     <div class="checkout-section">
 
       <div class="field">
+
         <label>E-mail</label>
-        <input id="authEmail" type="email" autocomplete="email">
+
+        <input
+          id="authEmail"
+          type="email"
+          autocomplete="email"
+        >
+
       </div>
 
       <br>
 
       <div class="field">
+
         <label>Mot de passe</label>
+
         <input
           id="authPassword"
           type="password"
           autocomplete="new-password"
         >
+
       </div>
 
       <br>
 
       <div class="field">
+
         <label>Confirmer le mot de passe</label>
+
         <input
           id="authPassword2"
           type="password"
           autocomplete="new-password"
         >
+
       </div>
 
-      <div id="authError" style="margin-top:12px"></div>
+      <div
+        id="authError"
+        style="margin-top:12px"
+      ></div>
 
       <div class="actions-row">
-        <button class="primary" id="registerSubmit">
+
+        <button
+          class="primary"
+          id="registerSubmit"
+        >
           Créer mon compte
         </button>
+
       </div>
 
     </div>
+
   `;
 
-  $("registerSubmit").onclick = async ()=>{
+  $("registerSubmit").onclick =
+    async ()=>{
 
-    const email = $("authEmail").value.trim();
-    const password = $("authPassword").value;
-    const password2 = $("authPassword2").value;
+      const email =
+        $("authEmail").value.trim();
 
-    const errorBox = $("authError");
+      const password =
+        $("authPassword").value;
 
-    if(!email || !password || !password2){
-      errorBox.innerHTML =
-        `<small class="error">Remplis tous les champs.</small>`;
-      return;
-    }
+      const password2 =
+        $("authPassword2").value;
 
-    if(password !== password2){
-      errorBox.innerHTML =
-        `<small class="error">Les mots de passe sont différents.</small>`;
-      return;
-    }
+      const errorBox =
+        $("authError");
 
-    const btn = $("registerSubmit");
+      if(!email || !password || !password2){
 
-    btn.disabled = true;
-    btn.textContent = "Création...";
+        errorBox.innerHTML = `
+          <small class="error">
+            Remplis tous les champs.
+          </small>
+        `;
 
-    try{
+        return;
+      }
 
-      await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
+      if(password !== password2){
 
-      closeModal();
-      toast("Compte créé avec succès ✅");
+        errorBox.innerHTML = `
+          <small class="error">
+            Les mots de passe sont différents.
+          </small>
+        `;
 
-    }catch(error){
+        return;
+      }
 
-      errorBox.innerHTML =
-        `<small class="error">${escapeHTML(authError(error))}</small>`;
+      if(password.length < 6){
 
-      btn.disabled = false;
-      btn.textContent = "Créer mon compte";
-    }
-  };
+        errorBox.innerHTML = `
+          <small class="error">
+            Le mot de passe doit contenir au moins 6 caractères.
+          </small>
+        `;
+
+        return;
+      }
+
+      if(!auth){
+
+        errorBox.innerHTML = `
+          <small class="error">
+            Firebase n'a pas pu être initialisé.
+          </small>
+        `;
+
+        return;
+      }
+
+      const btn =
+        $("registerSubmit");
+
+      btn.disabled = true;
+      btn.textContent =
+        "Création...";
+
+      try{
+
+        await createUserWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+
+        closeModal();
+
+        toast(
+          "Compte créé avec succès ✅"
+        );
+
+      }catch(error){
+
+        console.error(
+          "REGISTER ERROR:",
+          error
+        );
+
+        errorBox.innerHTML = `
+          <small class="error">
+            ${escapeHTML(
+              authError(error)
+            )}
+          </small>
+        `;
+
+        btn.disabled = false;
+        btn.textContent =
+          "Créer mon compte";
+      }
+    };
 }
 
 
@@ -1194,16 +1619,28 @@ function renderRegisterForm(){
 
 function getTheme(){
 
-  const saved = localStorage.getItem("novaThemeChoice");
+  const saved =
+    localStorage.getItem(
+      "novaThemeChoice"
+    );
 
-  if(saved === "light" || saved === "dark"){
+  if(
+    saved === "light" ||
+    saved === "dark"
+  ){
     return saved;
   }
 
-  return window.matchMedia &&
-    window.matchMedia("(prefers-color-scheme:light)").matches
-      ? "light"
-      : "dark";
+  if(
+    window.matchMedia &&
+    window.matchMedia(
+      "(prefers-color-scheme:light)"
+    ).matches
+  ){
+    return "light";
+  }
+
+  return "dark";
 }
 
 function applyTheme(){
@@ -1219,46 +1656,80 @@ function openSettings(){
   showModal(
     "⚙️ Paramètres",
     `
+
       <div class="checkout-section">
 
         <h3>Apparence</h3>
 
         <div class="actions-row">
 
-          <button class="primary" id="darkTheme">
+          <button
+            class="primary"
+            id="darkTheme"
+          >
             🌙 Sombre
           </button>
 
-          <button class="secondary" id="lightTheme">
+          <button
+            class="secondary"
+            id="lightTheme"
+          >
             ☀️ Claire
           </button>
 
-          <button class="secondary" id="autoTheme">
+          <button
+            class="secondary"
+            id="autoTheme"
+          >
             🖥️ Automatique
           </button>
 
         </div>
 
       </div>
+
     `
   );
 
   $("darkTheme").onclick = ()=>{
-    localStorage.setItem("novaThemeChoice","dark");
+
+    localStorage.setItem(
+      "novaThemeChoice",
+      "dark"
+    );
+
     applyTheme();
-    toast("Thème sombre activé 🌙");
+
+    toast(
+      "Thème sombre activé 🌙"
+    );
   };
 
   $("lightTheme").onclick = ()=>{
-    localStorage.setItem("novaThemeChoice","light");
+
+    localStorage.setItem(
+      "novaThemeChoice",
+      "light"
+    );
+
     applyTheme();
-    toast("Thème clair activé ☀️");
+
+    toast(
+      "Thème clair activé ☀️"
+    );
   };
 
   $("autoTheme").onclick = ()=>{
-    localStorage.removeItem("novaThemeChoice");
+
+    localStorage.removeItem(
+      "novaThemeChoice"
+    );
+
     applyTheme();
-    toast("Thème automatique activé 🖥️");
+
+    toast(
+      "Thème automatique activé 🖥️"
+    );
   };
 }
 
@@ -1279,10 +1750,15 @@ function validateAddress(address){
   );
 }
 
-function calculateDiscountedTotal(subtotal,promo){
+function calculateDiscountedTotal(
+  subtotal,
+  promo
+){
 
   if(
-    String(promo || "").trim().toUpperCase() ===
+    String(promo || "")
+      .trim()
+      .toUpperCase() ===
     "NOVA100"
   ){
     return 0;
@@ -1294,27 +1770,50 @@ function calculateDiscountedTotal(subtotal,promo){
 function getAddressFromForm(){
 
   return {
-    firstName:$("firstName")?.value.trim() || "",
-    lastName:$("lastName")?.value.trim() || "",
-    street:$("street")?.value.trim() || "",
-    postalCode:$("postalCode")?.value.trim() || "",
-    city:$("city")?.value.trim() || "",
-    country:$("country")?.value.trim() || ""
+
+    firstName:
+      $("firstName")?.value.trim() || "",
+
+    lastName:
+      $("lastName")?.value.trim() || "",
+
+    street:
+      $("street")?.value.trim() || "",
+
+    postalCode:
+      $("postalCode")?.value.trim() || "",
+
+    city:
+      $("city")?.value.trim() || "",
+
+    country:
+      $("country")?.value.trim() || ""
+
   };
 }
 
 function openCheckout(){
 
-  const items = cartDetailed();
+  const items =
+    cartDetailed();
 
   if(!items.length){
-    toast("Ton panier est vide.");
+
+    toast(
+      "Ton panier est vide."
+    );
+
     return;
   }
 
   if(!currentUser){
-    toast("Connecte-toi pour commander.");
+
+    toast(
+      "Connecte-toi pour commander."
+    );
+
     openAccount();
+
     return;
   }
 
@@ -1326,12 +1825,17 @@ function drawCheckout(
   promoMessage = ""
 ){
 
-  const items = cartDetailed();
+  const items =
+    cartDetailed();
 
-  const subtotal = items.reduce(
-    (sum,item)=>sum + item.price * item.qty,
-    0
-  );
+  const subtotal =
+    items.reduce(
+      (sum,item)=>
+        sum +
+        item.price *
+        item.qty,
+      0
+    );
 
   const finalTotal =
     calculateDiscountedTotal(
@@ -1342,11 +1846,15 @@ function drawCheckout(
   showModal(
     "🧾 Finaliser la commande",
     `
+
       <div class="checkout-section">
 
         <h3>📍 Adresse</h3>
 
-        <div class="form-grid" style="margin-top:15px">
+        <div
+          class="form-grid"
+          style="margin-top:15px"
+        >
 
           <div class="field">
             <label>Prénom</label>
@@ -1375,23 +1883,40 @@ function drawCheckout(
 
           <div class="field full">
             <label>Pays</label>
-            <input id="country" value="France">
+            <input
+              id="country"
+              value="France"
+            >
           </div>
 
         </div>
 
       </div>
 
+
       <div class="checkout-section">
 
         <h3>🎟️ Code promo</h3>
 
-        <div style="display:flex;gap:8px;margin-top:12px">
+        <div
+          style="
+            display:flex;
+            gap:8px;
+            margin-top:12px
+          "
+        >
 
           <input
             id="promoInput"
             placeholder="Code promo"
-            style="flex:1;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--card2);color:var(--text)"
+            style="
+              flex:1;
+              padding:12px;
+              border:1px solid var(--line);
+              border-radius:10px;
+              background:var(--card2);
+              color:var(--text)
+            "
             value="${escapeAttribute(promoApplied)}"
           >
 
@@ -1404,17 +1929,24 @@ function drawCheckout(
 
         </div>
 
-        <div id="promoMessage" style="margin-top:10px">
+        <div
+          id="promoMessage"
+          style="margin-top:10px"
+        >
           ${promoMessage}
         </div>
 
       </div>
 
+
       <div class="checkout-section">
 
         <h3>💳 Paiement</h3>
 
-        <div class="payment-grid" style="margin-top:12px">
+        <div
+          class="payment-grid"
+          style="margin-top:12px"
+        >
 
           <button
             class="payment-button"
@@ -1432,33 +1964,63 @@ function drawCheckout(
 
         </div>
 
-        <p class="muted" style="margin-top:10px;font-size:12px">
-          Le paiement CB est actuellement une interface de démonstration.
+        <p
+          class="muted"
+          style="
+            margin-top:10px;
+            font-size:12px
+          "
+        >
+          Le paiement CB est actuellement
+          une interface de démonstration.
         </p>
 
       </div>
 
+
       <div class="checkout-section">
 
         <div class="total-line">
+
           <span>Sous-total</span>
-          <span>${money(subtotal)}</span>
+
+          <span>
+            ${money(subtotal)}
+          </span>
+
         </div>
 
         ${
-          promoApplied.toUpperCase() === "NOVA100"
+          String(promoApplied)
+            .toUpperCase() ===
+          "NOVA100"
+
           ? `
+
             <div class="total-line">
+
               <span>Réduction</span>
-              <span style="color:#22c55e">-${money(subtotal)}</span>
+
+              <span
+                style="color:#22c55e"
+              >
+                -${money(subtotal)}
+              </span>
+
             </div>
+
           `
           : ""
         }
 
         <div class="total-line">
+
           <span>Total</span>
-          <span>${money(finalTotal)}</span>
+
+          <span>
+            ${money(finalTotal)}
+          </span>
+
         </div>
 
         <button
@@ -1466,73 +2028,129 @@ function drawCheckout(
           id="confirmCheckout"
           style="width:100%"
         >
-          ${finalTotal === 0 ? "Valider gratuitement" : "Continuer avec PayPal"}
+          ${
+            finalTotal === 0
+              ? "Valider gratuitement"
+              : "Continuer avec PayPal"
+          }
         </button>
 
       </div>
+
     `
   );
 
-  $("promoBtn").onclick = ()=>{
+  const promoBtn =
+    $("promoBtn");
 
-    const code =
-      $("promoInput").value.trim().toUpperCase();
+  if(promoBtn){
 
-    if(code === "NOVA100"){
+    promoBtn.onclick = ()=>{
 
-      drawCheckout(
-        "NOVA100",
-        `<span style="color:#22c55e;font-weight:800">
-          Code NOVA100 appliqué. Total à 0 € ✅
-        </span>`
+      const code =
+        $("promoInput")
+          .value
+          .trim()
+          .toUpperCase();
+
+      if(code === "NOVA100"){
+
+        drawCheckout(
+          "NOVA100",
+          `
+            <span
+              style="
+                color:#22c55e;
+                font-weight:800
+              "
+            >
+              Code NOVA100 appliqué.
+              Total à 0 € ✅
+            </span>
+          `
+        );
+
+      }else{
+
+        $("promoMessage").innerHTML = `
+          <span
+            style="
+              color:#ef4444;
+              font-weight:800
+            "
+          >
+            Code promo invalide.
+          </span>
+        `;
+      }
+    };
+  }
+
+  const cardChoice =
+    $("cardChoice");
+
+  if(cardChoice){
+    cardChoice.onclick =
+      openCardPayment;
+  }
+
+  const paypalChoice =
+    $("paypalChoice");
+
+  if(paypalChoice){
+
+    paypalChoice.onclick = ()=>{
+
+      const address =
+        getAddressFromForm();
+
+      if(!validateAddress(address)){
+
+        toast(
+          "Complète ton adresse."
+        );
+
+        return;
+      }
+
+      createCheckoutOrder(
+        items,
+        subtotal,
+        finalTotal,
+        address,
+        promoApplied
       );
+    };
+  }
 
-    }else{
+  const confirm =
+    $("confirmCheckout");
 
-      $("promoMessage").innerHTML =
-        `<span style="color:#ef4444;font-weight:800">
-          Code promo invalide.
-        </span>`;
-    }
-  };
+  if(confirm){
 
-  $("cardChoice").onclick = openCardPayment;
+    confirm.onclick = ()=>{
 
-  $("paypalChoice").onclick = ()=>{
+      const address =
+        getAddressFromForm();
 
-    const address = getAddressFromForm();
+      if(!validateAddress(address)){
 
-    if(!validateAddress(address)){
-      toast("Complète ton adresse.");
-      return;
-    }
+        toast(
+          "Complète tous les champs de livraison."
+        );
 
-    createCheckoutOrder(
-      items,
-      subtotal,
-      finalTotal,
-      address,
-      promoApplied
-    );
-  };
+        return;
+      }
 
-  $("confirmCheckout").onclick = ()=>{
-
-    const address = getAddressFromForm();
-
-    if(!validateAddress(address)){
-      toast("Complète tous les champs de livraison.");
-      return;
-    }
-
-    createCheckoutOrder(
-      items,
-      subtotal,
-      finalTotal,
-      address,
-      promoApplied
-    );
-  };
+      createCheckoutOrder(
+        items,
+        subtotal,
+        finalTotal,
+        address,
+        promoApplied
+      );
+    };
+  }
 }
 
 
@@ -1545,28 +2163,43 @@ function openCardPayment(){
   showModal(
     "💳 Paiement par carte",
     `
+
       <div class="card-box checkout-section">
 
-        <p class="muted" style="margin-bottom:15px">
+        <p
+          class="muted"
+          style="margin-bottom:15px"
+        >
           Paiement CB en mode démonstration.
-          Aucune donnée bancaire n'est enregistrée ni envoyée.
+          Aucune donnée bancaire n'est enregistrée
+          ni envoyée.
         </p>
 
         <div class="field">
-          <label>Nom sur la carte</label>
+
+          <label>
+            Nom sur la carte
+          </label>
+
           <input id="cardName">
+
         </div>
 
         <br>
 
         <div class="field">
-          <label>Numéro de carte</label>
+
+          <label>
+            Numéro de carte
+          </label>
+
           <input
             id="cardNumber"
             inputmode="numeric"
             maxlength="19"
             placeholder="0000 0000 0000 0000"
           >
+
         </div>
 
         <br>
@@ -1574,37 +2207,73 @@ function openCardPayment(){
         <div class="form-grid">
 
           <div class="field">
-            <label>Expiration</label>
-            <input id="cardExpiry" placeholder="MM/AA">
+
+            <label>
+              Expiration
+            </label>
+
+            <input
+              id="cardExpiry"
+              placeholder="MM/AA"
+            >
+
           </div>
 
           <div class="field">
-            <label>CVV</label>
-            <input id="cardCvv" inputmode="numeric" maxlength="4">
+
+            <label>
+              CVV
+            </label>
+
+            <input
+              id="cardCvv"
+              inputmode="numeric"
+              maxlength="4"
+            >
+
           </div>
 
         </div>
 
         <div class="actions-row">
 
-          <button class="primary" id="demoCardBtn">
+          <button
+            class="primary"
+            id="demoCardBtn"
+          >
             Tester le paiement
           </button>
 
         </div>
 
-        <div id="cardResult" style="margin-top:12px"></div>
+        <div
+          id="cardResult"
+          style="margin-top:12px"
+        ></div>
 
       </div>
+
     `
   );
 
-  $("demoCardBtn").onclick = ()=>{
+  const demoBtn =
+    $("demoCardBtn");
+
+  if(!demoBtn){
+    return;
+  }
+
+  demoBtn.onclick = ()=>{
 
     $("cardResult").innerHTML = `
+
       <small class="error">
-        Paiement CB non disponible : cette interface est uniquement une démo.
+
+        Paiement CB non disponible :
+        cette interface est uniquement une démo.
+
       </small>
+
     `;
 
     $("cardNumber").value = "";
@@ -1627,49 +2296,78 @@ async function createCheckoutOrder(
 ){
 
   if(!currentUser){
-    toast("Connecte-toi pour commander.");
+
+    toast(
+      "Connecte-toi pour commander."
+    );
+
     return;
   }
 
-  const button = $("confirmCheckout");
+  if(!db){
+
+    toast(
+      "Firebase Firestore n'est pas disponible."
+    );
+
+    return;
+  }
+
+  const button =
+    $("confirmCheckout");
 
   if(button){
+
     button.disabled = true;
-    button.textContent = "Enregistrement...";
+
+    button.textContent =
+      "Enregistrement...";
   }
 
   try{
 
     const orderData = {
 
-      userId:currentUser.uid,
+      userId:
+        currentUser.uid,
 
-      email:currentUser.email || "",
+      email:
+        currentUser.email || "",
 
-      items:items.map(item => ({
-        id:item.id,
-        name:item.name,
-        price:item.price,
-        qty:item.qty,
-        image:item.image
-      })),
+      items:
+        items.map(item=>({
 
-      subtotal:Number(subtotal.toFixed(2)),
+          id:item.id,
+          name:item.name,
+          price:item.price,
+          qty:item.qty,
+          image:item.image
 
-      total:Number(finalTotal.toFixed(2)),
+        })),
 
-      promoCode:promoApplied || "",
+      subtotal:
+        Number(
+          subtotal.toFixed(2)
+        ),
 
-      discount:Number(
-        (subtotal-finalTotal).toFixed(2)
-      ),
+      total:
+        Number(
+          finalTotal.toFixed(2)
+        ),
+
+      promoCode:
+        promoApplied || "",
+
+      discount:
+        Number(
+          (subtotal-finalTotal)
+            .toFixed(2)
+        ),
 
       address,
 
       status:
-        finalTotal === 0
-          ? "Enregistrée"
-          : "Enregistrée",
+        "Enregistrée",
 
       paymentMethod:
         finalTotal === 0
@@ -1681,66 +2379,89 @@ async function createCheckoutOrder(
           ? "free"
           : "pending",
 
-      createdAt:serverTimestamp()
+      createdAt:
+        serverTimestamp()
     };
 
-    const ref = await addDoc(
-      collection(db,"orders"),
-      orderData
-    );
+    const ref =
+      await addDoc(
+        collection(db,"orders"),
+        orderData
+      );
 
     if(finalTotal === 0){
 
       cart = [];
+
       saveCart();
       renderCart();
 
       closeModal();
       closeCart();
 
-      toast("Commande enregistrée gratuitement ✅");
+      toast(
+        "Commande enregistrée gratuitement ✅"
+      );
 
       setTimeout(()=>{
+
         printInvoiceHTML({
           ...orderData,
           id:ref.id,
           createdAt:new Date()
         });
+
       },300);
 
       return;
     }
 
     const amount =
-      Number(finalTotal).toFixed(2);
+      Number(finalTotal)
+        .toFixed(2);
 
     const paypalURL =
       `https://paypal.me/SH0PNOVA/${amount}EUR`;
 
     cart = [];
+
     saveCart();
     renderCart();
 
     closeModal();
     closeCart();
 
-    toast("Commande créée. Ouverture de PayPal...");
+    toast(
+      "Commande créée. Ouverture de PayPal..."
+    );
 
     setTimeout(()=>{
-      window.location.href = paypalURL;
+
+      window.location.href =
+        paypalURL;
+
     },700);
 
   }catch(error){
 
-    console.error(error);
+    console.error(
+      "ORDER ERROR:",
+      error
+    );
 
     toast(
-      "Erreur lors de la création de la commande : " +
-      (error?.code || error?.message || "inconnue")
+      "Erreur commande : " +
+      (
+        error?.code ||
+        error?.message ||
+        "inconnue"
+      )
     );
 
     if(button){
+
       button.disabled = false;
+
       button.textContent =
         finalTotal === 0
           ? "Valider gratuitement"
@@ -1751,37 +2472,54 @@ async function createCheckoutOrder(
 
 
 /* =========================================================
-   ORDERS
+   TIMESTAMPS
 ========================================================= */
 
 function getTimestampValue(value){
 
-  if(!value) return 0;
+  if(!value){
+    return 0;
+  }
 
-  if(typeof value.toMillis === "function"){
+  if(
+    typeof value.toMillis ===
+    "function"
+  ){
     return value.toMillis();
   }
 
   if(value.seconds){
-    return value.seconds * 1000;
+
+    return (
+      value.seconds * 1000
+    );
   }
 
   if(value instanceof Date){
+
     return value.getTime();
   }
 
-  const n = Date.parse(value);
+  const n =
+    Date.parse(value);
 
-  return Number.isNaN(n) ? 0 : n;
+  return Number.isNaN(n)
+    ? 0
+    : n;
 }
 
 function formatTimestamp(value){
 
-  const timestamp = getTimestampValue(value);
+  const timestamp =
+    getTimestampValue(value);
 
-  if(!timestamp) return "Date inconnue";
+  if(!timestamp){
+    return "Date inconnue";
+  }
 
-  return new Date(timestamp).toLocaleString(
+  return new Date(
+    timestamp
+  ).toLocaleString(
     "fr-FR",
     {
       dateStyle:"medium",
@@ -1790,37 +2528,76 @@ function formatTimestamp(value){
   );
 }
 
+
+/* =========================================================
+   ORDERS
+========================================================= */
+
 async function openOrders(){
 
   if(!currentUser){
-    toast("Connecte-toi pour voir tes commandes.");
+
+    toast(
+      "Connecte-toi pour voir tes commandes."
+    );
+
     openAccount();
+
+    return;
+  }
+
+  if(!db){
+
+    showModal(
+      "📦 Mes commandes",
+      `
+        <div class="empty">
+          Firebase Firestore n'est pas disponible.
+        </div>
+      `
+    );
+
     return;
   }
 
   showModal(
     "📦 Mes commandes",
-    `<div class="empty">Chargement...</div>`
+    `
+      <div class="empty">
+        Chargement...
+      </div>
+    `
   );
 
   try{
 
-    const q = query(
-      collection(db,"orders"),
-      where("userId","==",currentUser.uid)
-    );
+    const q =
+      query(
+        collection(db,"orders"),
+        where(
+          "userId",
+          "==",
+          currentUser.uid
+        )
+      );
 
-    const snapshot = await getDocs(q);
+    const snapshot =
+      await getDocs(q);
 
-    const orders = snapshot.docs.map(d=>({
-      id:d.id,
-      ...d.data()
-    }));
+    const orders =
+      snapshot.docs.map(d=>({
+        id:d.id,
+        ...d.data()
+      }));
 
     orders.sort(
       (a,b)=>
-        getTimestampValue(b.createdAt) -
-        getTimestampValue(a.createdAt)
+        getTimestampValue(
+          b.createdAt
+        ) -
+        getTimestampValue(
+          a.createdAt
+        )
     );
 
     if(!orders.length){
@@ -1834,140 +2611,229 @@ async function openOrders(){
       return;
     }
 
-    modalContent.innerHTML = orders.map(order => {
+    modalContent.innerHTML =
+      orders.map(order=>{
 
-      const total = Number(order.total) || 0;
+        const total =
+          Number(order.total) || 0;
 
-      return `
-        <div class="order">
+        return `
 
-          <h3>
-            Commande #${escapeHTML(order.id.slice(0,8))}
-          </h3>
+          <div class="order">
 
-          <p class="muted">
-            ${formatTimestamp(order.createdAt)}
-          </p>
+            <h3>
+              Commande #${
+                escapeHTML(
+                  order.id.slice(0,8)
+                )
+              }
+            </h3>
 
-          <p style="margin-top:8px">
-            ${order.items?.length || 0} produit(s)
-          </p>
+            <p class="muted">
+              ${formatTimestamp(
+                order.createdAt
+              )}
+            </p>
 
-          <p style="margin-top:8px;font-weight:900">
-            ${money(total)}
-          </p>
+            <p style="margin-top:8px">
+              ${
+                order.items?.length || 0
+              }
+              produit(s)
+            </p>
 
-          <p style="margin-top:8px">
-            <span class="status">
-              ${escapeHTML(order.status || "Enregistrée")}
-            </span>
-          </p>
+            <p
+              style="
+                margin-top:8px;
+                font-weight:900
+              "
+            >
+              ${money(total)}
+            </p>
 
-          <p class="muted" style="margin-top:8px">
-            Paiement :
-            ${escapeHTML(order.paymentStatus || "pending")}
-          </p>
+            <p style="margin-top:8px">
 
-          ${
-            order.address?.city
+              <span class="status">
+                ${escapeHTML(
+                  order.status ||
+                  "Enregistrée"
+                )}
+              </span>
+
+            </p>
+
+            <p
+              class="muted"
+              style="margin-top:8px"
+            >
+              Paiement :
+              ${escapeHTML(
+                order.paymentStatus ||
+                "pending"
+              )}
+            </p>
+
+            ${
+              order.address?.city
               ? `
                 <p class="muted">
-                  Livraison : ${escapeHTML(order.address.city)}
+                  Livraison :
+                  ${escapeHTML(
+                    order.address.city
+                  )}
                 </p>
               `
               : ""
-          }
+            }
 
-          ${
-            order.trackingNumber
+            ${
+              order.trackingNumber
               ? `
                 <p style="margin-top:8px">
                   📍 Suivi :
-                  <b>${escapeHTML(order.trackingNumber)}</b>
+                  <b>
+                    ${escapeHTML(
+                      order.trackingNumber
+                    )}
+                  </b>
                 </p>
               `
               : ""
-          }
+            }
 
-          <div class="actions-row">
+            <div class="actions-row">
 
-            <button
-              class="primary"
-              data-order-details="${escapeAttribute(order.id)}"
-            >
-              Voir les détails
-            </button>
+              <button
+                class="primary"
+                data-order-details="${
+                  escapeAttribute(order.id)
+                }"
+              >
+                Voir les détails
+              </button>
 
-            <button
-              class="secondary"
-              data-order-invoice="${escapeAttribute(order.id)}"
-            >
-              🧾 Facture
-            </button>
+              <button
+                class="secondary"
+                data-order-invoice="${
+                  escapeAttribute(order.id)
+                }"
+              >
+                🧾 Facture
+              </button>
+
+            </div>
 
           </div>
 
-        </div>
-      `;
-    }).join("");
+        `;
 
-    modalContent.querySelectorAll(
-      "[data-order-details]"
-    ).forEach(btn=>{
+      }).join("");
 
-      btn.onclick = ()=>{
-        openOrderDetails(btn.dataset.orderDetails);
-      };
+    modalContent
+      .querySelectorAll(
+        "[data-order-details]"
+      )
+      .forEach(btn=>{
 
-    });
+        btn.onclick = ()=>{
+          openOrderDetails(
+            btn.dataset.orderDetails
+          );
+        };
 
-    modalContent.querySelectorAll(
-      "[data-order-invoice]"
-    ).forEach(btn=>{
+      });
 
-      btn.onclick = async ()=>{
-        const order = orders.find(
-          o => o.id === btn.dataset.orderInvoice
-        );
+    modalContent
+      .querySelectorAll(
+        "[data-order-invoice]"
+      )
+      .forEach(btn=>{
 
-        if(order){
-          printInvoiceHTML(order);
-        }
-      };
+        btn.onclick = ()=>{
 
-    });
+          const order =
+            orders.find(
+              o =>
+                o.id ===
+                btn.dataset.orderInvoice
+            );
+
+          if(order){
+            printInvoiceHTML(order);
+          }
+        };
+
+      });
 
   }catch(error){
 
-    console.error(error);
+    console.error(
+      "ORDERS ERROR:",
+      error
+    );
 
     modalContent.innerHTML = `
+
       <div class="empty">
-        <b>Erreur lors du chargement.</b>
-        <p class="muted" style="margin-top:8px">
-          ${escapeHTML(error?.code || error?.message || "")}
+
+        <b>
+          Erreur lors du chargement.
+        </b>
+
+        <p
+          class="muted"
+          style="margin-top:8px"
+        >
+          ${escapeHTML(
+            error?.code ||
+            error?.message ||
+            ""
+          )}
         </p>
+
       </div>
+
     `;
   }
 }
 
+
+/* =========================================================
+   ORDER DETAILS
+========================================================= */
+
 async function openOrderDetails(orderId){
+
+  if(!currentUser || !db){
+    return;
+  }
 
   try{
 
-    const q = query(
-      collection(db,"orders"),
-      where("userId","==",currentUser.uid)
-    );
+    const q =
+      query(
+        collection(db,"orders"),
+        where(
+          "userId",
+          "==",
+          currentUser.uid
+        )
+      );
 
-    const snapshot = await getDocs(q);
+    const snapshot =
+      await getDocs(q);
 
     const orderDoc =
-      snapshot.docs.find(d=>d.id === orderId);
+      snapshot.docs.find(
+        d => d.id === orderId
+      );
 
     if(!orderDoc){
-      toast("Commande introuvable.");
+
+      toast(
+        "Commande introuvable."
+      );
+
       return;
     }
 
@@ -1977,128 +2843,196 @@ async function openOrderDetails(orderId){
     };
 
     const statuses = [
+
       "Enregistrée",
       "Acceptée",
       "Préparation",
       "En transit",
       "Livraison proche",
       "Livrée"
+
     ];
 
     const currentIndex =
-      statuses.indexOf(order.status);
+      statuses.indexOf(
+        order.status
+      );
 
     showModal(
       `📦 Commande #${order.id.slice(0,8)}`,
       `
+
         <div class="order">
 
-          <h3>État de la commande</h3>
+          <h3>
+            État de la commande
+          </h3>
 
-          <div style="margin-top:15px">
+          <div
+            style="margin-top:15px"
+          >
 
-            ${statuses.map((status,index)=>`
+            ${
+              statuses.map(
+                (status,index)=>`
 
-              <div style="
-                display:flex;
-                gap:10px;
-                align-items:center;
-                padding:9px 0;
-                color:${index <= currentIndex ? "var(--text)" : "var(--muted)"}
-              ">
+                  <div
+                    style="
+                      display:flex;
+                      gap:10px;
+                      align-items:center;
+                      padding:9px 0;
+                      color:${
+                        index <= currentIndex
+                          ? "var(--text)"
+                          : "var(--muted)"
+                      }
+                    "
+                  >
 
-                <span style="
-                  width:25px;
-                  height:25px;
-                  display:grid;
-                  place-items:center;
-                  border-radius:50%;
-                  background:${index <= currentIndex ? "var(--accent)" : "var(--card)"};
-                  border:1px solid var(--line);
-                ">
-                  ${index <= currentIndex ? "✓" : index+1}
-                </span>
+                    <span
+                      style="
+                        width:25px;
+                        height:25px;
+                        display:grid;
+                        place-items:center;
+                        border-radius:50%;
+                        background:${
+                          index <= currentIndex
+                            ? "var(--accent)"
+                            : "var(--card)"
+                        };
+                        border:1px solid var(--line);
+                      "
+                    >
+                      ${
+                        index <= currentIndex
+                          ? "✓"
+                          : index+1
+                      }
+                    </span>
 
-                <span>${escapeHTML(status)}</span>
+                    <span>
+                      ${escapeHTML(
+                        status
+                      )}
+                    </span>
 
-              </div>
+                  </div>
 
-            `).join("")}
+                `
+              ).join("")
+            }
 
           </div>
 
         </div>
 
+
         <div class="order">
 
-          <h3>Produits</h3>
+          <h3>
+            Produits
+          </h3>
 
-          ${(order.items || []).map(item=>`
+          ${
+            (order.items || [])
+              .map(item=>`
 
-            <div style="
-              display:flex;
-              justify-content:space-between;
-              gap:10px;
-              padding:10px 0;
-              border-bottom:1px solid var(--line)
-            ">
+                <div
+                  style="
+                    display:flex;
+                    justify-content:space-between;
+                    gap:10px;
+                    padding:10px 0;
+                    border-bottom:1px solid var(--line)
+                  "
+                >
 
-              <span>
-                ${escapeHTML(item.name)}
-                × ${item.qty}
-              </span>
+                  <span>
+                    ${escapeHTML(
+                      item.name
+                    )}
+                    × ${item.qty}
+                  </span>
 
-              <b>
-                ${money(item.price * item.qty)}
-              </b>
+                  <b>
+                    ${money(
+                      item.price *
+                      item.qty
+                    )}
+                  </b>
 
-            </div>
+                </div>
 
-          `).join("")}
+              `).join("")
+          }
 
         </div>
 
+
         <div class="order">
 
-          <h3>Livraison</h3>
+          <h3>
+            Livraison
+          </h3>
 
           <p class="muted">
-            ${escapeHTML(order.address?.firstName || "")}
-            ${escapeHTML(order.address?.lastName || "")}
+            ${escapeHTML(
+              order.address?.firstName || ""
+            )}
+            ${escapeHTML(
+              order.address?.lastName || ""
+            )}
           </p>
 
           <p class="muted">
-            ${escapeHTML(order.address?.street || "")}
+            ${escapeHTML(
+              order.address?.street || ""
+            )}
           </p>
 
           <p class="muted">
-            ${escapeHTML(order.address?.postalCode || "")}
-            ${escapeHTML(order.address?.city || "")}
+            ${escapeHTML(
+              order.address?.postalCode || ""
+            )}
+            ${escapeHTML(
+              order.address?.city || ""
+            )}
           </p>
 
           ${
             order.trackingNumber
-              ? `
-                <p style="margin-top:10px">
-                  📍 Numéro de suivi :
-                  <b>${escapeHTML(order.trackingNumber)}</b>
-                </p>
-              `
-              : ""
+            ? `
+              <p style="margin-top:10px">
+                📍 Numéro de suivi :
+                <b>
+                  ${escapeHTML(
+                    order.trackingNumber
+                  )}
+                </b>
+              </p>
+            `
+            : ""
           }
 
           ${
             order.estimatedDelivery
-              ? `
-                <p style="margin-top:8px">
-                  🗓️ Livraison estimée :
-                  <b>${escapeHTML(order.estimatedDelivery)}</b>
-                </p>
-              `
-              : ""
+            ? `
+              <p style="margin-top:8px">
+                🗓️ Livraison estimée :
+                <b>
+                  ${escapeHTML(
+                    order.estimatedDelivery
+                  )}
+                </b>
+              </p>
+            `
+            : ""
           }
 
         </div>
+
 
         <div class="actions-row">
 
@@ -2117,19 +3051,38 @@ async function openOrderDetails(orderId){
           </button>
 
         </div>
+
       `
     );
 
-    $("backOrders").onclick = openOrders;
+    const back =
+      $("backOrders");
 
-    $("invoiceOrder").onclick = ()=>{
-      printInvoiceHTML(order);
-    };
+    if(back){
+      back.onclick =
+        openOrders;
+    }
+
+    const invoice =
+      $("invoiceOrder");
+
+    if(invoice){
+
+      invoice.onclick = ()=>{
+        printInvoiceHTML(order);
+      };
+    }
 
   }catch(error){
 
-    console.error(error);
-    toast("Impossible d'ouvrir la commande.");
+    console.error(
+      "ORDER DETAILS ERROR:",
+      error
+    );
+
+    toast(
+      "Impossible d'ouvrir la commande."
+    );
   }
 }
 
@@ -2142,19 +3095,24 @@ function isAdmin(){
 
   return Boolean(
     currentUser &&
-    String(currentUser.email || "").toLowerCase() ===
+    String(
+      currentUser.email || ""
+    ).toLowerCase() ===
     ADMIN_EMAIL.toLowerCase()
   );
 }
 
 function adminAuthorized(){
 
-  return localStorage.getItem(
-    ADMIN_ACCESS_KEY
-  ) === "true";
+  return (
+    localStorage.getItem(
+      ADMIN_ACCESS_KEY
+    ) === "true"
+  );
 }
 
 const ORDER_STATUSES = [
+
   "Enregistrée",
   "Acceptée",
   "Préparation",
@@ -2163,29 +3121,44 @@ const ORDER_STATUSES = [
   "Livrée",
   "Annulée",
   "Remboursement en cours"
+
 ];
 
 async function openAdmin(){
 
   if(!currentUser){
-    toast("Connecte-toi d'abord.");
+
+    toast(
+      "Connecte-toi d'abord."
+    );
+
     openAccount();
+
     return;
   }
 
   if(!isAdmin()){
-    toast("Accès admin refusé.");
+
+    toast(
+      "Accès admin refusé."
+    );
+
     return;
   }
 
   if(!adminAuthorized()){
 
-    const code = prompt(
-      "Code administrateur NovaShop :"
-    );
+    const code =
+      prompt(
+        "Code administrateur NovaShop :"
+      );
 
     if(code !== ADMIN_CODE){
-      toast("Code admin incorrect.");
+
+      toast(
+        "Code admin incorrect."
+      );
+
       return;
     }
 
@@ -2200,35 +3173,66 @@ async function openAdmin(){
 
 async function renderAdmin(){
 
+  if(!db){
+
+    showModal(
+      "🛠️ Administration NovaShop",
+      `
+        <div class="empty">
+          Firebase Firestore n'est pas disponible.
+        </div>
+      `
+    );
+
+    return;
+  }
+
   showModal(
     "🛠️ Administration NovaShop",
-    `<div class="empty">Chargement...</div>`
+    `
+      <div class="empty">
+        Chargement...
+      </div>
+    `
   );
 
   try{
 
     const snapshot =
-      await getDocs(collection(db,"orders"));
+      await getDocs(
+        collection(db,"orders")
+      );
 
-    const orders = snapshot.docs.map(d=>({
-      id:d.id,
-      ...d.data()
-    }));
+    const orders =
+      snapshot.docs.map(d=>({
+        id:d.id,
+        ...d.data()
+      }));
 
     orders.sort(
       (a,b)=>
-        getTimestampValue(b.createdAt) -
-        getTimestampValue(a.createdAt)
+        getTimestampValue(
+          b.createdAt
+        ) -
+        getTimestampValue(
+          a.createdAt
+        )
     );
 
     modalContent.innerHTML = `
 
       <div class="admin-card">
 
-        <h3>Administration</h3>
+        <h3>
+          Administration
+        </h3>
 
-        <p class="muted" style="margin-top:7px">
-          ${orders.length} commande(s)
+        <p
+          class="muted"
+          style="margin-top:7px"
+        >
+          ${orders.length}
+          commande(s)
         </p>
 
         <div class="actions-row">
@@ -2253,89 +3257,166 @@ async function renderAdmin(){
 
       ${
         orders.length
-          ? orders.map(order=>adminOrderHTML(order)).join("")
-          : `<div class="empty">Aucune commande.</div>`
+        ? orders
+            .map(order =>
+              adminOrderHTML(order)
+            )
+            .join("")
+        : `
+          <div class="empty">
+            Aucune commande.
+          </div>
+        `
       }
+
     `;
 
-    $("deleteAllOrders").onclick = async ()=>{
+    const deleteAll =
+      $("deleteAllOrders");
 
-      if(!confirm(
-        "Supprimer TOUTES les commandes ?"
-      )) return;
+    if(deleteAll){
 
-      try{
+      deleteAll.onclick =
+        async ()=>{
 
-        for(const order of orders){
-          await deleteDoc(
-            doc(db,"orders",order.id)
-          );
-        }
+          if(!confirm(
+            "Supprimer TOUTES les commandes ?"
+          )){
+            return;
+          }
 
-        toast("Commandes supprimées.");
-        renderAdmin();
+          try{
 
-      }catch(error){
+            for(
+              const order of orders
+            ){
+
+              await deleteDoc(
+                doc(
+                  db,
+                  "orders",
+                  order.id
+                )
+              );
+            }
+
+            toast(
+              "Commandes supprimées."
+            );
+
+            renderAdmin();
+
+          }catch(error){
+
+            toast(
+              "Erreur : " +
+              (
+                error?.code ||
+                error?.message ||
+                ""
+              )
+            );
+          }
+        };
+    }
+
+    const adminLogout =
+      $("adminLogout");
+
+    if(adminLogout){
+
+      adminLogout.onclick = ()=>{
+
+        localStorage.removeItem(
+          ADMIN_ACCESS_KEY
+        );
+
+        closeModal();
 
         toast(
-          "Erreur : " +
-          (error?.code || error?.message || "")
+          "Mode admin fermé."
         );
-      }
-    };
-
-    $("adminLogout").onclick = ()=>{
-      localStorage.removeItem(ADMIN_ACCESS_KEY);
-      closeModal();
-      toast("Mode admin fermé.");
-    };
-
-    modalContent.querySelectorAll(
-      "[data-admin-save]"
-    ).forEach(btn=>{
-
-      btn.onclick = ()=>{
-        saveAdminOrder(btn.dataset.adminSave);
       };
+    }
 
-    });
+    modalContent
+      .querySelectorAll(
+        "[data-admin-save]"
+      )
+      .forEach(btn=>{
 
-    modalContent.querySelectorAll(
-      "[data-admin-pay]"
-    ).forEach(btn=>{
+        btn.onclick = ()=>{
+          saveAdminOrder(
+            btn.dataset.adminSave
+          );
+        };
 
-      btn.onclick = ()=>{
-        acceptPaypalOrder(btn.dataset.adminPay);
-      };
+      });
 
-    });
+    modalContent
+      .querySelectorAll(
+        "[data-admin-pay]"
+      )
+      .forEach(btn=>{
 
-    modalContent.querySelectorAll(
-      "[data-admin-invoice]"
-    ).forEach(btn=>{
+        btn.onclick = ()=>{
+          acceptPaypalOrder(
+            btn.dataset.adminPay
+          );
+        };
 
-      btn.onclick = ()=>{
-        const order =
-          orders.find(o=>o.id === btn.dataset.adminInvoice);
+      });
 
-        if(order){
-          printInvoiceHTML(order);
-        }
-      };
+    modalContent
+      .querySelectorAll(
+        "[data-admin-invoice]"
+      )
+      .forEach(btn=>{
 
-    });
+        btn.onclick = ()=>{
+
+          const order =
+            orders.find(
+              o =>
+                o.id ===
+                btn.dataset.adminInvoice
+            );
+
+          if(order){
+            printInvoiceHTML(order);
+          }
+        };
+
+      });
 
   }catch(error){
 
-    console.error(error);
+    console.error(
+      "ADMIN ERROR:",
+      error
+    );
 
     modalContent.innerHTML = `
+
       <div class="empty">
-        <b>Erreur Firebase.</b>
-        <p class="muted" style="margin-top:8px">
-          ${escapeHTML(error?.code || error?.message || "")}
+
+        <b>
+          Erreur Firebase.
+        </b>
+
+        <p
+          class="muted"
+          style="margin-top:8px"
+        >
+          ${escapeHTML(
+            error?.code ||
+            error?.message ||
+            ""
+          )}
         </p>
+
       </div>
+
     `;
   }
 }
@@ -2343,97 +3424,184 @@ async function renderAdmin(){
 function adminOrderHTML(order){
 
   return `
+
     <div class="admin-card">
 
       <h3>
-        Commande #${escapeHTML(order.id.slice(0,8))}
+        Commande #${
+          escapeHTML(
+            order.id.slice(0,8)
+          )
+        }
       </h3>
 
       <p class="muted">
-        ${escapeHTML(order.email || "")}
+        ${escapeHTML(
+          order.email || ""
+        )}
       </p>
 
       <p style="margin-top:8px">
+
         Total :
-        <b>${money(order.total)}</b>
+        <b>
+          ${money(order.total)}
+        </b>
+
       </p>
 
       <p style="margin-top:6px">
+
         Statut :
+
         <span class="status">
-          ${escapeHTML(order.status || "Enregistrée")}
+          ${escapeHTML(
+            order.status ||
+            "Enregistrée"
+          )}
         </span>
+
       </p>
 
-      <p class="muted" style="margin-top:6px">
+      <p
+        class="muted"
+        style="margin-top:6px"
+      >
+
         Paiement :
-        ${escapeHTML(order.paymentStatus || "pending")}
+        ${escapeHTML(
+          order.paymentStatus ||
+          "pending"
+        )}
+
       </p>
 
-      <div class="admin-grid" style="margin-top:15px">
+      <div
+        class="admin-grid"
+        style="margin-top:15px"
+      >
 
         <div class="field">
-          <label>Statut</label>
 
-          <select id="status-${order.id}">
-            ${ORDER_STATUSES.map(status=>`
-              <option
-                value="${escapeAttribute(status)}"
-                ${status === order.status ? "selected" : ""}
-              >
-                ${escapeHTML(status)}
-              </option>
-            `).join("")}
+          <label>
+            Statut
+          </label>
+
+          <select
+            id="status-${escapeAttribute(order.id)}"
+          >
+
+            ${
+              ORDER_STATUSES
+                .map(status=>`
+
+                  <option
+                    value="${escapeAttribute(status)}"
+                    ${
+                      status ===
+                      order.status
+                      ? "selected"
+                      : ""
+                    }
+                  >
+                    ${escapeHTML(status)}
+                  </option>
+
+                `).join("")
+            }
+
           </select>
+
         </div>
 
+
         <div class="field">
-          <label>Ville</label>
+
+          <label>
+            Ville
+          </label>
+
           <input
-            id="city-${order.id}"
-            value="${escapeAttribute(order.packageCity || order.address?.city || "")}"
+            id="city-${escapeAttribute(order.id)}"
+            value="${escapeAttribute(
+              order.packageCity ||
+              order.address?.city ||
+              ""
+            )}"
           >
+
         </div>
 
+
         <div class="field">
-          <label>Numéro de suivi</label>
+
+          <label>
+            Numéro de suivi
+          </label>
+
           <input
-            id="tracking-${order.id}"
-            value="${escapeAttribute(order.trackingNumber || "")}"
+            id="tracking-${escapeAttribute(order.id)}"
+            value="${escapeAttribute(
+              order.trackingNumber ||
+              ""
+            )}"
           >
+
         </div>
 
+
         <div class="field">
-          <label>Délai de livraison</label>
+
+          <label>
+            Délai de livraison
+          </label>
+
           <input
-            id="duration-${order.id}"
-            value="${escapeAttribute(order.deliveryDuration || "")}"
+            id="duration-${escapeAttribute(order.id)}"
+            value="${escapeAttribute(
+              order.deliveryDuration ||
+              ""
+            )}"
             placeholder="ex : 2-4 jours"
           >
+
         </div>
 
+
         <div class="field">
-          <label>Livraison estimée</label>
+
+          <label>
+            Livraison estimée
+          </label>
+
           <input
-            id="estimated-${order.id}"
-            value="${escapeAttribute(order.estimatedDelivery || "")}"
+            id="estimated-${escapeAttribute(order.id)}"
+            value="${escapeAttribute(
+              order.estimatedDelivery ||
+              ""
+            )}"
           >
+
         </div>
 
       </div>
 
+
       <div class="actions-row">
 
         ${
-          order.paymentStatus !== "accepted" &&
-          order.total > 0
+          order.paymentStatus !==
+            "accepted" &&
+          Number(order.total) > 0
           ? `
+
             <button
               class="primary"
               data-admin-pay="${escapeAttribute(order.id)}"
             >
               💳 Accepter le paiement
             </button>
+
           `
           : ""
         }
@@ -2455,36 +3623,65 @@ function adminOrderHTML(order){
       </div>
 
     </div>
+
   `;
 }
 
 async function acceptPaypalOrder(orderId){
 
+  if(!db){
+    return;
+  }
+
   try{
 
     await updateDoc(
-      doc(db,"orders",orderId),
+      doc(
+        db,
+        "orders",
+        orderId
+      ),
       {
-        paymentStatus:"accepted",
-        paymentAcceptedAt:serverTimestamp(),
-        status:"Acceptée",
-        updatedAt:serverTimestamp()
+        paymentStatus:
+          "accepted",
+
+        paymentAcceptedAt:
+          serverTimestamp(),
+
+        status:
+          "Acceptée",
+
+        updatedAt:
+          serverTimestamp()
       }
     );
 
-    toast("Paiement accepté ✅");
+    toast(
+      "Paiement accepté ✅"
+    );
+
     renderAdmin();
 
   }catch(error){
 
+    console.error(error);
+
     toast(
       "Erreur : " +
-      (error?.code || error?.message || "")
+      (
+        error?.code ||
+        error?.message ||
+        ""
+      )
     );
   }
 }
 
 async function saveAdminOrder(orderId){
+
+  if(!db){
+    return;
+  }
 
   try{
 
@@ -2492,37 +3689,66 @@ async function saveAdminOrder(orderId){
       $(`status-${orderId}`).value;
 
     const packageCity =
-      $(`city-${orderId}`).value.trim();
+      $(`city-${orderId}`)
+        .value
+        .trim();
 
     const trackingNumber =
-      $(`tracking-${orderId}`).value.trim();
+      $(`tracking-${orderId}`)
+        .value
+        .trim();
 
     const deliveryDuration =
-      $(`duration-${orderId}`).value.trim();
+      $(`duration-${orderId}`)
+        .value
+        .trim();
 
     const estimatedDelivery =
-      $(`estimated-${orderId}`).value.trim();
+      $(`estimated-${orderId}`)
+        .value
+        .trim();
 
     await updateDoc(
-      doc(db,"orders",orderId),
+      doc(
+        db,
+        "orders",
+        orderId
+      ),
       {
+
         status,
+
         packageCity,
+
         trackingNumber,
+
         deliveryDuration,
+
         estimatedDelivery,
-        updatedAt:serverTimestamp()
+
+        updatedAt:
+          serverTimestamp()
+
       }
     );
 
-    toast("Commande mise à jour ✅");
+    toast(
+      "Commande mise à jour ✅"
+    );
+
     renderAdmin();
 
   }catch(error){
 
+    console.error(error);
+
     toast(
       "Erreur : " +
-      (error?.code || error?.message || "")
+      (
+        error?.code ||
+        error?.message ||
+        ""
+      )
     );
   }
 }
@@ -2534,58 +3760,97 @@ async function saveAdminOrder(orderId){
 
 function printInvoiceHTML(order){
 
-  const items = order.items || [];
+  const items =
+    order.items || [];
 
-  const itemsHTML = items.map(item=>`
-    <tr>
-      <td>${escapeHTML(item.name)}</td>
-      <td>${item.qty}</td>
-      <td>${money(item.price)}</td>
-      <td>${money(item.price * item.qty)}</td>
-    </tr>
-  `).join("");
+  const itemsHTML =
+    items.map(item=>`
+
+      <tr>
+
+        <td>
+          ${escapeHTML(
+            item.name
+          )}
+        </td>
+
+        <td>
+          ${item.qty}
+        </td>
+
+        <td>
+          ${money(item.price)}
+        </td>
+
+        <td>
+          ${money(
+            item.price *
+            item.qty
+          )}
+        </td>
+
+      </tr>
+
+    `).join("");
 
   const html = `
+
 <!DOCTYPE html>
+
 <html lang="fr">
+
 <head>
+
 <meta charset="UTF-8">
-<title>Facture NovaShop</title>
+
+<title>
+Facture NovaShop
+</title>
 
 <style>
+
 body{
   font-family:Arial,sans-serif;
   padding:40px;
   color:#111827;
 }
-h1{font-size:34px}
+
+h1{
+  font-size:34px
+}
+
 .header{
   display:flex;
   justify-content:space-between;
   margin-bottom:35px
 }
+
 table{
   width:100%;
   border-collapse:collapse;
   margin-top:25px
 }
+
 th,td{
   padding:12px;
   border-bottom:1px solid #ddd;
   text-align:left
 }
+
 .total{
   margin-top:25px;
   text-align:right;
   font-size:22px;
   font-weight:900
 }
+
 .box{
   padding:15px;
   background:#f4f4f5;
   border-radius:10px;
   margin-top:15px
 }
+
 </style>
 
 </head>
@@ -2595,92 +3860,194 @@ th,td{
 <div class="header">
 
   <div>
-    <h1>NovaShop</h1>
-    <p>Facture</p>
+
+    <h1>
+      NovaShop
+    </h1>
+
+    <p>
+      Facture
+    </p>
+
   </div>
 
   <div>
-    <b>Commande</b><br>
-    #${escapeHTML(order.id || "")}<br>
-    ${formatTimestamp(order.createdAt)}
+
+    <b>
+      Commande
+    </b>
+
+    <br>
+
+    #${escapeHTML(
+      order.id || ""
+    )}
+
+    <br>
+
+    ${formatTimestamp(
+      order.createdAt
+    )}
+
   </div>
 
 </div>
 
+
 <div class="box">
 
-  <b>Client</b><br>
+  <b>
+    Client
+  </b>
 
-  ${escapeHTML(order.address?.firstName || "")}
-  ${escapeHTML(order.address?.lastName || "")}<br>
+  <br>
 
-  ${escapeHTML(order.address?.street || "")}<br>
+  ${escapeHTML(
+    order.address?.firstName || ""
+  )}
 
-  ${escapeHTML(order.address?.postalCode || "")}
-  ${escapeHTML(order.address?.city || "")}<br>
+  ${escapeHTML(
+    order.address?.lastName || ""
+  )}
 
-  ${escapeHTML(order.address?.country || "")}
+  <br>
+
+  ${escapeHTML(
+    order.address?.street || ""
+  )}
+
+  <br>
+
+  ${escapeHTML(
+    order.address?.postalCode || ""
+  )}
+
+  ${escapeHTML(
+    order.address?.city || ""
+  )}
+
+  <br>
+
+  ${escapeHTML(
+    order.address?.country || ""
+  )}
 
 </div>
+
 
 <table>
 
 <thead>
+
 <tr>
-  <th>Produit</th>
-  <th>Qté</th>
-  <th>Prix</th>
-  <th>Total</th>
+
+  <th>
+    Produit
+  </th>
+
+  <th>
+    Qté
+  </th>
+
+  <th>
+    Prix
+  </th>
+
+  <th>
+    Total
+  </th>
+
 </tr>
+
 </thead>
 
 <tbody>
+
 ${itemsHTML}
+
 </tbody>
 
 </table>
 
+
 <div class="box">
 
   Paiement :
-  <b>${escapeHTML(order.paymentMethod || "")}</b><br>
+  <b>
+    ${escapeHTML(
+      order.paymentMethod || ""
+    )}
+  </b>
+
+  <br>
 
   Statut :
-  <b>${escapeHTML(order.status || "")}</b>
+  <b>
+    ${escapeHTML(
+      order.status || ""
+    )}
+  </b>
 
   ${
     order.promoCode
-      ? `<br>Code promo : <b>${escapeHTML(order.promoCode)}</b>`
+      ? `
+        <br>
+        Code promo :
+        <b>
+          ${escapeHTML(
+            order.promoCode
+          )}
+        </b>
+      `
       : ""
   }
 
 </div>
 
+
 <div class="total">
-  Total : ${money(order.total)}
+
+  Total :
+  ${money(order.total)}
+
 </div>
 
+
 <script>
-window.onload = () => window.print();
+
+window.onload = () =>
+  window.print();
+
 <\/script>
 
 </body>
+
 </html>
+
 `;
 
-  const win = window.open(
-    "",
-    "_blank",
-    "width=900,height=700"
-  );
+  const win =
+    window.open(
+      "",
+      "_blank",
+      "width=900,height=700"
+    );
 
   if(!win){
-    toast("Autorise les fenêtres pop-up pour imprimer.");
+
+    toast(
+      "Autorise les fenêtres pop-up pour imprimer."
+    );
+
     return;
   }
 
   win.document.open();
-  win.document.write(html);
+
+  win.document.write(
+    html
+  );
+
   win.document.close();
 }
 
@@ -2689,126 +4056,236 @@ window.onload = () => window.print();
    EVENTS
 ========================================================= */
 
-categoriesEl.addEventListener(
-  "click",
-  event=>{
+if(categoriesEl){
 
-    const button =
-      event.target.closest("[data-category]");
+  categoriesEl.addEventListener(
+    "click",
+    event=>{
 
-    if(!button) return;
+      const button =
+        event.target.closest(
+          "[data-category]"
+        );
 
-    selectedCategory =
-      button.dataset.category;
+      if(!button){
+        return;
+      }
 
-    renderCategories();
-    renderProducts();
-  }
-);
+      selectedCategory =
+        button.dataset.category;
 
-productsGrid.addEventListener(
-  "click",
-  event=>{
-
-    const view =
-      event.target.closest(".view-btn");
-
-    const add =
-      event.target.closest(".add-btn");
-
-    if(view){
-      openProduct(view.dataset.id);
-      return;
+      renderCategories();
+      renderProducts();
     }
+  );
+}
 
-    if(add){
-      addToCart(add.dataset.id);
+
+if(productsGrid){
+
+  productsGrid.addEventListener(
+    "click",
+    event=>{
+
+      const view =
+        event.target.closest(
+          ".view-btn"
+        );
+
+      const add =
+        event.target.closest(
+          ".add-btn"
+        );
+
+      if(view){
+
+        openProduct(
+          view.dataset.id
+        );
+
+        return;
+      }
+
+      if(add){
+
+        addToCart(
+          add.dataset.id
+        );
+      }
     }
-  }
-);
+  );
+}
 
-cartItems.addEventListener(
-  "click",
-  event=>{
 
-    const button =
-      event.target.closest("[data-action]");
+if(cartItems){
 
-    if(!button) return;
+  cartItems.addEventListener(
+    "click",
+    event=>{
 
-    const id = button.dataset.id;
-    const action = button.dataset.action;
+      const button =
+        event.target.closest(
+          "[data-action]"
+        );
 
-    if(action === "plus"){
-      updateCartQty(id,1);
+      if(!button){
+        return;
+      }
+
+      const id =
+        button.dataset.id;
+
+      const action =
+        button.dataset.action;
+
+      if(action === "plus"){
+        updateCartQty(id,1);
+      }
+
+      if(action === "minus"){
+        updateCartQty(id,-1);
+      }
+
+      if(action === "remove"){
+        removeFromCart(id);
+      }
     }
+  );
+}
 
-    if(action === "minus"){
-      updateCartQty(id,-1);
+
+if(searchInput){
+
+  searchInput.addEventListener(
+    "input",
+    ()=>{
+
+      searchValue =
+        searchInput.value.trim();
+
+      renderProducts();
     }
+  );
+}
 
-    if(action === "remove"){
-      removeFromCart(id);
+
+if(sortSelect){
+
+  sortSelect.addEventListener(
+    "change",
+    ()=>{
+
+      sortValue =
+        sortSelect.value;
+
+      renderProducts();
     }
-  }
-);
+  );
+}
 
-searchInput.addEventListener(
-  "input",
-  ()=>{
-    searchValue =
-      searchInput.value.trim();
 
-    renderProducts();
-  }
-);
+if(cartBtn){
+  cartBtn.onclick =
+    openCart;
+}
 
-sortSelect.addEventListener(
-  "change",
-  ()=>{
-    sortValue =
-      sortSelect.value;
 
-    renderProducts();
-  }
-);
+if(heroCartBtn){
 
-cartBtn.onclick = openCart;
-heroCartBtn.onclick = ()=>{
-  document
-    .getElementById("productGrid")
-    .scrollIntoView({
-      behavior:"smooth"
-    });
-};
+  heroCartBtn.onclick = ()=>{
 
-cartClose.onclick = closeCart;
+    const grid =
+      $("productGrid");
 
-cartOverlay.onclick = event=>{
-  if(event.target === cartOverlay){
-    closeCart();
-  }
-};
+    if(grid){
 
-modalClose.onclick = closeModal;
+      grid.scrollIntoView({
+        behavior:"smooth"
+      });
 
-modal.onclick = event=>{
-  if(event.target === modal){
-    closeModal();
-  }
-};
+    }
+  };
+}
 
-settingsBtn.onclick = openSettings;
-accountBtn.onclick = openAccount;
-ordersBtn.onclick = openOrders;
-adminBtn.onclick = openAdmin;
-checkoutBtn.onclick = openCheckout;
+
+if(cartClose){
+  cartClose.onclick =
+    closeCart;
+}
+
+
+if(cartOverlay){
+
+  cartOverlay.onclick =
+    event=>{
+
+      if(
+        event.target ===
+        cartOverlay
+      ){
+        closeCart();
+      }
+    };
+}
+
+
+if(modalClose){
+  modalClose.onclick =
+    closeModal;
+}
+
+
+if(modal){
+
+  modal.onclick =
+    event=>{
+
+      if(
+        event.target ===
+        modal
+      ){
+        closeModal();
+      }
+    };
+}
+
+
+if(settingsBtn){
+  settingsBtn.onclick =
+    openSettings;
+}
+
+
+if(accountBtn){
+  accountBtn.onclick =
+    openAccount;
+}
+
+
+if(ordersBtn){
+  ordersBtn.onclick =
+    openOrders;
+}
+
+
+if(adminBtn){
+  adminBtn.onclick =
+    openAdmin;
+}
+
+
+if(checkoutBtn){
+  checkoutBtn.onclick =
+    openCheckout;
+}
+
 
 document.addEventListener(
   "keydown",
   event=>{
 
     if(event.key === "Escape"){
+
       closeModal();
       closeCart();
     }
@@ -2820,43 +4297,111 @@ document.addEventListener(
    AUTH STATE
 ========================================================= */
 
-onAuthStateChanged(
-  auth,
-  user=>{
+if(auth){
 
-    currentUser = user;
+  onAuthStateChanged(
+    auth,
+    user=>{
 
-    if(user){
+      currentUser =
+        user;
 
-      accountBtn.textContent =
-        "👤 " +
-        (user.email?.split("@")[0] || "Compte");
+      if(user){
 
-      if(isAdmin()){
-        adminBtn.style.display = "";
+        if(accountBtn){
+
+          accountBtn.textContent =
+            "👤 " +
+            (
+              user.email
+                ?.split("@")[0] ||
+              "Compte"
+            );
+        }
+
+        if(adminBtn){
+
+          adminBtn.style.display =
+            isAdmin()
+              ? ""
+              : "none";
+        }
+
       }else{
-        adminBtn.style.display = "none";
+
+        if(accountBtn){
+
+          accountBtn.textContent =
+            "👤 Compte";
+        }
+
+        if(adminBtn){
+
+          adminBtn.style.display =
+            "none";
+        }
       }
-
-    }else{
-
-      accountBtn.textContent =
-        "👤 Compte";
-
-      adminBtn.style.display = "none";
     }
-  }
-);
+  );
+
+}
 
 
 /* =========================================================
-   INIT
+   INITIALISATION
 ========================================================= */
 
-applyTheme();
-renderCategories();
-renderProducts();
-renderCart();
+/*
+   IMPORTANT :
+   Le catalogue est initialisé indépendamment
+   de Firebase.
+*/
+
+try {
+
+  applyTheme();
+
+  renderCategories();
+
+  renderProducts();
+
+  renderCart();
+
+  console.log(
+    `NovaShop chargé : ${products.length} produits`
+  );
+
+} catch(error) {
+
+  console.error(
+    "NOVASHOP START ERROR:",
+    error
+  );
+
+  if(productsGrid){
+
+    productsGrid.innerHTML = `
+
+      <div class="empty">
+
+        <h2>
+          ⚠️ Erreur NovaShop
+        </h2>
+
+        <p
+          style="margin-top:10px"
+        >
+          ${escapeHTML(
+            error?.message ||
+            "Erreur JavaScript inconnue"
+          )}
+        </p>
+
+      </div>
+
+    `;
+  }
+}
 
 
 /* =========================================================
@@ -2864,13 +4409,23 @@ renderCart();
 ========================================================= */
 
 window.NovaShop = {
+
   products,
+
   addToCart,
+
   openCart,
+
   openAccount,
+
   openOrders,
+
   openAdmin,
+
   openCheckout,
+
   renderProducts,
+
   renderCart
+
 };
