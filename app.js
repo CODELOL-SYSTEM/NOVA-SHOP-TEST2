@@ -3,10 +3,6 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
 
 import {
-  getAnalytics
-} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-analytics.js";
-
-import {
   getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -19,12 +15,11 @@ import {
   collection,
   addDoc,
   getDocs,
-  query,
-  where,
-  orderBy,
-  updateDoc,
   doc,
-  serverTimestamp
+  updateDoc,
+  serverTimestamp,
+  query,
+  where
 } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
 
@@ -33,26 +28,19 @@ import {
 ========================================================= */
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAZ5vAkAEfIBpfLyhxgO7uvNdJ67KYKWD0",
-  authDomain: "novashop-4ee63.firebaseapp.com",
-  projectId: "novashop-4ee63",
-  storageBucket: "novashop-4ee63.firebasestorage.app",
-  messagingSenderId: "1044964015809",
-  appId: "1:1044964015809:web:4eafe0b1aede48f8539e40",
-  measurementId: "G-XNY5X2VMY9"
+  apiKey:"AIzaSy5vAkAEfIBpfLyhxgO7uvNdJ67KYKWD0",
+  authDomain:"novashop-4ee63.firebaseapp.com",
+  projectId:"novashop-4ee63",
+  storageBucket:"novashop-4ee63.firebasestorage.app",
+  messagingSenderId:"1044964015809",
+  appId:"1:1044964015809:web:4eafe0b1aede48f8539e40",
+  measurementId:"G-XNY5X2VMY9"
 };
 
 const app = initializeApp(firebaseConfig);
 
-let analytics = null;
-
-try{
-  analytics = getAnalytics(app);
-}catch(e){
-  console.warn("Analytics indisponible.");
-}
-
 const auth = getAuth(app);
+
 const db = getFirestore(app);
 
 
@@ -61,7 +49,10 @@ const db = getFirestore(app);
 ========================================================= */
 
 const ADMIN_EMAIL = "pc2alex.les@gmail.com";
+
 const ADMIN_CODE = "NOVA-ADMIN-2026";
+
+const PAYPAL_USERNAME = "SH0PNOVA";
 
 
 /* =========================================================
@@ -419,18 +410,23 @@ const products = [
 
 
 /* =========================================================
-   ÉTAT
+   VARIABLES
 ========================================================= */
 
-let cart = loadCart();
-let favorites = JSON.parse(
-  localStorage.getItem("novaFavorites") || "[]"
-);
+let cart =
+  JSON.parse(
+    localStorage.getItem("novaCart") || "[]"
+  );
 
-let currentCategory = "Tous";
-let currentSearch = "";
+let favorites =
+  JSON.parse(
+    localStorage.getItem("novaFavorites") || "[]"
+  );
+
+let selectedCategory = "Tous";
+
 let selectedPayment = "card";
-let authMode = "login";
+
 let currentUser = null;
 
 
@@ -438,83 +434,34 @@ let currentUser = null;
    HELPERS
 ========================================================= */
 
-const $ = id => document.getElementById(id);
+const $ = id =>
+  document.getElementById(id);
+
 
 function money(value){
-  return Number(value).toLocaleString("fr-FR",{
-    style:"currency",
-    currency:"EUR"
-  });
+
+  return Number(value || 0).toLocaleString(
+    "fr-FR",
+    {
+      style:"currency",
+      currency:"EUR"
+    }
+  );
+
 }
 
+
 function escapeHTML(value){
-  return String(value)
+
+  return String(value ?? "")
     .replaceAll("&","&amp;")
     .replaceAll("<","&lt;")
     .replaceAll(">","&gt;")
     .replaceAll('"',"&quot;")
     .replaceAll("'","&#039;");
+
 }
 
-function toast(message){
-  const el = $("toast");
-
-  el.textContent = message;
-  el.classList.add("show");
-
-  clearTimeout(window.novaToastTimer);
-
-  window.novaToastTimer = setTimeout(()=>{
-    el.classList.remove("show");
-  },2500);
-}
-
-function openModal(html){
-  $("modalContent").innerHTML = html;
-  $("overlay").classList.add("show");
-}
-
-function closeModal(){
-  $("overlay").classList.remove("show");
-}
-
-function getProduct(id){
-  return products.find(p => p.id === id);
-}
-
-
-/* =========================================================
-   PANIER
-========================================================= */
-
-function loadCart(){
-
-  try{
-
-    const saved = JSON.parse(
-      localStorage.getItem("novaCart") || "[]"
-    );
-
-    return saved
-      .map(item => ({
-        id:item.id,
-        qty:Number(item.qty ?? item.quantity ?? 1)
-      }))
-      .filter(item =>
-        getProductSafe(item.id)
-      )
-      .filter(item => item.qty > 0);
-
-  }catch{
-
-    return [];
-
-  }
-}
-
-function getProductSafe(id){
-  return products.find(p => p.id === id);
-}
 
 function saveCart(){
 
@@ -523,80 +470,377 @@ function saveCart(){
     JSON.stringify(cart)
   );
 
-  updateCartBadge();
+  updateCounters();
+
 }
 
-function addToCart(id, qty=1){
 
-  const existing = cart.find(item => item.id === id);
+function saveFavorites(){
 
-  if(existing){
-    existing.qty += qty;
-  }else{
-    cart.push({
-      id,
-      qty
-    });
-  }
+  localStorage.setItem(
+    "novaFavorites",
+    JSON.stringify(favorites)
+  );
 
-  saveCart();
+  updateCounters();
 
-  toast("Produit ajouté au panier 🛒");
 }
 
-function removeFromCart(id){
 
-  cart = cart.filter(item => item.id !== id);
+function toast(message){
 
-  saveCart();
+  const el = $("toast");
 
-  renderCart();
+  el.textContent = message;
+
+  el.classList.add("show");
+
+  clearTimeout(window.novaToastTimer);
+
+  window.novaToastTimer =
+    setTimeout(
+      () => el.classList.remove("show"),
+      2500
+    );
+
 }
 
-function changeQty(id, amount){
 
-  const item = cart.find(item => item.id === id);
+function openModal(html){
 
-  if(!item) return;
+  $("modalContent").innerHTML = html;
 
-  item.qty += amount;
+  $("modalOverlay").classList.add("show");
 
-  if(item.qty <= 0){
-    removeFromCart(id);
-    return;
-  }
-
-  saveCart();
-
-  renderCart();
 }
+
+
+function closeModal(){
+
+  $("modalOverlay").classList.remove("show");
+
+  $("modalContent").innerHTML = "";
+
+}
+
+
+function cartTotal(){
+
+  return cart.reduce(
+    (sum,item) =>
+      sum +
+      item.price *
+      item.quantity,
+    0
+  );
+
+}
+
 
 function cartCount(){
 
   return cart.reduce(
-    (total,item) => total + item.qty,
+    (sum,item) =>
+      sum + item.quantity,
     0
   );
+
 }
 
-function cartTotal(){
 
-  return cart.reduce((total,item)=>{
+/* =========================================================
+   COMPTEURS
+========================================================= */
 
-    const product = getProduct(item.id);
+function updateCounters(){
 
-    return total + (
-      product
-      ? product.price * item.qty
-      : 0
+  $("cartCount").textContent =
+    cartCount();
+
+  $("favoritesCount").textContent =
+    favorites.length;
+
+}
+
+
+/* =========================================================
+   CATEGORIES
+========================================================= */
+
+function renderCategories(){
+
+  const categories = [
+    "Tous",
+    ...new Set(
+      products.map(
+        product => product.category
+      )
+    )
+  ];
+
+  $("categories").innerHTML =
+    categories.map(category => `
+
+      <button
+        class="category ${
+          category === selectedCategory
+          ? "active"
+          : ""
+        }"
+        data-category="${escapeHTML(category)}"
+      >
+        ${escapeHTML(category)}
+      </button>
+
+    `).join("");
+
+  document
+    .querySelectorAll("[data-category]")
+    .forEach(button => {
+
+      button.onclick = () => {
+
+        selectedCategory =
+          button.dataset.category;
+
+        renderCategories();
+
+        renderProducts();
+
+      };
+
+    });
+
+}
+
+
+/* =========================================================
+   PRODUITS
+========================================================= */
+
+function getFilteredProducts(){
+
+  const search =
+    $("searchInput")
+      .value
+      .trim()
+      .toLowerCase();
+
+  let list =
+    products.filter(product => {
+
+      const categoryOK =
+        selectedCategory === "Tous" ||
+        product.category === selectedCategory;
+
+      const searchOK =
+        !search ||
+        product.name.toLowerCase().includes(search) ||
+        product.category.toLowerCase().includes(search);
+
+      return categoryOK && searchOK;
+
+    });
+
+  const sort =
+    $("sortSelect").value;
+
+  if(sort === "priceAsc"){
+
+    list.sort(
+      (a,b) => a.price - b.price
     );
 
-  },0);
+  }
+
+  if(sort === "priceDesc"){
+
+    list.sort(
+      (a,b) => b.price - a.price
+    );
+
+  }
+
+  if(sort === "name"){
+
+    list.sort(
+      (a,b) =>
+        a.name.localeCompare(
+          b.name,
+          "fr"
+        )
+    );
+
+  }
+
+  if(sort === "new"){
+
+    list.sort(
+      (a,b) =>
+        Number(Boolean(b.new)) -
+        Number(Boolean(a.new))
+    );
+
+  }
+
+  return list;
+
 }
 
-function updateCartBadge(){
 
-  $("cartBadge").textContent = cartCount();
+function renderProducts(){
+
+  const list =
+    getFilteredProducts();
+
+  if(!list.length){
+
+    $("productsGrid").innerHTML = `
+      <div class="empty">
+        Aucun produit trouvé 🔎
+      </div>
+    `;
+
+    return;
+
+  }
+
+  $("productsGrid").innerHTML =
+    list.map(product => {
+
+      const isFavorite =
+        favorites.includes(product.id);
+
+      return `
+
+        <article
+          class="product-card"
+          data-product="${product.id}"
+        >
+
+          ${
+            product.new
+            ? `
+              <div class="new-tag">
+                NOUVEAU
+              </div>
+            `
+            : ""
+          }
+
+          <button
+            class="favorite ${
+              isFavorite ? "active" : ""
+            }"
+            data-favorite="${product.id}"
+          >
+            ${
+              isFavorite
+              ? "♥"
+              : "♡"
+            }
+          </button>
+
+          <img
+            class="product-image"
+            src="${product.image}"
+            alt="${escapeHTML(product.name)}"
+            loading="lazy"
+          >
+
+          <div class="product-content">
+
+            <div class="product-category">
+              ${escapeHTML(product.category)}
+            </div>
+
+            <div class="product-name">
+              ${escapeHTML(product.name)}
+            </div>
+
+            <div class="product-price">
+              ${money(product.price)}
+            </div>
+
+            <div class="product-actions">
+
+              <button
+                class="secondary"
+                data-details="${product.id}"
+              >
+                Voir
+              </button>
+
+              <button
+                class="primary"
+                data-add="${product.id}"
+              >
+                🛒 Ajouter
+              </button>
+
+            </div>
+
+          </div>
+
+        </article>
+
+      `;
+
+    }).join("");
+
+  bindProductButtons();
+
+}
+
+
+function bindProductButtons(){
+
+  document
+    .querySelectorAll("[data-add]")
+    .forEach(button => {
+
+      button.onclick = () => {
+
+        addToCart(
+          button.dataset.add
+        );
+
+      };
+
+    });
+
+
+  document
+    .querySelectorAll("[data-details]")
+    .forEach(button => {
+
+      button.onclick = () => {
+
+        openProduct(
+          button.dataset.details
+        );
+
+      };
+
+    });
+
+
+  document
+    .querySelectorAll("[data-favorite]")
+    .forEach(button => {
+
+      button.onclick = event => {
+
+        event.stopPropagation();
+
+        toggleFavorite(
+          button.dataset.favorite
+        );
+
+      };
+
+    });
+
 }
 
 
@@ -604,19 +848,16 @@ function updateCartBadge(){
    FAVORIS
 ========================================================= */
 
-function isFavorite(id){
-  return favorites.includes(id);
-}
-
 function toggleFavorite(id){
 
-  if(isFavorite(id)){
+  if(favorites.includes(id)){
 
-    favorites = favorites.filter(
-      x => x !== id
-    );
+    favorites =
+      favorites.filter(
+        x => x !== id
+      );
 
-    toast("Retiré des favoris");
+    toast("Retiré des favoris.");
 
   }else{
 
@@ -626,356 +867,88 @@ function toggleFavorite(id){
 
   }
 
-  localStorage.setItem(
-    "novaFavorites",
-    JSON.stringify(favorites)
-  );
+  saveFavorites();
 
   renderProducts();
+
 }
 
 
-/* =========================================================
-   CATÉGORIES
-========================================================= */
+function showFavorites(){
 
-function renderCategories(){
-
-  const categories = [
-    "Tous",
-    ...new Set(products.map(p => p.category))
-  ];
-
-  $("categories").innerHTML =
-    categories.map(category => `
-      <button
-        class="category-btn ${currentCategory === category ? "active":""}"
-        data-category="${escapeHTML(category)}"
-      >
-        ${escapeHTML(category)}
-      </button>
-    `).join("");
-
-  document
-    .querySelectorAll(".category-btn")
-    .forEach(button => {
-
-      button.addEventListener("click",()=>{
-
-        currentCategory =
-          button.dataset.category;
-
-        renderCategories();
-        renderProducts();
-
-      });
-
-    });
-}
-
-
-/* =========================================================
-   FILTRE + TRI
-========================================================= */
-
-function getVisibleProducts(){
-
-  let list = [...products];
-
-  if(currentCategory !== "Tous"){
-
-    list = list.filter(
-      p => p.category === currentCategory
+  const list =
+    products.filter(
+      product =>
+        favorites.includes(product.id)
     );
-
-  }
-
-  if(currentSearch.trim()){
-
-    const search =
-      currentSearch.toLowerCase();
-
-    list = list.filter(p =>
-      p.name.toLowerCase().includes(search) ||
-      p.category.toLowerCase().includes(search)
-    );
-
-  }
-
-  const sort = $("sort").value;
-
-  if(sort === "priceAsc"){
-    list.sort((a,b)=>a.price-b.price);
-  }
-
-  if(sort === "priceDesc"){
-    list.sort((a,b)=>b.price-a.price);
-  }
-
-  if(sort === "name"){
-    list.sort((a,b)=>
-      a.name.localeCompare(b.name,"fr")
-    );
-  }
-
-  return list;
-}
-
-
-/* =========================================================
-   PRODUITS
-========================================================= */
-
-function renderProducts(){
-
-  const list = getVisibleProducts();
-
-  if(!list.length){
-
-    $("products").innerHTML = `
-      <div class="empty">
-        Aucun produit trouvé 🔎
-      </div>
-    `;
-
-    return;
-  }
-
-  $("products").innerHTML = list.map(product => `
-
-    <article class="product-card">
-
-      ${
-        product.new
-        ? `<div class="new-badge">NOUVEAU</div>`
-        : ""
-      }
-
-      <div class="product-image">
-        <img
-          src="${escapeHTML(product.image)}"
-          alt="${escapeHTML(product.name)}"
-          loading="lazy"
-        >
-      </div>
-
-      <div class="product-info">
-
-        <div class="product-category">
-          ${escapeHTML(product.category)}
-        </div>
-
-        <div class="product-name">
-          ${escapeHTML(product.name)}
-        </div>
-
-        <div class="product-bottom">
-
-          <div class="price">
-            ${money(product.price)}
-          </div>
-
-          <div class="card-actions">
-
-            <button
-              class="small-btn favorite ${isFavorite(product.id) ? "active":""}"
-              data-favorite="${product.id}"
-              title="Favoris"
-            >
-              ${isFavorite(product.id) ? "♥":"♡"}
-            </button>
-
-            <button
-              class="small-btn"
-              data-detail="${product.id}"
-              title="Voir"
-            >
-              👁️
-            </button>
-
-            <button
-              class="small-btn add-btn"
-              data-add="${product.id}"
-              title="Ajouter"
-            >
-              +
-            </button>
-
-          </div>
-
-        </div>
-
-      </div>
-
-    </article>
-
-  `).join("");
-
-  document
-    .querySelectorAll("[data-add]")
-    .forEach(button => {
-
-      button.addEventListener("click",()=>{
-
-        addToCart(button.dataset.add);
-
-      });
-
-    });
-
-  document
-    .querySelectorAll("[data-detail]")
-    .forEach(button => {
-
-      button.addEventListener("click",()=>{
-
-        openProduct(button.dataset.detail);
-
-      });
-
-    });
-
-  document
-    .querySelectorAll("[data-favorite]")
-    .forEach(button => {
-
-      button.addEventListener("click",()=>{
-
-        toggleFavorite(button.dataset.favorite);
-
-      });
-
-    });
-
-}
-
-
-/* =========================================================
-   DÉTAIL PRODUIT
-========================================================= */
-
-function openProduct(id){
-
-  const product = getProduct(id);
-
-  if(!product) return;
 
   openModal(`
 
-    <div class="modal-inner">
+    <h2 class="section-title">
+      ❤️ Mes favoris
+    </h2>
 
-      <div class="product-detail">
+    ${
+      list.length
+      ? `
+        <div class="products-grid">
+          ${list.map(product => `
 
-        <div class="detail-image">
+            <article class="product-card">
 
-          <img
-            src="${escapeHTML(product.image)}"
-            alt="${escapeHTML(product.name)}"
-          >
+              <img
+                class="product-image"
+                src="${product.image}"
+                alt=""
+              >
 
+              <div class="product-content">
+
+                <div class="product-name">
+                  ${escapeHTML(product.name)}
+                </div>
+
+                <div class="product-price">
+                  ${money(product.price)}
+                </div>
+
+                <button
+                  class="primary"
+                  data-fav-add="${product.id}"
+                  style="width:100%"
+                >
+                  🛒 Ajouter
+                </button>
+
+              </div>
+
+            </article>
+
+          `).join("")}
         </div>
-
-        <div>
-
-          <div class="detail-category">
-            ${escapeHTML(product.category)}
-          </div>
-
-          <h2 class="detail-name">
-            ${escapeHTML(product.name)}
-          </h2>
-
-          <div class="detail-price">
-            ${money(product.price)}
-          </div>
-
-          <div class="qty-row">
-
-            <button
-              class="qty-btn"
-              id="detailMinus"
-            >
-              −
-            </button>
-
-            <span
-              class="qty-value"
-              id="detailQty"
-            >
-              1
-            </span>
-
-            <button
-              class="qty-btn"
-              id="detailPlus"
-            >
-              +
-            </button>
-
-          </div>
-
-          <div class="detail-buttons">
-
-            <button
-              class="primary"
-              id="detailAdd"
-            >
-              🛒 Ajouter au panier
-            </button>
-
-            <button
-              class="secondary"
-              id="detailFav"
-            >
-              ❤️ Favori
-            </button>
-
-          </div>
-
+      `
+      : `
+        <div class="empty">
+          Aucun favori pour le moment ❤️
         </div>
-
-      </div>
-
-    </div>
+      `
+    }
 
   `);
 
-  let qty = 1;
+  document
+    .querySelectorAll("[data-fav-add]")
+    .forEach(button => {
 
-  $("detailMinus").onclick = ()=>{
+      button.onclick = () => {
 
-    qty = Math.max(1,qty-1);
+        addToCart(
+          button.dataset.favAdd
+        );
 
-    $("detailQty").textContent = qty;
+      };
 
-  };
-
-  $("detailPlus").onclick = ()=>{
-
-    qty++;
-
-    $("detailQty").textContent = qty;
-
-  };
-
-  $("detailAdd").onclick = ()=>{
-
-    addToCart(id,qty);
-
-    closeModal();
-
-  };
-
-  $("detailFav").onclick = ()=>{
-
-    toggleFavorite(id);
-
-    $("detailFav").textContent =
-      isFavorite(id)
-      ? "❤️ Favori"
-      : "♡ Ajouter aux favoris";
-
-  };
+    });
 
 }
 
@@ -984,244 +957,269 @@ function openProduct(id){
    PANIER
 ========================================================= */
 
-function renderCart(){
+function addToCart(id){
 
-  const items = cart
-    .map(item => ({
-      ...item,
-      product:getProduct(item.id)
-    }))
-    .filter(item => item.product);
+  const product =
+    products.find(
+      p => p.id === id
+    );
 
-  if(!items.length){
+  if(!product) return;
 
-    openModal(`
+  const existing =
+    cart.find(
+      item => item.id === id
+    );
 
-      <div class="modal-inner">
+  if(existing){
 
-        <h2 class="modal-title">
-          🛒 Ton panier
-        </h2>
+    existing.quantity++;
 
-        <div class="empty">
-          Ton panier est vide.
-        </div>
+  }else{
 
-      </div>
+    cart.push({
+      id:product.id,
+      name:product.name,
+      price:product.price,
+      image:product.image,
+      quantity:1
+    });
 
-    `);
-
-    return;
   }
+
+  saveCart();
+
+  toast("Produit ajouté au panier 🛒");
+
+}
+
+
+function changeQuantity(id, amount){
+
+  const item =
+    cart.find(
+      x => x.id === id
+    );
+
+  if(!item) return;
+
+  item.quantity += amount;
+
+  if(item.quantity <= 0){
+
+    cart =
+      cart.filter(
+        x => x.id !== id
+      );
+
+  }
+
+  saveCart();
+
+  showCart();
+
+}
+
+
+function showCart(){
 
   openModal(`
 
-    <div class="modal-inner">
+    <h2 class="section-title">
+      🛒 Mon panier
+    </h2>
 
-      <h2 class="modal-title">
-        🛒 Ton panier
-      </h2>
+    ${
+      cart.length
+      ? `
 
-      <div>
+        <div>
 
-        ${items.map(item => `
+          ${cart.map(item => `
 
-          <div class="cart-item">
+            <div class="cart-item">
 
-            <img
-              src="${escapeHTML(item.product.image)}"
-              alt=""
-            >
+              <img
+                src="${item.image}"
+                alt=""
+              >
 
-            <div>
+              <div class="cart-info">
 
-              <div class="cart-item-name">
-                ${escapeHTML(item.product.name)}
+                <div class="cart-name">
+                  ${escapeHTML(item.name)}
+                </div>
+
+                <div>
+                  ${money(item.price)}
+                </div>
+
               </div>
 
-              <div class="cart-item-price">
-                ${money(item.product.price)}
+              <div class="qty">
+
+                <button
+                  data-minus="${item.id}"
+                >
+                  −
+                </button>
+
+                <strong>
+                  ${item.quantity}
+                </strong>
+
+                <button
+                  data-plus="${item.id}"
+                >
+                  +
+                </button>
+
               </div>
 
             </div>
 
-            <div class="cart-controls">
+          `).join("")}
 
-              <button
-                data-cart-minus="${item.id}"
-              >
-                −
-              </button>
+        </div>
 
-              <b>${item.qty}</b>
+        <div class="total-box">
 
-              <button
-                data-cart-plus="${item.id}"
-              >
-                +
-              </button>
+          <div class="total-line">
 
-              <button
-                data-cart-remove="${item.id}"
-              >
-                🗑️
-              </button>
+            <span>
+              Total
+            </span>
 
-            </div>
+            <span>
+              ${money(cartTotal())}
+            </span>
 
           </div>
 
-        `).join("")}
+          <button
+            class="primary"
+            id="checkoutBtn"
+            style="width:100%;margin-top:15px"
+          >
+            Passer au paiement
+          </button>
 
-      </div>
-
-      <div class="total-box">
-
-        <div class="total-line">
-          <span>Sous-total</span>
-          <b>${money(cartTotal())}</b>
         </div>
 
-        <div class="total-line final">
-          <span>Total</span>
-          <b>${money(cartTotal())}</b>
+      `
+      : `
+
+        <div class="empty">
+          Ton panier est vide 🛒
         </div>
 
-      </div>
-
-      <button
-        class="primary"
-        id="checkoutBtn"
-        style="width:100%;margin-top:15px"
-      >
-        💳 Passer au paiement
-      </button>
-
-    </div>
+      `
+    }
 
   `);
 
   document
-    .querySelectorAll("[data-cart-minus]")
+    .querySelectorAll("[data-minus]")
     .forEach(button => {
 
-      button.onclick = ()=>{
-        changeQty(button.dataset.cartMinus,-1);
+      button.onclick = () => {
+
+        changeQuantity(
+          button.dataset.minus,
+          -1
+        );
+
       };
 
     });
 
   document
-    .querySelectorAll("[data-cart-plus]")
+    .querySelectorAll("[data-plus]")
     .forEach(button => {
 
-      button.onclick = ()=>{
-        changeQty(button.dataset.cartPlus,1);
+      button.onclick = () => {
+
+        changeQuantity(
+          button.dataset.plus,
+          1
+        );
+
       };
 
     });
 
-  document
-    .querySelectorAll("[data-cart-remove]")
-    .forEach(button => {
+  const checkout =
+    $("checkoutBtn");
 
-      button.onclick = ()=>{
-        removeFromCart(button.dataset.cartRemove);
-      };
+  if(checkout){
 
-    });
+    checkout.onclick =
+      showCheckout;
 
-  $("checkoutBtn").onclick = openCheckout;
+  }
+
 }
 
 
 /* =========================================================
-   FAVORIS
+   PRODUIT
 ========================================================= */
 
-function openFavorites(){
+function openProduct(id){
 
-  const list = products.filter(
-    p => favorites.includes(p.id)
-  );
+  const product =
+    products.find(
+      p => p.id === id
+    );
+
+  if(!product) return;
 
   openModal(`
 
-    <div class="modal-inner">
+    <div class="detail">
 
-      <h2 class="modal-title">
-        ❤️ Mes favoris
-      </h2>
+      <img
+        src="${product.image}"
+        alt="${escapeHTML(product.name)}"
+      >
 
-      ${
-        !list.length
-        ? `
-          <div class="empty">
-            Aucun favori pour le moment.
-          </div>
-        `
-        : `
-          <div class="products">
+      <div>
 
-            ${list.map(product => `
+        <div class="product-category">
+          ${escapeHTML(product.category)}
+        </div>
 
-              <article class="product-card">
+        <h2>
+          ${escapeHTML(product.name)}
+        </h2>
 
-                <div class="product-image">
-                  <img
-                    src="${escapeHTML(product.image)}"
-                    alt=""
-                  >
-                </div>
+        <div class="detail-price">
+          ${money(product.price)}
+        </div>
 
-                <div class="product-info">
+        <p style="color:#8e9bb0;line-height:1.6">
+          Produit disponible sur NovaShop.
+        </p>
 
-                  <div class="product-category">
-                    ${escapeHTML(product.category)}
-                  </div>
+        <button
+          class="primary"
+          id="detailAdd"
+          style="width:100%;margin-top:25px"
+        >
+          🛒 Ajouter au panier
+        </button>
 
-                  <div class="product-name">
-                    ${escapeHTML(product.name)}
-                  </div>
-
-                  <div class="product-bottom">
-
-                    <div class="price">
-                      ${money(product.price)}
-                    </div>
-
-                    <button
-                      class="small-btn add-btn"
-                      data-fav-add="${product.id}"
-                    >
-                      +
-                    </button>
-
-                  </div>
-
-                </div>
-
-              </article>
-
-            `).join("")}
-
-          </div>
-        `
-      }
+      </div>
 
     </div>
 
   `);
 
-  document
-    .querySelectorAll("[data-fav-add]")
-    .forEach(button => {
+  $("detailAdd").onclick = () => {
 
-      button.onclick = ()=>{
-        addToCart(button.dataset.favAdd);
-      };
+    addToCart(product.id);
 
-    });
+  };
 
 }
 
@@ -1230,344 +1228,311 @@ function openFavorites(){
    AUTH
 ========================================================= */
 
-function openAuth(){
+function showAccount(){
 
-  openModal(`
+  if(currentUser){
 
-    <div class="account-box">
+    openModal(`
 
-      <h2 class="modal-title">
-        👤 ${authMode === "login" ? "Connexion":"Créer un compte"}
-      </h2>
-
-      <div class="auth-tabs">
-
-        <button
-          class="auth-tab ${authMode === "login" ? "active":""}"
-          id="loginTab"
-        >
-          Connexion
-        </button>
-
-        <button
-          class="auth-tab ${authMode === "signup" ? "active":""}"
-          id="signupTab"
-        >
-          Inscription
-        </button>
-
-      </div>
-
-      <form class="form" id="authForm">
-
-        ${
-          authMode === "signup"
-          ? `
-            <input
-              id="authName"
-              type="text"
-              placeholder="Prénom / nom"
-              required
-            >
-          `
-          : ""
-        }
-
-        <input
-          id="authEmail"
-          type="email"
-          placeholder="Adresse e-mail"
-          required
-        >
-
-        <input
-          id="authPassword"
-          type="password"
-          placeholder="Mot de passe"
-          required
-        >
-
-        <div id="authError"></div>
-
-        <button
-          class="primary"
-          type="submit"
-        >
-          ${authMode === "login" ? "Se connecter":"Créer mon compte"}
-        </button>
-
-      </form>
-
-    </div>
-
-  `);
-
-  $("loginTab").onclick = ()=>{
-    authMode = "login";
-    openAuth();
-  };
-
-  $("signupTab").onclick = ()=>{
-    authMode = "signup";
-    openAuth();
-  };
-
-  $("authForm").onsubmit = handleAuth;
-
-}
-
-async function handleAuth(event){
-
-  event.preventDefault();
-
-  const email =
-    $("authEmail").value.trim();
-
-  const password =
-    $("authPassword").value;
-
-  const error =
-    $("authError");
-
-  error.textContent = "";
-
-  try{
-
-    if(authMode === "login"){
-
-      await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-
-      toast("Connexion réussie ✅");
-
-    }else{
-
-      await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-
-      toast("Compte créé ✅");
-
-    }
-
-    closeModal();
-
-  }catch(err){
-
-    console.error(err);
-
-    error.innerHTML = `
-      <div class="error">
-        ${escapeHTML(
-          authErrorMessage(err.code)
-        )}
-      </div>
-    `;
-
-  }
-
-}
-
-function authErrorMessage(code){
-
-  const messages = {
-
-    "auth/invalid-email":
-      "Adresse e-mail incorrecte.",
-
-    "auth/user-not-found":
-      "Compte introuvable.",
-
-    "auth/wrong-password":
-      "Mot de passe incorrect.",
-
-    "auth/invalid-credential":
-      "E-mail ou mot de passe incorrect.",
-
-    "auth/email-already-in-use":
-      "Cette adresse possède déjà un compte.",
-
-    "auth/weak-password":
-      "Le mot de passe est trop faible.",
-
-    "auth/api-key-not-valid":
-      "La clé Firebase est invalide. Vérifie la configuration Firebase."
-
-  };
-
-  return messages[code] ||
-    "Une erreur est survenue. Réessaie.";
-}
-
-
-/* =========================================================
-   COMPTE
-========================================================= */
-
-function openAccount(){
-
-  if(!currentUser){
-
-    authMode = "login";
-
-    openAuth();
-
-    return;
-  }
-
-  openModal(`
-
-    <div class="account-box">
-
-      <h2 class="modal-title">
+      <h2 class="section-title">
         👤 Mon compte
       </h2>
 
-      <div class="account-email">
-        ${escapeHTML(currentUser.email || "")}
-      </div>
+      <div class="account-box">
 
-      <div class="hero-buttons">
+        <div>
+          Connecté avec :
+        </div>
+
+        <strong>
+          ${escapeHTML(currentUser.email)}
+        </strong>
 
         <button
-          class="primary"
+          class="secondary"
           id="myOrdersBtn"
         >
           📦 Mes commandes
         </button>
 
         <button
-          class="secondary"
+          class="danger"
           id="logoutBtn"
         >
-          🚪 Se déconnecter
+          Se déconnecter
         </button>
 
       </div>
+
+    `);
+
+    $("logoutBtn").onclick =
+      async () => {
+
+        await signOut(auth);
+
+        closeModal();
+
+        toast("Déconnecté.");
+
+      };
+
+    $("myOrdersBtn").onclick =
+      showMyOrders;
+
+    return;
+
+  }
+
+
+  openModal(`
+
+    <h2 class="section-title">
+      👤 Connexion
+    </h2>
+
+    <div class="form">
+
+      <input
+        id="authEmail"
+        type="email"
+        placeholder="Email"
+      >
+
+      <input
+        id="authPassword"
+        type="password"
+        placeholder="Mot de passe"
+      >
+
+      <button
+        class="primary"
+        id="loginBtn"
+      >
+        Se connecter
+      </button>
+
+      <button
+        class="secondary"
+        id="registerBtn"
+      >
+        Créer un compte
+      </button>
+
+      <div id="authError"></div>
 
     </div>
 
   `);
 
-  $("myOrdersBtn").onclick = openMyOrders;
 
-  $("logoutBtn").onclick = async ()=>{
+  $("loginBtn").onclick =
+    async () => {
 
-    await signOut(auth);
+      const email =
+        $("authEmail").value.trim();
 
-    closeModal();
+      const password =
+        $("authPassword").value;
 
-    toast("Déconnexion réussie");
+      try{
 
-  };
+        await signInWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+
+        closeModal();
+
+        toast("Connexion réussie ✅");
+
+      }catch(error){
+
+        console.error(error);
+
+        $("authError").innerHTML = `
+          <div class="error">
+            ❌ Email ou mot de passe incorrect.
+          </div>
+        `;
+
+      }
+
+    };
+
+
+  $("registerBtn").onclick =
+    async () => {
+
+      const email =
+        $("authEmail").value.trim();
+
+      const password =
+        $("authPassword").value;
+
+      if(password.length < 6){
+
+        $("authError").innerHTML = `
+          <div class="error">
+            ❌ Le mot de passe doit contenir au moins 6 caractères.
+          </div>
+        `;
+
+        return;
+
+      }
+
+      try{
+
+        await createUserWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
+
+        closeModal();
+
+        toast("Compte créé ✅");
+
+      }catch(error){
+
+        console.error(error);
+
+        $("authError").innerHTML = `
+          <div class="error">
+            ❌ Impossible de créer le compte.
+          </div>
+        `;
+
+      }
+
+    };
 
 }
 
 
 /* =========================================================
-   COMMANDES UTILISATEUR
+   MES COMMANDES
 ========================================================= */
 
-async function openMyOrders(){
+async function showMyOrders(){
 
   if(!currentUser){
 
-    openAuth();
+    showAccount();
 
     return;
+
   }
 
   openModal(`
 
-    <div class="modal-inner">
+    <h2 class="section-title">
+      📦 Mes commandes
+    </h2>
 
-      <h2 class="modal-title">
-        📦 Mes commandes
-      </h2>
-
-      <div id="ordersContent">
-        Chargement...
-      </div>
-
+    <div id="myOrders">
+      Chargement...
     </div>
 
   `);
 
   try{
 
-    const q = query(
-      collection(db,"orders"),
-      where("userId","==",currentUser.uid),
-      orderBy("createdAt","desc")
-    );
+    const q =
+      query(
+        collection(db,"orders"),
+        where(
+          "customerEmail",
+          "==",
+          currentUser.email
+        )
+      );
 
     const snapshot =
       await getDocs(q);
 
     if(snapshot.empty){
 
-      $("ordersContent").innerHTML = `
+      $("myOrders").innerHTML = `
         <div class="empty">
           Aucune commande.
         </div>
       `;
 
       return;
+
     }
 
-    $("ordersContent").innerHTML =
-      snapshot.docs.map(docSnap => {
+    const orders =
+      snapshot.docs
+        .map(orderDoc => ({
+          id:orderDoc.id,
+          ...orderDoc.data()
+        }))
+        .sort((a,b) => {
 
-        const order = docSnap.data();
+          const dateA =
+            a.createdAt?.seconds || 0;
 
-        return `
+          const dateB =
+            b.createdAt?.seconds || 0;
 
-          <div class="order-card">
+          return dateB - dateA;
 
-            <div class="order-head">
+        });
 
-              <b>
-                Commande #${escapeHTML(docSnap.id.slice(0,8))}
-              </b>
 
-              <span class="status ${order.paymentStatus || "pending"}">
-                ${escapeHTML(
-                  order.paymentStatus || "pending"
-                )}
-              </span>
+    $("myOrders").innerHTML =
+      orders.map(order => `
 
-            </div>
+        <div class="order-card">
 
-            <div style="margin-top:8px;color:#9aacbf">
-              ${escapeHTML(
-                order.paymentMethod === "card"
-                ? "Carte bancaire"
-                : "PayPal"
-              )}
-            </div>
+          <strong>
+            Commande #${escapeHTML(
+              order.id.slice(0,8)
+            )}
+          </strong>
 
-            <div style="margin-top:7px;font-weight:900">
-              ${money(order.total || 0)}
-            </div>
+          <br><br>
 
-          </div>
+          Total :
+          <strong>
+            ${money(order.total)}
+          </strong>
 
-        `;
+          <br>
 
-      }).join("");
+          Paiement :
+          ${
+            order.paymentMethod === "card"
+            ? "💳 Carte"
+            : "🅿️ PayPal"
+          }
+
+          <br>
+
+          Statut :
+          <span class="status ${
+            order.paymentStatus || "pending"
+          }">
+            ${escapeHTML(
+              order.paymentStatus || "pending"
+            )}
+          </span>
+
+        </div>
+
+      `).join("");
 
   }catch(error){
 
     console.error(error);
 
-    $("ordersContent").innerHTML = `
+    $("myOrders").innerHTML = `
       <div class="error">
-        Impossible de charger les commandes.
+        ❌ Impossible de charger les commandes.
       </div>
     `;
 
@@ -1580,137 +1545,179 @@ async function openMyOrders(){
    CHECKOUT
 ========================================================= */
 
-function openCheckout(){
-
-  if(!currentUser){
-
-    toast("Connecte-toi pour commander 👤");
-
-    authMode = "login";
-
-    openAuth();
-
-    return;
-  }
+function showCheckout(){
 
   if(!cart.length){
 
     toast("Ton panier est vide.");
 
     return;
+
   }
 
-  selectedPayment = "card";
+  if(!currentUser){
 
-  renderCheckout();
-}
+    toast("Connecte-toi avant de payer.");
 
-function renderCheckout(){
+    showAccount();
 
-  const total = cartTotal();
+    return;
+
+  }
 
   openModal(`
 
-    <div class="modal-inner">
+    <h2 class="section-title">
+      💳 Paiement
+    </h2>
 
-      <h2 class="modal-title">
-        💳 Paiement
-      </h2>
+    <div class="form">
 
-      <form class="form" id="checkoutForm">
+      <input
+        id="customerName"
+        placeholder="Nom complet"
+      >
 
-        <input
-          id="customerName"
-          type="text"
-          placeholder="Nom complet"
-          required
-        >
+      <input
+        id="customerEmail"
+        type="email"
+        value="${escapeHTML(
+          currentUser.email
+        )}"
+        placeholder="Email"
+      >
 
-        <input
-          id="customerEmail"
-          type="email"
-          value="${escapeHTML(currentUser?.email || "")}"
-          placeholder="E-mail"
-          required
-        >
+      <div class="total-box">
 
-        <div class="payment-grid">
+        <div class="total-line">
 
-          <div
-            class="payment-card active"
-            id="cardPayment"
-          >
+          <span>
+            Total
+          </span>
 
-            <div class="payment-icon">
-              💳
-            </div>
-
-            <div class="payment-title">
-              Carte bancaire
-            </div>
-
-            <div class="payment-text">
-              Paiement par carte.
-            </div>
-
-          </div>
-
-          <div
-            class="payment-card"
-            id="paypalPayment"
-          >
-
-            <div class="payment-icon">
-              🅿️
-            </div>
-
-            <div class="payment-title">
-              PayPal
-            </div>
-
-            <div class="payment-text">
-              Paiement avec ton compte PayPal.
-            </div>
-
-          </div>
+          <span>
+            ${money(cartTotal())}
+          </span>
 
         </div>
 
-        <div
-          class="card-fields show"
-          id="cardFields"
+      </div>
+
+      <div class="payment-choice">
+
+        <button
+          type="button"
+          class="payment-btn active"
+          id="cardPaymentBtn"
         >
+          💳 Carte
+        </button>
+
+        <button
+          type="button"
+          class="payment-btn"
+          id="paypalPaymentBtn"
+        >
+          🅿️ PayPal
+        </button>
+
+      </div>
+
+      <div id="paymentArea"></div>
+
+      <button
+        class="primary"
+        id="payBtn"
+      >
+        Payer ${money(cartTotal())}
+      </button>
+
+    </div>
+
+  `);
+
+  renderPaymentArea();
+
+  $("cardPaymentBtn").onclick =
+    () => {
+
+      selectedPayment = "card";
+
+      $("cardPaymentBtn")
+        .classList.add("active");
+
+      $("paypalPaymentBtn")
+        .classList.remove("active");
+
+      renderPaymentArea();
+
+    };
+
+
+  $("paypalPaymentBtn").onclick =
+    () => {
+
+      selectedPayment = "paypal";
+
+      $("paypalPaymentBtn")
+        .classList.add("active");
+
+      $("cardPaymentBtn")
+        .classList.remove("active");
+
+      renderPaymentArea();
+
+    };
+
+
+  $("payBtn").onclick =
+    handlePayment;
+
+}
+
+
+/* =========================================================
+   ZONE PAIEMENT
+========================================================= */
+
+function renderPaymentArea(){
+
+  if(selectedPayment === "card"){
+
+    $("paymentArea").innerHTML = `
+
+      <div class="card-box">
+
+        <strong>
+          💳 Paiement par carte
+        </strong>
+
+        <p style="color:#8e9bb0;margin:8px 0 14px">
+          Mode test local NovaShop.
+        </p>
+
+        <div class="form">
 
           <input
             id="cardNumber"
-            type="text"
             inputmode="numeric"
             maxlength="19"
             placeholder="Numéro de carte"
-            autocomplete="off"
-            required
           >
 
-          <div class="exp-cvv">
+          <div class="card-grid">
 
             <input
               id="cardExpiry"
-              type="text"
-              inputmode="numeric"
-              maxlength="5"
               placeholder="MM/AA"
-              autocomplete="off"
-              required
+              maxlength="5"
             >
 
             <input
               id="cardCvv"
-              type="password"
               inputmode="numeric"
-              maxlength="3"
               placeholder="CVV"
-              autocomplete="off"
-              required
+              maxlength="4"
             >
 
           </div>
@@ -1719,143 +1726,125 @@ function renderCheckout(){
 
         </div>
 
-        <div
-          class="paypal-box"
-          id="paypalBox"
-        >
+      </div>
 
-          <div class="payment-text">
-            Tu seras redirigé vers PayPal pour effectuer le paiement.
-          </div>
+    `;
 
-        </div>
+    $("cardNumber").addEventListener(
+      "input",
+      event => {
 
-        <div class="total-box">
+        let value =
+          event.target.value
+            .replace(/\D/g,"")
+            .slice(0,16);
 
-          <div class="total-line">
-            <span>Sous-total</span>
-            <b>${money(total)}</b>
-          </div>
+        value =
+          value.match(/.{1,4}/g)?.join(" ")
+          || "";
 
-          <div class="total-line final">
-            <span>Total</span>
-            <b>${money(total)}</b>
-          </div>
+        event.target.value = value;
 
-        </div>
+      }
+    );
 
-        <button
-          class="primary"
-          id="payButton"
-          type="submit"
-        >
-          💳 Payer
-        </button>
+    $("cardExpiry").addEventListener(
+      "input",
+      event => {
 
-      </form>
+        let value =
+          event.target.value
+            .replace(/\D/g,"")
+            .slice(0,4);
+
+        if(value.length > 2){
+
+          value =
+            value.slice(0,2) +
+            "/" +
+            value.slice(2);
+
+        }
+
+        event.target.value = value;
+
+      }
+    );
+
+    return;
+
+  }
+
+
+  $("paymentArea").innerHTML = `
+
+    <div class="paypal-box">
+
+      <strong>
+        🅿️ Paiement PayPal
+      </strong>
+
+      <p style="color:#8e9bb0;margin-top:8px;line-height:1.5">
+        Tu seras redirigé vers PayPal pour effectuer le paiement.
+      </p>
+
+      <p style="margin-top:10px">
+        Montant :
+        <strong>
+          ${money(cartTotal())}
+        </strong>
+      </p>
 
     </div>
 
-  `);
-
-  $("cardPayment").onclick = ()=>{
-
-    selectedPayment = "card";
-
-    $("cardPayment").classList.add("active");
-    $("paypalPayment").classList.remove("active");
-
-    $("cardFields").classList.add("show");
-    $("paypalBox").classList.remove("show");
-
-    $("cardNumber").required = true;
-    $("cardExpiry").required = true;
-    $("cardCvv").required = true;
-
-    $("payButton").textContent =
-      "💳 Payer par carte";
-
-  };
-
-  $("paypalPayment").onclick = ()=>{
-
-    selectedPayment = "paypal";
-
-    $("paypalPayment").classList.add("active");
-    $("cardPayment").classList.remove("active");
-
-    $("cardFields").classList.remove("show");
-    $("paypalBox").classList.add("show");
-
-    $("cardNumber").required = false;
-    $("cardExpiry").required = false;
-    $("cardCvv").required = false;
-
-    $("payButton").textContent =
-      "🅿️ Payer avec PayPal";
-
-  };
-
-  $("cardNumber").addEventListener(
-    "input",
-    formatCardNumber
-  );
-
-  $("cardExpiry").addEventListener(
-    "input",
-    formatExpiry
-  );
-
-  $("cardCvv").addEventListener(
-    "input",
-    ()=>{
-      $("cardCvv").value =
-        $("cardCvv").value
-          .replace(/\D/g,"")
-          .slice(0,3);
-    }
-  );
-
-  $("checkoutForm").onsubmit =
-    handlePayment;
+  `;
 
 }
 
 
 /* =========================================================
-   FORMAT CARTE FICTIVE
+   CREATION COMMANDE
 ========================================================= */
 
-function formatCardNumber(){
+async function createOrder(
+  name,
+  email,
+  total,
+  paymentMethod,
+  paymentStatus
+){
 
-  let value =
-    $("cardNumber").value
-      .replace(/\D/g,"")
-      .slice(0,16);
+  if(!currentUser){
 
-  value =
-    value.match(/.{1,4}/g)?.join(" ") || "";
-
-  $("cardNumber").value = value;
-}
-
-function formatExpiry(){
-
-  let value =
-    $("cardExpiry").value
-      .replace(/\D/g,"")
-      .slice(0,4);
-
-  if(value.length > 2){
-
-    value =
-      value.slice(0,2) +
-      "/" +
-      value.slice(2);
+    throw new Error(
+      "Utilisateur non connecté"
+    );
 
   }
 
-  $("cardExpiry").value = value;
+  return await addDoc(
+    collection(db,"orders"),
+    {
+      customerName:name,
+      customerEmail:email,
+      userId:currentUser.uid,
+
+      items:cart.map(item => ({
+        id:item.id,
+        name:item.name,
+        price:item.price,
+        quantity:item.quantity
+      })),
+
+      total:Number(total),
+
+      paymentMethod,
+      paymentStatus,
+
+      createdAt:serverTimestamp()
+    }
+  );
+
 }
 
 
@@ -1873,26 +1862,41 @@ async function handlePayment(event){
   const email =
     $("customerEmail").value.trim();
 
+  const total =
+    cartTotal();
+
+
   if(!name || !email){
 
-    toast("Remplis tes informations.");
+    toast(
+      "Remplis tes informations."
+    );
 
     return;
+
   }
 
-  const total = cartTotal();
 
   if(total <= 0){
 
-    toast("Panier vide.");
+    toast(
+      "Ton panier est vide."
+    );
 
     return;
+
   }
+
+
+  /* =========================
+     CARTE
+  ========================= */
 
   if(selectedPayment === "card"){
 
     const number =
-      $("cardNumber").value
+      $("cardNumber")
+        .value
         .replace(/\s/g,"");
 
     const expiry =
@@ -1901,154 +1905,147 @@ async function handlePayment(event){
     const cvv =
       $("cardCvv").value;
 
-    /*
-      CARTE DE TEST LOCALE UNIQUEMENT
-
-      Numéro : 1234 5678 9012 3456
-      Expiration : 12/42
-      CVV : 144
-
-      Rien n'est envoyé à une banque.
-      Rien n'est sauvegardé.
-    */
 
     const validCard =
       number === "1234567890123456" &&
       expiry === "12/42" &&
       cvv === "144";
 
+
     if(!validCard){
 
       $("cardError").innerHTML = `
+
         <div class="error">
           ❌ Carte incorrecte
         </div>
+
       `;
 
       return;
+
     }
 
-    await createOrder(
-      name,
-      email,
-      total,
-      "card",
-      "paid"
-    );
 
-    cart = [];
+    try{
 
-    saveCart();
+      await createOrder(
+        name,
+        email,
+        total,
+        "card",
+        "paid"
+      );
 
-    openPaymentSuccess();
+      cart = [];
+
+      saveCart();
+
+      openPaymentSuccess();
+
+    }catch(error){
+
+      console.error(error);
+
+      toast(
+        "Impossible d'enregistrer la commande."
+      );
+
+    }
 
     return;
+
   }
+
+
+  /* =========================
+     PAYPAL
+  ========================= */
 
   if(selectedPayment === "paypal"){
 
-    await createOrder(
-      name,
-      email,
-      total,
-      "paypal",
-      "pending"
-    );
-
     const paypalUrl =
-      "https://paypal.me/SH0PNOVA/" +
+      "https://paypal.me/" +
+      PAYPAL_USERNAME +
+      "/" +
       encodeURIComponent(
         total.toFixed(2)
       );
 
-    window.open(
-      paypalUrl,
-      "_blank",
-      "noopener,noreferrer"
-    );
 
-    cart = [];
+    /*
+      On ouvre immédiatement le lien.
+      Sur iPhone, iOS peut alors reconnaître
+      le lien PayPal et proposer/lancer l'application
+      PayPal si elle est installée.
+    */
 
-    saveCart();
+    let paypalWindow = null;
 
-    toast("Ouverture de PayPal 🅿️");
+    try{
 
-    closeModal();
+      paypalWindow =
+        window.open(
+          paypalUrl,
+          "_blank"
+        );
 
-  }
+    }catch(error){
 
-}
+      console.log(
+        "Ouverture PayPal bloquée",
+        error
+      );
+
+    }
 
 
-/* =========================================================
-   COMMANDE FIRESTORE
-========================================================= */
+    try{
 
-async function createOrder(
-  name,
-  email,
-  total,
-  paymentMethod,
-  paymentStatus
-){
-
-  if(!currentUser){
-
-    throw new Error(
-      "Utilisateur non connecté."
-    );
-
-  }
-
-  const items = cart.map(item => {
-
-    const product =
-      getProduct(item.id);
-
-    return {
-
-      id:item.id,
-      name:product?.name || "",
-      price:product?.price || 0,
-      quantity:item.qty
-
-    };
-
-  });
-
-  try{
-
-    await addDoc(
-      collection(db,"orders"),
-      {
-
-        userId:currentUser.uid,
-
-        customerName:name,
-
-        customerEmail:email,
-
-        items,
-
+      await createOrder(
+        name,
+        email,
         total,
+        "paypal",
+        "pending"
+      );
 
-        paymentMethod,
+      cart = [];
 
-        paymentStatus,
+      saveCart();
 
-        createdAt:serverTimestamp()
+
+      /*
+        Si Safari bloque le nouvel onglet,
+        on redirige directement la page actuelle.
+      */
+
+      if(!paypalWindow){
+
+        window.location.href =
+          paypalUrl;
 
       }
-    );
 
-  }catch(error){
+      closeModal();
 
-    console.error(
-      "Erreur création commande:",
-      error
-    );
+    }catch(error){
 
-    throw error;
+      console.error(error);
+
+      if(paypalWindow){
+
+        try{
+          paypalWindow.close();
+        }catch(e){}
+        
+      }
+
+      toast(
+        "Impossible d'enregistrer la commande."
+      );
+
+    }
 
   }
 
@@ -2063,26 +2060,34 @@ function openPaymentSuccess(){
 
   openModal(`
 
-    <div class="account-box" style="text-align:center">
+    <div style="
+      text-align:center;
+      padding:30px 10px;
+    ">
 
-      <div style="font-size:60px">
+      <div style="
+        font-size:60px;
+        margin-bottom:15px;
+      ">
         ✅
       </div>
 
-      <h2 class="modal-title">
+      <h2>
         Paiement accepté
       </h2>
 
-      <p class="payment-text" style="font-size:15px">
-        Ta commande a été enregistrée avec succès.
+      <p style="
+        color:#8e9bb0;
+        margin:15px 0 25px;
+      ">
+        Ta commande a été enregistrée.
       </p>
 
       <button
         class="primary"
         id="successClose"
-        style="margin-top:20px"
       >
-        Continuer
+        Fermer
       </button>
 
     </div>
@@ -2096,48 +2101,15 @@ function openPaymentSuccess(){
 
 
 /* =========================================================
-   DASHBOARD ADMIN
+   ADMIN
 ========================================================= */
 
-async function openAdmin(){
+function isAdmin(){
 
-  if(!currentUser){
-
-    toast("Connecte-toi pour accéder au Dashboard.");
-
-    authMode = "login";
-
-    openAuth();
-
-    return;
-  }
-
-  if(
-    currentUser.email.toLowerCase() !==
-    ADMIN_EMAIL.toLowerCase()
-  ){
-
-    toast("Accès Dashboard refusé ❌");
-
-    return;
-  }
-
-  const code =
-    prompt("Code administrateur NovaShop :");
-
-  if(code !== ADMIN_CODE){
-
-    toast("Code administrateur incorrect ❌");
-
-    return;
-  }
-
-  localStorage.setItem(
-    "novaAdminAuthorized",
-    "true"
-  );
-
-  renderAdmin();
+  return currentUser &&
+    currentUser.email
+      .toLowerCase() ===
+    ADMIN_EMAIL.toLowerCase();
 
 }
 
@@ -2146,59 +2118,87 @@ async function openAdmin(){
    DASHBOARD
 ========================================================= */
 
-async function renderAdmin(){
+async function showDashboard(){
+
+  if(!currentUser){
+
+    toast(
+      "Connecte-toi pour accéder au dashboard."
+    );
+
+    showAccount();
+
+    return;
+
+  }
+
+
+  if(!isAdmin()){
+
+    openModal(`
+
+      <h2 class="section-title">
+        👑 Dashboard
+      </h2>
+
+      <div class="error">
+        ❌ Accès administrateur requis.
+      </div>
+
+    `);
+
+    return;
+
+  }
+
 
   openModal(`
 
-    <div class="modal-inner">
+    <h2 class="section-title">
+      👑 Dashboard NovaShop
+    </h2>
 
-      <h2 class="modal-title">
-        ⚙️ Dashboard NovaShop
-      </h2>
+    <div
+      id="adminDashboard"
+    >
+      Chargement...
+    </div>
 
-      <div class="payment-grid">
+  `);
 
-        <div class="payment-card active">
 
-          <div class="payment-icon">
-            📦
-          </div>
+  $("adminDashboard").innerHTML = `
 
-          <div class="payment-title">
-            Commandes
-          </div>
+    <div
+      style="
+        display:grid;
+        gap:15px;
+      "
+    >
 
-          <div class="payment-text">
-            Gestion des commandes clients.
-          </div>
+      <div class="total-box">
 
-        </div>
+        <strong>
+          Administrateur
+        </strong>
 
-        <div class="payment-card">
-
-          <div class="payment-icon">
-            🛍️
-          </div>
-
-          <div class="payment-title">
-            Produits
-          </div>
-
-          <div class="payment-text">
-            ${products.length} produits disponibles.
-          </div>
-
-        </div>
+        <p style="color:#8e9bb0;margin-top:5px">
+          ${escapeHTML(currentUser.email)}
+        </p>
 
       </div>
 
-      <div id="adminOrders">
+      <div
+        id="adminOrders"
+        class="admin-wrap"
+      >
         Chargement des commandes...
       </div>
 
     </div>
 
-  `);
+  `;
+
 
   await renderAdminOrders();
 
@@ -2214,26 +2214,55 @@ async function renderAdminOrders(){
   const container =
     $("adminOrders");
 
+
   try{
+
+    /*
+      IMPORTANT :
+      Pas de orderBy Firebase ici.
+      On récupère les commandes puis
+      on les trie directement en JavaScript.
+    */
 
     const snapshot =
       await getDocs(
-        query(
-          collection(db,"orders"),
-          orderBy("createdAt","desc")
-        )
+        collection(db,"orders")
       );
+
 
     if(snapshot.empty){
 
       container.innerHTML = `
+
         <div class="empty">
           Aucune commande.
         </div>
+
       `;
 
       return;
+
     }
+
+
+    const orders =
+      snapshot.docs
+        .map(orderDoc => ({
+          id:orderDoc.id,
+          ...orderDoc.data()
+        }))
+        .sort((a,b) => {
+
+          const dateA =
+            a.createdAt?.seconds || 0;
+
+          const dateB =
+            b.createdAt?.seconds || 0;
+
+          return dateB - dateA;
+
+        });
+
 
     container.innerHTML = `
 
@@ -2243,12 +2272,29 @@ async function renderAdminOrders(){
 
           <tr>
 
-            <th>Commande</th>
-            <th>Client</th>
-            <th>Total</th>
-            <th>Paiement</th>
-            <th>Statut</th>
-            <th>Action</th>
+            <th>
+              Commande
+            </th>
+
+            <th>
+              Client
+            </th>
+
+            <th>
+              Total
+            </th>
+
+            <th>
+              Paiement
+            </th>
+
+            <th>
+              Statut
+            </th>
+
+            <th>
+              Action
+            </th>
 
           </tr>
 
@@ -2256,79 +2302,90 @@ async function renderAdminOrders(){
 
         <tbody>
 
-          ${snapshot.docs.map(orderDoc => {
+          ${orders.map(order => `
 
-            const order =
-              orderDoc.data();
+            <tr>
 
-            return `
+              <td>
+                #${escapeHTML(
+                  order.id.slice(0,8)
+                )}
+              </td>
 
-              <tr>
+              <td>
 
-                <td>
-                  #${escapeHTML(
-                    orderDoc.id.slice(0,8)
-                  )}
-                </td>
+                ${escapeHTML(
+                  order.customerEmail || "?"
+                )}
 
-                <td>
+              </td>
+
+              <td>
+
+                ${money(
+                  order.total || 0
+                )}
+
+              </td>
+
+              <td>
+
+                ${
+                  order.paymentMethod === "card"
+                  ? "💳 Carte"
+                  : "🅿️ PayPal"
+                }
+
+              </td>
+
+              <td>
+
+                <span
+                  class="status ${
+                    order.paymentStatus ||
+                    "pending"
+                  }"
+                >
+
                   ${escapeHTML(
-                    order.customerEmail || ""
+                    order.paymentStatus ||
+                    "pending"
                   )}
-                </td>
 
-                <td>
-                  ${money(order.total || 0)}
-                </td>
+                </span>
 
-                <td>
-                  ${
-                    order.paymentMethod === "card"
-                    ? "💳 Carte"
-                    : "🅿️ PayPal"
-                  }
-                </td>
+              </td>
 
-                <td>
+              <td>
 
-                  <span
-                    class="status ${
-                      order.paymentStatus || "pending"
-                    }"
-                  >
-                    ${escapeHTML(
-                      order.paymentStatus || "pending"
-                    )}
-                  </span>
+                ${
+                  order.paymentStatus !== "paid"
 
-                </td>
+                  ? `
 
-                <td>
+                    <button
+                      class="small-btn"
+                      data-paid="${order.id}"
+                    >
+                      ✓ Payé
+                    </button>
 
-                  ${
-                    order.paymentStatus !== "paid"
-                    ? `
-                      <button
-                        class="small-btn add-btn"
-                        data-paid="${orderDoc.id}"
-                      >
-                        ✓ Payé
-                      </button>
-                    `
-                    : `
-                      <span class="success">
-                        ✓
-                      </span>
-                    `
-                  }
+                  `
 
-                </td>
+                  : `
 
-              </tr>
+                    <span class="success">
+                      ✓ Payé
+                    </span>
 
-            `;
+                  `
+                }
 
-          }).join("")}
+              </td>
+
+            </tr>
+
+          `).join("")}
 
         </tbody>
 
@@ -2336,54 +2393,68 @@ async function renderAdminOrders(){
 
     `;
 
+
     document
       .querySelectorAll("[data-paid]")
       .forEach(button => {
 
-        button.onclick = async ()=>{
+        button.onclick =
+          async () => {
 
-          try{
+            try{
 
-            await updateDoc(
-              doc(
-                db,
-                "orders",
-                button.dataset.paid
-              ),
-              {
-                paymentStatus:"paid"
-              }
-            );
+              await updateDoc(
+                doc(
+                  db,
+                  "orders",
+                  button.dataset.paid
+                ),
+                {
+                  paymentStatus:"paid"
+                }
+              );
 
-            toast(
-              "Commande marquée comme payée ✅"
-            );
 
-            await renderAdminOrders();
+              toast(
+                "Commande marquée comme payée ✅"
+              );
 
-          }catch(error){
 
-            console.error(error);
+              await renderAdminOrders();
 
-            toast(
-              "Erreur lors de la mise à jour."
-            );
+            }catch(error){
 
-          }
+              console.error(error);
 
-        };
+              toast(
+                "Erreur lors de la mise à jour."
+              );
+
+            }
+
+          };
 
       });
 
+
   }catch(error){
 
-    console.error(error);
+    console.error(
+      "ERREUR FIRESTORE COMMANDES :",
+      error
+    );
+
 
     container.innerHTML = `
 
       <div class="error">
-        Impossible de charger les commandes.
-        Vérifie les règles Firestore et l'index.
+
+        ❌ Impossible de charger les commandes.
+
+        <br><br>
+
+        Vérifie les règles Firestore.
+
       </div>
 
     `;
@@ -2394,90 +2465,7 @@ async function renderAdminOrders(){
 
 
 /* =========================================================
-   EVENTS
-========================================================= */
-
-$("search").addEventListener(
-  "input",
-  event => {
-
-    currentSearch =
-      event.target.value;
-
-    renderProducts();
-
-  }
-);
-
-$("sort").addEventListener(
-  "change",
-  renderProducts
-);
-
-$("accountBtn").addEventListener(
-  "click",
-  openAccount
-);
-
-$("favoritesBtn").addEventListener(
-  "click",
-  openFavorites
-);
-
-$("cartBtn").addEventListener(
-  "click",
-  renderCart
-);
-
-$("dashboardBtn").addEventListener(
-  "click",
-  openAdmin
-);
-
-$("heroDashboardBtn").addEventListener(
-  "click",
-  openAdmin
-);
-
-$("shopBtn").addEventListener(
-  "click",
-  ()=>{
-    $("shop").scrollIntoView({
-      behavior:"smooth"
-    });
-  }
-);
-
-$("closeModal").addEventListener(
-  "click",
-  closeModal
-);
-
-$("overlay").addEventListener(
-  "click",
-  event => {
-
-    if(event.target === $("overlay")){
-      closeModal();
-    }
-
-  }
-);
-
-document.addEventListener(
-  "keydown",
-  event => {
-
-    if(event.key === "Escape"){
-      closeModal();
-    }
-
-  }
-);
-
-
-/* =========================================================
-   FIREBASE AUTH
+   AUTH STATE
 ========================================================= */
 
 onAuthStateChanged(
@@ -2486,15 +2474,42 @@ onAuthStateChanged(
 
     currentUser = user;
 
-    if(user){
+    updateCounters();
 
-      $("accountBtn").title =
-        "Compte connecté";
+  }
+);
 
-    }else{
 
-      $("accountBtn").title =
-        "Connexion";
+/* =========================================================
+   EVENTS
+========================================================= */
+
+$("searchInput").addEventListener(
+  "input",
+  renderProducts
+);
+
+
+$("sortSelect").addEventListener(
+  "change",
+  renderProducts
+);
+
+
+$("closeModal").onclick =
+  closeModal;
+
+
+$("modalOverlay").addEventListener(
+  "click",
+  event => {
+
+    if(
+      event.target ===
+      $("modalOverlay")
+    ){
+
+      closeModal();
 
     }
 
@@ -2502,45 +2517,67 @@ onAuthStateChanged(
 );
 
 
+$("cartBtn").onclick =
+  showCart;
+
+
+$("favoritesBtn").onclick =
+  showFavorites;
+
+
+$("accountBtn").onclick =
+  showAccount;
+
+
+$("dashboardBtn").onclick =
+  showDashboard;
+
+
+$("heroDashboardBtn").onclick =
+  showDashboard;
+
+
+$("productsBtn").onclick =
+  () => {
+
+    document
+      .querySelector(".container")
+      .scrollIntoView({
+        behavior:"smooth"
+      });
+
+  };
+
+
 /* =========================================================
-   INITIALISATION
+   INIT
 ========================================================= */
 
 renderCategories();
 
 renderProducts();
 
-updateCartBadge();
+updateCounters();
 
 
 /* =========================================================
-   DEBUG / UTILITAIRES
+   EXPORT
 ========================================================= */
 
 window.NovaShop = {
 
   products,
 
-  getProduct,
+  cart,
 
-  addToCart,
+  favorites,
 
-  renderCart,
+  showCart,
 
-  openCheckout,
+  showAccount,
 
-  openAdmin,
+  showDashboard,
 
-  openAccount,
-
-  openFavorites,
-
-  currentUser:()=>{
-    return currentUser;
-  }
+  renderProducts
 
 };
-
-console.log(
-  `NovaShop chargé : ${products.length} produits`
-);
