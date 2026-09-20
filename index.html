@@ -283,7 +283,7 @@ a{
   width:100%;
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
-  gap:12px;
+  gap:10px;
   align-items:start;
 }
 
@@ -291,8 +291,8 @@ a{
   min-width:0;
   background:linear-gradient(180deg,#0d1728,#09111e);
   border:1px solid var(--border);
-  border-radius:12px;
-  padding:10px;
+  border-radius:10px;
+  padding:7px;
   position:relative;
   overflow:hidden;
   transition:.18s;
@@ -307,10 +307,10 @@ a{
 
 .product-image{
   width:100%;
-  height:115px;
+  height:82px;
   background:#07101d;
-  border-radius:8px;
-  padding:6px;
+  border-radius:7px;
+  padding:4px;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -321,16 +321,16 @@ a{
   width:100%;
   height:100%;
   max-width:100%;
-  max-height:108px;
+  max-height:76px;
   object-fit:contain;
 }
 
 /* NOM */
 
 .product-card h3{
-  font-size:13px;
-  line-height:1.25;
-  margin:7px 0 3px;
+  font-size:11px;
+  line-height:1.15;
+  margin:4px 0 2px;
   color:#fff;
   font-weight:600;
 
@@ -339,26 +339,26 @@ a{
   -webkit-line-clamp:2;
   overflow:hidden;
 
-  min-height:32px;
+  min-height:25px;
 }
 
 /* CATEGORIE */
 
 .product-category{
-  font-size:9px;
+  font-size:7px;
   color:var(--muted);
-  margin-bottom:3px;
+  margin-bottom:1px;
 }
 
 /* NOTE */
 
 .product-rating{
-  font-size:10px;
+  font-size:8px;
   color:var(--yellow);
   white-space:nowrap;
   overflow:hidden;
   text-overflow:ellipsis;
-  margin:3px 0;
+  margin:2px 0;
 }
 
 .product-rating span{
@@ -368,29 +368,29 @@ a{
 /* PRIX */
 
 .product-price{
-  font-size:16px;
+  font-size:14px;
   font-weight:700;
   color:#fff;
-  margin:4px 0;
+  margin:2px 0;
 }
 
 /* ACTIONS */
 
 .product-actions{
   display:flex;
-  gap:5px;
-  margin-top:6px;
+  gap:3px;
+  margin-top:3px;
 }
 
 .product-actions button{
   flex:1;
   min-width:0;
-  padding:7px 5px;
-  border-radius:7px;
+  padding:5px 3px;
+  border-radius:6px;
   border:1px solid var(--border);
   background:#101c30;
   color:#fff;
-  font-size:9px;
+  font-size:8px;
 }
 
 .product-actions button:hover{
@@ -402,19 +402,19 @@ a{
   border-color:var(--blue);
 }
 
-/* FAVORIS */
+/* FAVORI */
 
 .favorite-btn{
   position:absolute;
-  top:7px;
-  right:7px;
-  width:23px;
-  height:23px;
+  top:5px;
+  right:5px;
+  width:21px;
+  height:21px;
   border-radius:50%;
   border:1px solid var(--border);
   background:rgba(5,9,18,.9);
   color:white;
-  font-size:11px;
+  font-size:10px;
   z-index:3;
 }
 
@@ -426,14 +426,14 @@ a{
 
 .new-badge{
   position:absolute;
-  left:7px;
-  top:7px;
+  left:5px;
+  top:5px;
   z-index:3;
   background:var(--green);
   color:#04140c;
-  border-radius:5px;
-  padding:3px 5px;
-  font-size:7px;
+  border-radius:4px;
+  padding:2px 4px;
+  font-size:6px;
   font-weight:700;
 }
 
@@ -1011,7 +1011,7 @@ section{
 }
 
 /* =========================
-   EMPTY
+   EMPTY / LOADING
 ========================= */
 
 .empty{
@@ -1020,10 +1020,6 @@ section{
   padding:45px 20px;
   color:#718097;
 }
-
-/* =========================
-   LOADING
-========================= */
 
 .loading{
   display:flex;
@@ -1089,7 +1085,7 @@ footer p{
 }
 
 /* =========================
-   RESPONSIVE
+   TABLET
 ========================= */
 
 @media(max-width:800px){
@@ -1144,62 +1140,62 @@ footer p{
 
   .products-grid{
     grid-template-columns:repeat(2,minmax(0,1fr));
-    gap:7px;
+    gap:6px;
   }
 
   .product-card{
-    padding:7px;
-    border-radius:9px;
+    padding:6px;
+    border-radius:8px;
   }
 
   .product-image{
-    height:82px;
+    height:72px;
   }
 
   .product-image img{
-    max-height:76px;
+    max-height:67px;
   }
 
   .product-card h3{
-    font-size:10px;
-    min-height:25px;
-    margin:5px 0 2px;
+    font-size:9px;
+    min-height:23px;
+    margin:4px 0 2px;
   }
 
   .product-category{
-    font-size:7px;
+    font-size:6px;
   }
 
   .product-price{
-    font-size:13px;
+    font-size:12px;
   }
 
   .product-rating{
-    font-size:8px;
+    font-size:7px;
   }
 
   .product-actions{
-    gap:3px;
-    margin-top:4px;
+    gap:2px;
+    margin-top:3px;
   }
 
   .product-actions button{
-    font-size:7px;
+    font-size:6px;
     padding:5px 2px;
   }
 
   .favorite-btn{
-    width:21px;
-    height:21px;
-    top:5px;
-    right:5px;
+    width:20px;
+    height:20px;
+    top:4px;
+    right:4px;
     font-size:9px;
   }
 
   .new-badge{
-    font-size:6px;
-    top:5px;
-    left:5px;
+    font-size:5px;
+    top:4px;
+    left:4px;
   }
 
   .form-grid{
@@ -1235,38 +1231,34 @@ footer p{
   }
 
   .product-image{
-    height:72px;
+    height:65px;
   }
 
   .product-image img{
-    max-height:66px;
+    max-height:60px;
   }
 
   .product-card h3{
-    font-size:9px;
-    min-height:23px;
+    font-size:8px;
+    min-height:21px;
   }
 
   .product-price{
-    font-size:12px;
+    font-size:11px;
   }
 
   .product-rating{
-    font-size:7px;
+    font-size:6px;
   }
 
   .product-actions button{
-    font-size:6px;
+    font-size:5px;
   }
 }
 </style>
 </head>
 
 <body>
-
-<!-- =========================
-     NAVBAR
-========================= -->
 
 <header class="navbar">
   <div class="nav-inner">
@@ -1289,7 +1281,11 @@ footer p{
         👤 Compte
       </button>
 
-      <button class="nav-btn" id="dashboardBtn" style="display:none">
+      <button
+        class="nav-btn"
+        id="dashboardBtn"
+        style="display:none"
+      >
         ⚙️ Admin
       </button>
 
@@ -1299,13 +1295,10 @@ footer p{
 </header>
 
 
-<!-- =========================
-     HERO
-========================= -->
-
 <main id="accueil">
 
 <section class="hero">
+
   <div class="container">
 
     <div class="hero-box">
@@ -1316,8 +1309,8 @@ footer p{
       </h1>
 
       <p>
-        Composants PC, périphériques gaming, écrans, bureaux,
-        éclairage RGB et matériel informatique.
+        Composants PC, périphériques gaming, écrans,
+        bureaux, éclairage RGB et matériel informatique.
       </p>
 
       <div class="hero-buttons">
@@ -1341,14 +1334,12 @@ footer p{
     </div>
 
   </div>
+
 </section>
 
 
-<!-- =========================
-     SEARCH
-========================= -->
-
 <section class="search-section">
+
   <div class="container">
 
     <div class="search-box">
@@ -1370,12 +1361,9 @@ footer p{
     </div>
 
   </div>
+
 </section>
 
-
-<!-- =========================
-     PRODUCTS
-========================= -->
 
 <section id="produits">
 
@@ -1514,10 +1502,6 @@ footer p{
 </section>
 
 
-<!-- =========================
-     AVIS DU SITE
-========================= -->
-
 <section id="avis">
 
   <div class="container">
@@ -1554,10 +1538,6 @@ footer p{
 
 </section>
 
-
-<!-- =========================
-     FAQ
-========================= -->
 
 <section>
 
@@ -1617,8 +1597,8 @@ footer p{
         </div>
 
         <div class="faq-answer">
-          Le suivi de commande est disponible depuis le compte
-          lorsqu'une commande existe.
+          Le suivi de commande est disponible depuis
+          le compte lorsqu'une commande existe.
         </div>
 
       </div>
@@ -1649,10 +1629,6 @@ footer p{
 </main>
 
 
-<!-- =========================
-     MODAL GLOBAL
-========================= -->
-
 <div
   id="modalOverlay"
   class="modal-overlay"
@@ -1661,15 +1637,10 @@ footer p{
   <div
     id="modalContent"
     class="modal"
-  >
-  </div>
+  ></div>
 
 </div>
 
-
-<!-- =========================
-     TOAST
-========================= -->
 
 <div
   id="toast"
@@ -1679,10 +1650,6 @@ footer p{
 </div>
 
 
-<!-- =========================
-     FOOTER
-========================= -->
-
 <footer>
 
   <div class="container">
@@ -1691,6 +1658,7 @@ footer p{
 
       <div>
         <h3>NovaShop</h3>
+
         <p>
           Boutique gaming et informatique.
         </p>
@@ -1698,6 +1666,7 @@ footer p{
 
       <div>
         <h3>Informations</h3>
+
         <p>
           Produits<br>
           Commandes<br>
@@ -1708,6 +1677,7 @@ footer p{
 
       <div>
         <h3>Paiement</h3>
+
         <p>
           Carte de démonstration<br>
           PayPal
@@ -1721,18 +1691,11 @@ footer p{
 </footer>
 
 
-<!-- =========================
-     FIREBASE / APP
-========================= -->
-
 <script type="module" src="./app.js"></script>
 
 
-<!-- =========================
-     FAQ JS
-========================= -->
-
 <script>
+
 document.querySelectorAll(".faq-question").forEach(question => {
 
   question.addEventListener("click", () => {
@@ -1744,6 +1707,7 @@ document.querySelectorAll(".faq-question").forEach(question => {
   });
 
 });
+
 </script>
 
 </body>
