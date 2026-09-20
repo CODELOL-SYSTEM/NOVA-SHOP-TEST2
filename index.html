@@ -6,7 +6,12 @@
 <title>NovaShop</title>
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
 :root{
   --bg:#050912;
   --bg2:#09111f;
@@ -20,14 +25,22 @@
   --red:#ef4444;
   --border:#1e293b;
 }
+
 body{
   font-family:Arial,Helvetica,sans-serif;
   background:var(--bg);
   color:var(--text);
   min-height:100vh;
 }
-button,input,select{font:inherit}
-button{cursor:pointer}
+
+button,input,select{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
 header{
   position:sticky;
   top:0;
@@ -36,40 +49,51 @@ header{
   backdrop-filter:blur(16px);
   border-bottom:1px solid var(--border);
 }
+
 .nav{
   max-width:1400px;
-  margin:auto;
   min-height:74px;
+  margin:auto;
   padding:12px 20px;
   display:flex;
   align-items:center;
   gap:18px;
 }
+
 .logo{
   font-size:25px;
   font-weight:900;
   letter-spacing:-1px;
   white-space:nowrap;
 }
-.logo span{color:#3b82f6}
+
+.logo span{
+  color:#3b82f6;
+}
+
 .search{
   flex:1;
-  position:relative;
 }
+
 .search input{
   width:100%;
+  padding:13px 16px;
   background:#0b1423;
   color:white;
   border:1px solid #263449;
   border-radius:13px;
-  padding:13px 16px;
   outline:none;
 }
-.search input:focus{border-color:var(--blue)}
+
+.search input:focus{
+  border-color:var(--blue);
+}
+
 .nav-buttons{
   display:flex;
   gap:8px;
 }
+
 .icon-btn{
   border:1px solid var(--border);
   background:#0b1423;
@@ -77,12 +101,17 @@ header{
   border-radius:12px;
   padding:11px 13px;
 }
-.icon-btn:hover{background:#132039}
+
+.icon-btn:hover{
+  background:#132039;
+}
+
 .hero{
   max-width:1400px;
   margin:24px auto 0;
   padding:0 20px;
 }
+
 .hero-box{
   background:
     radial-gradient(circle at 80% 20%,rgba(37,99,235,.3),transparent 35%),
@@ -91,43 +120,67 @@ header{
   border-radius:24px;
   padding:45px;
 }
+
 .hero h1{
   font-size:clamp(34px,5vw,65px);
   line-height:1;
   margin-bottom:14px;
 }
-.hero h1 span{color:#3b82f6}
+
+.hero h1 span{
+  color:#3b82f6;
+}
+
 .hero p{
   color:var(--muted);
   max-width:650px;
   font-size:17px;
   line-height:1.6;
 }
+
 .hero-actions{
   display:flex;
   gap:10px;
   margin-top:25px;
   flex-wrap:wrap;
 }
-.primary,.secondary,.danger{
-  border:0;
+
+.primary,
+.secondary,
+.danger{
   border-radius:12px;
   padding:12px 18px;
   font-weight:800;
 }
-.primary{background:var(--blue);color:white}
-.primary:hover{background:var(--blue2)}
+
+.primary{
+  background:var(--blue);
+  color:white;
+  border:0;
+}
+
+.primary:hover{
+  background:var(--blue2);
+}
+
 .secondary{
   background:#17243a;
   color:white;
   border:1px solid #2a3b55;
 }
-.danger{background:var(--red);color:white}
+
+.danger{
+  background:var(--red);
+  color:white;
+  border:0;
+}
+
 .layout{
   max-width:1400px;
   margin:25px auto;
   padding:0 20px;
 }
+
 .toolbar{
   display:flex;
   gap:10px;
@@ -136,12 +189,14 @@ header{
   margin-bottom:20px;
   flex-wrap:wrap;
 }
+
 .categories{
   display:flex;
   gap:8px;
   overflow-x:auto;
   padding-bottom:5px;
 }
+
 .cat{
   white-space:nowrap;
   background:#0b1423;
@@ -150,11 +205,14 @@ header{
   border-radius:999px;
   padding:9px 14px;
 }
-.cat.active,.cat:hover{
+
+.cat.active,
+.cat:hover{
   background:#2563eb;
   color:white;
   border-color:#2563eb;
 }
+
 select{
   background:#0b1423;
   color:white;
@@ -162,11 +220,13 @@ select{
   border-radius:10px;
   padding:10px 13px;
 }
+
 .products{
   display:grid;
   grid-template-columns:repeat(4,minmax(0,1fr));
   gap:18px;
 }
+
 .card{
   background:linear-gradient(180deg,#101a2c,#0b1423);
   border:1px solid var(--border);
@@ -175,10 +235,12 @@ select{
   transition:.2s;
   position:relative;
 }
+
 .card:hover{
   transform:translateY(-4px);
   border-color:#31527d;
 }
+
 .card-img{
   height:235px;
   background:#080f1b;
@@ -187,13 +249,18 @@ select{
   justify-content:center;
   overflow:hidden;
 }
+
 .card-img img{
   width:100%;
   height:100%;
   object-fit:contain;
   display:block;
 }
-.card-body{padding:15px}
+
+.card-body{
+  padding:15px;
+}
+
 .badge{
   display:inline-block;
   background:#16a34a;
@@ -204,45 +271,61 @@ select{
   font-weight:800;
   margin-bottom:8px;
 }
+
 .card h3{
   font-size:16px;
   line-height:1.35;
   min-height:44px;
 }
+
 .category{
   color:#64748b;
   font-size:12px;
   margin-top:7px;
 }
+
 .price{
   margin-top:12px;
   font-size:21px;
   font-weight:900;
 }
+
 .card-actions{
   display:flex;
   gap:8px;
   margin-top:13px;
 }
+
 .card-actions button{
   flex:1;
   padding:10px;
   border-radius:9px;
   border:1px solid var(--border);
 }
-.buy{background:#2563eb;color:white;border:0!important}
+
+.buy{
+  background:#2563eb;
+  color:white;
+  border:0!important;
+}
+
 .fav{
   max-width:45px;
   background:#111c2d;
   color:white;
 }
-.fav.active{color:#ef4444}
+
+.fav.active{
+  color:#ef4444;
+}
+
 .empty{
   grid-column:1/-1;
   text-align:center;
   padding:70px 20px;
   color:var(--muted);
 }
+
 .overlay{
   display:none;
   position:fixed;
@@ -253,7 +336,11 @@ select{
   justify-content:center;
   padding:20px;
 }
-.overlay.open{display:flex}
+
+.overlay.open{
+  display:flex;
+}
+
 .modal{
   width:min(900px,100%);
   max-height:90vh;
@@ -264,6 +351,7 @@ select{
   padding:22px;
   position:relative;
 }
+
 .close{
   position:absolute;
   right:15px;
@@ -276,12 +364,17 @@ select{
   color:white;
   font-size:20px;
 }
-.modal h2{margin-bottom:18px}
+
+.modal h2{
+  margin-bottom:18px;
+}
+
 .product-detail{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:25px;
 }
+
 .product-detail-image{
   width:100%;
   height:420px;
@@ -292,6 +385,7 @@ select{
   border-radius:18px;
   background:#111827;
 }
+
 .product-detail-image img{
   width:100%;
   height:100%;
@@ -300,21 +394,28 @@ select{
   max-width:100%;
   max-height:100%;
 }
+
 .detail-info h1{
   font-size:30px;
   line-height:1.15;
   margin-bottom:10px;
 }
-.detail-info .price{font-size:30px}
+
+.detail-info .price{
+  font-size:30px;
+}
+
 .detail-info p{
   color:#94a3b8;
   line-height:1.6;
   margin:15px 0;
 }
+
 .form{
   display:grid;
   gap:12px;
 }
+
 .form input{
   width:100%;
   padding:13px;
@@ -324,13 +425,18 @@ select{
   color:white;
   outline:none;
 }
-.form input:focus{border-color:#3b82f6}
+
+.form input:focus{
+  border-color:#3b82f6;
+}
+
 .cart-item{
   display:flex;
   gap:12px;
   padding:14px 0;
   border-bottom:1px solid var(--border);
 }
+
 .cart-item img{
   width:75px;
   height:75px;
@@ -338,14 +444,22 @@ select{
   background:#111827;
   border-radius:10px;
 }
-.cart-info{flex:1}
-.cart-info h3{font-size:15px}
+
+.cart-info{
+  flex:1;
+}
+
+.cart-info h3{
+  font-size:15px;
+}
+
 .qty{
   display:flex;
   gap:7px;
   align-items:center;
   margin-top:9px;
 }
+
 .qty button{
   width:28px;
   height:28px;
@@ -354,6 +468,7 @@ select{
   color:white;
   border-radius:6px;
 }
+
 .cart-total{
   display:flex;
   justify-content:space-between;
@@ -361,43 +476,114 @@ select{
   font-weight:900;
   margin-top:18px;
 }
+
+.coupon-box{
+  margin-top:18px;
+  padding:16px;
+  background:#101c2e;
+  border:1px solid #24344c;
+  border-radius:14px;
+}
+
+.coupon-title{
+  font-weight:900;
+  margin-bottom:9px;
+}
+
+.coupon-row{
+  display:flex;
+  gap:8px;
+}
+
+.coupon-row input{
+  flex:1;
+  padding:12px;
+  background:#07101d;
+  color:white;
+  border:1px solid #263449;
+  border-radius:9px;
+  outline:none;
+}
+
+.coupon-row button{
+  padding:12px 16px;
+  background:#2563eb;
+  color:white;
+  border:0;
+  border-radius:9px;
+  font-weight:800;
+}
+
+.coupon-success{
+  color:#22c55e;
+  margin-top:9px;
+  font-weight:800;
+}
+
+.discount{
+  color:#22c55e;
+  margin-top:8px;
+}
+
 .payment-grid{
   display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:10px;
-  margin-top:15px;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin-top:18px;
 }
+
 .payment{
   background:#111c2d;
   border:1px solid #293950;
   color:white;
   border-radius:12px;
-  padding:15px;
+  padding:17px;
+  text-align:left;
 }
+
+.payment:hover{
+  border-color:#3b82f6;
+}
+
 .payment.active{
   border-color:#3b82f6;
   background:#12284c;
 }
-.nova{
-  margin-top:15px;
+
+.payment-icon{
+  font-size:25px;
+  margin-bottom:6px;
+}
+
+.payment-name{
+  font-weight:900;
+}
+
+.payment-desc{
+  color:#94a3b8;
+  font-size:12px;
+  margin-top:5px;
+}
+
+.payment-panel{
+  margin-top:14px;
   padding:15px;
-  background:linear-gradient(135deg,#301c00,#5b3500);
-  border:1px solid #a16207;
-  border-radius:13px;
+  background:#07101d;
+  border:1px solid #1e293b;
+  border-radius:12px;
 }
-.nova input{
-  width:100%;
-  margin-top:9px;
-  padding:11px;
-  background:#120d05;
-  color:white;
-  border:1px solid #a16207;
-  border-radius:9px;
+
+.payment-panel p{
+  color:#94a3b8;
+  font-size:13px;
+  line-height:1.5;
 }
+
 .account-box{
   display:grid;
   gap:12px;
 }
+
 .toast{
   position:fixed;
   bottom:22px;
@@ -412,10 +598,12 @@ select{
   opacity:0;
   transition:.25s;
 }
+
 .toast.show{
   transform:translateY(0);
   opacity:1;
 }
+
 footer{
   margin-top:50px;
   padding:35px 20px;
@@ -423,19 +611,48 @@ footer{
   text-align:center;
   color:#64748b;
 }
+
 @media(max-width:1050px){
-  .products{grid-template-columns:repeat(3,1fr)}
+  .products{
+    grid-template-columns:repeat(3,1fr);
+  }
 }
+
 @media(max-width:750px){
-  .products{grid-template-columns:repeat(2,1fr)}
-  .product-detail{grid-template-columns:1fr}
-  .payment-grid{grid-template-columns:1fr}
-  .hero-box{padding:30px 22px}
-  .nav{flex-wrap:wrap}
-  .search{order:5;flex-basis:100%}
+  .products{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .product-detail{
+    grid-template-columns:1fr;
+  }
+
+  .payment-grid{
+    grid-template-columns:1fr;
+  }
+
+  .hero-box{
+    padding:30px 22px;
+  }
+
+  .nav{
+    flex-wrap:wrap;
+  }
+
+  .search{
+    order:5;
+    flex-basis:100%;
+  }
 }
+
 @media(max-width:500px){
-  .products{grid-template-columns:1fr}
+  .products{
+    grid-template-columns:1fr;
+  }
+
+  .coupon-row{
+    flex-direction:column;
+  }
 }
 </style>
 </head>
@@ -444,37 +661,63 @@ footer{
 
 <header>
   <div class="nav">
-    <div class="logo">NOVA<span>SHOP</span></div>
+
+    <div class="logo">
+      NOVA<span>SHOP</span>
+    </div>
 
     <div class="search">
-      <input id="search" type="search" placeholder="Rechercher un produit...">
+      <input
+        id="search"
+        type="search"
+        placeholder="Rechercher un produit..."
+      >
     </div>
 
     <div class="nav-buttons">
       <button class="icon-btn" id="accountBtn">👤</button>
       <button class="icon-btn" id="favoritesBtn">❤️</button>
-      <button class="icon-btn" id="cartBtn">🛒 <b id="cartBadge">0</b></button>
+      <button class="icon-btn" id="cartBtn">
+        🛒 <b id="cartBadge">0</b>
+      </button>
     </div>
+
   </div>
 </header>
 
 <section class="hero">
+
   <div class="hero-box">
-    <h1>Bienvenue sur <span>NovaShop</span></h1>
+
+    <h1>
+      Bienvenue sur <span>NovaShop</span>
+    </h1>
+
     <p>
       Composants PC, PC Gamer, écrans, claviers, souris,
       casques, bureaux, éclairage RGB et bien plus.
     </p>
 
     <div class="hero-actions">
-      <button class="primary" id="shopBtn">🛒 Voir les produits</button>
-      <button class="secondary" id="novaBtn">⭐ NOVA100</button>
+
+      <button class="primary" id="shopBtn">
+        🛒 Voir les produits
+      </button>
+
+      <button class="secondary" id="novaBtn">
+        🎟️ Coupon
+      </button>
+
     </div>
+
   </div>
+
 </section>
 
 <main class="layout" id="shop">
+
   <div class="toolbar">
+
     <div class="categories" id="categories"></div>
 
     <select id="sort">
@@ -483,9 +726,11 @@ footer{
       <option value="priceDesc">Prix décroissant</option>
       <option value="name">Nom A-Z</option>
     </select>
+
   </div>
 
   <div class="products" id="products"></div>
+
 </main>
 
 <footer>
@@ -493,21 +738,39 @@ footer{
 </footer>
 
 <div class="overlay" id="overlay">
+
   <div class="modal">
-    <button class="close" id="closeModal">×</button>
+
+    <button class="close" id="closeModal">
+      ×
+    </button>
+
     <div id="modalContent"></div>
+
   </div>
+
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
+
 /* =========================================================
    NOVASHOP
-   43 PRODUITS
 ========================================================= */
 
-const products = [
+const PAYPAL_LINK="https://paypal.me/SH0PNOVA";
+
+const COUPON_CODE="NOVA100";
+
+const COUPON_DISCOUNT=0.10;
+
+
+/* =========================================================
+   PRODUITS
+========================================================= */
+
+const products=[
 {
 id:"p1",
 name:"Gigabyte B650 AORUS Elite AX",
@@ -812,6 +1075,7 @@ new:true
 }
 ];
 
+
 /* =========================================================
    ETAT
 ========================================================= */
@@ -823,8 +1087,10 @@ let currentCategory="Tous";
 let currentSort="default";
 let searchText="";
 let currentProduct=null;
-let nova100Active=false;
+
+let couponActive=false;
 let selectedPayment="card";
+
 
 /* =========================================================
    OUTILS
@@ -837,8 +1103,16 @@ function money(n){
 }
 
 function save(){
-  localStorage.setItem("novaCart",JSON.stringify(cart));
-  localStorage.setItem("novaFavorites",JSON.stringify(favorites));
+
+  localStorage.setItem(
+    "novaCart",
+    JSON.stringify(cart)
+  );
+
+  localStorage.setItem(
+    "novaFavorites",
+    JSON.stringify(favorites)
+  );
 }
 
 function getProduct(id){
@@ -846,35 +1120,65 @@ function getProduct(id){
 }
 
 function toast(message){
+
   const t=$("toast");
+
   t.textContent=message;
+
   t.classList.add("show");
-  setTimeout(()=>t.classList.remove("show"),2200);
+
+  setTimeout(()=>{
+    t.classList.remove("show");
+  },2200);
 }
 
 function openModal(html){
+
   $("modalContent").innerHTML=html;
+
   $("overlay").classList.add("open");
 }
 
 function closeModal(){
+
   $("overlay").classList.remove("open");
 }
 
 function cartCount(){
-  return cart.reduce((a,b)=>a+b.qty,0);
+
+  return cart.reduce(
+    (total,item)=>total+item.qty,
+    0
+  );
 }
 
 function cartTotal(){
-  return cart.reduce((a,b)=>{
-    const p=getProduct(b.id);
-    return a+(p?p.price*b.qty:0);
+
+  return cart.reduce((total,item)=>{
+
+    const p=getProduct(item.id);
+
+    if(!p)return total;
+
+    return total+(p.price*item.qty);
+
   },0);
 }
 
+function finalTotal(){
+
+  const total=cartTotal();
+
+  return couponActive
+    ? total*(1-COUPON_DISCOUNT)
+    : total;
+}
+
 function updateBadge(){
+
   $("cartBadge").textContent=cartCount();
 }
+
 
 /* =========================================================
    CATEGORIES
@@ -882,25 +1186,44 @@ function updateBadge(){
 
 function renderCategories(){
 
-  const cats=["Tous",...new Set(products.map(p=>p.category))];
+  const categories=[
+    "Tous",
+    ...new Set(
+      products.map(p=>p.category)
+    )
+  ];
 
-  $("categories").innerHTML=cats.map(c=>`
-    <button class="cat ${c===currentCategory?"active":""}" data-cat="${c}">
-      ${c}
-    </button>
-  `).join("");
+  $("categories").innerHTML=
+    categories.map(category=>`
 
-  document.querySelectorAll("[data-cat]").forEach(btn=>{
-    btn.onclick=()=>{
-      currentCategory=btn.dataset.cat;
-      renderCategories();
-      renderProducts();
-    };
-  });
+      <button
+        class="cat ${category===currentCategory?"active":""}"
+        data-category="${category}"
+      >
+        ${category}
+      </button>
+
+    `).join("");
+
+  document
+    .querySelectorAll("[data-category]")
+    .forEach(button=>{
+
+      button.onclick=()=>{
+
+        currentCategory=
+          button.dataset.category;
+
+        renderCategories();
+        renderProducts();
+      };
+
+    });
 }
 
+
 /* =========================================================
-   PRODUITS
+   FILTRE
 ========================================================= */
 
 function filteredProducts(){
@@ -908,11 +1231,18 @@ function filteredProducts(){
   let list=[...products];
 
   if(currentCategory!=="Tous"){
-    list=list.filter(p=>p.category===currentCategory);
+
+    list=list.filter(
+      p=>p.category===currentCategory
+    );
   }
 
   if(searchText.trim()){
-    const q=searchText.toLowerCase();
+
+    const q=searchText
+      .toLowerCase()
+      .trim();
+
     list=list.filter(p=>
       p.name.toLowerCase().includes(q) ||
       p.category.toLowerCase().includes(q)
@@ -920,142 +1250,243 @@ function filteredProducts(){
   }
 
   if(currentSort==="priceAsc"){
-    list.sort((a,b)=>a.price-b.price);
+
+    list.sort(
+      (a,b)=>a.price-b.price
+    );
   }
 
   if(currentSort==="priceDesc"){
-    list.sort((a,b)=>b.price-a.price);
+
+    list.sort(
+      (a,b)=>b.price-a.price
+    );
   }
 
   if(currentSort==="name"){
-    list.sort((a,b)=>a.name.localeCompare(b.name));
+
+    list.sort(
+      (a,b)=>a.name.localeCompare(b.name)
+    );
   }
 
   return list;
 }
+
+
+/* =========================================================
+   RENDU PRODUITS
+========================================================= */
 
 function renderProducts(){
 
   const list=filteredProducts();
 
   if(!list.length){
+
     $("products").innerHTML=`
+
       <div class="empty">
+
         <h2>Aucun produit trouvé 😕</h2>
-        <p>Essaie une autre recherche ou catégorie.</p>
+
+        <p>
+          Essaie une autre recherche.
+        </p>
+
       </div>
+
     `;
+
     return;
   }
 
-  $("products").innerHTML=list.map(p=>`
+  $("products").innerHTML=
 
-    <article class="card">
+    list.map(p=>`
 
-      <div class="card-img">
-        <img
-          src="${p.image}"
-          alt="${p.name.replace(/"/g,"&quot;")}"
-          referrerpolicy="no-referrer"
-          onerror="this.onerror=null;this.src='https://placehold.co/800x800/111827/ffffff?text=NovaShop'"
-        >
-      </div>
+      <article class="card">
 
-      <div class="card-body">
+        <div class="card-img">
 
-        ${p.new?`<span class="badge">NOUVEAU</span>`:""}
-
-        <h3>${p.name}</h3>
-
-        <div class="category">${p.category}</div>
-
-        <div class="price">${money(p.price)}</div>
-
-        <div class="card-actions">
-
-          <button class="buy" data-open="${p.id}">
-            Voir
-          </button>
-
-          <button class="fav ${favorites.includes(p.id)?"active":""}"
-                  data-fav="${p.id}">
-            ${favorites.includes(p.id)?"♥":"♡"}
-          </button>
+          <img
+            src="${p.image}"
+            alt="${p.name.replace(/"/g,"&quot;")}"
+            referrerpolicy="no-referrer"
+            onerror="
+              this.onerror=null;
+              this.src='https://placehold.co/800x800/111827/ffffff?text=NovaShop'
+            "
+          >
 
         </div>
 
-      </div>
-    </article>
-  `).join("");
+        <div class="card-body">
 
-  document.querySelectorAll("[data-open]").forEach(btn=>{
-    btn.onclick=()=>openProduct(btn.dataset.open);
-  });
+          ${
+            p.new
+            ? `<span class="badge">NOUVEAU</span>`
+            : ""
+          }
 
-  document.querySelectorAll("[data-fav]").forEach(btn=>{
-    btn.onclick=()=>{
-      toggleFavorite(btn.dataset.fav);
-    };
-  });
+          <h3>${p.name}</h3>
+
+          <div class="category">
+            ${p.category}
+          </div>
+
+          <div class="price">
+            ${money(p.price)}
+          </div>
+
+          <div class="card-actions">
+
+            <button
+              class="buy"
+              data-open-product="${p.id}"
+            >
+              Voir
+            </button>
+
+            <button
+              class="fav ${favorites.includes(p.id)?"active":""}"
+              data-favorite="${p.id}"
+            >
+              ${favorites.includes(p.id)?"♥":"♡"}
+            </button>
+
+          </div>
+
+        </div>
+
+      </article>
+
+    `).join("");
+
+  document
+    .querySelectorAll("[data-open-product]")
+    .forEach(button=>{
+
+      button.onclick=()=>{
+        openProduct(
+          button.dataset.openProduct
+        );
+      };
+
+    });
+
+  document
+    .querySelectorAll("[data-favorite]")
+    .forEach(button=>{
+
+      button.onclick=()=>{
+
+        toggleFavorite(
+          button.dataset.favorite
+        );
+
+      };
+
+    });
 }
+
+
+/* =========================================================
+   DETAIL PRODUIT
+========================================================= */
 
 function openProduct(id){
 
   const p=getProduct(id);
+
   if(!p)return;
 
   currentProduct=id;
 
   openModal(`
+
     <div class="product-detail">
 
       <div class="product-detail-image">
+
         <img
           src="${p.image}"
           alt="${p.name.replace(/"/g,"&quot;")}"
           referrerpolicy="no-referrer"
-          onerror="this.onerror=null;this.src='https://placehold.co/800x800/111827/ffffff?text=NovaShop'"
+          onerror="
+            this.onerror=null;
+            this.src='https://placehold.co/800x800/111827/ffffff?text=NovaShop'
+          "
         >
+
       </div>
 
       <div class="detail-info">
 
-        ${p.new?`<span class="badge">NOUVEAU</span>`:""}
+        ${
+          p.new
+          ? `<span class="badge">NOUVEAU</span>`
+          : ""
+        }
 
         <h1>${p.name}</h1>
 
-        <div class="category">${p.category}</div>
+        <div class="category">
+          ${p.category}
+        </div>
 
-        <div class="price">${money(p.price)}</div>
+        <div class="price">
+          ${money(p.price)}
+        </div>
 
         <p>
           Produit disponible sur NovaShop.
-          Ajoute-le au panier pour continuer ta commande.
+          Ajoute-le à ton panier pour commander.
         </p>
 
-        <button class="primary" id="detailAdd">
+        <button
+          class="primary"
+          id="detailAdd"
+          style="width:100%"
+        >
           🛒 Ajouter au panier
         </button>
 
-        <button class="secondary" id="detailFav" style="margin-top:10px;width:100%">
-          ${favorites.includes(p.id)?"♥ Retirer des favoris":"♡ Ajouter aux favoris"}
+        <button
+          class="secondary"
+          id="detailFavorite"
+          style="width:100%;margin-top:10px"
+        >
+          ${
+            favorites.includes(p.id)
+            ? "♥ Retirer des favoris"
+            : "♡ Ajouter aux favoris"
+          }
         </button>
 
       </div>
 
     </div>
+
   `);
 
   $("detailAdd").onclick=()=>{
+
     addToCart(p.id);
+
     closeModal();
+
   };
 
-  $("detailFav").onclick=()=>{
+  $("detailFavorite").onclick=()=>{
+
     toggleFavorite(p.id);
+
     openProduct(p.id);
+
   };
 }
+
 
 /* =========================================================
    PANIER
@@ -1063,96 +1494,147 @@ function openProduct(id){
 
 function addToCart(id){
 
-  const item=cart.find(x=>x.id===id);
+  const existing=
+    cart.find(item=>item.id===id);
 
-  if(item){
-    item.qty++;
+  if(existing){
+
+    existing.qty++;
+
   }else{
-    cart.push({id,qty:1});
+
+    cart.push({
+      id:id,
+      qty:1
+    });
+
   }
 
   save();
   updateBadge();
+
   toast("Produit ajouté au panier 🛒");
 }
 
 function removeFromCart(id){
 
-  cart=cart.filter(x=>x.id!==id);
+  cart=
+    cart.filter(item=>item.id!==id);
 
   save();
   updateBadge();
+
   renderCart();
 }
 
-function changeQty(id,delta){
+function changeQty(id,amount){
 
-  const item=cart.find(x=>x.id===id);
+  const item=
+    cart.find(x=>x.id===id);
 
   if(!item)return;
 
-  item.qty+=delta;
+  item.qty+=amount;
 
   if(item.qty<=0){
+
     removeFromCart(id);
     return;
+
   }
 
   save();
   updateBadge();
+
   renderCart();
 }
+
+
+/* =========================================================
+   RENDU PANIER
+========================================================= */
 
 function renderCart(){
 
   if(!cart.length){
 
     openModal(`
+
       <h2>🛒 Ton panier</h2>
 
       <div class="empty">
+
         <h3>Ton panier est vide</h3>
-        <p>Ajoute des produits pour les retrouver ici.</p>
+
+        <p>
+          Ajoute un produit pour continuer.
+        </p>
+
       </div>
+
     `);
 
     return;
   }
 
   let html=`
+
     <h2>🛒 Ton panier</h2>
+
   `;
 
   cart.forEach(item=>{
 
     const p=getProduct(item.id);
+
     if(!p)return;
 
     html+=`
+
       <div class="cart-item">
 
         <img
           src="${p.image}"
           alt=""
           referrerpolicy="no-referrer"
-          onerror="this.onerror=null;this.src='https://placehold.co/300x300/111827/ffffff?text=NovaShop'"
+          onerror="
+            this.onerror=null;
+            this.src='https://placehold.co/300x300/111827/ffffff?text=NovaShop'
+          "
         >
 
         <div class="cart-info">
 
-          <h3>${p.name}</h3>
+          <h3>
+            ${p.name}
+          </h3>
 
-          <div class="category">${money(p.price)} / unité</div>
+          <div class="category">
+            ${money(p.price)} / unité
+          </div>
 
           <div class="qty">
 
-            <button data-minus="${p.id}">−</button>
+            <button
+              data-minus="${p.id}"
+            >
+              −
+            </button>
 
-            <b>${item.qty}</b>
+            <b>
+              ${item.qty}
+            </b>
 
-            <button data-plus="${p.id}">+</button>
+            <button
+              data-plus="${p.id}"
+            >
+              +
+            </button>
 
-            <button data-remove="${p.id}" style="margin-left:8px">
+            <button
+              data-remove="${p.id}"
+              style="margin-left:8px"
+            >
               🗑️
             </button>
 
@@ -1161,39 +1643,83 @@ function renderCart(){
         </div>
 
       </div>
+
     `;
+
   });
 
-  const total=cartTotal();
-
   html+=`
+
     <div class="cart-total">
+
       <span>Total</span>
-      <span>${money(total)}</span>
+
+      <span>
+        ${money(cartTotal())}
+      </span>
+
     </div>
 
-    <button class="primary" id="checkoutBtn"
-            style="width:100%;margin-top:18px">
+    <button
+      class="primary"
+      id="goCheckout"
+      style="width:100%;margin-top:18px"
+    >
       💳 Passer au paiement
     </button>
+
   `;
 
   openModal(html);
 
-  document.querySelectorAll("[data-minus]").forEach(b=>{
-    b.onclick=()=>changeQty(b.dataset.minus,-1);
-  });
+  document
+    .querySelectorAll("[data-minus]")
+    .forEach(button=>{
 
-  document.querySelectorAll("[data-plus]").forEach(b=>{
-    b.onclick=()=>changeQty(b.dataset.plus,1);
-  });
+      button.onclick=()=>{
 
-  document.querySelectorAll("[data-remove]").forEach(b=>{
-    b.onclick=()=>removeFromCart(b.dataset.remove);
-  });
+        changeQty(
+          button.dataset.minus,
+          -1
+        );
 
-  $("checkoutBtn").onclick=renderCheckout;
+      };
+
+    });
+
+  document
+    .querySelectorAll("[data-plus]")
+    .forEach(button=>{
+
+      button.onclick=()=>{
+
+        changeQty(
+          button.dataset.plus,
+          1
+        );
+
+      };
+
+    });
+
+  document
+    .querySelectorAll("[data-remove]")
+    .forEach(button=>{
+
+      button.onclick=()=>{
+
+        removeFromCart(
+          button.dataset.remove
+        );
+
+      };
+
+    });
+
+  $("goCheckout").onclick=
+    renderCheckout;
 }
+
 
 /* =========================================================
    FAVORIS
@@ -1202,98 +1728,156 @@ function renderCart(){
 function toggleFavorite(id){
 
   if(favorites.includes(id)){
-    favorites=favorites.filter(x=>x!==id);
+
+    favorites=
+      favorites.filter(x=>x!==id);
+
     toast("Retiré des favoris");
+
   }else{
+
     favorites.push(id);
+
     toast("Ajouté aux favoris ❤️");
+
   }
 
   save();
+
   renderProducts();
 }
 
 function renderFavorites(){
 
-  const list=products.filter(p=>favorites.includes(p.id));
+  const list=
+    products.filter(
+      p=>favorites.includes(p.id)
+    );
 
-  openModal(`
-    <h2>❤️ Mes favoris</h2>
+  if(!list.length){
 
-    ${
-      list.length
-      ? `<div class="products" id="favoriteProducts"></div>`
-      : `<div class="empty">
-           <h3>Aucun favori</h3>
-           <p>Ajoute des produits avec le bouton ♡.</p>
-         </div>`
-    }
-  `);
+    openModal(`
 
-  if(!list.length)return;
+      <h2>❤️ Mes favoris</h2>
 
-  const box=$("favoriteProducts");
+      <div class="empty">
 
-  box.innerHTML=list.map(p=>`
-    <article class="card">
+        <h3>Aucun favori</h3>
 
-      <div class="card-img">
-        <img src="${p.image}"
-             referrerpolicy="no-referrer"
-             onerror="this.onerror=null;this.src='https://placehold.co/800x800/111827/ffffff?text=NovaShop'">
+        <p>
+          Ajoute des produits avec ♡.
+        </p>
+
       </div>
 
-      <div class="card-body">
-        <h3>${p.name}</h3>
-        <div class="category">${p.category}</div>
-        <div class="price">${money(p.price)}</div>
-        <button class="primary" data-favorite-open="${p.id}"
-                style="width:100%;margin-top:12px">
-          Voir
-        </button>
-      </div>
+    `);
 
-    </article>
-  `).join("");
-
-  document.querySelectorAll("[data-favorite-open]").forEach(b=>{
-    b.onclick=()=>openProduct(b.dataset.favoriteOpen);
-  });
-}
-
-/* =========================================================
-   NOVA100
-========================================================= */
-
-function novaTotal(){
-
-  let total=cartTotal();
-
-  if(nova100Active){
-    total*=0.9;
+    return;
   }
 
-  return total;
+  openModal(`
+
+    <h2>❤️ Mes favoris</h2>
+
+    <div
+      class="products"
+      id="favoriteProducts"
+    ></div>
+
+  `);
+
+  $("favoriteProducts").innerHTML=
+
+    list.map(p=>`
+
+      <article class="card">
+
+        <div class="card-img">
+
+          <img
+            src="${p.image}"
+            alt=""
+            referrerpolicy="no-referrer"
+            onerror="
+              this.onerror=null;
+              this.src='https://placehold.co/800x800/111827/ffffff?text=NovaShop'
+            "
+          >
+
+        </div>
+
+        <div class="card-body">
+
+          <h3>${p.name}</h3>
+
+          <div class="category">
+            ${p.category}
+          </div>
+
+          <div class="price">
+            ${money(p.price)}
+          </div>
+
+          <button
+            class="primary"
+            data-fav-open="${p.id}"
+            style="width:100%;margin-top:12px"
+          >
+            Voir
+          </button>
+
+        </div>
+
+      </article>
+
+    `).join("");
+
+  document
+    .querySelectorAll("[data-fav-open]")
+    .forEach(button=>{
+
+      button.onclick=()=>{
+        openProduct(
+          button.dataset.favOpen
+        );
+      };
+
+    });
 }
 
-function activateNova(){
 
-  const input=$("novaCode");
+/* =========================================================
+   COUPON
+========================================================= */
+
+function applyCoupon(){
+
+  const input=$("couponInput");
 
   if(!input)return;
 
-  if(input.value.trim().toUpperCase()==="NOVA100"){
+  const code=
+    input.value
+      .trim()
+      .toUpperCase();
 
-    nova100Active=true;
+  if(code===COUPON_CODE){
 
-    toast("NOVA100 activé ⭐ -10%");
+    couponActive=true;
+
+    toast("Coupon appliqué : -10% 🎟️");
 
     renderCheckout();
 
   }else{
-    toast("Code NOVA100 incorrect");
+
+    couponActive=false;
+
+    toast("Coupon incorrect ❌");
+
   }
 }
+
 
 /* =========================================================
    CHECKOUT
@@ -1302,177 +1886,319 @@ function activateNova(){
 function renderCheckout(){
 
   if(!cart.length){
+
     renderCart();
+
     return;
   }
 
   const total=cartTotal();
-  const finalTotal=novaTotal();
+
+  const totalFinal=finalTotal();
 
   openModal(`
+
     <h2>💳 Paiement</h2>
 
-    <div class="nova">
+    <div class="coupon-box">
 
-      <b>⭐ Code NOVA100</b>
+      <div class="coupon-title">
+        🎟️ Coupon de réduction
+      </div>
 
-      <input id="novaCode"
-             placeholder="Entre NOVA100"
-             value="${nova100Active?"NOVA100":""}">
+      <div class="coupon-row">
 
-      <button class="secondary"
-              id="activateNova"
-              style="margin-top:9px;width:100%">
-        Activer
-      </button>
+        <input
+          id="couponInput"
+          placeholder="Entrez votre coupon"
+          value="${couponActive?COUPON_CODE:""}"
+        >
+
+        <button id="applyCoupon">
+          Appliquer
+        </button>
+
+      </div>
+
+      ${
+        couponActive
+        ? `
+          <div class="coupon-success">
+            ✓ Coupon appliqué : -10%
+          </div>
+        `
+        : ""
+      }
 
     </div>
 
     <div style="margin-top:18px">
 
-      <p style="color:#94a3b8">
-        Total avant réduction :
+      <div style="color:#94a3b8">
+        Sous-total :
         <b>${money(total)}</b>
-      </p>
+      </div>
 
       ${
-        nova100Active
-        ? `<p style="color:#22c55e;margin-top:7px">
-             Réduction NOVA100 : -10%
-           </p>`
-        :""
+        couponActive
+        ? `
+          <div class="discount">
+            Réduction : -${money(total*0.10)}
+          </div>
+        `
+        : ""
       }
 
-      <h2 style="margin-top:10px">
-        Total : ${money(finalTotal)}
-      </h2>
+      <div
+        style="
+          font-size:26px;
+          font-weight:900;
+          margin-top:9px;
+        "
+      >
+        Total : ${money(totalFinal)}
+      </div>
 
     </div>
 
     <div class="payment-grid">
 
-      <button class="payment ${selectedPayment==="card"?"active":""}"
-              data-payment="card">
-        💳 Carte bancaire
+      <button
+        class="payment ${selectedPayment==="card"?"active":""}"
+        data-payment="card"
+      >
+
+        <div class="payment-icon">
+          💳
+        </div>
+
+        <div class="payment-name">
+          Carte bancaire
+        </div>
+
+        <div class="payment-desc">
+          Payer par carte via PayPal
+        </div>
+
       </button>
 
-      <button class="payment ${selectedPayment==="paypal"?"active":""}"
-              data-payment="paypal">
-        🅿️ PayPal
-      </button>
+      <button
+        class="payment ${selectedPayment==="paypal"?"active":""}"
+        data-payment="paypal"
+      >
 
-      <button class="payment ${selectedPayment==="transfer"?"active":""}"
-              data-payment="transfer">
-        🏦 Virement
+        <div class="payment-icon">
+          🅿️
+        </div>
+
+        <div class="payment-name">
+          PayPal
+        </div>
+
+        <div class="payment-desc">
+          Payer avec PayPal
+        </div>
+
       </button>
 
     </div>
+
+    ${
+      selectedPayment==="card"
+      ? `
+
+        <div class="payment-panel">
+
+          <p>
+            Le paiement par carte sera ouvert
+            via PayPal.
+          </p>
+
+          <button
+            class="primary"
+            id="payCard"
+            style="width:100%;margin-top:12px"
+          >
+            💳 Continuer vers le paiement
+          </button>
+
+        </div>
+
+      `
+      : `
+
+        <div class="payment-panel">
+
+          <p>
+            Tu vas être envoyé vers PayPal
+            pour effectuer le paiement.
+          </p>
+
+          <button
+            class="primary"
+            id="payPaypal"
+            style="width:100%;margin-top:12px"
+          >
+            🅿️ Payer avec PayPal
+          </button>
+
+        </div>
+
+      `
+    }
 
     <div class="form" style="margin-top:18px">
 
-      <input id="customerName" placeholder="Nom">
+      <input
+        id="customerName"
+        placeholder="Nom"
+      >
 
-      <input id="customerEmail" type="email"
-             placeholder="Email">
-
-      <button class="primary" id="confirmOrder">
-        Confirmer la commande
-      </button>
+      <input
+        id="customerEmail"
+        type="email"
+        placeholder="Email"
+      >
 
     </div>
 
-    <p style="font-size:12px;color:#64748b;margin-top:14px">
-      Le bouton enregistre la commande. Il ne débite pas réellement
-      une carte ou un compte PayPal.
-    </p>
   `);
 
-  $("activateNova").onclick=activateNova;
+  $("applyCoupon").onclick=
+    applyCoupon;
 
-  document.querySelectorAll("[data-payment]").forEach(btn=>{
-    btn.onclick=()=>{
-      selectedPayment=btn.dataset.payment;
-      renderCheckout();
-    };
-  });
+  document
+    .querySelectorAll("[data-payment]")
+    .forEach(button=>{
 
-  $("confirmOrder").onclick=createOrder;
+      button.onclick=()=>{
+
+        selectedPayment=
+          button.dataset.payment;
+
+        renderCheckout();
+
+      };
+
+    });
+
+  if(selectedPayment==="paypal"){
+
+    $("payPaypal").onclick=
+      openPayPal;
+
+  }else{
+
+    $("payCard").onclick=
+      openPayPal;
+
+  }
 }
 
+
 /* =========================================================
-   COMMANDE
+   PAYPAL
 ========================================================= */
 
-function createOrder(){
+function openPayPal(){
 
-  const name=$("customerName").value.trim();
-  const email=$("customerEmail").value.trim();
+  const total=finalTotal();
 
-  if(!name||!email){
-    toast("Remplis ton nom et ton email");
+  if(total<=0){
+
+    toast("Montant invalide");
+
     return;
   }
 
+  /*
+    PayPal.me accepte le montant dans l'URL.
+    Exemple :
+    https://paypal.me/SH0PNOVA/49.99
+  */
+
+  const amount=
+    total.toFixed(2);
+
+  const url=
+    PAYPAL_LINK+"/"+amount;
+
+  window.open(
+    url,
+    "_blank",
+    "noopener,noreferrer"
+  );
+
+  saveOrder();
+
+  toast(
+    "Ouverture du paiement PayPal 🅿️"
+  );
+}
+
+
+/* =========================================================
+   SAUVEGARDE COMMANDE
+========================================================= */
+
+function saveOrder(){
+
+  const nameInput=
+    $("customerName");
+
+  const emailInput=
+    $("customerEmail");
+
   const order={
-    id:"NOVA-"+Date.now(),
-    customerName:name,
-    customerEmail:email,
-    payment:selectedPayment,
-    nova100:nova100Active,
-    total:novaTotal(),
-    items:cart.map(x=>({
-      id:x.id,
-      qty:x.qty
-    })),
-    createdAt:new Date().toISOString()
+
+    id:
+      "NOVA-"+Date.now(),
+
+    name:
+      nameInput
+      ? nameInput.value.trim()
+      : "",
+
+    email:
+      emailInput
+      ? emailInput.value.trim()
+      : "",
+
+    payment:
+      selectedPayment,
+
+    coupon:
+      couponActive
+      ? COUPON_CODE
+      : null,
+
+    total:
+      finalTotal(),
+
+    items:
+      cart.map(item=>({
+        id:item.id,
+        qty:item.qty
+      })),
+
+    date:
+      new Date().toISOString()
+
   };
 
-  const orders=JSON.parse(localStorage.getItem("novaOrders")||"[]");
+  const orders=
+    JSON.parse(
+      localStorage.getItem("novaOrders")||"[]"
+    );
 
   orders.push(order);
 
-  localStorage.setItem("novaOrders",JSON.stringify(orders));
-
-  cart=[];
-  nova100Active=false;
-
-  save();
-  updateBadge();
-
-  openModal(`
-    <div style="text-align:center;padding:25px">
-
-      <div style="font-size:55px">✅</div>
-
-      <h2>Commande enregistrée !</h2>
-
-      <p style="color:#94a3b8;margin:12px 0">
-        Numéro de commande :
-      </p>
-
-      <b>${order.id}</b>
-
-      <p style="color:#94a3b8;margin-top:15px">
-        Paiement sélectionné :
-        ${selectedPayment}
-      </p>
-
-      <button class="primary"
-              id="backShop"
-              style="margin-top:20px">
-        Retour à la boutique
-      </button>
-
-    </div>
-  `);
-
-  $("backShop").onclick=()=>{
-    closeModal();
-    window.scrollTo({top:0,behavior:"smooth"});
-  };
-
-  toast("Commande enregistrée ✅");
+  localStorage.setItem(
+    "novaOrders",
+    JSON.stringify(orders)
+  );
 }
+
 
 /* =========================================================
    COMPTE
@@ -1480,147 +2206,278 @@ function createOrder(){
 
 function renderAccount(){
 
-  const orders=JSON.parse(localStorage.getItem("novaOrders")||"[]");
+  const orders=
+    JSON.parse(
+      localStorage.getItem("novaOrders")||"[]"
+    );
 
   openModal(`
+
     <h2>👤 Mon compte</h2>
 
     <div class="account-box">
 
-      <div style="
-        padding:16px;
-        background:#111c2d;
-        border-radius:12px;
-      ">
+      <div
+        style="
+          padding:16px;
+          background:#111c2d;
+          border-radius:12px;
+        "
+      >
+
         <b>Compte NovaShop</b>
-        <p style="color:#94a3b8;margin-top:7px">
-          Les commandes sont conservées sur cet appareil.
+
+        <p
+          style="
+            color:#94a3b8;
+            margin-top:7px;
+          "
+        >
+          Tes commandes sont conservées
+          sur cet appareil.
         </p>
+
       </div>
 
-      <button class="secondary" id="ordersBtn">
+      <button
+        class="secondary"
+        id="ordersButton"
+      >
         📦 Mes commandes (${orders.length})
       </button>
 
-      <button class="secondary" id="clearOrders">
-        🗑️ Effacer les commandes locales
+      <button
+        class="secondary"
+        id="clearOrders"
+      >
+        🗑️ Effacer les commandes
       </button>
 
     </div>
+
   `);
 
-  $("ordersBtn").onclick=renderOrders;
+  $("ordersButton").onclick=
+    renderOrders;
 
   $("clearOrders").onclick=()=>{
-    localStorage.removeItem("novaOrders");
+
+    localStorage.removeItem(
+      "novaOrders"
+    );
+
     toast("Commandes supprimées");
+
     renderAccount();
+
   };
 }
 
+
+/* =========================================================
+   COMMANDES
+========================================================= */
+
 function renderOrders(){
 
-  const orders=JSON.parse(localStorage.getItem("novaOrders")||"[]");
+  const orders=
+    JSON.parse(
+      localStorage.getItem("novaOrders")||"[]"
+    );
 
   if(!orders.length){
 
     openModal(`
+
       <h2>📦 Mes commandes</h2>
 
       <div class="empty">
+
         <h3>Aucune commande</h3>
+
       </div>
+
     `);
 
     return;
   }
 
   openModal(`
+
     <h2>📦 Mes commandes</h2>
 
-    ${orders.slice().reverse().map(o=>`
-      <div style="
-        padding:15px;
-        border:1px solid #1e293b;
-        border-radius:12px;
-        margin-bottom:10px;
-      ">
+    ${
+      orders
+        .slice()
+        .reverse()
+        .map(order=>`
 
-        <b>${o.id}</b>
+          <div
+            style="
+              padding:15px;
+              border:1px solid #1e293b;
+              border-radius:12px;
+              margin-bottom:10px;
+            "
+          >
 
-        <p style="color:#94a3b8;margin-top:7px">
-          ${o.customerName}
-        </p>
+            <b>${order.id}</b>
 
-        <p style="margin-top:6px">
-          ${money(o.total)}
-        </p>
+            <p
+              style="
+                color:#94a3b8;
+                margin-top:7px;
+              "
+            >
+              ${order.name||"Client"}
+            </p>
 
-        <p style="color:#64748b;font-size:12px;margin-top:5px">
-          Paiement : ${o.payment}
-        </p>
+            <p style="margin-top:6px">
+              ${money(order.total)}
+            </p>
 
-      </div>
-    `).join("")}
+            <p
+              style="
+                color:#64748b;
+                font-size:12px;
+                margin-top:5px;
+              "
+            >
+              Paiement :
+              ${order.payment}
+            </p>
+
+            ${
+              order.coupon
+              ? `
+                <p
+                  style="
+                    color:#22c55e;
+                    font-size:12px;
+                    margin-top:5px;
+                  "
+                >
+                  Coupon : ${order.coupon}
+                </p>
+              `
+              : ""
+            }
+
+          </div>
+
+        `).join("")
+    }
+
   `);
 }
+
 
 /* =========================================================
    BOUTONS
 ========================================================= */
 
-$("closeModal").onclick=closeModal;
+$("closeModal").onclick=
+  closeModal;
 
-$("overlay").addEventListener("click",e=>{
-  if(e.target===$("overlay"))closeModal();
-});
+$("overlay").addEventListener(
+  "click",
+  event=>{
 
-$("cartBtn").onclick=renderCart;
+    if(event.target===$("overlay")){
+      closeModal();
+    }
 
-$("favoritesBtn").onclick=renderFavorites;
+  }
+);
 
-$("accountBtn").onclick=renderAccount;
+$("cartBtn").onclick=
+  renderCart;
+
+$("favoritesBtn").onclick=
+  renderFavorites;
+
+$("accountBtn").onclick=
+  renderAccount;
 
 $("shopBtn").onclick=()=>{
+
   $("shop").scrollIntoView({
     behavior:"smooth"
   });
+
 };
 
 $("novaBtn").onclick=()=>{
+
   $("shop").scrollIntoView({
     behavior:"smooth"
   });
 
   setTimeout(()=>{
-    toast("Entre NOVA100 au paiement pour obtenir -10% ⭐");
+
+    toast(
+      "Le coupon se trouve au paiement 🎟️"
+    );
+
   },500);
+
 };
 
-$("search").addEventListener("input",e=>{
-  searchText=e.target.value;
-  renderProducts();
-});
+$("search").addEventListener(
+  "input",
+  event=>{
 
-$("sort").addEventListener("change",e=>{
-  currentSort=e.target.value;
-  renderProducts();
-});
+    searchText=
+      event.target.value;
 
-document.addEventListener("keydown",e=>{
-  if(e.key==="Escape")closeModal();
-});
+    renderProducts();
+
+  }
+);
+
+$("sort").addEventListener(
+  "change",
+  event=>{
+
+    currentSort=
+      event.target.value;
+
+    renderProducts();
+
+  }
+);
+
+document.addEventListener(
+  "keydown",
+  event=>{
+
+    if(event.key==="Escape"){
+      closeModal();
+    }
+
+  }
+);
+
 
 /* =========================================================
-   INIT
+   INITIALISATION
 ========================================================= */
 
 renderCategories();
 renderProducts();
 updateBadge();
 
-console.log("NovaShop chargé :",products.length,"produits");
-console.log("Boutons NovaShop actifs ✅");
+console.log(
+  "NovaShop chargé :",
+  products.length,
+  "produits ✅"
+);
+
+console.log(
+  "PayPal :",
+  PAYPAL_LINK
+);
+
 </script>
 
 </body>
