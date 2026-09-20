@@ -31,15 +31,7 @@ import {
 // FIREBASE
 // ============================================================
 
-const firebaseConfig = {
-  apiKey: "AIzaSyAZ5vAkAEfIBpfLyhxgO7uvNdJ67KYKWD0",
-  authDomain: "novashop-4ee63.firebaseapp.com",
-  projectId: "novashop-4ee63",
-  storageBucket: "novashop-4ee63.firebasestorage.app",
-  messagingSenderId: "1044964015809",
-  appId: "1:1044964015809:web:4eafe0b1aede48f8539e40",
-  measurementId: "G-XNY5X2VMY9"
-};
+const firebaseConfig = { apiKey: "AIzaSyAZ5vAkAEfIBpfLyhxgO7uvNdJ67KYKWD0", authDomain: "novashop-4ee63.firebaseapp.com", projectId: "novashop-4ee63", storageBucket: "novashop-4ee63.firebasestorage.app", messagingSenderId: "1044964015809", appId: "1:1044964015809:web:4eafe0b1aede48f8539e40", measurementId: "G-XNY5X2VMY9" };
 
 const firebaseApp = initializeApp(firebaseConfig);
 const auth = getAuth(firebaseApp);
