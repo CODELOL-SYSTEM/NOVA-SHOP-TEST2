@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NovaShop</title>
 
 <style>
@@ -17,27 +17,35 @@
   --bg2:#09111f;
   --card:#0d1728;
   --card2:#111e32;
-  --border:#1d304c;
-  --text:#f4f7fb;
-  --muted:#8fa1b8;
-  --blue:#4f8cff;
-  --blue2:#2463e8;
-  --green:#28d17c;
+  --line:#1d2d46;
+  --text:#f5f8ff;
+  --muted:#8d9ab0;
+  --blue:#2777ff;
+  --blue2:#55a2ff;
+  --green:#26d98b;
   --red:#ff5364;
-  --yellow:#ffc857;
+  --orange:#ff9b42;
+  --shadow:0 20px 60px rgba(0,0,0,.35);
+}
+
+html{
+  scroll-behavior:smooth;
 }
 
 body{
-  font-family:Arial,Helvetica,sans-serif;
+  min-height:100vh;
   background:
-    radial-gradient(circle at 15% 0%,rgba(45,110,255,.16),transparent 30%),
-    radial-gradient(circle at 90% 20%,rgba(0,180,255,.08),transparent 30%),
+    radial-gradient(circle at 10% 0%,rgba(39,119,255,.15),transparent 30%),
+    radial-gradient(circle at 90% 10%,rgba(85,162,255,.08),transparent 25%),
     var(--bg);
   color:var(--text);
-  min-height:100vh;
+  font-family:Arial,Helvetica,sans-serif;
 }
 
-button,input,select{
+button,
+input,
+select,
+textarea{
   font:inherit;
 }
 
@@ -50,51 +58,61 @@ a{
   text-decoration:none;
 }
 
+/* ================= HEADER ================= */
+
 header{
   position:sticky;
   top:0;
-  z-index:50;
+  z-index:100;
+  background:rgba(5,9,18,.88);
   backdrop-filter:blur(18px);
-  background:rgba(5,9,18,.86);
-  border-bottom:1px solid var(--border);
+  border-bottom:1px solid var(--line);
 }
 
 .nav{
-  max-width:1400px;
+  max-width:1450px;
   margin:auto;
   min-height:72px;
-  padding:12px 20px;
+  padding:12px 22px;
   display:flex;
   align-items:center;
-  gap:15px;
+  gap:20px;
 }
 
 .logo{
-  font-size:25px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:23px;
   font-weight:900;
-  letter-spacing:-1px;
-  color:white;
   white-space:nowrap;
 }
 
-.logo span{
-  color:var(--blue);
+.logo-mark{
+  width:38px;
+  height:38px;
+  border-radius:12px;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg,#2777ff,#7bb7ff);
+  box-shadow:0 8px 30px rgba(39,119,255,.35);
 }
 
 .search{
   flex:1;
-  max-width:650px;
+  max-width:620px;
   position:relative;
 }
 
 .search input{
   width:100%;
-  background:#0a1322;
-  border:1px solid var(--border);
-  color:white;
-  border-radius:14px;
-  padding:13px 16px 13px 44px;
+  height:45px;
+  padding:0 45px 0 17px;
+  border:1px solid var(--line);
   outline:none;
+  border-radius:13px;
+  color:white;
+  background:#091221;
 }
 
 .search input:focus{
@@ -103,104 +121,127 @@ header{
 
 .search-icon{
   position:absolute;
-  left:16px;
+  right:15px;
   top:12px;
-  color:var(--muted);
+  opacity:.65;
 }
 
 .nav-actions{
-  display:flex;
-  gap:8px;
   margin-left:auto;
+  display:flex;
+  align-items:center;
+  gap:8px;
 }
 
-.btn{
-  border:1px solid var(--border);
+.nav-btn{
+  border:1px solid var(--line);
   background:#0b1525;
   color:white;
   padding:11px 14px;
-  border-radius:12px;
-  transition:.18s;
+  border-radius:11px;
 }
 
-.btn:hover{
-  transform:translateY(-1px);
-  border-color:#39639d;
+.nav-btn:hover{
+  border-color:#386cb7;
+  background:#101e33;
 }
 
-.btn.primary{
-  background:linear-gradient(135deg,var(--blue),var(--blue2));
-  border-color:transparent;
+.cart-count{
+  display:inline-grid;
+  place-items:center;
+  min-width:21px;
+  height:21px;
+  margin-left:5px;
+  padding:0 5px;
+  border-radius:20px;
+  background:var(--blue);
+  font-size:12px;
 }
 
-.btn.danger{
-  background:#32141b;
-  color:#ff8793;
-  border-color:#5b202b;
-}
-
-.btn.success{
-  background:#0d3022;
-  color:#63e7a4;
-  border-color:#1a6848;
-}
+/* ================= HERO ================= */
 
 .hero{
-  max-width:1400px;
-  margin:auto;
-  padding:65px 20px 35px;
-  display:grid;
-  grid-template-columns:1.3fr .7fr;
-  gap:25px;
-  align-items:center;
+  max-width:1450px;
+  margin:30px auto 0;
+  padding:55px 30px 70px;
+  border:1px solid var(--line);
+  border-radius:28px;
+  background:
+    linear-gradient(135deg,rgba(39,119,255,.13),transparent 45%),
+    linear-gradient(180deg,#0b1629,#07101e);
+  box-shadow:var(--shadow);
+  position:relative;
+  overflow:hidden;
+}
+
+.hero::before{
+  content:"";
+  position:absolute;
+  width:350px;
+  height:350px;
+  right:-130px;
+  top:-150px;
+  border-radius:50%;
+  background:rgba(39,119,255,.16);
+  filter:blur(10px);
+}
+
+.hero-content{
+  position:relative;
+  z-index:1;
+  max-width:800px;
 }
 
 .hero h1{
-  font-size:clamp(40px,6vw,78px);
-  line-height:.96;
-  letter-spacing:-4px;
+  font-size:clamp(38px,6vw,75px);
+  line-height:.98;
+  margin-bottom:20px;
 }
 
 .hero h1 span{
-  color:var(--blue);
+  color:#62aaff;
 }
 
 .hero p{
-  color:var(--muted);
-  max-width:700px;
+  max-width:680px;
+  color:#a9b6ca;
   font-size:18px;
-  margin:22px 0;
   line-height:1.6;
+  margin-bottom:27px;
 }
 
 .hero-buttons{
   display:flex;
-  gap:12px;
   flex-wrap:wrap;
+  gap:12px;
 }
 
-.hero-card{
-  background:linear-gradient(145deg,#101f36,#09111f);
-  border:1px solid var(--border);
-  border-radius:25px;
-  padding:28px;
-  box-shadow:0 25px 80px rgba(0,0,0,.25);
+.primary-btn,
+.secondary-btn{
+  border:0;
+  border-radius:12px;
+  padding:14px 20px;
+  font-weight:800;
 }
 
-.hero-card .big{
-  font-size:45px;
-  font-weight:900;
+.primary-btn{
+  background:linear-gradient(135deg,#2777ff,#4d9aff);
+  color:white;
+  box-shadow:0 10px 30px rgba(39,119,255,.25);
 }
 
-.hero-card p{
-  margin:8px 0 0;
-  font-size:14px;
+.secondary-btn{
+  background:#101d30;
+  color:white;
+  border:1px solid var(--line);
 }
+
+/* ================= SECTIONS ================= */
 
 .section{
-  max-width:1400px;
-  margin:auto;
-  padding:30px 20px;
+  max-width:1450px;
+  margin:55px auto;
+  padding:0 22px;
 }
 
 .section-title{
@@ -212,277 +253,367 @@ header{
 }
 
 .section-title h2{
-  font-size:32px;
+  font-size:30px;
 }
 
 .section-title p{
   color:var(--muted);
 }
 
-.filters{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  margin-bottom:18px;
-}
-
-.filters select,
-.filters input{
-  background:#0b1525;
-  color:white;
-  border:1px solid var(--border);
-  padding:11px 13px;
-  border-radius:11px;
-  outline:none;
-}
+/* ================= CATEGORIES ================= */
 
 .categories{
   display:flex;
-  gap:8px;
-  overflow-x:auto;
-  padding-bottom:8px;
-  margin-bottom:20px;
+  gap:9px;
+  overflow:auto;
+  padding-bottom:7px;
 }
 
 .category-btn{
-  white-space:nowrap;
-  border:1px solid var(--border);
-  background:#0a1322;
-  color:#b8c5d6;
+  flex:0 0 auto;
+  border:1px solid var(--line);
+  background:#0b1525;
+  color:#ccd6e7;
+  border-radius:10px;
   padding:10px 14px;
-  border-radius:999px;
 }
 
 .category-btn.active,
 .category-btn:hover{
+  background:#1a56ad;
+  border-color:#327be7;
   color:white;
-  background:#16325d;
-  border-color:#386eb9;
 }
+
+/* ================= FILTERS ================= */
+
+.filters{
+  margin-top:18px;
+  padding:17px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  border:1px solid var(--line);
+  background:#091321;
+  border-radius:16px;
+}
+
+.filter-group{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.filter-group label{
+  color:#9eabc0;
+  font-size:14px;
+}
+
+.filter-group select,
+.filter-group input{
+  background:#0e1a2d;
+  color:white;
+  border:1px solid var(--line);
+  border-radius:9px;
+  padding:9px;
+  outline:none;
+}
+
+.range-box{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.range-box input{
+  width:150px;
+}
+
+/* ================= PRODUCTS ================= */
 
 .products{
   display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:15px;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:18px;
 }
 
-.product{
+.product-card{
   position:relative;
-  background:linear-gradient(180deg,#0e192a,#09111e);
-  border:1px solid var(--border);
-  border-radius:18px;
   overflow:hidden;
-  display:flex;
-  flex-direction:column;
-  min-width:0;
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:linear-gradient(180deg,#0d1728,#091321);
+  transition:.2s;
 }
 
-.product-img{
+.product-card:hover{
+  transform:translateY(-4px);
+  border-color:#31557f;
+  box-shadow:0 18px 45px rgba(0,0,0,.28);
+}
+
+.product-image{
   height:245px;
-  background:#07101c;
+  background:#f5f7fa;
   display:flex;
   align-items:center;
   justify-content:center;
-  padding:15px;
   position:relative;
 }
 
-.product-img img{
+.product-image img{
   width:100%;
   height:100%;
   object-fit:contain;
+  padding:14px;
 }
 
 .new-badge{
   position:absolute;
   top:12px;
   left:12px;
-  background:var(--green);
-  color:#03140c;
-  font-weight:900;
-  padding:5px 9px;
+  padding:6px 9px;
   border-radius:8px;
-  font-size:12px;
+  background:#22c77f;
+  color:#04150e;
+  font-size:11px;
+  font-weight:900;
 }
 
-.fav{
+.favorite-btn{
   position:absolute;
-  top:10px;
-  right:10px;
+  right:12px;
+  top:12px;
   width:38px;
   height:38px;
   border-radius:50%;
-  border:1px solid var(--border);
-  background:rgba(4,9,17,.8);
-  color:white;
+  border:1px solid #d6dce6;
+  background:rgba(255,255,255,.9);
   font-size:18px;
-  z-index:2;
+  color:#7b8798;
 }
 
-.fav.active{
-  color:#ff5b7a;
+.favorite-btn.active{
+  color:#ff4561;
 }
 
 .product-body{
-  padding:15px;
-  display:flex;
-  flex-direction:column;
-  flex:1;
+  padding:16px;
 }
 
-.product-cat{
-  color:#6fa2ff;
+.product-category{
+  color:#7197c9;
   font-size:12px;
+  font-weight:700;
   margin-bottom:7px;
 }
 
 .product-name{
-  font-weight:700;
-  line-height:1.35;
-  min-height:43px;
+  min-height:48px;
+  font-size:16px;
+  font-weight:800;
+  line-height:1.4;
 }
 
 .rating{
-  margin-top:10px;
-  font-size:13px;
-  color:#ffc857;
+  margin-top:9px;
+  display:flex;
+  align-items:center;
+  gap:7px;
+  color:#ffbd4a;
+  font-size:14px;
 }
 
-.rating small{
-  color:var(--muted);
+.rating-number{
+  color:white;
+  font-weight:800;
+}
+
+.review-count{
+  color:#7f8da3;
+  font-size:12px;
 }
 
 .price{
+  margin-top:12px;
   font-size:22px;
   font-weight:900;
-  margin:12px 0;
 }
 
 .product-actions{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:8px;
-  margin-top:auto;
+  margin-top:14px;
 }
 
-.review-button{
-  width:100%;
-  margin-top:8px;
+.product-actions button{
+  border-radius:10px;
+  padding:11px;
+  border:1px solid var(--line);
+  color:white;
+  background:#101c2e;
 }
 
-.info-grid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:15px;
+.product-actions .add-btn{
+  background:#216de0;
+  border-color:#216de0;
 }
 
-.info-card{
-  background:var(--card);
-  border:1px solid var(--border);
-  border-radius:18px;
+/* ================= REVIEWS ================= */
+
+.reviews-summary{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
   padding:22px;
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:#0b1525;
 }
 
-.info-card h3{
-  margin-bottom:8px;
+.reviews-big{
+  font-size:42px;
+  font-weight:900;
 }
 
-.info-card p{
-  color:var(--muted);
-  line-height:1.5;
+.reviews-stars{
+  color:#ffbf4d;
+  font-size:22px;
 }
 
-.faq{
+.reviews-total{
+  color:#9aa8bd;
+}
+
+.more-reviews-btn{
+  border:1px solid #2d5e9e;
+  background:#102544;
+  color:white;
+  padding:12px 17px;
+  border-radius:11px;
+}
+
+/* ================= FAQ ================= */
+
+.faq-list{
   display:grid;
   gap:10px;
 }
 
 .faq-item{
-  background:var(--card);
-  border:1px solid var(--border);
+  border:1px solid var(--line);
   border-radius:14px;
+  background:#0b1525;
   overflow:hidden;
 }
 
 .faq-question{
   width:100%;
+  text-align:left;
   border:0;
-  background:transparent;
+  background:none;
   color:white;
   padding:18px;
-  text-align:left;
+  font-weight:800;
   display:flex;
   justify-content:space-between;
-  font-weight:700;
+  gap:15px;
 }
 
 .faq-answer{
   display:none;
-  color:var(--muted);
-  line-height:1.6;
   padding:0 18px 18px;
+  color:#9ba9be;
+  line-height:1.6;
 }
 
 .faq-item.open .faq-answer{
   display:block;
 }
 
+/* ================= REFUND ================= */
+
 .refund-box{
-  background:linear-gradient(135deg,#111d32,#0b1525);
-  border:1px solid var(--border);
-  border-radius:20px;
   padding:25px;
+  border-radius:18px;
+  border:1px solid var(--line);
+  background:
+    linear-gradient(135deg,rgba(38,217,139,.08),transparent),
+    #0b1525;
+}
+
+.refund-box h3{
+  margin-bottom:10px;
 }
 
 .refund-box p{
-  color:var(--muted);
+  color:#9daabd;
   line-height:1.6;
-  margin:8px 0;
 }
 
-.site-reviews{
-  text-align:center;
-  padding:35px 20px;
+.refund-steps{
+  margin-top:18px;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
 }
 
-.site-reviews .stars{
-  color:#ffc857;
-  font-size:28px;
+.refund-step{
+  padding:17px;
+  border-radius:12px;
+  background:#101c2e;
+  border:1px solid var(--line);
 }
 
-.site-reviews .count{
-  font-size:42px;
-  font-weight:900;
-  margin:8px;
+.refund-step strong{
+  display:block;
+  margin-bottom:7px;
 }
+
+/* ================= FOOTER ================= */
 
 footer{
-  border-top:1px solid var(--border);
-  margin-top:40px;
-  padding:30px 20px;
-  color:var(--muted);
-  text-align:center;
+  border-top:1px solid var(--line);
+  margin-top:80px;
+  padding:35px 22px;
+  background:#040811;
 }
 
-footer button{
-  background:none;
+.footer-inner{
+  max-width:1450px;
+  margin:auto;
+  display:flex;
+  justify-content:space-between;
+  gap:20px;
+  flex-wrap:wrap;
+}
+
+.footer-links{
+  display:flex;
+  gap:18px;
+  color:#9daabd;
+}
+
+.footer-links button{
   border:0;
-  color:#82adff;
-  margin:8px;
+  background:none;
+  color:#9daabd;
 }
 
-/* MODALS */
+/* ================= MODAL ================= */
 
 .modal{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,.72);
-  backdrop-filter:blur(8px);
+  z-index:1000;
   display:none;
   align-items:center;
   justify-content:center;
   padding:20px;
-  z-index:100;
+  background:rgba(0,0,0,.72);
+  backdrop-filter:blur(8px);
 }
 
 .modal.show{
@@ -490,34 +621,35 @@ footer button{
 }
 
 .modal-box{
-  width:min(100%,900px);
+  width:min(900px,100%);
   max-height:92vh;
   overflow:auto;
-  background:#091322;
-  border:1px solid var(--border);
-  border-radius:22px;
-  box-shadow:0 30px 100px rgba(0,0,0,.55);
+  border:1px solid #243753;
+  border-radius:20px;
+  background:#091321;
+  box-shadow:0 30px 100px rgba(0,0,0,.5);
 }
 
-.modal-head{
-  position:sticky;
-  top:0;
-  z-index:2;
-  background:#091322;
-  border-bottom:1px solid var(--border);
-  padding:17px 20px;
+.modal-header{
+  padding:18px 20px;
+  border-bottom:1px solid var(--line);
   display:flex;
-  justify-content:space-between;
   align-items:center;
+  justify-content:space-between;
+  gap:15px;
 }
 
-.close{
-  border:0;
-  background:#111e31;
-  color:white;
+.modal-header h3{
+  font-size:21px;
+}
+
+.close-btn{
   width:38px;
   height:38px;
   border-radius:10px;
+  border:1px solid var(--line);
+  background:#101c2e;
+  color:white;
   font-size:20px;
 }
 
@@ -525,310 +657,290 @@ footer button{
   padding:20px;
 }
 
+/* ================= PRODUCT MODAL ================= */
+
 .product-detail{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:25px;
 }
 
-.detail-img{
-  background:#050c16;
-  min-height:400px;
+.detail-image{
+  min-height:390px;
   border-radius:16px;
+  background:#f6f7f9;
   display:flex;
   align-items:center;
   justify-content:center;
-  padding:20px;
 }
 
-.detail-img img{
+.detail-image img{
   width:100%;
   height:100%;
-  max-height:420px;
+  max-height:500px;
   object-fit:contain;
 }
 
 .detail-info h2{
-  font-size:30px;
-  margin-bottom:12px;
+  font-size:28px;
+  line-height:1.2;
 }
 
-.detail-info .description{
-  color:var(--muted);
-  line-height:1.6;
+.detail-description{
+  color:#96a5bb;
+  line-height:1.7;
   margin:15px 0;
+}
+
+.detail-price{
+  font-size:32px;
+  font-weight:900;
+  margin:20px 0;
+}
+
+.detail-actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
 }
 
 .quantity{
   display:flex;
   align-items:center;
-  gap:12px;
+  gap:10px;
   margin:15px 0;
 }
 
 .quantity button{
   width:38px;
   height:38px;
-  border:1px solid var(--border);
-  background:#101d30;
+  border:1px solid var(--line);
+  background:#101c2e;
   color:white;
   border-radius:9px;
 }
 
-.quantity span{
-  min-width:30px;
-  text-align:center;
-}
+/* ================= CART ================= */
 
-/* CART */
+.cart-items{
+  display:grid;
+  gap:10px;
+}
 
 .cart-item{
   display:grid;
-  grid-template-columns:70px 1fr auto;
-  gap:13px;
+  grid-template-columns:75px 1fr auto;
   align-items:center;
-  padding:13px 0;
-  border-bottom:1px solid var(--border);
+  gap:12px;
+  padding:12px;
+  border:1px solid var(--line);
+  border-radius:13px;
+  background:#0d192b;
 }
 
 .cart-item img{
-  width:70px;
-  height:70px;
+  width:75px;
+  height:75px;
   object-fit:contain;
-  background:#050c16;
-  border-radius:10px;
+  border-radius:9px;
+  background:white;
 }
 
-.cart-item-info{
-  min-width:0;
+.cart-name{
+  font-weight:800;
 }
 
-.cart-item-info strong{
-  display:block;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
+.cart-price{
+  color:#82b4ff;
+  margin-top:5px;
+}
+
+.cart-controls{
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+
+.cart-controls button{
+  border:1px solid var(--line);
+  background:#111f33;
+  color:white;
+  width:32px;
+  height:32px;
+  border-radius:8px;
+}
+
+.cart-remove{
+  color:#ff6978 !important;
 }
 
 .cart-total{
   margin-top:20px;
+  padding-top:18px;
+  border-top:1px solid var(--line);
   display:flex;
   justify-content:space-between;
-  font-size:24px;
+  font-size:23px;
   font-weight:900;
 }
 
-.checkout-form{
-  display:grid;
-  gap:12px;
-}
+/* ================= FORMS ================= */
 
-.checkout-form input{
-  width:100%;
-  padding:13px;
-  background:#0a1423;
-  border:1px solid var(--border);
-  border-radius:11px;
-  color:white;
-  outline:none;
-}
-
-.payment-methods{
+.form-grid{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:12px;
-  margin:15px 0;
+}
+
+.field{
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+}
+
+.field.full{
+  grid-column:1/-1;
+}
+
+.field label{
+  color:#9daabd;
+  font-size:13px;
+}
+
+.field input,
+.field select,
+.field textarea{
+  width:100%;
+  border:1px solid var(--line);
+  outline:none;
+  border-radius:10px;
+  background:#0d192b;
+  color:white;
+  padding:12px;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus{
+  border-color:var(--blue);
+}
+
+/* ================= PAYMENT ================= */
+
+.payment-options{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin:20px 0;
 }
 
 .payment-choice{
-  border:1px solid var(--border);
-  background:#0b1525;
+  border:1px solid var(--line);
+  background:#0d192b;
   color:white;
-  padding:18px;
-  border-radius:14px;
+  border-radius:13px;
+  padding:17px;
   text-align:left;
 }
 
 .payment-choice.active{
-  border-color:var(--blue);
-  background:#102c55;
+  border-color:#3f8cff;
+  background:#10274a;
 }
 
-/* CB */
-
-.cb-demo{
-  background:linear-gradient(135deg,#111a2d,#172f58 55%,#0b172b);
-  border:1px solid #33578c;
-  border-radius:20px;
-  padding:24px;
-  min-height:205px;
-  position:relative;
-  overflow:hidden;
-  box-shadow:0 20px 50px rgba(0,0,0,.3);
-}
-
-.cb-demo:before{
-  content:"";
-  position:absolute;
-  width:230px;
-  height:230px;
-  border-radius:50%;
-  background:rgba(80,140,255,.12);
-  right:-80px;
-  top:-80px;
-}
-
-.cb-chip{
-  width:48px;
-  height:35px;
-  border-radius:7px;
-  background:linear-gradient(135deg,#b9c0c9,#5f6974);
-  margin-bottom:22px;
-}
-
-.cb-number{
-  font-size:22px;
-  letter-spacing:3px;
-  margin-bottom:22px;
-}
-
-.cb-bottom{
-  display:flex;
-  justify-content:space-between;
-  color:#d6deea;
-  font-size:12px;
-}
-
-.cb-brand{
-  font-size:20px;
-  font-weight:900;
-  position:absolute;
-  right:22px;
-  bottom:20px;
-}
-
-.card-fields{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-}
-
-.card-fields .full{
-  grid-column:1/-1;
-}
-
-.card-fields label{
-  color:#9eafc5;
-  font-size:12px;
+.payment-choice strong{
+  display:block;
   margin-bottom:6px;
+}
+
+.payment-panel{
+  display:none;
+  padding:17px;
+  border:1px solid var(--line);
+  border-radius:13px;
+  background:#08111f;
+}
+
+.payment-panel.active{
   display:block;
 }
 
-.card-fields input{
-  width:100%;
-  padding:13px;
+.demo-note{
+  margin-bottom:15px;
+  padding:12px;
   border-radius:10px;
-  border:1px solid var(--border);
-  background:#07101c;
-  color:white;
-  outline:none;
+  background:#111e31;
+  color:#9eabc0;
+  font-size:13px;
+  line-height:1.5;
 }
 
-/* REVIEWS */
-
-.review-list{
-  display:grid;
-  gap:10px;
+.card-preview{
+  margin-top:18px;
+  padding:22px;
+  min-height:190px;
+  border-radius:18px;
+  background:
+    radial-gradient(circle at 80% 20%,rgba(255,255,255,.18),transparent 25%),
+    linear-gradient(135deg,#101722,#26354c);
+  border:1px solid #40506a;
 }
 
-.review{
-  padding:15px;
-  border:1px solid var(--border);
-  border-radius:14px;
-  background:#0d1727;
+.card-preview-title{
+  font-size:18px;
+  font-weight:900;
 }
 
-.review-top{
+.card-preview-number{
+  margin-top:35px;
+  font-size:22px;
+  letter-spacing:3px;
+}
+
+.card-preview-bottom{
   display:flex;
   justify-content:space-between;
-  gap:10px;
+  margin-top:22px;
+  color:#c3ccda;
+  font-size:12px;
 }
 
-.review-stars{
-  color:#ffc857;
-}
+/* ================= ACCOUNT ================= */
 
-.review p{
-  color:#b6c3d4;
-  margin-top:8px;
-  line-height:1.45;
-}
-
-.review small{
-  color:#6e819a;
-}
-
-/* ACCOUNT */
-
-.auth-tabs{
+.account-tabs{
   display:flex;
   gap:8px;
   margin-bottom:18px;
 }
 
-.auth-tab{
+.account-tab{
   flex:1;
-}
-
-.auth-form{
-  display:grid;
-  gap:12px;
-}
-
-.auth-form input{
-  width:100%;
-  padding:13px;
-  background:#07101c;
-  border:1px solid var(--border);
-  border-radius:10px;
+  border:1px solid var(--line);
+  background:#0e1a2d;
   color:white;
+  padding:11px;
+  border-radius:10px;
 }
 
-/* DASHBOARD */
+.account-tab.active{
+  background:#1c5eb9;
+}
 
-.dashboard-stats{
+/* ================= ORDERS ================= */
+
+.orders-list{
   display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:12px;
-  margin-bottom:20px;
+  gap:14px;
 }
 
-.stat{
-  background:#0d1829;
-  border:1px solid var(--border);
-  border-radius:15px;
+.order-card{
   padding:18px;
+  border:1px solid var(--line);
+  border-radius:16px;
+  background:#0b1525;
 }
 
-.stat small{
-  color:var(--muted);
-}
-
-.stat strong{
-  display:block;
-  font-size:27px;
-  margin-top:5px;
-}
-
-.order-admin{
-  background:#0c1727;
-  border:1px solid var(--border);
-  border-radius:18px;
-  padding:18px;
-  margin-bottom:15px;
-}
-
-.order-head{
+.order-top{
   display:flex;
   justify-content:space-between;
   gap:15px;
@@ -836,123 +948,237 @@ footer button{
 }
 
 .order-id{
-  color:#73a6ff;
+  color:#79adff;
+  font-weight:900;
+}
+
+.order-meta{
+  color:#8e9cb1;
+  font-size:13px;
+  margin-top:6px;
+}
+
+.status-badge{
+  display:inline-block;
+  padding:7px 10px;
+  border-radius:8px;
+  background:#14253d;
+  color:#a9c9ff;
+  font-size:12px;
+  font-weight:800;
+}
+
+.tracking{
+  margin-top:14px;
+  padding:14px;
+  border-radius:12px;
+  background:#0f1d31;
+  border:1px solid var(--line);
+}
+
+.tracking-row{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  margin-top:7px;
+  color:#a0aec2;
+}
+
+.countdown{
+  color:#69a8ff;
+  font-weight:900;
+}
+
+/* ================= ADMIN ================= */
+
+.admin-stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  margin-bottom:18px;
+}
+
+.stat-card{
+  padding:18px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:#0c1728;
+}
+
+.stat-card span{
+  display:block;
+  color:#8f9db2;
   font-size:13px;
 }
 
-.order-total{
-  font-size:22px;
-  font-weight:900;
+.stat-card strong{
+  display:block;
+  font-size:25px;
+  margin-top:8px;
+}
+
+.admin-order{
+  padding:20px;
+  border:1px solid #263954;
+  border-radius:17px;
+  background:#0a1423;
+}
+
+.admin-order + .admin-order{
+  margin-top:14px;
+}
+
+.admin-section{
+  margin-top:15px;
+  padding-top:15px;
+  border-top:1px solid var(--line);
 }
 
 .admin-grid{
   display:grid;
   grid-template-columns:repeat(2,1fr);
-  gap:12px;
-  margin-top:15px;
-}
-
-.admin-field{
-  display:grid;
-  gap:6px;
+  gap:10px;
 }
 
 .admin-field label{
-  color:#8296ae;
+  display:block;
+  color:#8e9cb1;
   font-size:12px;
+  margin-bottom:6px;
 }
 
 .admin-field input,
 .admin-field select{
-  background:#07101c;
-  border:1px solid var(--border);
+  width:100%;
+  border:1px solid var(--line);
+  background:#101c2e;
   color:white;
+  padding:10px;
   border-radius:9px;
-  padding:11px;
-}
-
-.admin-full{
-  grid-column:1/-1;
-}
-
-.countdown{
-  font-size:22px;
-  font-weight:900;
-  color:#67a1ff;
-}
-
-.tracking-presets{
-  display:flex;
-  gap:6px;
-  flex-wrap:wrap;
-}
-
-.tracking-presets button{
-  border:1px solid var(--border);
-  background:#101d30;
-  color:#bdc9d9;
-  padding:7px 9px;
-  border-radius:8px;
-  font-size:11px;
-}
-
-.order-items{
-  margin-top:15px;
-  color:#aebdd0;
-  font-size:13px;
-  line-height:1.6;
 }
 
 .admin-actions{
   display:flex;
   gap:8px;
-  margin-top:15px;
   flex-wrap:wrap;
+  margin-top:13px;
 }
 
-.empty{
-  text-align:center;
-  color:var(--muted);
-  padding:40px 10px;
+.save-order-btn{
+  background:#1e8d60;
+  border:0;
+  color:white;
+  padding:11px 15px;
+  border-radius:10px;
+  font-weight:800;
 }
+
+.delete-order-btn{
+  background:#b72e40;
+  border:0;
+  color:white;
+  padding:11px 15px;
+  border-radius:10px;
+  font-weight:800;
+}
+
+.preset-location{
+  margin-top:7px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
+
+.preset-location button{
+  border:1px solid var(--line);
+  background:#111f33;
+  color:#c5cfdd;
+  padding:7px 9px;
+  border-radius:8px;
+  font-size:11px;
+}
+
+/* ================= REVIEWS MODAL ================= */
+
+.review-list{
+  display:grid;
+  gap:10px;
+}
+
+.review-person{
+  padding:14px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:#0d192b;
+}
+
+.review-person-top{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+}
+
+.review-name{
+  font-weight:800;
+}
+
+.review-stars{
+  color:#ffbd4b;
+}
+
+.review-text{
+  color:#98a7bb;
+  margin-top:7px;
+  line-height:1.5;
+}
+
+/* ================= TOAST ================= */
 
 .toast{
   position:fixed;
   right:20px;
   bottom:20px;
-  z-index:300;
-  background:#111e31;
-  border:1px solid var(--border);
-  color:white;
+  z-index:3000;
+  max-width:360px;
   padding:14px 17px;
   border-radius:12px;
-  box-shadow:0 15px 50px rgba(0,0,0,.4);
-  transform:translateY(20px);
-  opacity:0;
-  pointer-events:none;
-  transition:.25s;
+  background:#14243a;
+  border:1px solid #2b4465;
+  box-shadow:var(--shadow);
+  display:none;
 }
 
 .toast.show{
-  transform:translateY(0);
-  opacity:1;
+  display:block;
 }
+
+/* ================= EMPTY ================= */
+
+.empty{
+  padding:40px 20px;
+  text-align:center;
+  border:1px dashed #2a3b55;
+  border-radius:16px;
+  color:#8795aa;
+}
+
+.hidden{
+  display:none !important;
+}
+
+/* ================= RESPONSIVE ================= */
 
 @media(max-width:1100px){
   .products{
     grid-template-columns:repeat(3,1fr);
   }
 
-  .hero{
-    grid-template-columns:1fr;
-  }
-
-  .dashboard-stats{
+  .admin-stats{
     grid-template-columns:repeat(2,1fr);
   }
 }
 
-@media(max-width:750px){
+@media(max-width:800px){
   .nav{
     flex-wrap:wrap;
   }
@@ -967,46 +1193,53 @@ footer button{
     grid-template-columns:repeat(2,1fr);
   }
 
-  .info-grid{
-    grid-template-columns:1fr;
-  }
-
   .product-detail{
     grid-template-columns:1fr;
   }
 
+  .refund-steps{
+    grid-template-columns:1fr;
+  }
+
+  .form-grid,
   .admin-grid{
     grid-template-columns:1fr;
   }
 
-  .admin-full{
+  .field.full{
     grid-column:auto;
-  }
-
-  .payment-methods{
-    grid-template-columns:1fr;
   }
 }
 
-@media(max-width:500px){
+@media(max-width:520px){
+  .hero{
+    margin:15px 10px 0;
+    padding:35px 20px 45px;
+  }
+
+  .section{
+    padding:0 12px;
+  }
+
   .products{
     grid-template-columns:1fr;
   }
 
-  .dashboard-stats{
-    grid-template-columns:1fr 1fr;
+  .product-image{
+    height:270px;
   }
 
-  .hero h1{
-    letter-spacing:-2px;
-  }
-
-  .card-fields{
+  .payment-options{
     grid-template-columns:1fr;
   }
 
-  .card-fields .full{
-    grid-column:auto;
+  .admin-stats{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .reviews-summary{
+    align-items:flex-start;
+    flex-direction:column;
   }
 }
 </style>
@@ -1014,227 +1247,487 @@ footer button{
 
 <body>
 
+<!-- ================= HEADER ================= -->
+
 <header>
   <nav class="nav">
-    <button class="btn" id="homeBtn">Nova<span>Shop</span></button>
+
+    <a href="#" class="logo">
+      <span class="logo-mark">N</span>
+      <span>NovaShop</span>
+    </a>
 
     <div class="search">
+      <input
+        id="searchInput"
+        type="search"
+        placeholder="Rechercher un produit..."
+        autocomplete="off"
+      >
       <span class="search-icon">🔎</span>
-      <input id="searchInput" placeholder="Rechercher un produit...">
     </div>
 
     <div class="nav-actions">
-      <button class="btn" id="favoritesBtn">♡</button>
-      <button class="btn" id="cartBtn">🛒 <span id="cartCount">0</span></button>
-      <button class="btn" id="accountBtn">👤 Compte</button>
-      <button class="btn" id="dashboardBtn">⚙️</button>
+
+      <button class="nav-btn" id="favoritesBtn">
+        ❤️
+      </button>
+
+      <button class="nav-btn" id="accountBtn">
+        👤 Compte
+      </button>
+
+      <button class="nav-btn" id="dashboardBtn">
+        ⚙️ Dashboard
+      </button>
+
+      <button class="nav-btn" id="cartBtn">
+        🛒 Panier
+        <span class="cart-count" id="cartCount">0</span>
+      </button>
+
     </div>
+
   </nav>
 </header>
+
+
+<!-- ================= HERO ================= -->
 
 <main>
 
 <section class="hero">
-  <div>
-    <h1>Bienvenue sur<br><span>NovaShop.</span></h1>
+
+  <div class="hero-content">
+
+    <h1>
+      Bienvenue sur<br>
+      <span>NovaShop</span>
+    </h1>
+
     <p>
-      Composants, PC gamer, écrans, périphériques et accessoires gaming.
-      Trouve ton matériel et commande directement depuis NovaShop.
+      Composants PC, périphériques gaming, écrans, bureaux,
+      éclairage RGB et matériel pour créer ton setup.
     </p>
 
     <div class="hero-buttons">
-      <button class="btn primary" id="productsBtn">Voir les produits</button>
-      <button class="btn" id="heroReviewsBtn">⭐ Voir les avis</button>
+
+      <button
+        class="primary-btn"
+        id="productsBtn"
+      >
+        Voir les produits
+      </button>
+
+      <button
+        class="secondary-btn"
+        id="heroDashboard"
+      >
+        Dashboard
+      </button>
+
     </div>
+
   </div>
 
-  <div class="hero-card">
-    <div class="big">81 591</div>
-    <p>avis sur NovaShop</p>
-    <div class="rating">★★★★★ 4,7/5</div>
-    <br>
-    <button class="btn primary" id="heroReviewsBtn2">Voir les avis</button>
-  </div>
 </section>
+
+
+<!-- ================= PRODUCTS ================= -->
 
 <section class="section" id="productsSection">
 
   <div class="section-title">
+
     <div>
-      <h2>Produits</h2>
-      <p id="productResultText">43 produits</p>
+      <h2>Nos produits</h2>
+      <p id="productsResultText">
+        Tous les produits NovaShop
+      </p>
     </div>
-  </div>
 
-  <div class="categories" id="categories"></div>
-
-  <div class="filters">
     <select id="sortSelect">
-      <option value="default">Tri par défaut</option>
+      <option value="default">Trier par défaut</option>
       <option value="priceAsc">Prix croissant</option>
       <option value="priceDesc">Prix décroissant</option>
       <option value="ratingDesc">Meilleures notes</option>
       <option value="reviewsDesc">Plus d'avis</option>
+      <option value="nameAsc">Nom A → Z</option>
     </select>
 
-    <select id="ratingFilter">
-      <option value="3.1">⭐ 3,1+ étoiles</option>
-      <option value="3.5">⭐ 3,5+ étoiles</option>
-      <option value="4">⭐ 4+ étoiles</option>
-      <option value="4.5">⭐ 4,5+ étoiles</option>
-      <option value="5">⭐ 5 étoiles</option>
-    </select>
-
-    <label class="btn">
-      Avis min :
-      <input id="minReviewsFilter" type="number" min="321" max="9782" value="321"
-             style="width:90px;background:transparent;border:0;color:white;outline:none">
-    </label>
-
-    <label class="btn">
-      Avis max :
-      <input id="maxReviewsFilter" type="number" min="321" max="9782" value="9782"
-             style="width:90px;background:transparent;border:0;color:white;outline:none">
-    </label>
   </div>
 
-  <div class="products" id="products"></div>
+
+  <div
+    class="categories"
+    id="categories"
+  ></div>
+
+
+  <div class="filters">
+
+    <div class="filter-group">
+
+      <label for="ratingFilter">
+        Note minimum
+      </label>
+
+      <select id="ratingFilter">
+        <option value="3.1">⭐ 3,1+</option>
+        <option value="3.5">⭐ 3,5+</option>
+        <option value="4">⭐ 4,0+</option>
+        <option value="4.5">⭐ 4,5+</option>
+        <option value="5">⭐ 5,0</option>
+      </select>
+
+    </div>
+
+
+    <div class="filter-group range-box">
+
+      <label for="minReviewsFilter">
+        Avis min
+      </label>
+
+      <input
+        id="minReviewsFilter"
+        type="range"
+        min="321"
+        max="9782"
+        value="321"
+      >
+
+      <span id="minReviewsValue">
+        321
+      </span>
+
+    </div>
+
+
+    <div class="filter-group range-box">
+
+      <label for="maxReviewsFilter">
+        Avis max
+      </label>
+
+      <input
+        id="maxReviewsFilter"
+        type="range"
+        min="321"
+        max="9782"
+        value="9782"
+      >
+
+      <span id="maxReviewsValue">
+        9782
+      </span>
+
+    </div>
+
+  </div>
+
+
+  <div
+    class="products"
+    id="productsGrid"
+  ></div>
 
 </section>
 
-<section class="section">
+
+<!-- ================= REVIEWS ================= -->
+
+<section class="section" id="reviewsSection">
+
   <div class="section-title">
+
     <div>
-      <h2>Pourquoi NovaShop ?</h2>
-      <p>Tout ce qu'il faut pour ton setup.</p>
+      <h2>Avis clients</h2>
+      <p>Retours de clients ayant acheté sur NovaShop</p>
     </div>
+
+    <button
+      class="more-reviews-btn"
+      id="moreReviewsBtn"
+    >
+      + Plus d'avis
+    </button>
+
   </div>
 
-  <div class="info-grid">
-    <div class="info-card">
-      <h3>🚀 Commandes</h3>
-      <p>Retrouve tes commandes et leur suivi depuis ton compte.</p>
+
+  <div class="reviews-summary">
+
+    <div>
+      <div class="reviews-big">
+        4,6/5
+      </div>
+
+      <div class="reviews-stars">
+        ★★★★★
+      </div>
+
+      <div class="reviews-total">
+        81 591 avis sur le site
+      </div>
     </div>
 
-    <div class="info-card">
-      <h3>🔐 Compte</h3>
-      <p>Connexion et inscription avec Firebase Authentication.</p>
+
+    <div>
+      <button
+        class="secondary-btn"
+        id="reviewsOpenBtn"
+      >
+        Voir les avis
+      </button>
     </div>
 
-    <div class="info-card">
-      <h3>📦 Suivi</h3>
-      <p>Le statut et la localisation du colis peuvent être suivis.</p>
-    </div>
   </div>
+
 </section>
 
-<section class="section" id="faq">
+
+<!-- ================= FAQ ================= -->
+
+<section
+  class="section"
+  id="faq"
+>
+
   <div class="section-title">
+
     <div>
       <h2>FAQ</h2>
-      <p>Les questions les plus fréquentes.</p>
-    </div>
-  </div>
-
-  <div class="faq">
-
-    <div class="faq-item">
-      <button class="faq-question">
-        Comment commander ?
-        <span>＋</span>
-      </button>
-      <div class="faq-answer">
-        Ajoute les produits au panier, connecte-toi puis valide ta commande.
-      </div>
-    </div>
-
-    <div class="faq-item">
-      <button class="faq-question">
-        Où retrouver mes commandes ?
-        <span>＋</span>
-      </button>
-      <div class="faq-answer">
-        Ouvre ton compte puis sélectionne « Mes commandes ».
-      </div>
-    </div>
-
-    <div class="faq-item">
-      <button class="faq-question">
-        Comment fonctionne le paiement CB ?
-        <span>＋</span>
-      </button>
-      <div class="faq-answer">
-        Le formulaire CB de ce site utilise uniquement le système de démonstration prévu par NovaShop.
-      </div>
-    </div>
-
-    <div class="faq-item">
-      <button class="faq-question">
-        Comment suivre mon colis ?
-        <span>＋</span>
-      </button>
-      <div class="faq-answer">
-        Le statut et la localisation du colis apparaissent dans tes commandes.
-      </div>
+      <p>Les réponses aux questions fréquentes</p>
     </div>
 
   </div>
+
+
+  <div class="faq-list">
+
+    <div class="faq-item">
+
+      <button class="faq-question">
+        Comment passer une commande ?
+        <span>＋</span>
+      </button>
+
+      <div class="faq-answer">
+        Ajoute les produits au panier, ouvre le panier,
+        complète ton adresse puis choisis ton mode de paiement.
+      </div>
+
+    </div>
+
+
+    <div class="faq-item">
+
+      <button class="faq-question">
+        Quels paiements sont disponibles ?
+        <span>＋</span>
+      </button>
+
+      <div class="faq-answer">
+        NovaShop propose le paiement par CB de démonstration
+        et un bouton PayPal séparé.
+      </div>
+
+    </div>
+
+
+    <div class="faq-item">
+
+      <button class="faq-question">
+        Où voir ma commande ?
+        <span>＋</span>
+      </button>
+
+      <div class="faq-answer">
+        Connecte-toi à ton compte puis ouvre la rubrique
+        « Mes commandes ».
+      </div>
+
+    </div>
+
+
+    <div class="faq-item">
+
+      <button class="faq-question">
+        Comment fonctionne le suivi ?
+        <span>＋</span>
+      </button>
+
+      <div class="faq-answer">
+        Le statut et la localisation du colis peuvent être
+        affichés dans le suivi de commande.
+      </div>
+
+    </div>
+
+
+    <div class="faq-item">
+
+      <button class="faq-question">
+        Comment demander un remboursement ?
+        <span>＋</span>
+      </button>
+
+      <div class="faq-answer">
+        Consulte la rubrique remboursement ci-dessous
+        pour connaître le fonctionnement prévu sur NovaShop.
+      </div>
+
+    </div>
+
+  </div>
+
 </section>
 
-<section class="section" id="refund">
+
+<!-- ================= REFUND ================= -->
+
+<section
+  class="section"
+  id="refund"
+>
+
   <div class="section-title">
+
     <div>
       <h2>Remboursement</h2>
-      <p>Informations sur les remboursements.</p>
+      <p>Informations sur le traitement des remboursements</p>
     </div>
+
   </div>
+
 
   <div class="refund-box">
-    <h3>💶 Demande de remboursement</h3>
-    <p>
-      Une demande peut être traitée depuis le système de commandes.
-    </p>
-    <p>
-      Lorsqu'un remboursement est lancé, son état peut passer par
-      « En cours de remboursement » puis « Remboursée ».
-    </p>
-    <button class="btn primary" id="refundAccountBtn">
-      Ouvrir mon compte
-    </button>
-  </div>
-</section>
 
-<section class="site-reviews">
-  <div class="stars">★★★★★</div>
-  <div class="count">81 591</div>
-  <p style="color:#8fa1b8">avis sur NovaShop</p>
-  <br>
-  <button class="btn primary" id="allReviewsBtn">+ Voir les avis</button>
+    <h3>
+      Demande de remboursement
+    </h3>
+
+    <p>
+      Pour une commande éligible, le remboursement peut être
+      indiqué dans le suivi avec les statuts « En cours de remboursement »
+      puis « Remboursée ».
+    </p>
+
+
+    <div class="refund-steps">
+
+      <div class="refund-step">
+        <strong>1. Demande</strong>
+        <span>
+          La demande est enregistrée pour la commande concernée.
+        </span>
+      </div>
+
+      <div class="refund-step">
+        <strong>2. Traitement</strong>
+        <span>
+          La commande passe au statut « En cours de remboursement ».
+        </span>
+      </div>
+
+      <div class="refund-step">
+        <strong>3. Terminé</strong>
+        <span>
+          Le statut devient « Remboursée » lorsque le traitement est terminé.
+        </span>
+      </div>
+
+    </div>
+
+  </div>
+
 </section>
 
 </main>
 
+
+<!-- ================= FOOTER ================= -->
+
 <footer>
-  <div>© 2026 NovaShop</div>
-  <button id="footerProducts">Produits</button>
-  <button id="footerFaq">FAQ</button>
-  <button id="footerRefund">Remboursement</button>
-  <button id="footerReviews">Avis</button>
+
+  <div class="footer-inner">
+
+    <div>
+      <strong>NovaShop</strong>
+      <div style="color:#78869b;margin-top:7px;">
+        Boutique gaming
+      </div>
+    </div>
+
+    <div class="footer-links">
+
+      <button id="footerProducts">
+        Produits
+      </button>
+
+      <button id="footerFaq">
+        FAQ
+      </button>
+
+      <button id="footerRefund">
+        Remboursement
+      </button>
+
+      <button id="footerReviews">
+        Avis
+      </button>
+
+    </div>
+
+  </div>
+
 </footer>
 
-<!-- MODAL GENERAL -->
 
-<div class="modal" id="modal">
-  <div class="modal-box" id="modalBox">
-    <div class="modal-head">
-      <h3 id="modalTitle">NovaShop</h3>
-      <button class="close" id="closeModal">×</button>
+<!-- ================= GENERIC MODAL ================= -->
+
+<div
+  class="modal"
+  id="mainModal"
+>
+
+  <div class="modal-box">
+
+    <div class="modal-header">
+
+      <h3 id="modalTitle">
+        NovaShop
+      </h3>
+
+      <button
+        class="close-btn"
+        id="closeModal"
+      >
+        ×
+      </button>
+
     </div>
-    <div class="modal-content" id="modalContent"></div>
+
+    <div
+      class="modal-content"
+      id="modalContent"
+    ></div>
+
   </div>
+
 </div>
 
-<div class="toast" id="toast"></div>
+
+<!-- ================= TOAST ================= -->
+
+<div
+  class="toast"
+  id="toast"
+></div>
+
+
+<!-- ================= FIREBASE / APP ================= -->
 
 <script type="module" src="./app.js"></script>
 
