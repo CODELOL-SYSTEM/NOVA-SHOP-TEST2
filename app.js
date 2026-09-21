@@ -51,10 +51,9 @@ const PAYPAL_BASE = "https://paypal.me/SH0PNOVA";
 
 const CART_STORAGE_KEY = "novaCart";
 const FAVORITES_STORAGE_KEY = "novaFavorites";
-const ORDERS_STORAGE_KEY = "novaOrders";
-const TEST_CARD_STORAGE_KEY = "novaTestCard";
 const ADMIN_AUTH_STORAGE_KEY = "novaAdminAuthorized";
 const THEME_STORAGE_KEY = "novaThemeChoice";
+const TEST_CARD_STORAGE_KEY = "novaTestCard";
 
 
 /* =========================================================
@@ -421,88 +420,117 @@ const settingsBtn = $("settingsBtn");
 ========================================================= */
 
 function money(value){
-  return Number(value || 0).toLocaleString("fr-FR",{
-    style:"currency",
-    currency:"EUR"
-  });
+
+  return Number(value || 0).toLocaleString(
+    "fr-FR",
+    {
+      style:"currency",
+      currency:"EUR"
+    }
+  );
+
 }
 
 function escapeHTML(value){
+
   return String(value ?? "")
     .replaceAll("&","&amp;")
     .replaceAll("<","&lt;")
     .replaceAll(">","&gt;")
     .replaceAll('"',"&quot;")
     .replaceAll("'","&#039;");
+
 }
 
 function getProduct(id){
-  return products.find(product => product.id === id) || null;
-}
 
-function normalizeCardNumber(value){
-  return String(value || "")
-    .replace(/\s+/g,"")
-    .trim();
+  return products.find(
+    product => product.id === id
+  ) || null;
+
 }
 
 
 /* =========================================================
-   PANIER LOCAL
+   PANIER
 ========================================================= */
 
 function loadCart(){
 
   try{
-    const raw = localStorage.getItem(CART_STORAGE_KEY);
+
+    const raw =
+      localStorage.getItem(
+        CART_STORAGE_KEY
+      );
 
     if(!raw){
+
       cart = [];
       return;
+
     }
 
-    const parsed = JSON.parse(raw);
+    const parsed =
+      JSON.parse(raw);
 
-    cart = Array.isArray(parsed)
-      ? parsed.filter(item => item && item.id)
-      : [];
+    cart =
+      Array.isArray(parsed)
+        ? parsed.filter(
+            item =>
+              item &&
+              item.id
+          )
+        : [];
 
   }catch{
+
     cart = [];
+
   }
+
 }
 
 function saveCart(){
+
   localStorage.setItem(
     CART_STORAGE_KEY,
     JSON.stringify(cart)
   );
+
 }
 
 function getCartCount(){
 
   return cart.reduce(
-    (total,item) =>
-      total + Number(item.quantity || 1),
+    (total,item)=>
+      total +
+      Number(item.quantity || 1),
     0
   );
+
 }
 
 function getCartSubtotal(){
 
-  return cart.reduce((total,item)=>{
+  return cart.reduce(
+    (total,item)=>{
 
-    const product = getProduct(item.id);
+      const product =
+        getProduct(item.id);
 
-    if(!product){
-      return total;
-    }
+      if(!product){
+        return total;
+      }
 
-    return total +
-      Number(product.price || 0) *
-      Number(item.quantity || 1);
+      return total +
+        Number(product.price || 0) *
+        Number(item.quantity || 1);
 
-  },0);
+    },
+    0
+  );
+
 }
 
 
@@ -513,22 +541,33 @@ function getCartSubtotal(){
 function loadFavorites(){
 
   try{
-    const raw = localStorage.getItem(FAVORITES_STORAGE_KEY);
+
+    const raw =
+      localStorage.getItem(
+        FAVORITES_STORAGE_KEY
+      );
 
     if(!raw){
+
       favorites = [];
       return;
+
     }
 
-    const parsed = JSON.parse(raw);
+    const parsed =
+      JSON.parse(raw);
 
-    favorites = Array.isArray(parsed)
-      ? parsed
-      : [];
+    favorites =
+      Array.isArray(parsed)
+        ? parsed
+        : [];
 
   }catch{
+
     favorites = [];
+
   }
+
 }
 
 function saveFavorites(){
@@ -537,24 +576,42 @@ function saveFavorites(){
     FAVORITES_STORAGE_KEY,
     JSON.stringify(favorites)
   );
+
 }
 
 function isFavorite(id){
+
   return favorites.includes(id);
+
 }
 
 function toggleFavorite(id){
 
   if(isFavorite(id)){
-    favorites = favorites.filter(item => item !== id);
-    toast("Retiré des favoris.");
+
+    favorites =
+      favorites.filter(
+        item => item !== id
+      );
+
+    toast(
+      "Retiré des favoris."
+    );
+
   }else{
+
     favorites.push(id);
-    toast("Ajouté aux favoris ❤️","success");
+
+    toast(
+      "Ajouté aux favoris ❤️",
+      "success"
+    );
+
   }
 
   saveFavorites();
   renderProducts();
+
 }
 
 
@@ -570,37 +627,54 @@ function renderCategories(){
 
   const categories = [
     "Tous",
-    ...new Set(products.map(product => product.category))
+    ...new Set(
+      products.map(
+        product => product.category
+      )
+    )
   ];
 
-  categoryList.innerHTML = categories.map(category=>`
+  categoryList.innerHTML =
+    categories.map(category=>`
 
-    <button
-      type="button"
-      class="category-btn ${state.category===category?"active":""}"
-      data-category="${escapeHTML(category)}"
-    >
-      ${escapeHTML(category)}
-    </button>
+      <button
+        type="button"
+        class="category-btn ${
+          state.category === category
+            ? "active"
+            : ""
+        }"
+        data-category="${escapeHTML(category)}"
+      >
+        ${escapeHTML(category)}
+      </button>
 
-  `).join("");
+    `).join("");
 
-  categoryList.querySelectorAll(".category-btn")
+  categoryList
+    .querySelectorAll(
+      ".category-btn"
+    )
     .forEach(button=>{
 
-      button.addEventListener("click",()=>{
+      button.addEventListener(
+        "click",
+        ()=>{
 
-        state.category =
-          button.dataset.category || "Tous";
+          state.category =
+            button.dataset.category ||
+            "Tous";
 
-        state.page = 1;
+          state.page = 1;
 
-        renderCategories();
-        renderProducts();
+          renderCategories();
+          renderProducts();
 
-      });
+        }
+      );
 
     });
+
 }
 
 
@@ -610,7 +684,8 @@ function renderCategories(){
 
 function getFilteredProducts(){
 
-  let result = [...products];
+  let result =
+    [...products];
 
   const search =
     state.search
@@ -619,75 +694,91 @@ function getFilteredProducts(){
 
   if(search){
 
-    result = result.filter(product =>
+    result =
+      result.filter(product=>
+        product.name
+          .toLowerCase()
+          .includes(search)
 
-      product.name
-        .toLowerCase()
-        .includes(search)
+        ||
 
-      ||
+        product.category
+          .toLowerCase()
+          .includes(search)
+      );
 
-      product.category
-        .toLowerCase()
-        .includes(search)
-
-    );
   }
 
   if(state.category !== "Tous"){
 
-    result = result.filter(
-      product =>
-        product.category === state.category
-    );
+    result =
+      result.filter(
+        product =>
+          product.category ===
+          state.category
+      );
 
   }
 
   if(state.brand){
 
-    result = result.filter(product =>
-      product.name
-        .toLowerCase()
-        .includes(
-          state.brand.toLowerCase()
-        )
-    );
+    result =
+      result.filter(product=>
+        product.name
+          .toLowerCase()
+          .includes(
+            state.brand.toLowerCase()
+          )
+      );
 
   }
 
   switch(state.sort){
 
     case "price-asc":
-      result.sort((a,b)=>a.price-b.price);
+
+      result.sort(
+        (a,b)=>a.price-b.price
+      );
+
       break;
 
     case "price-desc":
-      result.sort((a,b)=>b.price-a.price);
+
+      result.sort(
+        (a,b)=>b.price-a.price
+      );
+
       break;
 
     case "name-asc":
-      result.sort((a,b)=>
-        a.name.localeCompare(
-          b.name,
-          "fr"
-        )
+
+      result.sort(
+        (a,b)=>
+          a.name.localeCompare(
+            b.name,
+            "fr"
+          )
       );
+
       break;
 
     case "name-desc":
-      result.sort((a,b)=>
-        b.name.localeCompare(
-          a.name,
-          "fr"
-        )
+
+      result.sort(
+        (a,b)=>
+          b.name.localeCompare(
+            a.name,
+            "fr"
+          )
       );
+
       break;
 
-    default:
-      break;
   }
 
   return result;
+
 }
 
 function renderProducts(){
@@ -696,13 +787,15 @@ function renderProducts(){
     return;
   }
 
-  const result = getFilteredProducts();
+  const result =
+    getFilteredProducts();
 
   const totalPages =
     Math.max(
       1,
       Math.ceil(
-        result.length / state.perPage
+        result.length /
+        state.perPage
       )
     );
 
@@ -729,8 +822,17 @@ function renderProducts(){
         padding:50px 20px;
         color:var(--muted);
       ">
-        <div style="font-size:48px;margin-bottom:12px;">🔎</div>
-        <h3>Aucun produit trouvé</h3>
+        <div style="
+          font-size:48px;
+          margin-bottom:12px;
+        ">
+          🔎
+        </div>
+
+        <h3>
+          Aucun produit trouvé
+        </h3>
+
         <p style="margin-top:8px;">
           Essaie une autre recherche.
         </p>
@@ -740,97 +842,123 @@ function renderProducts(){
     return;
   }
 
-  productGrid.innerHTML = visible.map(product=>{
+  productGrid.innerHTML =
+    visible.map(product=>{
 
-    const favorite =
-      isFavorite(product.id);
+      const favorite =
+        isFavorite(product.id);
 
-    return `
+      return `
 
-      <article class="product-card">
+        <article class="product-card">
 
-        <div class="product-image-wrap">
+          <div class="product-image-wrap">
 
-          ${
-            product.new
-              ? `<span class="new-badge">NOUVEAU</span>`
-              : ""
-          }
+            ${
+              product.new
+                ? `
+                  <span class="new-badge">
+                    NOUVEAU
+                  </span>
+                `
+                : ""
+            }
 
-          <button
-            type="button"
-            class="favorite-btn ${favorite?"active":""}"
-            data-favorite="${escapeHTML(product.id)}"
-            aria-label="Favoris"
-          >
-            ${favorite?"♥":"♡"}
-          </button>
+            <button
+              type="button"
+              class="
+                favorite-btn
+                ${favorite?"active":""}
+              "
+              data-favorite="${escapeHTML(
+                product.id
+              )}"
+              aria-label="Favoris"
+            >
+              ${favorite?"♥":"♡"}
+            </button>
 
-          <img
-            src="${escapeHTML(product.image)}"
-            alt="${escapeHTML(product.name)}"
-            loading="lazy"
-            onerror="this.style.display='none'"
-          >
+            <img
+              src="${escapeHTML(
+                product.image
+              )}"
+              alt="${escapeHTML(
+                product.name
+              )}"
+              loading="lazy"
+              onerror="
+                this.style.display='none'
+              "
+            >
 
-        </div>
-
-        <div class="product-info">
-
-          <div class="product-category">
-            ${escapeHTML(product.category)}
           </div>
 
-          <h3 class="product-name">
-            ${escapeHTML(product.name)}
-          </h3>
+          <div class="product-info">
 
-          <div class="product-bottom">
+            <div class="product-category">
+              ${escapeHTML(
+                product.category
+              )}
+            </div>
 
-            <strong class="product-price">
-              ${money(product.price)}
-            </strong>
+            <h3 class="product-name">
+              ${escapeHTML(
+                product.name
+              )}
+            </h3>
 
-            <div class="product-actions">
+            <div class="product-bottom">
 
-              <button
-                type="button"
-                class="view-btn product-view"
-                data-product="${escapeHTML(product.id)}"
-              >
-                Voir
-              </button>
+              <strong class="product-price">
+                ${money(product.price)}
+              </strong>
 
-              <button
-                type="button"
-                class="add-btn product-add"
-                data-add="${escapeHTML(product.id)}"
-              >
-                Ajouter
-              </button>
+              <div class="product-actions">
+
+                <button
+                  type="button"
+                  class="view-btn product-view"
+                  data-product="${escapeHTML(
+                    product.id
+                  )}"
+                >
+                  Voir
+                </button>
+
+                <button
+                  type="button"
+                  class="add-btn product-add"
+                  data-add="${escapeHTML(
+                    product.id
+                  )}"
+                >
+                  Ajouter
+                </button>
+
+              </div>
 
             </div>
 
           </div>
 
-        </div>
+        </article>
 
-      </article>
-    `;
+      `;
 
-  }).join("");
+    }).join("");
 
   productGrid
     .querySelectorAll("[data-add]")
     .forEach(button=>{
 
-      button.addEventListener("click",()=>{
-
-        addToCart(
-          button.dataset.add
-        );
-
-      });
+      button.addEventListener(
+        "click",
+        ()=>{
+          addToCart(
+            button.dataset.add
+          );
+        }
+      );
 
     });
 
@@ -838,13 +966,14 @@ function renderProducts(){
     .querySelectorAll("[data-product]")
     .forEach(button=>{
 
-      button.addEventListener("click",()=>{
-
-        openProduct(
-          button.dataset.product
-        );
-
-      });
+      button.addEventListener(
+        "click",
+        ()=>{
+          openProduct(
+            button.dataset.product
+          );
+        }
+      );
 
     });
 
@@ -852,13 +981,14 @@ function renderProducts(){
     .querySelectorAll("[data-favorite]")
     .forEach(button=>{
 
-      button.addEventListener("click",()=>{
-
-        toggleFavorite(
-          button.dataset.favorite
-        );
-
-      });
+      button.addEventListener(
+        "click",
+        ()=>{
+          toggleFavorite(
+            button.dataset.favorite
+          );
+        }
+      );
 
     });
 
@@ -866,6 +996,7 @@ function renderProducts(){
     result.length,
     totalPages
   );
+
 }
 
 
@@ -873,12 +1004,13 @@ function renderProducts(){
    PAGINATION
 ========================================================= */
 
-function renderPagination(total,totalPages){
+function renderPagination(
+  total,
+  totalPages
+){
 
   const existing =
-    document.getElementById(
-      "productsPagination"
-    );
+    $("productsPagination");
 
   if(!existing){
     return;
@@ -888,6 +1020,7 @@ function renderPagination(total,totalPages){
 
     existing.innerHTML = "";
     return;
+
   }
 
   existing.innerHTML = `
@@ -930,33 +1063,44 @@ function renderPagination(total,totalPages){
     </div>
   `;
 
-  $("previousPage")?.addEventListener(
-    "click",
-    ()=>{
-      if(state.page>1){
-        state.page--;
-        renderProducts();
-        window.scrollTo({
-          top:0,
-          behavior:"smooth"
-        });
-      }
-    }
-  );
+  $("previousPage")
+    ?.addEventListener(
+      "click",
+      ()=>{
+        if(state.page > 1){
 
-  $("nextPage")?.addEventListener(
-    "click",
-    ()=>{
-      if(state.page<totalPages){
-        state.page++;
-        renderProducts();
-        window.scrollTo({
-          top:0,
-          behavior:"smooth"
-        });
+          state.page--;
+
+          renderProducts();
+
+          window.scrollTo({
+            top:0,
+            behavior:"smooth"
+          });
+
+        }
       }
-    }
-  );
+    );
+
+  $("nextPage")
+    ?.addEventListener(
+      "click",
+      ()=>{
+        if(state.page < totalPages){
+
+          state.page++;
+
+          renderProducts();
+
+          window.scrollTo({
+            top:0,
+            behavior:"smooth"
+          });
+
+        }
+      }
+    );
+
 }
 
 
@@ -974,16 +1118,22 @@ function addToCart(id){
   }
 
   const existing =
-    cart.find(item => item.id === id);
+    cart.find(
+      item => item.id === id
+    );
 
   if(existing){
+
     existing.quantity =
       Number(existing.quantity || 1) + 1;
+
   }else{
+
     cart.push({
       id,
       quantity:1
     });
+
   }
 
   saveCart();
@@ -993,6 +1143,7 @@ function addToCart(id){
     `${product.name} ajouté au panier 🛒`,
     "success"
   );
+
 }
 
 function removeFromCart(id){
@@ -1005,10 +1156,16 @@ function removeFromCart(id){
   saveCart();
   renderCart();
 
-  toast("Produit retiré du panier.");
+  toast(
+    "Produit retiré du panier."
+  );
+
 }
 
-function changeCartQuantity(id,delta){
+function changeCartQuantity(
+  id,
+  delta
+){
 
   const item =
     cart.find(
@@ -1020,27 +1177,35 @@ function changeCartQuantity(id,delta){
   }
 
   item.quantity =
-    Number(item.quantity || 1) + delta;
+    Number(item.quantity || 1) +
+    delta;
 
   if(item.quantity <= 0){
+
     removeFromCart(id);
     return;
+
   }
 
   saveCart();
   renderCart();
+
 }
 
 function renderCart(){
 
   if(cartCount){
+
     cartCount.textContent =
       String(getCartCount());
+
   }
 
   if(cartTotal){
+
     cartTotal.textContent =
       money(getCartSubtotal());
+
   }
 
   if(!cartItems){
@@ -1055,14 +1220,20 @@ function renderCart(){
         padding:35px 15px;
         color:var(--muted);
       ">
-        <div style="font-size:48px;">🛒</div>
+
+        <div style="font-size:48px;">
+          🛒
+        </div>
+
         <h3 style="margin-top:10px;">
           Ton panier est vide
         </h3>
+
       </div>
     `;
 
     return;
+
   }
 
   cartItems.innerHTML =
@@ -1076,22 +1247,32 @@ function renderCart(){
       }
 
       const quantity =
-        Number(item.quantity || 1);
+        Number(
+          item.quantity || 1
+        );
 
       return `
 
         <div class="cart-item">
 
           <img
-            src="${escapeHTML(product.image)}"
-            alt="${escapeHTML(product.name)}"
-            onerror="this.style.display='none'"
+            src="${escapeHTML(
+              product.image
+            )}"
+            alt="${escapeHTML(
+              product.name
+            )}"
+            onerror="
+              this.style.display='none'
+            "
           >
 
           <div class="cart-item-info">
 
             <strong>
-              ${escapeHTML(product.name)}
+              ${escapeHTML(
+                product.name
+              )}
             </strong>
 
             <span>
@@ -1102,16 +1283,22 @@ function renderCart(){
 
               <button
                 type="button"
-                data-minus="${escapeHTML(product.id)}"
+                data-minus="${escapeHTML(
+                  product.id
+                )}"
               >
                 −
               </button>
 
-              <span>${quantity}</span>
+              <span>
+                ${quantity}
+              </span>
 
               <button
                 type="button"
-                data-plus="${escapeHTML(product.id)}"
+                data-plus="${escapeHTML(
+                  product.id
+                )}"
               >
                 +
               </button>
@@ -1123,7 +1310,9 @@ function renderCart(){
           <button
             type="button"
             class="remove-cart"
-            data-remove="${escapeHTML(product.id)}"
+            data-remove="${escapeHTML(
+              product.id
+            )}"
           >
             ×
           </button>
@@ -1139,10 +1328,12 @@ function renderCart(){
 
       button.addEventListener(
         "click",
-        ()=>changeCartQuantity(
-          button.dataset.minus,
-          -1
-        )
+        ()=>{
+          changeCartQuantity(
+            button.dataset.minus,
+            -1
+          );
+        }
       );
 
     });
@@ -1153,10 +1344,12 @@ function renderCart(){
 
       button.addEventListener(
         "click",
-        ()=>changeCartQuantity(
-          button.dataset.plus,
-          1
-        )
+        ()=>{
+          changeCartQuantity(
+            button.dataset.plus,
+            1
+          );
+        }
       );
 
     });
@@ -1167,12 +1360,15 @@ function renderCart(){
 
       button.addEventListener(
         "click",
-        ()=>removeFromCart(
-          button.dataset.remove
-        )
+        ()=>{
+          removeFromCart(
+            button.dataset.remove
+          );
+        }
       );
 
     });
+
 }
 
 function openCart(){
@@ -1194,20 +1390,27 @@ function closeCart(){
    MODALE
 ========================================================= */
 
-function showModal(title,body){
+function showModal(
+  title,
+  body
+){
 
   if(!modal){
     return;
   }
 
   if(modalTitle){
+
     modalTitle.textContent =
       title;
+
   }
 
   if(modalBody){
+
     modalBody.innerHTML =
       body;
+
   }
 
   modal.classList.add("open");
@@ -1216,7 +1419,9 @@ function showModal(title,body){
 
 function closeModal(){
 
-  modal?.classList.remove("open");
+  modal?.classList.remove(
+    "open"
+  );
 
 }
 
@@ -1225,7 +1430,10 @@ function closeModal(){
    TOAST
 ========================================================= */
 
-function toast(message,type="info"){
+function toast(
+  message,
+  type="info"
+){
 
   if(!toastContainer){
     return;
@@ -1243,6 +1451,7 @@ function toast(message,type="info"){
   toastContainer.appendChild(item);
 
   setTimeout(()=>{
+
     item.classList.add("hide");
 
     setTimeout(()=>{
@@ -1250,6 +1459,7 @@ function toast(message,type="info"){
     },300);
 
   },3200);
+
 }
 
 
@@ -1288,14 +1498,20 @@ function openProduct(id){
         ">
 
           <img
-            src="${escapeHTML(product.image)}"
-            alt="${escapeHTML(product.name)}"
+            src="${escapeHTML(
+              product.image
+            )}"
+            alt="${escapeHTML(
+              product.name
+            )}"
             style="
               max-width:100%;
               max-height:100%;
               object-fit:contain;
             "
-            onerror="this.style.display='none'"
+            onerror="
+              this.style.display='none'
+            "
           >
 
         </div>
@@ -1305,7 +1521,9 @@ function openProduct(id){
           font-size:14px;
           margin-bottom:8px;
         ">
-          ${escapeHTML(product.category)}
+          ${escapeHTML(
+            product.category
+          )}
         </div>
 
         <h2 style="margin-bottom:10px;">
@@ -1339,7 +1557,12 @@ function openProduct(id){
             class="view-btn"
             id="modalFavorite"
           >
-            ${favorite?"♥ Retirer":"♡ Ajouter"} aux favoris
+            ${
+              favorite
+                ? "♥ Retirer"
+                : "♡ Ajouter"
+            }
+            aux favoris
           </button>
 
         </div>
@@ -1348,7 +1571,10 @@ function openProduct(id){
           type="button"
           class="view-btn"
           id="modalReviews"
-          style="width:100%;margin-top:10px;"
+          style="
+            width:100%;
+            margin-top:10px;
+          "
         >
           ⭐ Voir les avis
         </button>
@@ -1357,28 +1583,32 @@ function openProduct(id){
     `
   );
 
-  $("modalAddToCart")?.addEventListener(
-    "click",
-    ()=>{
-      addToCart(id);
-      closeModal();
-    }
-  );
+  $("modalAddToCart")
+    ?.addEventListener(
+      "click",
+      ()=>{
+        addToCart(id);
+        closeModal();
+      }
+    );
 
-  $("modalFavorite")?.addEventListener(
-    "click",
-    ()=>{
-      toggleFavorite(id);
-      closeModal();
-    }
-  );
+  $("modalFavorite")
+    ?.addEventListener(
+      "click",
+      ()=>{
+        toggleFavorite(id);
+        closeModal();
+      }
+    );
 
-  $("modalReviews")?.addEventListener(
-    "click",
-    ()=>{
-      openProductReviews(id);
-    }
-  );
+  $("modalReviews")
+    ?.addEventListener(
+      "click",
+      ()=>{
+        openProductReviews(id);
+      }
+    );
+
 }
 
 
@@ -1399,17 +1629,20 @@ function openProductReviews(id){
     {
       name:"Alex",
       rating:5,
-      text:"Très bon produit, livraison rapide."
+      text:
+        "Très bon produit, livraison rapide."
     },
     {
       name:"Max",
       rating:4,
-      text:"Bonne qualité et conforme à la description."
+      text:
+        "Bonne qualité et conforme à la description."
     },
     {
       name:"Lucas",
       rating:5,
-      text:"Rien à redire, fonctionne parfaitement."
+      text:
+        "Rien à redire, fonctionne parfaitement."
     }
   ];
 
@@ -1428,6 +1661,7 @@ function openProductReviews(id){
           background:rgba(255,255,255,.05);
           margin-bottom:15px;
         ">
+
           <strong style="font-size:25px;">
             ⭐ 4.7
           </strong>
@@ -1435,9 +1669,13 @@ function openProductReviews(id){
           <span style="color:var(--muted);">
             Avis clients
           </span>
+
         </div>
 
-        <div style="display:grid;gap:10px;">
+        <div style="
+          display:grid;
+          gap:10px;
+        ">
 
           ${reviews.map(review=>`
 
@@ -1454,11 +1692,15 @@ function openProductReviews(id){
               ">
 
                 <strong>
-                  ${escapeHTML(review.name)}
+                  ${escapeHTML(
+                    review.name
+                  )}
                 </strong>
 
                 <span>
-                  ${"⭐".repeat(review.rating)}
+                  ${"⭐".repeat(
+                    review.rating
+                  )}
                 </span>
 
               </div>
@@ -1467,7 +1709,9 @@ function openProductReviews(id){
                 margin-top:8px;
                 color:var(--muted);
               ">
-                ${escapeHTML(review.text)}
+                ${escapeHTML(
+                  review.text
+                )}
               </p>
 
             </div>
@@ -1479,6 +1723,7 @@ function openProductReviews(id){
       </div>
     `
   );
+
 }
 
 
@@ -1519,9 +1764,12 @@ function authError(error){
 
   };
 
-  return messages[code] ||
+  return (
+    messages[code] ||
     error?.message ||
-    "Une erreur est survenue.";
+    "Une erreur est survenue."
+  );
+
 }
 
 function showLoginForm(){
@@ -1595,74 +1843,83 @@ function showLoginForm(){
     `
   );
 
-  $("loginForm")?.addEventListener(
-    "submit",
-    async event=>{
+  $("loginForm")
+    ?.addEventListener(
+      "submit",
+      async event=>{
 
-      event.preventDefault();
+        event.preventDefault();
 
-      const email =
-        $("loginEmail")?.value.trim() || "";
+        const email =
+          $("loginEmail")
+            ?.value.trim() || "";
 
-      const password =
-        $("loginPassword")?.value || "";
+        const password =
+          $("loginPassword")
+            ?.value || "";
 
-      const errorBox =
-        $("loginError");
+        const errorBox =
+          $("loginError");
 
-      const submit =
-        $("loginSubmit");
-
-      if(submit){
-        submit.disabled = true;
-        submit.textContent = "Connexion...";
-      }
-
-      try{
-
-        await signInWithEmailAndPassword(
-          auth,
-          email,
-          password
-        );
-
-        closeModal();
-
-        toast(
-          "Connexion réussie 👋",
-          "success"
-        );
-
-      }catch(error){
-
-        if(errorBox){
-
-          errorBox.textContent =
-            authError(error);
-
-          errorBox.style.display =
-            "block";
-        }
-
-      }finally{
+        const submit =
+          $("loginSubmit");
 
         if(submit){
 
-          submit.disabled = false;
+          submit.disabled = true;
           submit.textContent =
-            "Se connecter";
+            "Connexion...";
+
+        }
+
+        try{
+
+          await signInWithEmailAndPassword(
+            auth,
+            email,
+            password
+          );
+
+          closeModal();
+
+          toast(
+            "Connexion réussie 👋",
+            "success"
+          );
+
+        }catch(error){
+
+          if(errorBox){
+
+            errorBox.textContent =
+              authError(error);
+
+            errorBox.style.display =
+              "block";
+
+          }
+
+        }finally{
+
+          if(submit){
+
+            submit.disabled = false;
+            submit.textContent =
+              "Se connecter";
+
+          }
 
         }
 
       }
+    );
 
-    }
-  );
+  $("goRegister")
+    ?.addEventListener(
+      "click",
+      showRegisterForm
+    );
 
-  $("goRegister")?.addEventListener(
-    "click",
-    showRegisterForm
-  );
 }
 
 function showRegisterForm(){
@@ -1750,96 +2007,102 @@ function showRegisterForm(){
     `
   );
 
-  $("registerForm")?.addEventListener(
-    "submit",
-    async event=>{
+  $("registerForm")
+    ?.addEventListener(
+      "submit",
+      async event=>{
 
-      event.preventDefault();
+        event.preventDefault();
 
-      const email =
-        $("registerEmail")?.value.trim() || "";
+        const email =
+          $("registerEmail")
+            ?.value.trim() || "";
 
-      const password =
-        $("registerPassword")?.value || "";
+        const password =
+          $("registerPassword")
+            ?.value || "";
 
-      const password2 =
-        $("registerPassword2")?.value || "";
+        const password2 =
+          $("registerPassword2")
+            ?.value || "";
 
-      const errorBox =
-        $("registerError");
+        const errorBox =
+          $("registerError");
 
-      if(password !== password2){
+        if(password !== password2){
 
-        if(errorBox){
+          if(errorBox){
 
-          errorBox.textContent =
-            "Les deux mots de passe sont différents.";
+            errorBox.textContent =
+              "Les deux mots de passe sont différents.";
 
-          errorBox.style.display =
-            "block";
+            errorBox.style.display =
+              "block";
 
+          }
+
+          return;
         }
 
-        return;
-      }
-
-      const submit =
-        $("registerSubmit");
-
-      if(submit){
-
-        submit.disabled = true;
-        submit.textContent =
-          "Création...";
-
-      }
-
-      try{
-
-        await createUserWithEmailAndPassword(
-          auth,
-          email,
-          password
-        );
-
-        closeModal();
-
-        toast(
-          "Compte créé avec succès 🎉",
-          "success"
-        );
-
-      }catch(error){
-
-        if(errorBox){
-
-          errorBox.textContent =
-            authError(error);
-
-          errorBox.style.display =
-            "block";
-
-        }
-
-      }finally{
+        const submit =
+          $("registerSubmit");
 
         if(submit){
 
-          submit.disabled = false;
+          submit.disabled = true;
           submit.textContent =
-            "Créer mon compte";
+            "Création...";
+
+        }
+
+        try{
+
+          await createUserWithEmailAndPassword(
+            auth,
+            email,
+            password
+          );
+
+          closeModal();
+
+          toast(
+            "Compte créé avec succès 🎉",
+            "success"
+          );
+
+        }catch(error){
+
+          if(errorBox){
+
+            errorBox.textContent =
+              authError(error);
+
+            errorBox.style.display =
+              "block";
+
+          }
+
+        }finally{
+
+          if(submit){
+
+            submit.disabled = false;
+            submit.textContent =
+              "Créer mon compte";
+
+          }
 
         }
 
       }
+    );
 
-    }
-  );
+  $("goLogin")
+    ?.addEventListener(
+      "click",
+      showLoginForm
+    );
 
-  $("goLogin")?.addEventListener(
-    "click",
-    showLoginForm
-  );
 }
 
 async function logout(){
@@ -1861,6 +2124,7 @@ async function logout(){
     );
 
   }
+
 }
 
 function openAccount(){
@@ -1941,18 +2205,21 @@ function openAccount(){
     `
   );
 
-  $("accountOrders")?.addEventListener(
-    "click",
-    openOrders
-  );
+  $("accountOrders")
+    ?.addEventListener(
+      "click",
+      openOrders
+    );
 
-  $("accountLogout")?.addEventListener(
-    "click",
-    async ()=>{
-      closeModal();
-      await logout();
-    }
-  );
+  $("accountLogout")
+    ?.addEventListener(
+      "click",
+      async ()=>{
+        closeModal();
+        await logout();
+      }
+    );
+
 }
 
 
@@ -1990,12 +2257,10 @@ async function getUserOrders(){
     orders.sort((a,b)=>{
 
       const aDate =
-        a.createdAt?.seconds ||
-        0;
+        a.createdAt?.seconds || 0;
 
       const bDate =
-        b.createdAt?.seconds ||
-        0;
+        b.createdAt?.seconds || 0;
 
       return bDate - aDate;
 
@@ -2013,6 +2278,7 @@ async function getUserOrders(){
     return [];
 
   }
+
 }
 
 async function openOrders(){
@@ -2060,16 +2326,22 @@ async function openOrders(){
         padding:30px 10px;
         color:var(--muted);
       ">
-        <div style="font-size:45px;">📦</div>
+
+        <div style="font-size:45px;">
+          📦
+        </div>
+
         <h3 style="
           margin-top:10px;
           color:var(--text);
         ">
           Aucune commande
         </h3>
+
         <p style="margin-top:8px;">
           Tes commandes apparaîtront ici.
         </p>
+
       </div>
     `;
 
@@ -2088,7 +2360,9 @@ async function openOrders(){
         <button
           type="button"
           class="order-card"
-          data-order-id="${escapeHTML(order.id)}"
+          data-order-id="${escapeHTML(
+            order.id
+          )}"
         >
 
           <div>
@@ -2118,7 +2392,9 @@ async function openOrders(){
     }).join("");
 
   content
-    .querySelectorAll("[data-order-id]")
+    .querySelectorAll(
+      "[data-order-id]"
+    )
     .forEach(button=>{
 
       button.addEventListener(
@@ -2140,6 +2416,7 @@ async function openOrders(){
       );
 
     });
+
 }
 
 
@@ -2201,14 +2478,18 @@ function openOrderDetails(order){
           padding:10px 0;
           border-bottom:1px solid var(--line);
         ">
+
           <span>
             ${escapeHTML(name)}
             × ${quantity}
           </span>
 
           <strong>
-            ${money(price * quantity)}
+            ${money(
+              price * quantity
+            )}
           </strong>
+
         </div>
       `;
 
@@ -2227,27 +2508,31 @@ function openOrderDetails(order){
         </div>
       `
       :
-      timeline.map((step,index)=>{
+      timeline.map(
+        (step,index)=>{
 
-        const active =
-          currentIndex >= index;
+          const active =
+            currentIndex >= index;
 
-        return `
-          <div class="
-            timeline-step
-            ${active?"active":""}
-          ">
-            <span>
-              ${active?"●":"○"}
-            </span>
+          return `
+            <div class="
+              timeline-step
+              ${active?"active":""}
+            ">
 
-            <span>
-              ${step}
-            </span>
-          </div>
-        `;
+              <span>
+                ${active?"●":"○"}
+              </span>
 
-      }).join("");
+              <span>
+                ${step}
+              </span>
+
+            </div>
+          `;
+
+        }
+      ).join("");
 
   showModal(
     `Commande #${order.id.slice(0,8)}`,
@@ -2271,7 +2556,9 @@ function openOrderDetails(order){
               ? `
                 <div style="margin-top:8px">
                   Suivi :
-                  ${escapeHTML(order.tracking)}
+                  ${escapeHTML(
+                    order.tracking
+                  )}
                 </div>
               `
               : ""
@@ -2282,7 +2569,9 @@ function openOrderDetails(order){
               ? `
                 <div style="margin-top:8px">
                   📍 Ville :
-                  ${escapeHTML(order.city)}
+                  ${escapeHTML(
+                    order.city
+                  )}
                 </div>
               `
               : ""
@@ -2303,7 +2592,9 @@ function openOrderDetails(order){
 
         </div>
 
-        <h3>Suivi</h3>
+        <h3>
+          Suivi
+        </h3>
 
         <div style="
           margin:12px 0 20px;
@@ -2311,7 +2602,9 @@ function openOrderDetails(order){
           ${timelineHTML}
         </div>
 
-        <h3>Produits</h3>
+        <h3>
+          Produits
+        </h3>
 
         <div style="
           margin:10px 0 20px;
@@ -2322,13 +2615,17 @@ function openOrderDetails(order){
         ${
           order.address
             ? `
-              <h3>Livraison</h3>
+              <h3>
+                Livraison
+              </h3>
 
               <p style="
                 margin:8px 0 20px;
                 color:var(--muted);
               ">
-                ${escapeHTML(order.address)}
+                ${escapeHTML(
+                  order.address
+                )}
               </p>
             `
             : ""
@@ -2342,10 +2639,14 @@ function openOrderDetails(order){
           border-top:1px solid var(--line);
         ">
 
-          <strong>Total</strong>
+          <strong>
+            Total
+          </strong>
 
           <strong>
-            ${money(order.total || 0)}
+            ${money(
+              order.total || 0
+            )}
           </strong>
 
         </div>
@@ -2366,10 +2667,12 @@ function openOrderDetails(order){
     `
   );
 
-  $("invoiceBtn")?.addEventListener(
-    "click",
-    ()=>printInvoice(order)
-  );
+  $("invoiceBtn")
+    ?.addEventListener(
+      "click",
+      ()=>printInvoice(order)
+    );
+
 }
 
 
@@ -2409,6 +2712,7 @@ function printInvoice(order){
 
       return `
         <tr>
+
           <td>
             ${escapeHTML(name)}
           </td>
@@ -2422,56 +2726,74 @@ function printInvoice(order){
           </td>
 
           <td>
-            ${money(price * quantity)}
+            ${money(
+              price * quantity
+            )}
           </td>
+
         </tr>
       `;
 
     }).join("");
 
-  const invoice =
-    `
+  const invoice = `
 <!DOCTYPE html>
+
 <html lang="fr">
+
 <head>
+
 <meta charset="UTF-8">
-<title>Facture NovaShop</title>
+
+<title>
+Facture NovaShop
+</title>
 
 <style>
+
 body{
   font-family:Arial,sans-serif;
   padding:40px;
   color:#111;
 }
+
 h1{
   margin-bottom:5px;
 }
+
 small{
   color:#666;
 }
+
 table{
   width:100%;
   border-collapse:collapse;
   margin-top:30px;
 }
-th,td{
+
+th,
+td{
   padding:12px;
   border-bottom:1px solid #ddd;
   text-align:left;
 }
+
 .total{
   margin-top:25px;
   text-align:right;
   font-size:22px;
   font-weight:700;
 }
+
 </style>
 
 </head>
 
 <body>
 
-<h1>NovaShop</h1>
+<h1>
+NovaShop
+</h1>
 
 <small>
 Commande #${escapeHTML(
@@ -2481,23 +2803,29 @@ Commande #${escapeHTML(
 
 <p>
 Client :
-${escapeHTML(order.userEmail || "")}
+${escapeHTML(
+  order.userEmail || ""
+)}
 </p>
 
 <p>
 Adresse :
-${escapeHTML(order.address || "")}
+${escapeHTML(
+  order.address || ""
+)}
 </p>
 
 <table>
 
 <thead>
+
 <tr>
 <th>Produit</th>
 <th>Qté</th>
 <th>Prix</th>
 <th>Total</th>
 </tr>
+
 </thead>
 
 <tbody>
@@ -2507,18 +2835,22 @@ ${rows}
 </table>
 
 <div class="total">
-Total : ${money(order.total || 0)}
+Total :
+${money(order.total || 0)}
 </div>
 
 <script>
+
 window.onload=()=>{
   window.print();
 };
+
 <\/script>
 
 </body>
+
 </html>
-    `;
+  `;
 
   const popup =
     window.open(
@@ -2540,11 +2872,12 @@ window.onload=()=>{
   popup.document.open();
   popup.document.write(invoice);
   popup.document.close();
+
 }
 
 
 /* =========================================================
-   CARTE LOCALE
+   CARTE ADMIN
 ========================================================= */
 
 function getTestCard(){
@@ -2582,6 +2915,7 @@ function getTestCard(){
     return null;
 
   }
+
 }
 
 function generateTestCard(){
@@ -2589,7 +2923,9 @@ function generateTestCard(){
   const digits =
     Array.from(
       {length:12},
-      ()=>Math.floor(Math.random()*10)
+      ()=>Math.floor(
+        Math.random()*10
+      )
     ).join("");
 
   const number =
@@ -2597,19 +2933,25 @@ function generateTestCard(){
 
   const month =
     String(
-      Math.floor(Math.random()*12)+1
+      Math.floor(
+        Math.random()*12
+      ) + 1
     ).padStart(2,"0");
 
   const year =
     String(
       new Date().getFullYear() +
-      Math.floor(Math.random()*5) +
+      Math.floor(
+        Math.random()*5
+      ) +
       1
     ).slice(-2);
 
   const cvv =
     String(
-      Math.floor(Math.random()*900)+100
+      Math.floor(
+        Math.random()*900
+      ) + 100
     );
 
   const card = {
@@ -2625,6 +2967,7 @@ function generateTestCard(){
   );
 
   return card;
+
 }
 
 function renderTestCardHTML(){
@@ -2649,6 +2992,7 @@ function renderTestCardHTML(){
   }
 
   return `
+
     <div style="
       width:100%;
       max-width:420px;
@@ -2657,9 +3001,10 @@ function renderTestCardHTML(){
       padding:24px;
       border-radius:22px;
       background:#050505;
-      color:#fff;
+      color:#ffffff !important;
       border:1px solid #252525;
-      box-shadow:0 18px 50px rgba(0,0,0,.45);
+      box-shadow:
+        0 18px 50px rgba(0,0,0,.45);
       display:flex;
       flex-direction:column;
       justify-content:space-between;
@@ -2669,16 +3014,20 @@ function renderTestCardHTML(){
         font-size:24px;
         font-weight:700;
         letter-spacing:3px;
-        color:#fff;
+        color:#ffffff !important;
       ">
-        ${escapeHTML(card.number)}
+        ${escapeHTML(
+          card.number
+        )}
       </div>
 
       <div style="
         display:grid;
-        grid-template-columns:1fr auto auto;
+        grid-template-columns:
+          1fr auto auto;
         gap:18px;
         align-items:end;
+        color:#ffffff !important;
       ">
 
         <div>
@@ -2686,7 +3035,7 @@ function renderTestCardHTML(){
           <div style="
             font-size:10px;
             letter-spacing:1.5px;
-            color:#fff;
+            color:#ffffff !important;
           ">
             TITULAIRE
           </div>
@@ -2694,10 +3043,12 @@ function renderTestCardHTML(){
           <div style="
             font-size:15px;
             font-weight:700;
-            color:#fff;
+            color:#ffffff !important;
             margin-top:4px;
           ">
-            ${escapeHTML(card.holder)}
+            ${escapeHTML(
+              card.holder
+            )}
           </div>
 
         </div>
@@ -2707,7 +3058,7 @@ function renderTestCardHTML(){
           <div style="
             font-size:10px;
             letter-spacing:1.5px;
-            color:#fff;
+            color:#ffffff !important;
           ">
             EXP
           </div>
@@ -2715,10 +3066,12 @@ function renderTestCardHTML(){
           <div style="
             font-size:15px;
             font-weight:700;
-            color:#fff;
+            color:#ffffff !important;
             margin-top:4px;
           ">
-            ${escapeHTML(card.expiry)}
+            ${escapeHTML(
+              card.expiry
+            )}
           </div>
 
         </div>
@@ -2728,7 +3081,7 @@ function renderTestCardHTML(){
           <div style="
             font-size:10px;
             letter-spacing:1.5px;
-            color:#fff;
+            color:#ffffff !important;
           ">
             CVV
           </div>
@@ -2736,10 +3089,12 @@ function renderTestCardHTML(){
           <div style="
             font-size:15px;
             font-weight:700;
-            color:#fff;
+            color:#ffffff !important;
             margin-top:4px;
           ">
-            ${escapeHTML(card.cvv)}
+            ${escapeHTML(
+              card.cvv
+            )}
           </div>
 
         </div>
@@ -2758,40 +3113,74 @@ function renderTestCardHTML(){
     ">
 
       <div>
-        <strong>Numéro de carte</strong>
-        <div style="color:var(--muted);margin-top:3px;">
-          ${escapeHTML(card.number)}
+        <strong>
+          Numéro de carte
+        </strong>
+
+        <div style="
+          color:var(--muted);
+          margin-top:3px;
+        ">
+          ${escapeHTML(
+            card.number
+          )}
         </div>
       </div>
 
       <div>
-        <strong>Nom sur la carte</strong>
-        <div style="color:var(--muted);margin-top:3px;">
-          ${escapeHTML(card.holder)}
+        <strong>
+          Nom sur la carte
+        </strong>
+
+        <div style="
+          color:var(--muted);
+          margin-top:3px;
+        ">
+          ${escapeHTML(
+            card.holder
+          )}
         </div>
       </div>
 
       <div>
-        <strong>Expiration</strong>
-        <div style="color:var(--muted);margin-top:3px;">
-          ${escapeHTML(card.expiry)}
+        <strong>
+          Expiration
+        </strong>
+
+        <div style="
+          color:var(--muted);
+          margin-top:3px;
+        ">
+          ${escapeHTML(
+            card.expiry
+          )}
         </div>
       </div>
 
       <div>
-        <strong>CVV</strong>
-        <div style="color:var(--muted);margin-top:3px;">
-          ${escapeHTML(card.cvv)}
+        <strong>
+          CVV
+        </strong>
+
+        <div style="
+          color:var(--muted);
+          margin-top:3px;
+        ">
+          ${escapeHTML(
+            card.cvv
+          )}
         </div>
       </div>
 
     </div>
   `;
+
 }
 
 
 /* =========================================================
    CHECKOUT
+   CARTE NON PRE-REMPLIE
 ========================================================= */
 
 function openCheckout(){
@@ -2812,14 +3201,12 @@ function openCheckout(){
     );
 
     showLoginForm();
+
     return;
   }
 
   const subtotal =
     getCartSubtotal();
-
-  const card =
-    getTestCard();
 
   showModal(
     "Finaliser la commande",
@@ -2837,6 +3224,7 @@ function openCheckout(){
           placeholder="Adresse complète"
         ></textarea>
 
+
         <div style="
           padding:15px;
           border-radius:14px;
@@ -2848,11 +3236,15 @@ function openCheckout(){
             display:flex;
             justify-content:space-between;
           ">
-            <span>Sous-total</span>
+
+            <span>
+              Sous-total
+            </span>
 
             <strong id="checkoutSubtotal">
               ${money(subtotal)}
             </strong>
+
           </div>
 
           <div style="
@@ -2862,7 +3254,9 @@ function openCheckout(){
             font-size:22px;
           ">
 
-            <span>Total</span>
+            <span>
+              Total
+            </span>
 
             <strong id="checkoutFinal">
               ${money(subtotal)}
@@ -2872,9 +3266,11 @@ function openCheckout(){
 
         </div>
 
+
         <h3>
           Mode de paiement
         </h3>
+
 
         <div style="
           display:grid;
@@ -2900,16 +3296,19 @@ function openCheckout(){
 
         </div>
 
+
         <input
           type="hidden"
           id="paymentMethod"
           value=""
         >
 
+
         <div
           id="paymentInfo"
           style="margin:12px 0"
         ></div>
+
 
         <button
           type="submit"
@@ -2919,6 +3318,7 @@ function openCheckout(){
         >
           Continuer
         </button>
+
 
         <div
           id="checkoutError"
@@ -2933,13 +3333,16 @@ function openCheckout(){
     `
   );
 
+
   let paymentMethod = "";
+
 
   const subtotalEl =
     $("checkoutSubtotal");
 
   const finalEl =
     $("checkoutFinal");
+
 
   function updateCheckout(){
 
@@ -2962,10 +3365,14 @@ function openCheckout(){
 
   }
 
+
   updateCheckout();
 
+
   document
-    .querySelectorAll(".payment-choice")
+    .querySelectorAll(
+      ".payment-choice"
+    )
     .forEach(button=>{
 
       button.addEventListener(
@@ -2978,15 +3385,22 @@ function openCheckout(){
           $("paymentMethod").value =
             paymentMethod;
 
+
           document
-            .querySelectorAll(".payment-choice")
+            .querySelectorAll(
+              ".payment-choice"
+            )
             .forEach(item=>
               item.classList.remove(
                 "selected"
               )
             );
 
-          button.classList.add("selected");
+
+          button.classList.add(
+            "selected"
+          );
+
 
           const info =
             $("paymentInfo");
@@ -2995,47 +3409,44 @@ function openCheckout(){
             return;
           }
 
+
           if(paymentMethod === "paypal"){
 
             info.innerHTML = `
+
               <div style="
                 padding:12px;
                 border-radius:12px;
-                background:rgba(60,130,255,.1);
+                background:
+                  rgba(60,130,255,.1);
               ">
-                🅿️ Tu seras redirigé vers PayPal
-                pour effectuer le paiement.
+
+                🅿️ Tu seras redirigé vers
+                PayPal pour effectuer le paiement.
+
               </div>
+
             `;
 
             return;
           }
 
-          const currentCard =
-            getTestCard();
 
-          if(!currentCard){
-
-            info.innerHTML = `
-              <div style="
-                padding:12px;
-                border-radius:12px;
-                background:rgba(255,180,0,.1);
-              ">
-                💳 Aucune carte n’a encore été créée
-                depuis l’administration.
-              </div>
-            `;
-
-            return;
-          }
+          /*
+            IMPORTANT :
+            aucun numéro,
+            aucun nom,
+            aucune expiration
+            et aucun CVV n'est prérempli.
+          */
 
           info.innerHTML = `
 
             <div style="
               padding:15px;
               border-radius:14px;
-              background:rgba(255,255,255,.05);
+              background:
+                rgba(255,255,255,.05);
             ">
 
               <div style="
@@ -3044,6 +3455,7 @@ function openCheckout(){
               ">
                 💳 Informations de carte
               </div>
+
 
               <label for="cardNumber">
                 Numéro de carte
@@ -3054,9 +3466,10 @@ function openCheckout(){
                 type="text"
                 inputmode="numeric"
                 autocomplete="off"
-                value="${escapeHTML(currentCard.number)}"
+                placeholder="XXXX XXXX XXXX XXXX"
                 required
               >
+
 
               <label
                 for="cardHolder"
@@ -3069,13 +3482,15 @@ function openCheckout(){
                 id="cardHolder"
                 type="text"
                 autocomplete="off"
-                value="${escapeHTML(currentCard.holder)}"
+                placeholder="Nom du titulaire"
                 required
               >
 
+
               <div style="
                 display:grid;
-                grid-template-columns:1fr 1fr;
+                grid-template-columns:
+                  1fr 1fr;
                 gap:10px;
                 margin-top:10px;
               ">
@@ -3090,11 +3505,12 @@ function openCheckout(){
                     id="cardExpiry"
                     type="text"
                     autocomplete="off"
-                    value="${escapeHTML(currentCard.expiry)}"
+                    placeholder="MM/AA"
                     required
                   >
 
                 </div>
+
 
                 <div>
 
@@ -3107,7 +3523,7 @@ function openCheckout(){
                     type="text"
                     inputmode="numeric"
                     autocomplete="off"
-                    value="${escapeHTML(currentCard.cvv)}"
+                    placeholder="CVV"
                     required
                   >
 
@@ -3115,16 +3531,18 @@ function openCheckout(){
 
               </div>
 
+
               <p style="
                 margin-top:12px;
                 color:var(--muted);
                 font-size:13px;
               ">
-                Utilise les informations de la carte
-                créée depuis l’administration.
+                Saisis manuellement les informations
+                de la carte créée dans l’administration.
               </p>
 
             </div>
+
           `;
 
         }
@@ -3133,263 +3551,325 @@ function openCheckout(){
 
     });
 
-  $("checkoutForm")?.addEventListener(
-    "submit",
-    async event=>{
 
-      event.preventDefault();
+  $("checkoutForm")
+    ?.addEventListener(
+      "submit",
+      async event=>{
 
-      const address =
-        $("checkoutAddress")?.value.trim() || "";
+        event.preventDefault();
 
-      const errorBox =
-        $("checkoutError");
 
-      if(!address){
+        const address =
+          $("checkoutAddress")
+            ?.value.trim() || "";
 
-        errorBox.textContent =
-          "Indique ton adresse de livraison.";
+        const errorBox =
+          $("checkoutError");
 
-        errorBox.style.display =
-          "block";
 
-        return;
-      }
+        if(!address){
 
-      if(!paymentMethod){
+          errorBox.textContent =
+            "Indique ton adresse de livraison.";
 
-        errorBox.textContent =
-          "Choisis un moyen de paiement.";
+          errorBox.style.display =
+            "block";
 
-        errorBox.style.display =
-          "block";
-
-        return;
-      }
-
-      const submit =
-        $("checkoutSubmit");
-
-      if(submit){
-
-        submit.disabled = true;
-        submit.textContent =
-          "Création...";
-
-      }
-
-      try{
-
-        const subtotal =
-          getCartSubtotal();
-
-        const total =
-          subtotal;
-
-        if(paymentMethod === "card"){
-
-          const storedCard =
-            getTestCard();
-
-          if(!storedCard){
-
-            errorBox.textContent =
-              "Aucune carte n’a encore été créée dans l’administration.";
-
-            errorBox.style.display =
-              "block";
-
-            return;
-          }
-
-          const enteredNumber =
-            normalizeCardNumber(
-              $("cardNumber")?.value
-            );
-
-          const storedNumber =
-            normalizeCardNumber(
-              storedCard.number
-            );
-
-          const enteredHolder =
-            ($("cardHolder")?.value || "")
-              .trim()
-              .toUpperCase();
-
-          const storedHolder =
-            storedCard.holder
-              .trim()
-              .toUpperCase();
-
-          const enteredExpiry =
-            ($("cardExpiry")?.value || "")
-              .trim();
-
-          const enteredCvv =
-            ($("cardCvv")?.value || "")
-              .trim();
-
-          const valid =
-            enteredNumber === storedNumber &&
-            enteredHolder === storedHolder &&
-            enteredExpiry === storedCard.expiry &&
-            enteredCvv === storedCard.cvv;
-
-          if(!valid){
-
-            errorBox.textContent =
-              "Les informations de la carte ne correspondent pas à la carte créée dans l’administration.";
-
-            errorBox.style.display =
-              "block";
-
-            return;
-          }
+          return;
         }
 
-        const orderItems =
-          cart.map(item=>{
 
-            const product =
-              getProduct(item.id);
+        if(!paymentMethod){
 
-            return {
-              id:item.id,
-              name:
-                product?.name ||
-                "Produit",
-              price:
-                product?.price || 0,
-              quantity:
-                Number(item.quantity || 1),
-              image:
-                product?.image || ""
-            };
+          errorBox.textContent =
+            "Choisis un moyen de paiement.";
 
-          });
+          errorBox.style.display =
+            "block";
 
-        const orderData = {
-          userId:
-            currentUser.uid,
-
-          userEmail:
-            currentUser.email || "",
-
-          items:
-            orderItems,
-
-          subtotal,
-
-          total,
-
-          address,
-
-          status:
-            "Enregistrée",
-
-          paymentMethod,
-
-          paymentStatus:
-            total === 0 ||
-            paymentMethod === "card"
-              ? "Payé"
-              : "En attente",
-
-          tracking:
-            "",
-
-          city:
-            "",
-
-          estimatedDelivery:
-            "",
-
-          createdAt:
-            serverTimestamp()
-        };
-
-        const orderRef =
-          await addDoc(
-            collection(db,"orders"),
-            orderData
-          );
-
-        cart = [];
-
-        saveCart();
-        renderCart();
-        closeModal();
-
-        toast(
-          `Commande #${orderRef.id.slice(0,8)} créée 🎉`,
-          "success"
-        );
-
-        if(
-          paymentMethod === "paypal" &&
-          total > 0
-        ){
-
-          const paypalUrl =
-            `${PAYPAL_BASE}/${encodeURIComponent(
-              total.toFixed(2)
-            )}EUR`;
-
-          setTimeout(()=>{
-
-            window.open(
-              paypalUrl,
-              "_blank",
-              "noopener,noreferrer"
-            );
-
-          },400);
-
-        }else if(
-          paymentMethod === "card" &&
-          total > 0
-        ){
-
-          toast(
-            "Paiement accepté 💳",
-            "success"
-          );
-
+          return;
         }
 
-      }catch(error){
 
-        console.error(
-          "Checkout error:",
-          error
-        );
+        const submit =
+          $("checkoutSubmit");
 
-        errorBox.textContent =
-          `Erreur : ${
-            error.message ||
-            error.code ||
-            "inconnue"
-          }`;
-
-        errorBox.style.display =
-          "block";
-
-      }finally{
 
         if(submit){
 
-          submit.disabled = false;
+          submit.disabled = true;
 
           submit.textContent =
-            "Continuer";
+            "Création...";
+
+        }
+
+
+        try{
+
+          const subtotal =
+            getCartSubtotal();
+
+          const total =
+            subtotal;
+
+
+          /*
+            Vérification de la carte :
+            elle reste uniquement dans le navigateur
+            et aucune donnée de carte n'est enregistrée
+            dans Firestore.
+          */
+
+          if(paymentMethod === "card"){
+
+            const storedCard =
+              getTestCard();
+
+
+            if(!storedCard){
+
+              errorBox.textContent =
+                "Aucune carte n’a encore été créée dans l’administration.";
+
+              errorBox.style.display =
+                "block";
+
+              return;
+            }
+
+
+            const enteredNumber =
+              ($("cardNumber")
+                ?.value || "")
+                .replace(/\s+/g,"")
+                .trim();
+
+
+            const storedNumber =
+              storedCard.number
+                .replace(/\s+/g,"")
+                .trim();
+
+
+            const enteredHolder =
+              ($("cardHolder")
+                ?.value || "")
+                .trim()
+                .toUpperCase();
+
+
+            const storedHolder =
+              storedCard.holder
+                .trim()
+                .toUpperCase();
+
+
+            const enteredExpiry =
+              ($("cardExpiry")
+                ?.value || "")
+                .trim();
+
+
+            const enteredCvv =
+              ($("cardCvv")
+                ?.value || "")
+                .trim();
+
+
+            const valid =
+              enteredNumber === storedNumber &&
+              enteredHolder === storedHolder &&
+              enteredExpiry === storedCard.expiry &&
+              enteredCvv === storedCard.cvv;
+
+
+            if(!valid){
+
+              errorBox.textContent =
+                "Les informations de la carte ne correspondent pas à la carte créée dans l’administration.";
+
+              errorBox.style.display =
+                "block";
+
+              return;
+            }
+
+          }
+
+
+          const orderItems =
+            cart.map(item=>{
+
+              const product =
+                getProduct(item.id);
+
+              return {
+
+                id:item.id,
+
+                name:
+                  product?.name ||
+                  "Produit",
+
+                price:
+                  product?.price ||
+                  0,
+
+                quantity:
+                  Number(
+                    item.quantity || 1
+                  ),
+
+                image:
+                  product?.image ||
+                  ""
+
+              };
+
+            });
+
+
+          const orderData = {
+
+            userId:
+              currentUser.uid,
+
+            userEmail:
+              currentUser.email || "",
+
+            items:
+              orderItems,
+
+            subtotal,
+
+            total,
+
+            address,
+
+            status:
+              "Enregistrée",
+
+            paymentMethod,
+
+            paymentStatus:
+              total === 0 ||
+              paymentMethod === "card"
+                ? "Payé"
+                : "En attente",
+
+            tracking:
+              "",
+
+            city:
+              "",
+
+            estimatedDelivery:
+              "",
+
+            createdAt:
+              serverTimestamp()
+
+          };
+
+
+          const orderRef =
+            await addDoc(
+              collection(
+                db,
+                "orders"
+              ),
+              orderData
+            );
+
+
+          cart = [];
+
+          saveCart();
+          renderCart();
+          closeModal();
+
+
+          toast(
+            `Commande #${orderRef.id.slice(0,8)} créée 🎉`,
+            "success"
+          );
+
+
+          if(
+            paymentMethod === "paypal" &&
+            total > 0
+          ){
+
+            const paypalUrl =
+              `${PAYPAL_BASE}/${encodeURIComponent(
+                total.toFixed(2)
+              )}EUR`;
+
+
+            setTimeout(()=>{
+
+              window.open(
+                paypalUrl,
+                "_blank",
+                "noopener,noreferrer"
+              );
+
+            },400);
+
+          }
+
+
+          if(
+            paymentMethod === "card" &&
+            total > 0
+          ){
+
+            toast(
+              "Paiement accepté 💳",
+              "success"
+            );
+
+          }
+
+
+        }catch(error){
+
+          console.error(
+            "Checkout error:",
+            error
+          );
+
+
+          errorBox.textContent =
+            `Erreur : ${
+              error.message ||
+              error.code ||
+              "inconnue"
+            }`;
+
+
+          errorBox.style.display =
+            "block";
+
+
+        }finally{
+
+          if(submit){
+
+            submit.disabled = false;
+
+            submit.textContent =
+              "Continuer";
+
+          }
 
         }
 
       }
+    );
 
-    }
-  );
 }
 
 
@@ -3404,6 +3884,7 @@ function isAdminUser(){
       currentUser.email || ""
     ).toLowerCase() ===
     ADMIN_EMAIL.toLowerCase();
+
 }
 
 async function openAdmin(){
@@ -3418,10 +3899,12 @@ async function openAdmin(){
     return;
   }
 
+
   const alreadyAuthorized =
     localStorage.getItem(
       ADMIN_AUTH_STORAGE_KEY
     ) === "true";
+
 
   if(!alreadyAuthorized){
 
@@ -3429,6 +3912,7 @@ async function openAdmin(){
       window.prompt(
         "Code administrateur :"
       );
+
 
     if(code !== ADMIN_CODE){
 
@@ -3440,13 +3924,17 @@ async function openAdmin(){
       return;
     }
 
+
     localStorage.setItem(
       ADMIN_AUTH_STORAGE_KEY,
       "true"
     );
+
   }
 
+
   await loadAdmin();
+
 }
 
 async function loadAdmin(){
@@ -3464,18 +3952,27 @@ async function loadAdmin(){
     `
   );
 
+
   try{
 
     const snapshot =
       await getDocs(
-        collection(db,"orders")
+        collection(
+          db,
+          "orders"
+        )
       );
+
 
     const orders =
       snapshot.docs.map(item=>({
+
         id:item.id,
+
         ...item.data()
+
       }));
+
 
     orders.sort((a,b)=>{
 
@@ -3489,7 +3986,9 @@ async function loadAdmin(){
 
     });
 
+
     renderAdmin(orders);
+
 
   }catch(error){
 
@@ -3498,6 +3997,7 @@ async function loadAdmin(){
       error
     );
 
+
     showModal(
       "Administration",
       `
@@ -3505,15 +4005,19 @@ async function loadAdmin(){
           color:#ff7777;
           padding:15px;
         ">
+
           Erreur :
           ${escapeHTML(
             error.message ||
             "Impossible de charger les commandes."
           )}
+
         </div>
       `
     );
+
   }
+
 }
 
 function renderAdmin(orders){
@@ -3521,24 +4025,31 @@ function renderAdmin(orders){
   const card =
     getTestCard();
 
+
   showModal(
     "Administration",
     `
 
       <div>
 
+
         <div style="
           display:grid;
           grid-template-columns:
-            repeat(auto-fit,minmax(150px,1fr));
+            repeat(
+              auto-fit,
+              minmax(150px,1fr)
+            );
           gap:10px;
           margin-bottom:18px;
         ">
 
+
           <div style="
             padding:15px;
             border-radius:14px;
-            background:rgba(255,255,255,.05);
+            background:
+              rgba(255,255,255,.05);
           ">
 
             <div style="
@@ -3556,10 +4067,12 @@ function renderAdmin(orders){
 
           </div>
 
+
           <div style="
             padding:15px;
             border-radius:14px;
-            background:rgba(255,255,255,.05);
+            background:
+              rgba(255,255,255,.05);
           ">
 
             <div style="
@@ -3576,7 +4089,9 @@ function renderAdmin(orders){
                 orders.reduce(
                   (sum,order)=>
                     sum +
-                    Number(order.total || 0),
+                    Number(
+                      order.total || 0
+                    ),
                   0
                 )
               )}
@@ -3584,13 +4099,17 @@ function renderAdmin(orders){
 
           </div>
 
+
         </div>
 
+
+        <!-- CARTE UNIQUEMENT DANS LE DASHBOARD -->
 
         <div style="
           padding:18px;
           border-radius:18px;
-          background:rgba(255,255,255,.04);
+          background:
+            rgba(255,255,255,.04);
           border:1px solid var(--line);
           margin-bottom:18px;
         ">
@@ -3607,9 +4126,11 @@ function renderAdmin(orders){
             Utilisable uniquement sur ce site.
           </p>
 
+
           <div id="adminCardContainer">
             ${renderTestCardHTML()}
           </div>
+
 
           <button
             type="button"
@@ -3620,10 +4141,13 @@ function renderAdmin(orders){
               margin-top:8px;
             "
           >
-            ${card
-              ? "🔄 Générer une nouvelle carte"
-              : "💳 Créer une carte"}
+            ${
+              card
+                ? "🔄 Générer une nouvelle carte"
+                : "💳 Créer une carte"
+            }
           </button>
+
 
         </div>
 
@@ -3658,9 +4182,13 @@ function renderAdmin(orders){
 
           ${
             orders.length
-              ? orders.map(order=>
-                  renderAdminOrder(order)
-                ).join("")
+              ? orders
+                  .map(order=>
+                    renderAdminOrder(
+                      order
+                    )
+                  )
+                  .join("")
               : `
                 <div style="
                   padding:30px;
@@ -3674,9 +4202,11 @@ function renderAdmin(orders){
 
         </div>
 
+
       </div>
     `
   );
+
 
   $("generateTestCard")
     ?.addEventListener(
@@ -3685,21 +4215,30 @@ function renderAdmin(orders){
 
         generateTestCard();
 
+
         const container =
           $("adminCardContainer");
 
+
         if(container){
+
           container.innerHTML =
             renderTestCardHTML();
+
         }
+
 
         const button =
           $("generateTestCard");
 
+
         if(button){
+
           button.textContent =
             "🔄 Générer une nouvelle carte";
+
         }
+
 
         toast(
           "Carte créée 💳",
@@ -3709,16 +4248,19 @@ function renderAdmin(orders){
       }
     );
 
+
   $("refreshAdmin")
     ?.addEventListener(
       "click",
       loadAdmin
     );
 
+
   $("quitAdmin")
     ?.addEventListener(
       "click",
       ()=>{
+
         localStorage.removeItem(
           ADMIN_AUTH_STORAGE_KEY
         );
@@ -3728,37 +4270,51 @@ function renderAdmin(orders){
         toast(
           "Mode administrateur quitté."
         );
+
       }
     );
 
+
   document
-    .querySelectorAll("[data-save-order]")
+    .querySelectorAll(
+      "[data-save-order]"
+    )
     .forEach(button=>{
 
       button.addEventListener(
         "click",
-        ()=>saveAdminOrder(
-          button.dataset.saveOrder
-        )
+        ()=>{
+          saveAdminOrder(
+            button.dataset.saveOrder
+          );
+        }
       );
 
     });
 
+
   document
-    .querySelectorAll("[data-paid-order]")
+    .querySelectorAll(
+      "[data-paid-order]"
+    )
     .forEach(button=>{
 
       button.addEventListener(
         "click",
-        ()=>markOrderPaid(
-          button.dataset.paidOrder
-        )
+        ()=>{
+          markOrderPaid(
+            button.dataset.paidOrder
+          );
+        }
       );
 
     });
 
+
   document
-    .querySelectorAll("[data-invoice-order]")
+    .querySelectorAll(
+      "[data-invoice-order]"
+    )
     .forEach(button=>{
 
       button.addEventListener(
@@ -3773,7 +4329,11 @@ function renderAdmin(orders){
             );
 
           if(order){
-            printInvoice(order);
+
+            printInvoice(
+              order
+            );
+
           }
 
         }
@@ -3781,18 +4341,24 @@ function renderAdmin(orders){
 
     });
 
+
   document
-    .querySelectorAll("[data-delete-order]")
+    .querySelectorAll(
+      "[data-delete-order]"
+    )
     .forEach(button=>{
 
       button.addEventListener(
         "click",
-        ()=>deleteAdminOrder(
-          button.dataset.deleteOrder
-        )
+        ()=>{
+          deleteAdminOrder(
+            button.dataset.deleteOrder
+          );
+        }
       );
 
     });
+
 }
 
 function renderAdminOrder(order){
@@ -3803,9 +4369,11 @@ function renderAdminOrder(order){
       padding:18px;
       border-radius:18px;
       border:1px solid var(--line);
-      background:rgba(255,255,255,.025);
+      background:
+        rgba(255,255,255,.025);
       margin-bottom:12px;
     ">
+
 
       <div style="
         display:flex;
@@ -3814,6 +4382,7 @@ function renderAdminOrder(order){
         gap:12px;
         flex-wrap:wrap;
       ">
+
 
         <div>
 
@@ -3834,9 +4403,15 @@ function renderAdminOrder(order){
 
         </div>
 
-        <strong style="font-size:19px;">
-          ${money(order.total || 0)}
+
+        <strong style="
+          font-size:19px;
+        ">
+          ${money(
+            order.total || 0
+          )}
         </strong>
+
 
       </div>
 
@@ -3847,38 +4422,50 @@ function renderAdminOrder(order){
         margin-top:15px;
       ">
 
+
         <label>
+
           Statut
 
           <select
-            id="status-${escapeHTML(order.id)}"
+            id="status-${escapeHTML(
+              order.id
+            )}"
           >
 
-            ${[
-              "Enregistrée",
-              "Acceptée",
-              "Préparation",
-              "En transit",
-              "Livraison proche",
-              "Livrée",
-              "Annulée"
-            ].map(status=>`
+            ${
+              [
+                "Enregistrée",
+                "Acceptée",
+                "Préparation",
+                "En transit",
+                "Livraison proche",
+                "Livrée",
+                "Annulée"
+              ]
+              .map(status=>`
 
-              <option
-                value="${escapeHTML(status)}"
-                ${
-                  (
-                    order.status ||
-                    "Enregistrée"
-                  ) === status
-                    ? "selected"
-                    : ""
-                }
-              >
-                ${escapeHTML(status)}
-              </option>
+                <option
+                  value="${escapeHTML(
+                    status
+                  )}"
+                  ${
+                    (
+                      order.status ||
+                      "Enregistrée"
+                    ) === status
+                      ? "selected"
+                      : ""
+                  }
+                >
+                  ${escapeHTML(
+                    status
+                  )}
+                </option>
 
-            `).join("")}
+              `)
+              .join("")
+            }
 
           </select>
 
@@ -3886,10 +4473,13 @@ function renderAdminOrder(order){
 
 
         <label>
+
           Ville de livraison
 
           <input
-            id="city-${escapeHTML(order.id)}"
+            id="city-${escapeHTML(
+              order.id
+            )}"
             type="text"
             value="${escapeHTML(
               order.city || ""
@@ -3901,10 +4491,13 @@ function renderAdminOrder(order){
 
 
         <label>
+
           Numéro de suivi
 
           <input
-            id="tracking-${escapeHTML(order.id)}"
+            id="tracking-${escapeHTML(
+              order.id
+            )}"
             type="text"
             value="${escapeHTML(
               order.tracking || ""
@@ -3916,10 +4509,13 @@ function renderAdminOrder(order){
 
 
         <label>
+
           Livraison estimée
 
           <input
-            id="delivery-${escapeHTML(order.id)}"
+            id="delivery-${escapeHTML(
+              order.id
+            )}"
             type="text"
             value="${escapeHTML(
               order.estimatedDelivery || ""
@@ -3928,6 +4524,7 @@ function renderAdminOrder(order){
           >
 
         </label>
+
 
       </div>
 
@@ -3939,43 +4536,61 @@ function renderAdminOrder(order){
         margin-top:14px;
       ">
 
+
         <button
           type="button"
           class="add-btn"
-          data-save-order="${escapeHTML(order.id)}"
+          data-save-order="${escapeHTML(
+            order.id
+          )}"
         >
           💾 Enregistrer
         </button>
 
+
         <button
           type="button"
           class="view-btn"
-          data-paid-order="${escapeHTML(order.id)}"
+          data-paid-order="${escapeHTML(
+            order.id
+          )}"
         >
           💳 Marquer payé
         </button>
 
+
         <button
           type="button"
           class="view-btn"
-          data-invoice-order="${escapeHTML(order.id)}"
+          data-invoice-order="${escapeHTML(
+            order.id
+          )}"
         >
           🧾 Facture
         </button>
 
+
         <button
           type="button"
           class="view-btn"
-          data-delete-order="${escapeHTML(order.id)}"
-          style="color:#ff7777;"
+          data-delete-order="${escapeHTML(
+            order.id
+          )}"
+          style="
+            color:#ff7777;
+          "
         >
           🗑️ Supprimer
         </button>
 
+
       </div>
 
+
     </div>
+
   `;
+
 }
 
 async function saveAdminOrder(id){
@@ -3991,19 +4606,27 @@ async function saveAdminOrder(id){
       "Enregistrée";
 
     const city =
-      $(`city-${id}`)?.value.trim() ||
+      $(`city-${id}`)
+        ?.value.trim() ||
       "";
 
     const tracking =
-      $(`tracking-${id}`)?.value.trim() ||
+      $(`tracking-${id}`)
+        ?.value.trim() ||
       "";
 
     const estimatedDelivery =
-      $(`delivery-${id}`)?.value.trim() ||
+      $(`delivery-${id}`)
+        ?.value.trim() ||
       "";
 
+
     await updateDoc(
-      doc(db,"orders",id),
+      doc(
+        db,
+        "orders",
+        id
+      ),
       {
         status,
         city,
@@ -4012,10 +4635,12 @@ async function saveAdminOrder(id){
       }
     );
 
+
     toast(
       "Commande mise à jour ✅",
       "success"
     );
+
 
   }catch(error){
 
@@ -4030,6 +4655,7 @@ async function saveAdminOrder(id){
     );
 
   }
+
 }
 
 async function markOrderPaid(id){
@@ -4041,18 +4667,26 @@ async function markOrderPaid(id){
   try{
 
     await updateDoc(
-      doc(db,"orders",id),
+      doc(
+        db,
+        "orders",
+        id
+      ),
       {
-        paymentStatus:"Payé"
+        paymentStatus:
+          "Payé"
       }
     );
+
 
     toast(
       "Commande marquée comme payée 💳",
       "success"
     );
 
+
     await loadAdmin();
+
 
   }catch(error){
 
@@ -4067,6 +4701,7 @@ async function markOrderPaid(id){
     );
 
   }
+
 }
 
 async function deleteAdminOrder(id){
@@ -4087,15 +4722,22 @@ async function deleteAdminOrder(id){
   try{
 
     await deleteDoc(
-      doc(db,"orders",id)
+      doc(
+        db,
+        "orders",
+        id
+      )
     );
+
 
     toast(
       "Commande supprimée.",
       "success"
     );
 
+
     await loadAdmin();
+
 
   }catch(error){
 
@@ -4110,6 +4752,7 @@ async function deleteAdminOrder(id){
     );
 
   }
+
 }
 
 
@@ -4122,12 +4765,14 @@ function getTheme(){
   return localStorage.getItem(
     THEME_STORAGE_KEY
   ) || "dark";
+
 }
 
 function applyTheme(){
 
   const theme =
     getTheme();
+
 
   if(theme === "light"){
 
@@ -4150,7 +4795,9 @@ function applyTheme(){
       prefersDark
         ? "dark"
         : "light";
+
   }
+
 }
 
 function openSettings(){
@@ -4158,10 +4805,13 @@ function openSettings(){
   const current =
     getTheme();
 
+
   showModal(
     "Paramètres",
     `
-      <h3>Apparence</h3>
+      <h3>
+        Apparence
+      </h3>
 
       <div style="
         display:grid;
@@ -4205,8 +4855,11 @@ function openSettings(){
     `
   );
 
+
   document
-    .querySelectorAll(".theme-choice")
+    .querySelectorAll(
+      ".theme-choice"
+    )
     .forEach(button=>{
 
       button.addEventListener(
@@ -4231,6 +4884,7 @@ function openSettings(){
       );
 
     });
+
 }
 
 
@@ -4252,12 +4906,14 @@ searchInput?.addEventListener(
   }
 );
 
+
 sortSelect?.addEventListener(
   "change",
   event=>{
 
     state.sort =
-      event.target.value || "default";
+      event.target.value ||
+      "default";
 
     state.page = 1;
 
@@ -4266,30 +4922,36 @@ sortSelect?.addEventListener(
   }
 );
 
+
 checkoutBtn?.addEventListener(
   "click",
   openCheckout
 );
+
 
 accountBtn?.addEventListener(
   "click",
   openAccount
 );
 
+
 ordersBtn?.addEventListener(
   "click",
   openOrders
 );
+
 
 adminBtn?.addEventListener(
   "click",
   openAdmin
 );
 
+
 settingsBtn?.addEventListener(
   "click",
   openSettings
 );
+
 
 cartOverlay?.addEventListener(
   "click",
@@ -4305,7 +4967,9 @@ onAuthStateChanged(
   auth,
   user=>{
 
-    currentUser = user;
+    currentUser =
+      user;
+
 
     if(accountBtn){
 
@@ -4327,7 +4991,9 @@ onAuthStateChanged(
           "👤 Compte";
 
       }
+
     }
+
 
     if(adminBtn){
 
@@ -4342,6 +5008,7 @@ onAuthStateChanged(
         isAdmin
           ? ""
           : "none";
+
     }
 
   }
@@ -4366,6 +5033,7 @@ document.addEventListener(
   }
 );
 
+
 window.addEventListener(
   "unhandledrejection",
   event=>{
@@ -4378,8 +5046,11 @@ window.addEventListener(
       error
     );
 
+
     if(
-      error?.code?.startsWith("auth/")
+      error?.code?.startsWith(
+        "auth/"
+      )
     ){
 
       toast(
