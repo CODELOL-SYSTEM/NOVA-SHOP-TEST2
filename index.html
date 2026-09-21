@@ -728,12 +728,6 @@ footer{
   font-size:20px;
 }
 
-label{
-  display:block;
-  margin-bottom:7px;
-  font-weight:800;
-}
-
 .order-card,
 .admin-order{
   background:var(--card);
@@ -819,331 +813,438 @@ label{
 <body>
 
 <header>
-  <nav class="nav">
+<nav class="nav">
 
-    <a href="#" class="logo">
-      Nova<span>Shop</span>
-    </a>
+<a href="#" class="logo">
+Nova<span>Shop</span>
+</a>
 
-    <div class="nav-links">
-      <a href="#accueil">Accueil</a>
-      <a href="#productsSection">Produits</a>
-      <a href="#reviewsSection">Avis</a>
-      <a href="#faqSection">FAQ</a>
-    </div>
+<div class="nav-links">
+<a href="#accueil">Accueil</a>
+<a href="#productsSection">Produits</a>
+<a href="#reviewsSection">Avis</a>
+<a href="#faqSection">FAQ</a>
+</div>
 
-    <div class="nav-actions">
+<div class="nav-actions">
 
-      <button class="btn" id="settingsBtn" type="button">
-        ⚙️
-      </button>
+<button class="btn" id="settingsBtn" type="button">
+⚙️
+</button>
 
-      <button class="btn" id="accountBtn" type="button">
-        👤 Compte
-      </button>
+<button class="btn" id="accountBtn" type="button">
+👤 Compte
+</button>
 
-      <button class="btn" id="ordersBtn" type="button">
-        📦 Commandes
-      </button>
+<button class="btn" id="ordersBtn" type="button">
+📦 Commandes
+</button>
 
-      <button class="btn" id="adminBtn" type="button" style="display:none">
-        🛡️ Admin
-      </button>
+<button class="btn" id="adminBtn" type="button" style="display:none">
+🛡️ Admin
+</button>
 
-      <button class="btn cart-button" id="cartBtn" type="button">
-        🛒 Panier
-        <span class="badge" id="cartBadge">0</span>
-      </button>
+<button class="btn cart-button" id="cartBtn" type="button">
+🛒 Panier
+<span class="badge" id="cartBadge">0</span>
+</button>
 
-    </div>
+</div>
 
-  </nav>
+</nav>
 </header>
 
 <main>
 
 <section class="hero" id="accueil">
 
-  <div>
+<div>
 
-    <h1>
-      Ton setup.<br>
-      <span>Ton niveau.</span>
-    </h1>
+<h1>
+Ton setup.<br>
+<span>Ton niveau.</span>
+</h1>
 
-    <p>
-      NovaShop rassemble composants PC, périphériques,
-      écrans, audio, streaming et accessoires gaming.
-    </p>
+<p>
+NovaShop rassemble composants PC,
+périphériques, écrans, audio,
+streaming et accessoires gaming.
+</p>
 
-    <div class="hero-actions">
+<div class="hero-actions">
 
-      <a href="#productsSection" class="btn-primary">
-        🛍️ Voir les produits
-      </a>
+<a href="#productsSection" class="btn-primary">
+🛍️ Voir les produits
+</a>
 
-      <button
-        class="view-btn"
-        id="heroCartBtn"
-        type="button"
-      >
-        🛒 Voir mon panier
-      </button>
+<button
+class="view-btn"
+id="heroCartBtn"
+type="button">
+🛒 Voir mon panier
+</button>
 
-    </div>
+</div>
 
-  </div>
+</div>
 
-  <div class="hero-card">
-    <div>
-      <div class="hero-card-icon">🎮</div>
-      <h2>NovaShop Gaming</h2>
-      <p style="margin-top:8px">
-        Performance, accessoires et setup.
-      </p>
-    </div>
-  </div>
+<div class="hero-card">
+
+<div>
+
+<div class="hero-card-icon">
+🎮
+</div>
+
+<h2>NovaShop Gaming</h2>
+
+<p style="margin-top:8px">
+Performance, accessoires et setup.
+</p>
+
+</div>
+
+</div>
 
 </section>
 
 <section class="section" id="productsSection">
 
-  <h2 class="section-title">
-    Produits
-  </h2>
+<h2 class="section-title">
+Produits
+</h2>
 
-  <p class="section-subtitle">
-    Trouve ton prochain équipement.
-  </p>
+<p class="section-subtitle">
+Trouve ton prochain équipement.
+</p>
 
-  <div class="toolbar">
+<div class="toolbar">
 
-    <input
-      class="input"
-      id="searchInput"
-      type="search"
-      placeholder="Rechercher un produit..."
-    >
+<input
+class="input"
+id="searchInput"
+type="search"
+placeholder="Rechercher un produit..."
+>
 
-    <select id="sortSelect">
-      <option value="default">Trier par défaut</option>
-      <option value="price-low">Prix croissant</option>
-      <option value="price-high">Prix décroissant</option>
-      <option value="name">Nom A-Z</option>
-      <option value="new">Nouveautés</option>
-    </select>
+<select id="sortSelect">
 
-  </div>
+<option value="default">
+Trier par défaut
+</option>
 
-  <div id="categories" class="categories"></div>
+<option value="price-low">
+Prix croissant
+</option>
 
-  <div class="products-head">
-    <h3>Catalogue</h3>
-    <span class="product-count" id="productCount">0 produits</span>
-  </div>
+<option value="price-high">
+Prix décroissant
+</option>
 
-  <div id="productGrid" class="product-grid"></div>
+<option value="name">
+Nom A-Z
+</option>
+
+<option value="new">
+Nouveautés
+</option>
+
+</select>
+
+</div>
+
+<div id="categories" class="categories"></div>
+
+<div class="products-head">
+
+<h3>Catalogue</h3>
+
+<span
+class="product-count"
+id="productCount">
+0 produits
+</span>
+
+</div>
+
+<div
+id="productGrid"
+class="product-grid">
+</div>
 
 </section>
 
 <section class="section">
 
-  <h2 class="section-title">
-    Pourquoi NovaShop ?
-  </h2>
+<h2 class="section-title">
+Pourquoi NovaShop ?
+</h2>
 
-  <div class="trust-grid">
+<div class="trust-grid">
 
-    <div class="trust-card">
-      <strong>🚀 Rapidité</strong>
-      <span>Une boutique pensée pour trouver rapidement ton matériel.</span>
-    </div>
+<div class="trust-card">
+<strong>🚀 Rapidité</strong>
+<span>
+Une boutique pensée pour trouver rapidement ton matériel.
+</span>
+</div>
 
-    <div class="trust-card">
-      <strong>🛡️ Commandes</strong>
-      <span>Retrouve tes commandes depuis ton compte.</span>
-    </div>
+<div class="trust-card">
+<strong>🛡️ Commandes</strong>
+<span>
+Retrouve tes commandes depuis ton compte.
+</span>
+</div>
 
-    <div class="trust-card">
-      <strong>📦 Suivi</strong>
-      <span>Le statut de livraison peut être mis à jour depuis l'administration.</span>
-    </div>
+<div class="trust-card">
+<strong>📦 Suivi</strong>
+<span>
+Le statut de livraison peut être mis à jour depuis l'administration.
+</span>
+</div>
 
-    <div class="trust-card">
-      <strong>💳 Paiement</strong>
-      <span>PayPal et mode carte bancaire de démonstration.</span>
-    </div>
+<div class="trust-card">
+<strong>💳 Paiement</strong>
+<span>
+PayPal et mode carte bancaire de démonstration.
+</span>
+</div>
 
-  </div>
+</div>
 
 </section>
 
 <section class="section" id="reviewsSection">
 
-  <h2 class="section-title">
-    ⭐ Avis clients
-  </h2>
+<h2 class="section-title">
+⭐ Avis clients
+</h2>
 
-  <p class="section-subtitle">
-    Les avis affichés sur les produits sont des avis de démonstration.
-  </p>
+<p class="section-subtitle">
+Les avis affichés sur les produits sont des avis de démonstration.
+</p>
 
-  <div class="trust-grid">
+<div class="trust-grid">
 
-    <div class="trust-card">
-      <strong>Lucas ⭐⭐⭐⭐⭐</strong>
-      <span>Très bon produit, livraison rapide.</span>
-    </div>
+<div class="trust-card">
+<strong>Lucas ⭐⭐⭐⭐⭐</strong>
+<span>
+Très bon produit, livraison rapide.
+</span>
+</div>
 
-    <div class="trust-card">
-      <strong>Maxime ⭐⭐⭐⭐⭐</strong>
-      <span>Produit conforme et bien emballé.</span>
-    </div>
+<div class="trust-card">
+<strong>Maxime ⭐⭐⭐⭐⭐</strong>
+<span>
+Produit conforme et bien emballé.
+</span>
+</div>
 
-    <div class="trust-card">
-      <strong>Enzo ⭐⭐⭐⭐</strong>
-      <span>Bonne expérience sur NovaShop.</span>
-    </div>
+<div class="trust-card">
+<strong>Enzo ⭐⭐⭐⭐</strong>
+<span>
+Bonne expérience sur NovaShop.
+</span>
+</div>
 
-    <div class="trust-card">
-      <strong>NovaShop</strong>
-      <span>Les avis détaillés sont accessibles depuis chaque produit.</span>
-    </div>
+<div class="trust-card">
+<strong>NovaShop</strong>
+<span>
+Les avis détaillés sont accessibles depuis chaque produit.
+</span>
+</div>
 
-  </div>
+</div>
 
 </section>
 
 <section class="section">
 
-  <h2 class="section-title">
-    ↩️ Retours
-  </h2>
+<h2 class="section-title">
+↩️ Retours
+</h2>
 
-  <div class="refunds">
-    <p>
-      Pour une vraie boutique en production, les conditions de
-      retour et de remboursement doivent être définies selon
-      les règles applicables à ton activité.
-    </p>
-  </div>
+<div class="refunds">
+
+<p>
+Pour toute question concernant une commande,
+contacte le support NovaShop :
+<strong>helpy.nova.sh0p@gmail.com</strong>
+</p>
+
+</div>
 
 </section>
 
 <section class="section" id="faqSection">
 
-  <h2 class="section-title">
-    FAQ
-  </h2>
+<h2 class="section-title">
+FAQ
+</h2>
 
-  <div class="faq">
+<div class="faq">
 
-    <details>
-      <summary>Comment commander ?</summary>
-      <p>
-        Ajoute tes produits au panier, connecte-toi puis ouvre
-        le checkout afin de renseigner ton adresse et ton mode
-        de paiement.
-      </p>
-    </details>
+<details>
 
-    <details>
-      <summary>Comment voir mes commandes ?</summary>
-      <p>
-        Connecte-toi puis ouvre le bouton Commandes ou la section
-        Mes commandes depuis ton compte.
-      </p>
-    </details>
+<summary>
+Comment commander ?
+</summary>
 
-    <details>
-      <summary>À quoi sert NOVA100 ?</summary>
-      <p>
-        NOVA100 applique une réduction de démonstration de 100 %
-        au panier pendant le checkout.
-      </p>
-    </details>
+<p>
+Ajoute tes produits au panier, connecte-toi puis ouvre
+le checkout afin de renseigner ton adresse et ton mode
+de paiement.
+</p>
 
-  </div>
+</details>
+
+<details>
+
+<summary>
+Comment voir mes commandes ?
+</summary>
+
+<p>
+Connecte-toi puis ouvre le bouton Commandes ou la section
+Mes commandes depuis ton compte.
+</p>
+
+</details>
+
+<details>
+
+<summary>
+À quoi sert NOVA100 ?
+</summary>
+
+<p>
+NOVA100 applique une réduction de démonstration de 100 %
+au panier pendant le checkout.
+</p>
+
+</details>
+
+<details>
+
+<summary>
+Comment contacter le support ?
+</summary>
+
+<p>
+Tu peux contacter le support NovaShop à :
+<strong>helpy.nova.sh0p@gmail.com</strong>
+</p>
+
+</details>
+
+</div>
 
 </section>
 
 </main>
 
 <footer>
-  <strong>NovaShop</strong>
-  <p style="margin-top:8px">
-    Boutique gaming • Support : pc2alex.les@gmail.com
-  </p>
+
+<strong>NovaShop</strong>
+
+<p style="margin-top:8px">
+Boutique gaming
+</p>
+
+<p style="margin-top:5px">
+Support :
+<a
+href="mailto:helpy.nova.sh0p@gmail.com"
+style="color:var(--accent);font-weight:800">
+helpy.nova.sh0p@gmail.com
+</a>
+</p>
+
 </footer>
 
 <div id="overlay" class="overlay"></div>
 
 <aside id="cartDrawer" class="cart-drawer">
 
-  <div class="cart-header">
+<div class="cart-header">
 
-    <h2>🛒 Panier</h2>
+<h2>
+🛒 Panier
+</h2>
 
-    <button
-      id="closeCart"
-      class="modal-close"
-      type="button"
-    >
-      ×
-    </button>
+<button
+id="closeCart"
+class="modal-close"
+type="button">
+×
+</button>
 
-  </div>
+</div>
 
-  <div id="cartItems" class="cart-items"></div>
+<div
+id="cartItems"
+class="cart-items">
+</div>
 
-  <div class="cart-footer">
+<div class="cart-footer">
 
-    <div class="cart-total">
-      <span>Total</span>
-      <strong id="cartTotal">0,00 €</strong>
-    </div>
+<div class="cart-total">
 
-    <button
-      id="checkoutBtn"
-      class="add-btn"
-      type="button"
-    >
-      Passer la commande
-    </button>
+<span>
+Total
+</span>
 
-  </div>
+<strong id="cartTotal">
+0,00 €
+</strong>
+
+</div>
+
+<button
+id="checkoutBtn"
+class="add-btn"
+type="button">
+Passer la commande
+</button>
+
+</div>
 
 </aside>
 
 <div id="modalLayer" class="modal-layer">
 
-  <div class="modal-box">
+<div class="modal-box">
 
-    <div class="modal-header">
+<div class="modal-header">
 
-      <h2 id="modalTitle">
-        NovaShop
-      </h2>
+<h2 id="modalTitle">
+NovaShop
+</h2>
 
-      <button
-        id="modalClose"
-        class="modal-close"
-        type="button"
-      >
-        ×
-      </button>
+<button
+id="modalClose"
+class="modal-close"
+type="button">
+×
+</button>
 
-    </div>
+</div>
 
-    <div id="modalContent" class="modal-content"></div>
+<div
+id="modalContent"
+class="modal-content">
+</div>
 
-  </div>
+</div>
 
 </div>
 
 <div id="toast" class="toast"></div>
 
-<script type="module" src="./app.js"></script>
+<script
+type="module"
+src="./app.js">
+</script>
 
 </body>
 </html>
