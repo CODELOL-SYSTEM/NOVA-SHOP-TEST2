@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#050912">
 <title>NovaShop</title>
 
 <style>
@@ -17,27 +18,49 @@
   --bg2:#09111f;
   --card:#0c1525;
   --card2:#101c30;
-  --border:#1d2b43;
-  --text:#fff;
-  --muted:#8fa1bb;
-  --blue:#2979ff;
-  --blue2:#1662dc;
-  --green:#39e58c;
+  --text:#f5f7fb;
+  --muted:#94a3b8;
+  --line:rgba(255,255,255,.09);
+  --accent:#4f8cff;
+  --accent2:#7c3aed;
+  --green:#22c55e;
+  --red:#ef4444;
   --yellow:#ffd84d;
-  --danger:#ff4f67;
+  --shadow:0 20px 60px rgba(0,0,0,.35);
+}
+
+:root[data-theme="light"]{
+  --bg:#f4f7fb;
+  --bg2:#eaf0f8;
+  --card:#fff;
+  --card2:#f8fafc;
+  --text:#111827;
+  --muted:#64748b;
+  --line:rgba(15,23,42,.12);
+  --shadow:0 20px 60px rgba(15,23,42,.12);
+}
+
+html{
+  scroll-behavior:smooth;
 }
 
 body{
-  font-family:Arial,Helvetica,sans-serif;
-  background:
-    radial-gradient(circle at top left,rgba(41,121,255,.12),transparent 30%),
-    linear-gradient(180deg,var(--bg),var(--bg2));
-  color:var(--text);
   min-height:100vh;
+  background:
+    radial-gradient(circle at 10% 0%,rgba(79,140,255,.12),transparent 30%),
+    radial-gradient(circle at 90% 10%,rgba(124,58,237,.10),transparent 30%),
+    var(--bg);
+  color:var(--text);
+  font-family:Inter,Arial,sans-serif;
+}
+
+body.modal-open{
+  overflow:hidden;
 }
 
 button,
 input,
+textarea,
 select{
   font:inherit;
 }
@@ -46,543 +69,748 @@ button{
   cursor:pointer;
 }
 
+button:disabled{
+  opacity:.5;
+  cursor:not-allowed;
+}
+
 a{
   color:inherit;
   text-decoration:none;
 }
 
-/* NAVBAR */
-
-.navbar{
+header{
   position:sticky;
   top:0;
-  z-index:100;
-  height:64px;
+  z-index:50;
+  background:rgba(5,9,18,.82);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--line);
+}
+
+:root[data-theme="light"] header{
+  background:rgba(255,255,255,.86);
+}
+
+.nav{
+  max-width:1400px;
+  margin:auto;
+  min-height:72px;
+  padding:12px 20px;
   display:flex;
   align-items:center;
-  justify-content:space-between;
-  padding:0 22px;
-  background:rgba(5,9,18,.94);
-  backdrop-filter:blur(14px);
-  border-bottom:1px solid var(--border);
+  gap:22px;
 }
 
 .logo{
   font-size:24px;
   font-weight:900;
   letter-spacing:-1px;
+  color:#fff;
 }
 
 .logo span{
-  color:var(--blue);
+  color:var(--accent);
 }
 
 .nav-links{
   display:flex;
+  gap:18px;
   align-items:center;
-  gap:8px;
+  flex:1;
 }
 
-.nav-links button{
-  border:1px solid transparent;
-  background:transparent;
-  color:#cdd8e8;
-  padding:9px 12px;
-  border-radius:8px;
+.nav-links a{
+  color:var(--muted);
+  font-weight:700;
+  transition:.2s;
 }
 
-.nav-links button:hover{
-  background:#101a2b;
-  border-color:var(--border);
-  color:#fff;
+.nav-links a:hover{
+  color:var(--text);
 }
 
 .nav-actions{
   display:flex;
+  gap:8px;
   align-items:center;
-  gap:7px;
 }
 
-.nav-btn{
-  width:38px;
-  height:38px;
-  border-radius:9px;
-  border:1px solid var(--border);
-  background:#0d1728;
-  color:white;
+.btn{
+  border:1px solid var(--line);
+  background:var(--card);
+  color:var(--text);
+  padding:10px 14px;
+  border-radius:12px;
+  font-weight:800;
+  transition:.2s;
 }
 
-.cart-count{
-  display:inline-flex;
-  min-width:18px;
-  height:18px;
-  align-items:center;
-  justify-content:center;
-  padding:0 4px;
-  border-radius:999px;
-  background:var(--blue);
-  color:white;
-  font-size:10px;
+.btn:hover{
+  transform:translateY(-1px);
+  border-color:rgba(79,140,255,.5);
+}
+
+.btn-primary,
+.add-btn{
+  border:0;
+  background:linear-gradient(135deg,var(--accent),#2563eb);
+  color:#fff;
+  padding:11px 15px;
+  border-radius:12px;
+  font-weight:900;
+  transition:.2s;
+}
+
+.btn-primary:hover,
+.add-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 10px 30px rgba(37,99,235,.25);
+}
+
+.view-btn{
+  border:1px solid var(--line);
+  background:var(--card2);
+  color:var(--text);
+  padding:11px 15px;
+  border-radius:12px;
   font-weight:800;
 }
 
-/* HERO */
+.view-btn:hover{
+  border-color:var(--accent);
+}
+
+.cart-button{
+  position:relative;
+}
+
+.badge{
+  position:absolute;
+  top:-7px;
+  right:-7px;
+  min-width:20px;
+  height:20px;
+  padding:0 5px;
+  border-radius:99px;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  background:var(--red);
+  color:#fff;
+  font-size:11px;
+  font-weight:900;
+}
 
 .hero{
-  width:min(1200px,calc(100% - 30px));
-  margin:26px auto 18px;
-  padding:28px;
-  border:1px solid var(--border);
-  border-radius:16px;
-  background:
-    radial-gradient(circle at 90% 10%,rgba(41,121,255,.22),transparent 32%),
-    linear-gradient(135deg,#0b1527,#08111f);
+  max-width:1400px;
+  margin:auto;
+  padding:85px 20px 55px;
+  display:grid;
+  grid-template-columns:1.2fr .8fr;
+  gap:40px;
+  align-items:center;
 }
 
 .hero h1{
-  font-size:38px;
-  margin-bottom:8px;
+  font-size:clamp(42px,6vw,78px);
+  line-height:.95;
+  letter-spacing:-4px;
+  margin-bottom:22px;
 }
 
 .hero h1 span{
-  color:var(--blue);
+  color:var(--accent);
 }
 
 .hero p{
   color:var(--muted);
-  max-width:700px;
-  line-height:1.5;
+  font-size:18px;
+  max-width:650px;
+  line-height:1.7;
 }
 
-/* SEARCH */
-
-.shop-tools{
-  width:min(1200px,calc(100% - 30px));
-  margin:0 auto 14px;
+.hero-actions{
   display:flex;
-  gap:8px;
+  gap:12px;
   flex-wrap:wrap;
+  margin-top:28px;
 }
 
-.search-box{
-  flex:1;
-  min-width:220px;
-  display:flex;
-  align-items:center;
-  border:1px solid var(--border);
-  background:#0b1525;
-  border-radius:9px;
-  padding:0 12px;
-}
-
-.search-box span{
-  color:var(--muted);
-  margin-right:8px;
-}
-
-.search-box input{
-  width:100%;
-  height:42px;
-  background:transparent;
-  border:0;
-  outline:0;
-  color:white;
-}
-
-.filter-select{
-  height:42px;
-  background:#0b1525;
-  color:white;
-  border:1px solid var(--border);
-  border-radius:9px;
-  padding:0 10px;
-  outline:none;
-}
-
-/* PRODUCTS */
-
-.products-section{
-  width:min(1200px,calc(100% - 30px));
-  margin:0 auto;
-}
-
-.section-head{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px;
-  margin-bottom:10px;
-}
-
-.section-head h2{
-  font-size:20px;
-}
-
-.section-head span{
-  color:var(--muted);
-  font-size:12px;
-}
-
-.products-grid{
-  width:100%;
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
-  gap:10px;
-  align-items:start;
-}
-
-.product-card{
-  min-width:0;
-  background:linear-gradient(180deg,#0d1728,#09111e);
-  border:1px solid var(--border);
-  border-radius:10px;
-  padding:6px;
-  position:relative;
-  overflow:hidden;
-  transition:.18s;
-}
-
-.product-card:hover{
-  transform:translateY(-2px);
-  border-color:#2d4a73;
-}
-
-.product-image{
-  width:100%;
-  height:60px;
-  background:#07101d;
-  border-radius:7px;
-  padding:3px;
+.hero-card{
+  min-height:300px;
+  border:1px solid var(--line);
+  border-radius:28px;
+  background:
+    linear-gradient(145deg,rgba(79,140,255,.12),rgba(124,58,237,.08)),
+    var(--card);
+  box-shadow:var(--shadow);
   display:flex;
   align-items:center;
   justify-content:center;
+  text-align:center;
+  padding:35px;
+}
+
+.hero-card-icon{
+  font-size:100px;
+  margin-bottom:15px;
+}
+
+.section{
+  max-width:1400px;
+  margin:auto;
+  padding:35px 20px;
+}
+
+.section-title{
+  font-size:32px;
+  margin-bottom:10px;
+}
+
+.section-subtitle{
+  color:var(--muted);
+  margin-bottom:24px;
+}
+
+.toolbar{
+  display:grid;
+  grid-template-columns:1fr 220px;
+  gap:12px;
+  margin-bottom:18px;
+}
+
+.input,
+select,
+textarea{
+  width:100%;
+  border:1px solid var(--line);
+  background:var(--card);
+  color:var(--text);
+  border-radius:12px;
+  padding:13px 14px;
+  outline:none;
+}
+
+.input:focus,
+select:focus,
+textarea:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(79,140,255,.1);
+}
+
+textarea{
+  resize:vertical;
+}
+
+.categories{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-bottom:25px;
+}
+
+.category-btn{
+  border:1px solid var(--line);
+  background:var(--card);
+  color:var(--muted);
+  padding:9px 13px;
+  border-radius:999px;
+  font-weight:800;
+}
+
+.category-btn.active{
+  background:var(--accent);
+  border-color:var(--accent);
+  color:#fff;
+}
+
+.products-head{
+  display:flex;
+  justify-content:space-between;
+  gap:15px;
+  align-items:center;
+  margin-bottom:18px;
+}
+
+.product-count{
+  color:var(--muted);
+}
+
+.product-grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:16px;
+}
+
+.product{
+  overflow:hidden;
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:20px;
+  box-shadow:0 10px 35px rgba(0,0,0,.12);
+  transition:.25s;
+  min-width:0;
+}
+
+.product:hover{
+  transform:translateY(-5px);
+  border-color:rgba(79,140,255,.45);
+  box-shadow:var(--shadow);
+}
+
+.product-img{
+  height:245px;
+  position:relative;
+  background:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
   overflow:hidden;
 }
 
-.product-image img{
+.product-img img{
   width:100%;
   height:100%;
-  max-width:100%;
-  max-height:54px;
   object-fit:contain;
+  transition:.3s;
 }
 
-.product-card h3{
-  font-size:10px;
-  line-height:1.15;
-  margin:3px 0 1px;
-  color:#fff;
-  font-weight:600;
-  display:-webkit-box;
-  -webkit-box-orient:vertical;
-  -webkit-line-clamp:2;
-  overflow:hidden;
-  min-height:23px;
-}
-
-.product-category{
-  font-size:7px;
-  color:var(--muted);
-  margin-bottom:1px;
-}
-
-.product-rating{
-  font-size:7px;
-  color:var(--yellow);
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  margin:1px 0;
-}
-
-.product-price{
-  font-size:13px;
-  font-weight:700;
-  color:#fff;
-  margin:1px 0;
-}
-
-.product-actions{
-  display:flex;
-  gap:3px;
-  margin-top:2px;
-}
-
-.product-actions button{
-  flex:1;
-  min-width:0;
-  padding:4px 3px;
-  border-radius:6px;
-  border:1px solid var(--border);
-  background:#101c30;
-  color:#fff;
-  font-size:7px;
-  cursor:pointer;
-}
-
-.product-actions button:hover{
-  background:#172640;
-}
-
-.favorite-btn{
-  position:absolute;
-  top:5px;
-  right:5px;
-  width:21px;
-  height:21px;
-  border-radius:50%;
-  border:1px solid var(--border);
-  background:rgba(5,9,18,.9);
-  color:white;
-  font-size:10px;
-  z-index:3;
-  cursor:pointer;
+.product:hover .product-img img{
+  transform:scale(1.04);
 }
 
 .new-badge{
   position:absolute;
-  left:5px;
-  top:5px;
-  z-index:3;
+  top:12px;
+  left:12px;
+  z-index:2;
   background:var(--green);
-  color:#04140c;
-  border-radius:4px;
-  padding:2px 4px;
-  font-size:6px;
-  font-weight:700;
-}
-
-/* REVIEWS */
-
-.reviews-section{
-  width:min(1200px,calc(100% - 30px));
-  margin:32px auto;
-}
-
-.reviews-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:10px;
-}
-
-.review-card{
-  background:#0b1525;
-  border:1px solid var(--border);
-  border-radius:11px;
-  padding:14px;
-}
-
-.review-stars{
-  color:var(--yellow);
-  margin-bottom:7px;
-}
-
-.review-card p{
-  color:#cad3e0;
-  font-size:13px;
-  line-height:1.45;
-}
-
-.review-user{
-  color:var(--muted);
-  font-size:11px;
-  margin-top:9px;
-}
-
-/* FAQ */
-
-.faq-section{
-  width:min(1000px,calc(100% - 30px));
-  margin:32px auto;
-}
-
-.faq-item{
-  background:#0b1525;
-  border:1px solid var(--border);
-  border-radius:10px;
-  margin-bottom:8px;
-  overflow:hidden;
-}
-
-.faq-question{
-  width:100%;
-  text-align:left;
-  background:transparent;
-  color:white;
-  border:0;
-  padding:14px;
-  font-weight:700;
-}
-
-.faq-answer{
-  padding:0 14px 14px;
-  color:var(--muted);
-  line-height:1.5;
-  font-size:13px;
-}
-
-/* MODAL */
-
-.modal-overlay{
-  position:fixed;
-  inset:0;
-  z-index:500;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding:15px;
-  background:rgba(0,0,0,.72);
-}
-
-.modal-overlay.active{
-  display:flex;
-}
-
-.modal{
-  width:min(700px,100%);
-  max-height:90vh;
-  overflow:auto;
-  background:#091321;
-  border:1px solid var(--border);
-  border-radius:15px;
-  padding:18px;
-  position:relative;
-}
-
-.modal-close{
-  position:absolute;
-  top:10px;
-  right:10px;
-  width:32px;
-  height:32px;
+  color:#04130a;
+  padding:7px 9px;
   border-radius:8px;
-  border:1px solid var(--border);
-  background:#101c30;
-  color:white;
+  font-size:11px;
+  font-weight:900;
 }
 
-.modal-content{
+.product-body{
+  padding:17px;
+}
+
+.product-cat{
+  color:var(--accent);
+  font-size:12px;
+  font-weight:900;
+  text-transform:uppercase;
+  letter-spacing:.4px;
+  margin-bottom:8px;
+}
+
+.product h3{
+  font-size:16px;
+  line-height:1.35;
+  min-height:44px;
+}
+
+.rating{
+  margin-top:10px;
+  display:flex;
+  gap:7px;
+  align-items:center;
+  color:var(--muted);
+  font-size:13px;
+}
+
+.stars{
+  color:var(--yellow);
+  letter-spacing:1px;
+}
+
+.price{
+  font-size:22px;
+  font-weight:950;
   margin-top:14px;
 }
 
-/* TOAST */
+.product-actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-top:15px;
+}
+
+.product-actions button{
+  width:100%;
+}
+
+.empty-products,
+.empty-cart{
+  grid-column:1/-1;
+  text-align:center;
+  padding:50px 20px;
+  color:var(--muted);
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:20px;
+}
+
+.trust-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:15px;
+}
+
+.trust-card{
+  padding:22px;
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:var(--card);
+}
+
+.trust-card strong{
+  display:block;
+  margin-bottom:8px;
+}
+
+.trust-card span{
+  color:var(--muted);
+  line-height:1.5;
+}
+
+.refunds{
+  padding:28px;
+  border-radius:20px;
+  border:1px solid var(--line);
+  background:var(--card);
+  line-height:1.7;
+}
+
+.faq{
+  display:grid;
+  gap:10px;
+}
+
+details{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:16px;
+}
+
+summary{
+  cursor:pointer;
+  font-weight:900;
+}
+
+details p{
+  color:var(--muted);
+  margin-top:12px;
+  line-height:1.6;
+}
+
+footer{
+  margin-top:60px;
+  padding:35px 20px;
+  border-top:1px solid var(--line);
+  color:var(--muted);
+  text-align:center;
+}
+
+.overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.65);
+  z-index:80;
+  display:none;
+}
+
+.overlay.open{
+  display:block;
+}
+
+.cart-drawer{
+  position:fixed;
+  top:0;
+  right:0;
+  width:min(460px,100%);
+  height:100vh;
+  z-index:90;
+  background:var(--bg2);
+  border-left:1px solid var(--line);
+  transform:translateX(100%);
+  transition:.25s;
+  display:flex;
+  flex-direction:column;
+}
+
+.cart-drawer.open{
+  transform:translateX(0);
+}
+
+.cart-header{
+  padding:20px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-bottom:1px solid var(--line);
+}
+
+.cart-items{
+  flex:1;
+  overflow:auto;
+  padding:15px;
+}
+
+.cart-item{
+  display:grid;
+  grid-template-columns:70px 1fr 30px;
+  gap:12px;
+  padding:12px 0;
+  border-bottom:1px solid var(--line);
+}
+
+.cart-item img{
+  width:70px;
+  height:70px;
+  object-fit:contain;
+  background:#fff;
+  border-radius:10px;
+}
+
+.cart-item-info{
+  min-width:0;
+}
+
+.cart-item-info strong{
+  display:block;
+  font-size:14px;
+  line-height:1.35;
+}
+
+.cart-item-info > span{
+  display:block;
+  margin-top:6px;
+  font-weight:800;
+}
+
+.cart-quantity{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-top:9px;
+}
+
+.cart-quantity button{
+  width:27px;
+  height:27px;
+  border:1px solid var(--line);
+  border-radius:7px;
+  background:var(--card);
+  color:var(--text);
+}
+
+.remove-cart{
+  border:0;
+  background:transparent;
+  color:var(--red);
+  font-size:24px;
+}
+
+.cart-footer{
+  padding:18px;
+  border-top:1px solid var(--line);
+}
+
+.cart-total{
+  display:flex;
+  justify-content:space-between;
+  font-size:22px;
+  margin-bottom:14px;
+}
+
+.cart-footer button{
+  width:100%;
+}
+
+.modal-layer{
+  position:fixed;
+  inset:0;
+  z-index:100;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+  background:rgba(0,0,0,.72);
+}
+
+.modal-layer.open{
+  display:flex;
+}
+
+.modal-box{
+  width:min(720px,100%);
+  max-height:92vh;
+  overflow:auto;
+  background:var(--bg2);
+  border:1px solid var(--line);
+  border-radius:22px;
+  box-shadow:var(--shadow);
+}
+
+.modal-header{
+  position:sticky;
+  top:0;
+  z-index:2;
+  padding:18px 20px;
+  display:flex;
+  justify-content:space-between;
+  gap:15px;
+  align-items:center;
+  background:var(--bg2);
+  border-bottom:1px solid var(--line);
+}
+
+.modal-header h2{
+  font-size:20px;
+}
+
+.modal-close{
+  border:0;
+  background:var(--card);
+  color:var(--text);
+  width:36px;
+  height:36px;
+  border-radius:10px;
+  font-size:22px;
+}
+
+.modal-content{
+  padding:22px;
+}
 
 .toast{
   position:fixed;
   right:18px;
   bottom:18px;
-  z-index:900;
-  min-width:220px;
-  max-width:350px;
-  padding:12px 14px;
-  background:#0d1728;
-  border:1px solid var(--border);
-  border-radius:9px;
-  color:white;
-  box-shadow:0 12px 35px rgba(0,0,0,.35);
-  opacity:0;
-  transform:translateY(15px);
-  pointer-events:none;
-  transition:.2s;
-}
-
-.toast.show{
-  opacity:1;
-  transform:translateY(0);
-}
-
-/* FOOTER */
-
-footer{
-  margin-top:40px;
-  border-top:1px solid var(--border);
-  background:#040811;
-  padding:28px 15px;
-}
-
-.footer-inner{
-  width:min(1200px,100%);
-  margin:auto;
+  z-index:200;
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-  gap:18px;
+  gap:8px;
 }
 
-.footer-col h3{
-  margin-bottom:8px;
-  font-size:14px;
+.toast-item{
+  min-width:280px;
+  max-width:420px;
+  padding:13px 15px;
+  border-radius:13px;
+  background:#111827;
+  color:#fff;
+  border:1px solid rgba(255,255,255,.1);
+  box-shadow:var(--shadow);
+  display:flex;
+  justify-content:space-between;
+  gap:15px;
+  align-items:center;
 }
 
-.footer-col p,
-.footer-col a{
+.toast-item.success{
+  border-color:rgba(34,197,94,.45);
+}
+
+.toast-item.error{
+  border-color:rgba(239,68,68,.5);
+}
+
+.toast-item button{
+  border:0;
+  background:transparent;
+  color:#fff;
+  font-size:20px;
+}
+
+label{
   display:block;
-  color:var(--muted);
-  font-size:12px;
-  line-height:1.7;
+  margin-bottom:7px;
+  font-weight:800;
 }
 
-.footer-bottom{
-  width:min(1200px,100%);
-  margin:22px auto 0;
-  padding-top:15px;
-  border-top:1px solid var(--border);
-  color:var(--muted);
-  font-size:11px;
+.order-card,
+.admin-order{
+  background:var(--card);
 }
 
-/* MOBILE */
+.timeline{
+  display:grid;
+  gap:8px;
+}
 
-@media(max-width:700px){
+.timeline-step{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:8px;
+  border-radius:9px;
+}
 
-  .navbar{
-    padding:0 10px;
+.timeline-step.active{
+  background:rgba(79,140,255,.1);
+}
+
+@media(max-width:1100px){
+  .product-grid{
+    grid-template-columns:repeat(3,minmax(0,1fr));
   }
 
-  .logo{
-    font-size:19px;
+  .trust-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+}
+
+@media(max-width:800px){
+  .nav{
+    flex-wrap:wrap;
   }
 
   .nav-links{
-    display:none;
+    order:3;
+    width:100%;
+    overflow:auto;
   }
 
   .hero{
-    padding:20px;
+    grid-template-columns:1fr;
+    padding-top:50px;
+  }
+
+  .toolbar{
+    grid-template-columns:1fr;
+  }
+
+  .product-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+}
+
+@media(max-width:520px){
+  .nav-actions{
+    width:100%;
+    overflow:auto;
+  }
+
+  .product-grid{
+    grid-template-columns:1fr;
+  }
+
+  .trust-grid{
+    grid-template-columns:1fr;
   }
 
   .hero h1{
-    font-size:28px;
+    font-size:45px;
   }
 
-  .products-grid{
-    grid-template-columns:repeat(2,minmax(0,1fr));
-    gap:7px;
-  }
-
-  .product-card{
-    padding:5px;
-  }
-
-  .product-image{
-    height:55px;
-  }
-
-  .product-image img{
-    max-height:49px;
-  }
-
-  .product-card h3{
-    font-size:9px;
-    min-height:21px;
-  }
-
-  .product-price{
-    font-size:12px;
-  }
-
-  .product-actions button{
-    padding:4px 2px;
-    font-size:7px;
+  .product-img{
+    height:250px;
   }
 }
 </style>
@@ -590,262 +818,330 @@ footer{
 
 <body>
 
-<header class="navbar">
+<header>
+  <nav class="nav">
 
-  <div class="logo">
-    Nova<span>Shop</span>
-  </div>
+    <a href="#" class="logo">
+      Nova<span>Shop</span>
+    </a>
 
-  <nav class="nav-links">
-    <button onclick="window.scrollTo({top:0,behavior:'smooth'})">Accueil</button>
-    <button onclick="document.getElementById('productsSection').scrollIntoView({behavior:'smooth'})">Produits</button>
-    <button onclick="document.getElementById('reviewsSection').scrollIntoView({behavior:'smooth'})">Avis</button>
-    <button onclick="document.getElementById('faqSection').scrollIntoView({behavior:'smooth'})">FAQ</button>
-  </nav>
-
-  <div class="nav-actions">
-    <button class="nav-btn" id="favoritesBtn">♡</button>
-    <button class="nav-btn" id="cartBtn">
-      🛒
-      <span class="cart-count" id="cartCount">0</span>
-    </button>
-  </div>
-
-</header>
-
-
-<main>
-
-  <section class="hero">
-
-    <h1>
-      Bienvenue sur <span>NovaShop</span>
-    </h1>
-
-    <p>
-      Découvre nos produits gaming, composants PC, périphériques,
-      bureaux, écrans et accessoires.
-    </p>
-
-  </section>
-
-
-  <section class="shop-tools">
-
-    <div class="search-box">
-      <span>🔎</span>
-      <input
-        type="text"
-        id="searchInput"
-        placeholder="Rechercher un produit..."
-      >
-    </div>
-
-    <select id="categoryFilter" class="filter-select">
-      <option value="all">Toutes les catégories</option>
-      <option value="Composants">Composants</option>
-      <option value="PC Gamer">PC Gamer</option>
-      <option value="Casques">Casques</option>
-      <option value="Claviers">Claviers</option>
-      <option value="Souris">Souris</option>
-      <option value="Stockage">Stockage</option>
-      <option value="Alimentation">Alimentation</option>
-      <option value="Boîtiers">Boîtiers</option>
-      <option value="Refroidissement">Refroidissement</option>
-      <option value="Écrans">Écrans</option>
-      <option value="Bureaux">Bureaux</option>
-      <option value="Chaises">Chaises</option>
-      <option value="Microphones">Microphones</option>
-      <option value="Éclairage">Éclairage</option>
-      <option value="GPU">GPU</option>
-    </select>
-
-    <select id="sortFilter" class="filter-select">
-      <option value="default">Trier</option>
-      <option value="priceLow">Prix croissant</option>
-      <option value="priceHigh">Prix décroissant</option>
-      <option value="rating">Meilleures notes</option>
-    </select>
-
-  </section>
-
-
-  <section class="products-section" id="productsSection">
-
-    <div class="section-head">
-      <h2>Nos produits</h2>
-      <span id="productCount">0 produit</span>
-    </div>
-
-    <div id="productsGrid" class="products-grid"></div>
-
-  </section>
-
-
-  <section class="reviews-section" id="reviewsSection">
-
-    <div class="section-head">
-      <h2>Avis clients</h2>
-      <span>Ce que pensent nos clients</span>
-    </div>
-
-    <div class="reviews-grid">
-
-      <div class="review-card">
-        <div class="review-stars">★★★★★</div>
-        <p>
-          Très bonne expérience, produit reçu rapidement et parfaitement emballé.
-        </p>
-        <div class="review-user">Client NovaShop</div>
-      </div>
-
-      <div class="review-card">
-        <div class="review-stars">★★★★★</div>
-        <p>
-          Site simple à utiliser et beaucoup de produits intéressants.
-        </p>
-        <div class="review-user">Client NovaShop</div>
-      </div>
-
-      <div class="review-card">
-        <div class="review-stars">★★★★☆</div>
-        <p>
-          Navigation rapide et produits bien présentés.
-        </p>
-        <div class="review-user">Client NovaShop</div>
-      </div>
-
-    </div>
-
-  </section>
-
-
-  <section class="faq-section" id="faqSection">
-
-    <div class="section-head">
-      <h2>Questions fréquentes</h2>
-    </div>
-
-    <div class="faq-item">
-      <button class="faq-question">
-        Comment acheter un produit ?
-      </button>
-      <div class="faq-answer">
-        Clique sur le produit puis utilise les boutons disponibles pour
-        consulter les informations ou l'ajouter au panier.
-      </div>
-    </div>
-
-    <div class="faq-item">
-      <button class="faq-question">
-        Comment fonctionne le panier ?
-      </button>
-      <div class="faq-answer">
-        Les produits ajoutés sont conservés dans ton panier pour préparer
-        ta commande.
-      </div>
-    </div>
-
-    <div class="faq-item">
-      <button class="faq-question">
-        Les produits sont-ils enregistrés ?
-      </button>
-      <div class="faq-answer">
-        NovaShop utilise Firebase pour gérer certaines données du site.
-      </div>
-    </div>
-
-  </section>
-
-</main>
-
-
-<div class="modal-overlay" id="modalOverlay">
-
-  <div class="modal">
-
-    <button class="modal-close" id="modalClose">
-      ✕
-    </button>
-
-    <div class="modal-content" id="modalContent"></div>
-
-  </div>
-
-</div>
-
-
-<div class="toast" id="toast"></div>
-
-
-<footer>
-
-  <div class="footer-inner">
-
-    <div class="footer-col">
-      <h3>NovaShop</h3>
-      <p>
-        Boutique gaming et informatique.
-      </p>
-    </div>
-
-    <div class="footer-col">
-      <h3>Boutique</h3>
+    <div class="nav-links">
+      <a href="#accueil">Accueil</a>
       <a href="#productsSection">Produits</a>
       <a href="#reviewsSection">Avis</a>
       <a href="#faqSection">FAQ</a>
     </div>
 
-    <div class="footer-col">
-      <h3>Informations</h3>
-      <p>Commandes</p>
-      <p>Paiements</p>
-      <p>Support</p>
+    <div class="nav-actions">
+
+      <button class="btn" id="settingsBtn" type="button">
+        ⚙️
+      </button>
+
+      <button class="btn" id="accountBtn" type="button">
+        👤 Compte
+      </button>
+
+      <button class="btn" id="ordersBtn" type="button">
+        📦 Commandes
+      </button>
+
+      <button class="btn" id="adminBtn" type="button" style="display:none">
+        🛡️ Admin
+      </button>
+
+      <button class="btn cart-button" id="cartBtn" type="button">
+        🛒 Panier
+        <span class="badge" id="cartBadge">0</span>
+      </button>
+
+    </div>
+
+  </nav>
+</header>
+
+<main>
+
+<section class="hero" id="accueil">
+
+  <div>
+
+    <h1>
+      Ton setup.<br>
+      <span>Ton niveau.</span>
+    </h1>
+
+    <p>
+      NovaShop rassemble composants PC, périphériques,
+      écrans, audio, streaming et accessoires gaming.
+    </p>
+
+    <div class="hero-actions">
+
+      <a href="#productsSection" class="btn-primary">
+        🛍️ Voir les produits
+      </a>
+
+      <button
+        class="view-btn"
+        id="heroCartBtn"
+        type="button"
+      >
+        🛒 Voir mon panier
+      </button>
+
     </div>
 
   </div>
 
-  <div class="footer-bottom">
-    © 2026 NovaShop. Tous droits réservés.
+  <div class="hero-card">
+    <div>
+      <div class="hero-card-icon">🎮</div>
+      <h2>NovaShop Gaming</h2>
+      <p style="margin-top:8px">
+        Performance, accessoires et setup.
+      </p>
+    </div>
   </div>
 
+</section>
+
+<section class="section" id="productsSection">
+
+  <h2 class="section-title">
+    Produits
+  </h2>
+
+  <p class="section-subtitle">
+    Trouve ton prochain équipement.
+  </p>
+
+  <div class="toolbar">
+
+    <input
+      class="input"
+      id="searchInput"
+      type="search"
+      placeholder="Rechercher un produit..."
+    >
+
+    <select id="sortSelect">
+      <option value="default">Trier par défaut</option>
+      <option value="price-low">Prix croissant</option>
+      <option value="price-high">Prix décroissant</option>
+      <option value="name">Nom A-Z</option>
+      <option value="new">Nouveautés</option>
+    </select>
+
+  </div>
+
+  <div id="categories" class="categories"></div>
+
+  <div class="products-head">
+    <h3>Catalogue</h3>
+    <span class="product-count" id="productCount">0 produits</span>
+  </div>
+
+  <div id="productGrid" class="product-grid"></div>
+
+</section>
+
+<section class="section">
+
+  <h2 class="section-title">
+    Pourquoi NovaShop ?
+  </h2>
+
+  <div class="trust-grid">
+
+    <div class="trust-card">
+      <strong>🚀 Rapidité</strong>
+      <span>Une boutique pensée pour trouver rapidement ton matériel.</span>
+    </div>
+
+    <div class="trust-card">
+      <strong>🛡️ Commandes</strong>
+      <span>Retrouve tes commandes depuis ton compte.</span>
+    </div>
+
+    <div class="trust-card">
+      <strong>📦 Suivi</strong>
+      <span>Le statut de livraison peut être mis à jour depuis l'administration.</span>
+    </div>
+
+    <div class="trust-card">
+      <strong>💳 Paiement</strong>
+      <span>PayPal et mode carte bancaire de démonstration.</span>
+    </div>
+
+  </div>
+
+</section>
+
+<section class="section" id="reviewsSection">
+
+  <h2 class="section-title">
+    ⭐ Avis clients
+  </h2>
+
+  <p class="section-subtitle">
+    Les avis affichés sur les produits sont des avis de démonstration.
+  </p>
+
+  <div class="trust-grid">
+
+    <div class="trust-card">
+      <strong>Lucas ⭐⭐⭐⭐⭐</strong>
+      <span>Très bon produit, livraison rapide.</span>
+    </div>
+
+    <div class="trust-card">
+      <strong>Maxime ⭐⭐⭐⭐⭐</strong>
+      <span>Produit conforme et bien emballé.</span>
+    </div>
+
+    <div class="trust-card">
+      <strong>Enzo ⭐⭐⭐⭐</strong>
+      <span>Bonne expérience sur NovaShop.</span>
+    </div>
+
+    <div class="trust-card">
+      <strong>NovaShop</strong>
+      <span>Les avis détaillés sont accessibles depuis chaque produit.</span>
+    </div>
+
+  </div>
+
+</section>
+
+<section class="section">
+
+  <h2 class="section-title">
+    ↩️ Retours
+  </h2>
+
+  <div class="refunds">
+    <p>
+      Pour une vraie boutique en production, les conditions de
+      retour et de remboursement doivent être définies selon
+      les règles applicables à ton activité.
+    </p>
+  </div>
+
+</section>
+
+<section class="section" id="faqSection">
+
+  <h2 class="section-title">
+    FAQ
+  </h2>
+
+  <div class="faq">
+
+    <details>
+      <summary>Comment commander ?</summary>
+      <p>
+        Ajoute tes produits au panier, connecte-toi puis ouvre
+        le checkout afin de renseigner ton adresse et ton mode
+        de paiement.
+      </p>
+    </details>
+
+    <details>
+      <summary>Comment voir mes commandes ?</summary>
+      <p>
+        Connecte-toi puis ouvre le bouton Commandes ou la section
+        Mes commandes depuis ton compte.
+      </p>
+    </details>
+
+    <details>
+      <summary>À quoi sert NOVA100 ?</summary>
+      <p>
+        NOVA100 applique une réduction de démonstration de 100 %
+        au panier pendant le checkout.
+      </p>
+    </details>
+
+  </div>
+
+</section>
+
+</main>
+
+<footer>
+  <strong>NovaShop</strong>
+  <p style="margin-top:8px">
+    Boutique gaming • Support : pc2alex.les@gmail.com
+  </p>
 </footer>
 
+<div id="overlay" class="overlay"></div>
 
-<script>
-document.querySelectorAll(".faq-question").forEach(button=>{
-  button.addEventListener("click",()=>{
-    const answer=button.nextElementSibling;
+<aside id="cartDrawer" class="cart-drawer">
 
-    if(answer.style.display==="none"){
-      answer.style.display="block";
-    }else{
-      answer.style.display="none";
-    }
-  });
-});
+  <div class="cart-header">
 
-document.querySelectorAll(".faq-answer").forEach(answer=>{
-  answer.style.display="block";
-});
+    <h2>🛒 Panier</h2>
 
-const modalOverlay=document.getElementById("modalOverlay");
-const modalClose=document.getElementById("modalClose");
+    <button
+      id="closeCart"
+      class="modal-close"
+      type="button"
+    >
+      ×
+    </button>
 
-if(modalClose){
-  modalClose.addEventListener("click",()=>{
-    modalOverlay.classList.remove("active");
-  });
-}
+  </div>
 
-if(modalOverlay){
-  modalOverlay.addEventListener("click",(e)=>{
-    if(e.target===modalOverlay){
-      modalOverlay.classList.remove("active");
-    }
-  });
-}
-</script>
+  <div id="cartItems" class="cart-items"></div>
+
+  <div class="cart-footer">
+
+    <div class="cart-total">
+      <span>Total</span>
+      <strong id="cartTotal">0,00 €</strong>
+    </div>
+
+    <button
+      id="checkoutBtn"
+      class="add-btn"
+      type="button"
+    >
+      Passer la commande
+    </button>
+
+  </div>
+
+</aside>
+
+<div id="modalLayer" class="modal-layer">
+
+  <div class="modal-box">
+
+    <div class="modal-header">
+
+      <h2 id="modalTitle">
+        NovaShop
+      </h2>
+
+      <button
+        id="modalClose"
+        class="modal-close"
+        type="button"
+      >
+        ×
+      </button>
+
+    </div>
+
+    <div id="modalContent" class="modal-content"></div>
+
+  </div>
+
+</div>
+
+<div id="toast" class="toast"></div>
 
 <script type="module" src="./app.js"></script>
 
