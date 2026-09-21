@@ -53,7 +53,6 @@ const db = getFirestore(firebaseApp);
 const ADMIN_EMAIL = "pc2alex.les@gmail.com";
 const ADMIN_CODE = "NOVA-ADMIN-2026";
 const ADMIN_ACCESS_KEY = "novaAdminAuthorized";
-
 const TEST_CARD_STORAGE_KEY = "novaTestCard";
 
 const FALLBACK_IMAGE =
@@ -463,7 +462,9 @@ let favorites = [];
 let reviewsCache = {};
 
 try {
-  cart = JSON.parse(localStorage.getItem("novaCart") || "[]");
+  cart = JSON.parse(
+    localStorage.getItem("novaCart") || "[]"
+  );
 
   if (!Array.isArray(cart)) {
     cart = [];
@@ -490,7 +491,6 @@ try {
 // ============================================================
 
 function money(value) {
-
   return Number(value || 0).toLocaleString(
     "fr-FR",
     {
@@ -502,7 +502,6 @@ function money(value) {
 
 
 function escapeHTML(value) {
-
   return String(value ?? "")
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
@@ -518,7 +517,6 @@ function escapeAttr(value) {
 
 
 function getProduct(id) {
-
   return products.find(
     product => product.id === id
   );
@@ -526,7 +524,6 @@ function getProduct(id) {
 
 
 function saveCart() {
-
   localStorage.setItem(
     "novaCart",
     JSON.stringify(cart)
@@ -535,7 +532,6 @@ function saveCart() {
 
 
 function saveFavorites() {
-
   localStorage.setItem(
     "novaFavorites",
     JSON.stringify(favorites)
@@ -544,7 +540,6 @@ function saveFavorites() {
 
 
 function getCartCount() {
-
   return cart.reduce(
     (total, item) =>
       total + Number(item.quantity || 0),
@@ -554,7 +549,6 @@ function getCartCount() {
 
 
 function getCartSubtotal() {
-
   return cart.reduce(
     (total, item) => {
 
@@ -726,13 +720,17 @@ function addToCart(id) {
     cart.find(item => item.id === id);
 
   if (existing) {
+
     existing.quantity =
       Number(existing.quantity || 0) + 1;
+
   } else {
+
     cart.push({
       id,
       quantity: 1
     });
+
   }
 
   saveCart();
@@ -856,6 +854,7 @@ function renderCart() {
             border-radius:10px;
             background:rgba(255,255,255,.04);
           ">
+
             <img
               src="${escapeAttr(product.image)}"
               alt="${escapeHTML(product.name)}"
@@ -870,6 +869,7 @@ function renderCart() {
                 this.src='${FALLBACK_IMAGE}';
               "
             >
+
           </div>
 
           <div>
@@ -962,12 +962,16 @@ function renderCart() {
           }
 
           if (Number(item.quantity) <= 1) {
+
             removeFromCart(item.id);
+
           } else {
+
             changeCartQuantity(
               item.id,
               Number(item.quantity) - 1
             );
+
           }
 
         }
@@ -989,10 +993,12 @@ function renderCart() {
             );
 
           if (item) {
+
             changeCartQuantity(
               item.id,
               Number(item.quantity) + 1
             );
+
           }
 
         }
@@ -1127,6 +1133,7 @@ function getFilteredProducts() {
         Number(!!b.new) -
         Number(!!a.new)
     );
+
   }
 
   return result;
@@ -1143,10 +1150,12 @@ function renderProducts() {
     getFilteredProducts();
 
   if (productCount) {
+
     productCount.textContent =
       `${filtered.length} produit${
         filtered.length > 1 ? "s" : ""
       }`;
+
   }
 
   if (!filtered.length) {
@@ -1157,6 +1166,7 @@ function renderProducts() {
         text-align:center;
         padding:40px;
       ">
+
         <div style="font-size:50px;">
           🔎
         </div>
@@ -1168,6 +1178,7 @@ function renderProducts() {
         <p>
           Essaie une autre recherche.
         </p>
+
       </div>
     `;
 
@@ -1189,14 +1200,13 @@ function renderProducts() {
           "
         >
 
-          <!-- IMAGE PETITE ET COMPACTE -->
           <div
             class="product-image-wrap"
             style="
               width:100%;
-              height:120px;
-              min-height:120px;
-              max-height:120px;
+              height:120px !important;
+              min-height:120px !important;
+              max-height:120px !important;
               display:flex;
               align-items:center;
               justify-content:center;
@@ -1214,11 +1224,11 @@ function renderProducts() {
               loading="lazy"
               style="
                 display:block;
-                width:auto;
-                height:auto;
-                max-width:90%;
-                max-height:110px;
-                object-fit:contain;
+                width:auto !important;
+                height:auto !important;
+                max-width:90% !important;
+                max-height:110px !important;
+                object-fit:contain !important;
                 object-position:center;
                 margin:auto;
               "
@@ -1264,14 +1274,12 @@ function renderProducts() {
               ${escapeHTML(product.category)}
             </div>
 
-            <h3
-              style="
-                font-size:14px;
-                line-height:1.25;
-                margin:0;
-                min-height:35px;
-              "
-            >
+            <h3 style="
+              font-size:14px;
+              line-height:1.25;
+              margin:0;
+              min-height:35px;
+            ">
               ${escapeHTML(product.name)}
             </h3>
 
@@ -1540,9 +1548,7 @@ function openProduct(id) {
     ?.addEventListener(
       "click",
       () => {
-
         addToCart(product.id);
-
       }
     );
 
@@ -1550,9 +1556,7 @@ function openProduct(id) {
     ?.addEventListener(
       "click",
       () => {
-
         openProductReviews(product.id);
-
       }
     );
 }
@@ -1574,7 +1578,8 @@ async function openProductReviews(productId) {
   showModal(
     `Avis - ${product.name}`,
     `
-      <div id="reviewsLoading"
+      <div
+        id="reviewsLoading"
         style="
           text-align:center;
           padding:25px;
@@ -1616,10 +1621,7 @@ async function openProductReviews(productId) {
     reviewsCache[productId] =
       reviews;
 
-    const loading =
-      $("reviewsLoading");
-
-    loading?.remove();
+    $("reviewsLoading")?.remove();
 
     const list =
       $("reviewsList");
@@ -1752,6 +1754,7 @@ function authError(error) {
 
     "auth/network-request-failed":
       "Erreur réseau."
+
   };
 
   return (
@@ -1853,11 +1856,9 @@ function showLoginForm() {
           $("loginSubmit");
 
         if (submit) {
-
           submit.disabled = true;
           submit.textContent =
             "Connexion...";
-
         }
 
         try {
@@ -2326,6 +2327,7 @@ async function openOrders() {
           b.createdAt?.seconds || 0;
 
         return dateB - dateA;
+
       }
     );
 
@@ -2374,6 +2376,10 @@ async function openOrders() {
           order.status ||
           "Enregistrée";
 
+        const customerName =
+          `${order.firstName || ""} ${order.lastName || ""}`
+            .trim();
+
         return `
           <div
             class="order-card"
@@ -2403,6 +2409,19 @@ async function openOrders() {
               </strong>
 
             </div>
+
+            ${
+              customerName
+                ? `
+                  <div style="
+                    margin-bottom:8px;
+                    opacity:.9;
+                  ">
+                    👤 ${escapeHTML(customerName)}
+                  </div>
+                `
+                : ""
+            }
 
             <div style="
               margin-bottom:12px;
@@ -2551,6 +2570,10 @@ function openOrderDetails(order) {
 
     }).join("");
 
+  const customerName =
+    `${order.firstName || ""} ${order.lastName || ""}`
+      .trim();
+
   const timelineHTML =
     status === "Annulée"
       ? `
@@ -2605,6 +2628,32 @@ function openOrderDetails(order) {
           background:rgba(80,120,255,.08);
           margin-bottom:18px;
         ">
+
+          ${
+            customerName
+              ? `
+                <div style="
+                  margin-bottom:9px;
+                  font-weight:700;
+                ">
+                  👤 ${escapeHTML(customerName)}
+                </div>
+              `
+              : ""
+          }
+
+          ${
+            order.userEmail
+              ? `
+                <div style="
+                  margin-bottom:9px;
+                  opacity:.8;
+                ">
+                  📧 ${escapeHTML(order.userEmail)}
+                </div>
+              `
+              : ""
+          }
 
           <strong>
             Statut :
@@ -2807,17 +2856,10 @@ function generateTestCard() {
     );
 
   const card = {
-
     number,
-
-    holder:
-      "NOVASHOP CARD",
-
-    expiry:
-      `${month}/${year}`,
-
+    holder: "NOVASHOP CARD",
+    expiry: `${month}/${year}`,
     cvv
-
   };
 
   localStorage.setItem(
@@ -2869,6 +2911,7 @@ function renderTestCardHTML() {
 
       </div>
     `;
+
   }
 
   return `
@@ -3032,6 +3075,47 @@ function openCheckout() {
       <form id="checkoutForm">
 
         <div style="
+          display:grid;
+          grid-template-columns:1fr 1fr;
+          gap:10px;
+          margin-bottom:14px;
+        ">
+
+          <div>
+
+            <label for="checkoutFirstName">
+              Prénom
+            </label>
+
+            <input
+              id="checkoutFirstName"
+              type="text"
+              autocomplete="given-name"
+              placeholder="Ton prénom"
+              required
+            >
+
+          </div>
+
+          <div>
+
+            <label for="checkoutLastName">
+              Nom
+            </label>
+
+            <input
+              id="checkoutLastName"
+              type="text"
+              autocomplete="family-name"
+              placeholder="Ton nom"
+              required
+            >
+
+          </div>
+
+        </div>
+
+        <div style="
           margin-bottom:14px;
         ">
 
@@ -3043,6 +3127,7 @@ function openCheckout() {
             id="checkoutAddress"
             required
             rows="4"
+            autocomplete="street-address"
             placeholder="Adresse complète"
           ></textarea>
 
@@ -3311,6 +3396,7 @@ function openCheckout() {
 
               </div>
             `;
+
           }
 
         }
@@ -3326,12 +3412,50 @@ function openCheckout() {
 
         event.preventDefault();
 
+        const firstName =
+          $("checkoutFirstName")
+            ?.value.trim() || "";
+
+        const lastName =
+          $("checkoutLastName")
+            ?.value.trim() || "";
+
         const address =
           $("checkoutAddress")
             ?.value.trim() || "";
 
         const errorBox =
           $("checkoutError");
+
+        if (!firstName) {
+
+          if (errorBox) {
+
+            errorBox.textContent =
+              "Indique ton prénom.";
+
+            errorBox.style.display =
+              "block";
+
+          }
+
+          return;
+        }
+
+        if (!lastName) {
+
+          if (errorBox) {
+
+            errorBox.textContent =
+              "Indique ton nom.";
+
+            errorBox.style.display =
+              "block";
+
+          }
+
+          return;
+        }
 
         if (!address) {
 
@@ -3397,6 +3521,7 @@ function openCheckout() {
               throw new Error(
                 "Aucune carte n'a été créée dans l'administration."
               );
+
             }
 
             const enteredNumber =
@@ -3451,6 +3576,7 @@ function openCheckout() {
               throw new Error(
                 "Les informations de carte sont incorrectes."
               );
+
             }
 
             paymentStatus =
@@ -3472,7 +3598,7 @@ function openCheckout() {
                   product?.price ||
                   0,
                 quantity:
-                  item.quantity
+                  Number(item.quantity || 1)
               };
 
             });
@@ -3485,6 +3611,9 @@ function openCheckout() {
             userEmail:
               currentUser.email || "",
 
+            firstName,
+            lastName,
+
             items:
               orderItems,
 
@@ -3495,6 +3624,9 @@ function openCheckout() {
 
             address,
 
+            city:
+              "",
+
             status:
               "Enregistrée",
 
@@ -3503,9 +3635,6 @@ function openCheckout() {
             paymentStatus,
 
             tracking:
-              "",
-
-            city:
               "",
 
             estimatedDelivery:
@@ -3655,6 +3784,10 @@ function printInvoice(order) {
 
     }).join("");
 
+  const customerName =
+    `${order.firstName || ""} ${order.lastName || ""}`
+      .trim();
+
   const invoiceWindow =
     window.open(
       "",
@@ -3767,6 +3900,18 @@ function printInvoice(order) {
         Client
       </h3>
 
+      ${
+        customerName
+          ? `
+            <p>
+              <strong>
+                ${escapeHTML(customerName)}
+              </strong>
+            </p>
+          `
+          : ""
+      }
+
       <p>
         ${escapeHTML(
           order.userEmail || ""
@@ -3778,6 +3923,16 @@ function printInvoice(order) {
           order.address || ""
         )}
       </p>
+
+      ${
+        order.city
+          ? `
+            <p>
+              ${escapeHTML(order.city)}
+            </p>
+          `
+          : ""
+      }
 
       <h3>
         Produits
@@ -3942,6 +4097,7 @@ async function loadAdmin() {
           b.createdAt?.seconds || 0;
 
         return bTime - aTime;
+
       }
     );
 
@@ -4089,6 +4245,10 @@ function renderAdmin(orders) {
                   )
                   .join(", ");
 
+              const customerName =
+                `${order.firstName || ""} ${order.lastName || ""}`
+                  .trim();
+
               return `
 
                 <div
@@ -4122,10 +4282,31 @@ function renderAdmin(orders) {
 
                   </div>
 
+                  ${
+                    customerName
+                      ? `
+                        <p style="
+                          margin:8px 0;
+                        ">
+                          👤 <strong>
+                            ${escapeHTML(customerName)}
+                          </strong>
+                        </p>
+                      `
+                      : `
+                        <p style="
+                          margin:8px 0;
+                        ">
+                          👤 Nom non renseigné
+                        </p>
+                      `
+                  }
+
                   <p style="
                     margin:8px 0;
+                    opacity:.85;
                   ">
-                    👤 ${
+                    📧 ${
                       escapeHTML(
                         order.userEmail ||
                         "Inconnu"
@@ -4353,72 +4534,7 @@ function renderAdmin(orders) {
     );
 
 
-  $("generateTestCard")
-    ?.addEventListener(
-      "click",
-      () => {
-
-        generateTestCard();
-
-        const container =
-          $("testCardContainer");
-
-        if (container) {
-
-          container.innerHTML =
-            renderTestCardHTML();
-
-          $("generateTestCard")
-            ?.addEventListener(
-              "click",
-              () => {
-
-                generateTestCard();
-
-                const updated =
-                  $("testCardContainer");
-
-                if (updated) {
-
-                  updated.innerHTML =
-                    renderTestCardHTML();
-
-                  attachTestCardButton();
-                }
-
-              }
-            );
-
-        }
-
-      }
-    );
-
-
-  function attachTestCardButton() {
-
-    $("generateTestCard")
-      ?.addEventListener(
-        "click",
-        () => {
-
-          generateTestCard();
-
-          const container =
-            $("testCardContainer");
-
-          if (container) {
-
-            container.innerHTML =
-              renderTestCardHTML();
-
-            attachTestCardButton();
-
-          }
-
-        }
-      );
-  }
+  attachTestCardButton();
 
 
   document
@@ -4501,31 +4617,72 @@ function renderAdmin(orders) {
 }
 
 
+function attachTestCardButton() {
+
+  const button =
+    $("generateTestCard");
+
+  if (!button) {
+    return;
+  }
+
+  button.addEventListener(
+    "click",
+    () => {
+
+      generateTestCard();
+
+      const container =
+        $("testCardContainer");
+
+      if (container) {
+
+        container.innerHTML =
+          renderTestCardHTML();
+
+        attachTestCardButton();
+
+      }
+
+    }
+  );
+}
+
+
 async function saveAdminOrder(id) {
 
   try {
 
+    const safeId =
+      typeof CSS !== "undefined" &&
+      typeof CSS.escape === "function"
+        ? CSS.escape(id)
+        : id.replace(
+            /["\\]/g,
+            "\\$&"
+          );
+
     const status =
       document.querySelector(
-        `.admin-status[data-id="${CSS.escape(id)}"]`
+        `.admin-status[data-id="${safeId}"]`
       )?.value ||
       "Enregistrée";
 
     const city =
       document.querySelector(
-        `.admin-city[data-id="${CSS.escape(id)}"]`
+        `.admin-city[data-id="${safeId}"]`
       )?.value ||
       "";
 
     const tracking =
       document.querySelector(
-        `.admin-tracking[data-id="${CSS.escape(id)}"]`
+        `.admin-tracking[data-id="${safeId}"]`
       )?.value ||
       "";
 
     const estimatedDelivery =
       document.querySelector(
-        `.admin-delivery[data-id="${CSS.escape(id)}"]`
+        `.admin-delivery[data-id="${safeId}"]`
       )?.value ||
       "";
 
@@ -4555,6 +4712,7 @@ async function saveAdminOrder(id) {
       }`,
       "error"
     );
+
   }
 }
 
@@ -4589,6 +4747,7 @@ async function markOrderPaid(id) {
       }`,
       "error"
     );
+
   }
 }
 
@@ -4628,6 +4787,7 @@ async function deleteAdminOrder(id) {
       }`,
       "error"
     );
+
   }
 }
 
@@ -4679,6 +4839,7 @@ function applyTheme() {
       prefersDark
         ? "dark"
         : "light";
+
   }
 }
 
