@@ -1,7 +1,9 @@
 // ============================================================
 // NOVASHOP - APP.JS COMPLET
+// PARTIE 1/2
 // Firebase Auth + Firestore
 // Produits + panier + comptes + commandes + admin
+// Carte de test fictive générable depuis le dashboard
 // ============================================================
 
 import {
@@ -40,7 +42,7 @@ const firebaseConfig = {
   projectId:"novashop-4ee63",
   storageBucket:"novashop-4ee63.firebasestorage.app",
   messagingSenderId:"1044964015809",
-  appId:"1:1044964015809:web:4eafe0b1aede48f8539e40",
+  appId:"1:1044964015809:web:4eafe48f8539e40",
   measurementId:"G-XNY5X2VMY9"
 };
 
@@ -61,6 +63,8 @@ const PAYPAL_BASE = "https://paypal.me/SH0PNOVA";
 
 const FALLBACK_IMAGE =
   "https://placehold.co/800x800/111827/ffffff?text=NovaShop";
+
+const TEST_CARD_KEY = "novaTestCard";
 
 
 // ============================================================
@@ -587,6 +591,165 @@ function getCartSubtotal(){
 
     },
     0
+  );
+}
+
+
+// ============================================================
+// CARTE DE TEST
+// ============================================================
+
+function getTestCard(){
+
+  try{
+
+    const card=
+      JSON.parse(
+        localStorage.getItem(TEST_CARD_KEY)||"null"
+      );
+
+    if(
+      card&&
+      card.number&&
+      card.expiry&&
+      card.cvv&&
+      card.name
+    ){
+      return card;
+    }
+
+  }catch(error){
+
+    console.warn(
+      "Impossible de lire la carte de test.",
+      error
+    );
+  }
+
+  return null;
+}
+
+
+function saveTestCard(card){
+
+  localStorage.setItem(
+    TEST_CARD_KEY,
+    JSON.stringify(card)
+  );
+}
+
+
+function generateTestCard(){
+
+  let number="";
+
+  for(let i=0;i<4;i++){
+
+    const block=
+      String(
+        Math.floor(
+          1000+
+          Math.random()*9000
+        )
+      );
+
+    number+=
+      block;
+  }
+
+  const month=
+    String(
+      Math.floor(
+        1+
+        Math.random()*12
+      )
+    ).padStart(2,"0");
+
+  const year=
+    String(
+      new Date().getFullYear()+
+      2+
+      Math.floor(Math.random()*4)
+    ).slice(-2);
+
+  const cvv=
+    String(
+      Math.floor(
+        100+
+        Math.random()*900
+      )
+    );
+
+  const card={
+    number,
+    expiry:`${month}/${year}`,
+    cvv,
+    name:"NOVASHOP TEST",
+    type:"TEST",
+    createdAt:new Date().toISOString()
+  };
+
+  saveTestCard(card);
+
+  return card;
+}
+
+
+function maskCardNumber(number){
+
+  const clean=
+    String(number||"")
+      .replace(/\D/g,"");
+
+  if(clean.length<4){
+    return "•••• •••• •••• ••••";
+  }
+
+  return `•••• •••• •••• ${clean.slice(-4)}`;
+}
+
+
+function formatCardNumber(value){
+
+  return String(value||"")
+    .replace(/\D/g,"")
+    .slice(0,16)
+    .replace(/(.{4})/g,"$1 ")
+    .trim();
+}
+
+
+function validCardNumber(value){
+
+  const number=
+    String(value||"")
+      .replace(/\D/g,"");
+
+  return /^\d{16}$/.test(number);
+}
+
+
+function validExpiry(value){
+
+  const match=
+    String(value||"")
+      .match(/^(\d{2})\/(\d{2})$/);
+
+  if(!match){
+    return false;
+  }
+
+  const month=
+    Number(match[1]);
+
+  return month>=1&&month<=12;
+}
+
+
+function validCVV(value){
+
+  return /^\d{3,4}$/.test(
+    String(value||"")
   );
 }
 
@@ -2321,7 +2484,10 @@ async function openOrders(){
       `;
     }
   }
-}
+}// ============================================================
+// NOVASHOP - APP.JS COMPLET
+// PARTIE 2/2
+// ============================================================
 
 
 // ============================================================
@@ -2399,6 +2565,56 @@ function openOrderDetails(order){
 
     }).join("");
 
+  const address=
+    order.address||{};
+
+  const hasStructuredAddress=
+    typeof address==="object"&&
+    !Array.isArray(address);
+
+  const addressHTML=
+    hasStructuredAddress
+      ?`
+
+        <div style="
+          line-height:1.8;
+          color:var(--muted);
+        ">
+
+          <div>
+            ${escapeHTML(
+              `${address.firstName||""} ${address.lastName||""}`.trim()
+            )}
+          </div>
+
+          <div>
+            ${escapeHTML(address.street||"")}
+          </div>
+
+          <div>
+            ${escapeHTML(
+              `${address.postalCode||""} ${address.city||""}`.trim()
+            )}
+          </div>
+
+          <div>
+            ${escapeHTML(address.country||"")}
+          </div>
+
+        </div>
+
+      `
+      :`
+
+        <p style="
+          color:var(--muted);
+          line-height:1.7;
+        ">
+          ${escapeHTML(address||"")}
+        </p>
+
+      `;
+
   const timelineHTML=
     status==="Annulée"
       ?`
@@ -2461,7 +2677,7 @@ function openOrderDetails(order){
             order.tracking
               ?`
                 <div style="margin-top:8px">
-                  Suivi :
+                  📦 Suivi :
                   ${escapeHTML(order.tracking)}
                 </div>
               `
@@ -2483,7 +2699,7 @@ function openOrderDetails(order){
             order.estimatedDelivery
               ?`
                 <div style="margin-top:8px">
-                  Livraison estimée :
+                  🚚 Livraison estimée :
                   ${escapeHTML(
                     order.estimatedDelivery
                   )}
@@ -2494,7 +2710,9 @@ function openOrderDetails(order){
 
         </div>
 
-        <h3>Suivi</h3>
+        <h3>
+          Suivi
+        </h3>
 
         <div style="
           margin:12px 0 20px;
@@ -2502,7 +2720,9 @@ function openOrderDetails(order){
           ${timelineHTML}
         </div>
 
-        <h3>Produits</h3>
+        <h3>
+          Produits
+        </h3>
 
         <div style="
           margin:10px 0 20px;
@@ -2510,20 +2730,18 @@ function openOrderDetails(order){
           ${productsHTML}
         </div>
 
-        ${
-          order.address
-            ?`
-              <h3>Livraison</h3>
+        <h3>
+          Livraison
+        </h3>
 
-              <p style="
-                margin:8px 0 20px;
-                color:var(--muted);
-              ">
-                ${escapeHTML(order.address)}
-              </p>
-            `
-            :""
-        }
+        <div style="
+          padding:14px;
+          margin:10px 0 20px;
+          border-radius:14px;
+          background:rgba(255,255,255,.04);
+        ">
+          ${addressHTML}
+        </div>
 
         <div style="
           display:flex;
@@ -2533,7 +2751,9 @@ function openOrderDetails(order){
           border-top:1px solid var(--line);
         ">
 
-          <strong>Total</strong>
+          <strong>
+            Total
+          </strong>
 
           <strong>
             ${money(order.total||0)}
@@ -2601,28 +2821,131 @@ function openCheckout(){
   const subtotal=
     getCartSubtotal();
 
+  const testCard=
+    getTestCard();
+
   showModal(
     "Finaliser la commande",
     `
 
       <form id="checkoutForm">
 
-        <label for="checkoutAddress">
-          Adresse de livraison
-        </label>
+        <h3>
+          📦 Adresse de livraison
+        </h3>
 
-        <textarea
-          id="checkoutAddress"
-          required
-          rows="4"
-          placeholder="Adresse complète"
-        ></textarea>
+        <div style="
+          display:grid;
+          grid-template-columns:1fr 1fr;
+          gap:12px;
+          margin-top:12px;
+        ">
+
+          <div>
+            <label for="checkoutFirstName">
+              Prénom
+            </label>
+
+            <input
+              id="checkoutFirstName"
+              type="text"
+              required
+              placeholder="Prénom"
+              autocomplete="given-name"
+            >
+          </div>
+
+          <div>
+            <label for="checkoutLastName">
+              Nom
+            </label>
+
+            <input
+              id="checkoutLastName"
+              type="text"
+              required
+              placeholder="Nom"
+              autocomplete="family-name"
+            >
+          </div>
+
+          <div style="
+            grid-column:1 / -1;
+          ">
+
+            <label for="checkoutStreet">
+              Adresse
+            </label>
+
+            <input
+              id="checkoutStreet"
+              type="text"
+              required
+              placeholder="12 rue Exemple"
+              autocomplete="street-address"
+            >
+
+          </div>
+
+          <div>
+
+            <label for="checkoutPostalCode">
+              Code postal
+            </label>
+
+            <input
+              id="checkoutPostalCode"
+              type="text"
+              required
+              inputmode="numeric"
+              maxlength="10"
+              placeholder="59000"
+              autocomplete="postal-code"
+            >
+
+          </div>
+
+          <div>
+
+            <label for="checkoutCity">
+              Ville
+            </label>
+
+            <input
+              id="checkoutCity"
+              type="text"
+              required
+              placeholder="Lille"
+              autocomplete="address-level2"
+            >
+
+          </div>
+
+          <div style="
+            grid-column:1 / -1;
+          ">
+
+            <label for="checkoutCountry">
+              Pays
+            </label>
+
+            <input
+              id="checkoutCountry"
+              type="text"
+              required
+              value="France"
+              autocomplete="country-name"
+            >
+
+          </div>
+
+        </div>
 
         <div style="
           padding:15px;
           border-radius:14px;
           background:rgba(255,255,255,.05);
-          margin:18px 0;
+          margin:20px 0;
         ">
 
           <div style="
@@ -2660,7 +2983,7 @@ function openCheckout(){
         </div>
 
         <h3>
-          Mode de paiement
+          💳 Mode de paiement
         </h3>
 
         <div style="
@@ -2692,6 +3015,201 @@ function openCheckout(){
           id="paymentMethod"
           value=""
         >
+
+        <div
+          id="cardFields"
+          style="
+            display:none;
+            margin-top:15px;
+          "
+        >
+
+          <div style="
+            padding:15px;
+            border-radius:16px;
+            background:linear-gradient(
+              135deg,
+              #111827,
+              #172554
+            );
+            border:1px solid rgba(255,255,255,.12);
+            margin-bottom:16px;
+          ">
+
+            <div style="
+              display:flex;
+              justify-content:space-between;
+              align-items:center;
+            ">
+
+              <strong>
+                NOVASHOP
+              </strong>
+
+              <span>
+                💳
+              </span>
+
+            </div>
+
+            <div
+              id="cardPreviewNumber"
+              style="
+                font-size:20px;
+                letter-spacing:2px;
+                margin:25px 0 18px;
+              "
+            >
+              ${testCard
+                ?escapeHTML(
+                  maskCardNumber(testCard.number)
+                )
+                :"•••• •••• •••• ••••"}
+            </div>
+
+            <div style="
+              display:flex;
+              justify-content:space-between;
+              font-size:12px;
+            ">
+
+              <div>
+
+                <div style="opacity:.6">
+                  TITULAIRE
+                </div>
+
+                <strong id="cardPreviewName">
+                  ${testCard
+                    ?escapeHTML(testCard.name)
+                    :"NOM TITULAIRE"}
+                </strong>
+
+              </div>
+
+              <div>
+
+                <div style="opacity:.6">
+                  EXP
+                </div>
+
+                <strong id="cardPreviewExpiry">
+                  ${testCard
+                    ?escapeHTML(testCard.expiry)
+                    :"MM/AA"}
+                </strong>
+
+              </div>
+
+            </div>
+
+          </div>
+
+          <label for="checkoutCardNumber">
+            Numéro de carte
+          </label>
+
+          <input
+            id="checkoutCardNumber"
+            type="text"
+            inputmode="numeric"
+            autocomplete="cc-number"
+            maxlength="19"
+            placeholder="0000 0000 0000 0000"
+            value="${
+              testCard
+                ?escapeHTML(
+                  formatCardNumber(testCard.number)
+                )
+                :""
+            }"
+          >
+
+          <label
+            for="checkoutCardName"
+            style="margin-top:12px"
+          >
+            Nom sur la carte
+          </label>
+
+          <input
+            id="checkoutCardName"
+            type="text"
+            autocomplete="cc-name"
+            placeholder="NOM TITULAIRE"
+            value="${
+              testCard
+                ?escapeHTML(testCard.name)
+                :""
+            }"
+          >
+
+          <div style="
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:12px;
+            margin-top:12px;
+          ">
+
+            <div>
+
+              <label for="checkoutCardExpiry">
+                Expiration
+              </label>
+
+              <input
+                id="checkoutCardExpiry"
+                type="text"
+                inputmode="numeric"
+                autocomplete="cc-exp"
+                maxlength="5"
+                placeholder="MM/AA"
+                value="${
+                  testCard
+                    ?escapeHTML(testCard.expiry)
+                    :""
+                }"
+              >
+
+            </div>
+
+            <div>
+
+              <label for="checkoutCardCVV">
+                CVV
+              </label>
+
+              <input
+                id="checkoutCardCVV"
+                type="password"
+                inputmode="numeric"
+                autocomplete="cc-csc"
+                maxlength="4"
+                placeholder="•••"
+                value="${
+                  testCard
+                    ?escapeHTML(testCard.cvv)
+                    :""
+                }"
+              >
+
+            </div>
+
+          </div>
+
+          <div style="
+            margin-top:12px;
+            padding:10px 12px;
+            border-radius:10px;
+            background:rgba(80,120,255,.08);
+            font-size:12px;
+            color:var(--muted);
+          ">
+            🔒 Les données de carte saisies ici
+            ne sont pas enregistrées dans la commande.
+          </div>
+
+        </div>
 
         <div
           id="paymentInfo"
@@ -2752,6 +3270,104 @@ function openCheckout(){
   updateCheckout();
 
 
+  const cardNumberInput=
+    $("checkoutCardNumber");
+
+  const cardNameInput=
+    $("checkoutCardName");
+
+  const cardExpiryInput=
+    $("checkoutCardExpiry");
+
+  const cardCVVInput=
+    $("checkoutCardCVV");
+
+
+  cardNumberInput?.addEventListener(
+    "input",
+    event=>{
+
+      const formatted=
+        formatCardNumber(
+          event.target.value
+        );
+
+      event.target.value=
+        formatted;
+
+      const preview=
+        $("cardPreviewNumber");
+
+      if(preview){
+
+        preview.textContent=
+          formatted||
+          "•••• •••• •••• ••••";
+      }
+    }
+  );
+
+
+  cardNameInput?.addEventListener(
+    "input",
+    event=>{
+
+      const preview=
+        $("cardPreviewName");
+
+      if(preview){
+
+        preview.textContent=
+          event.target.value
+            .toUpperCase()||
+          "NOM TITULAIRE";
+      }
+    }
+  );
+
+
+  cardExpiryInput?.addEventListener(
+    "input",
+    event=>{
+
+      let value=
+        event.target.value
+          .replace(/\D/g,"")
+          .slice(0,4);
+
+      if(value.length>2){
+
+        value=
+          `${value.slice(0,2)}/${value.slice(2)}`;
+      }
+
+      event.target.value=value;
+
+      const preview=
+        $("cardPreviewExpiry");
+
+      if(preview){
+
+        preview.textContent=
+          value||
+          "MM/AA";
+      }
+    }
+  );
+
+
+  cardCVVInput?.addEventListener(
+    "input",
+    event=>{
+
+      event.target.value=
+        event.target.value
+          .replace(/\D/g,"")
+          .slice(0,4);
+    }
+  );
+
+
   document
     .querySelectorAll(
       ".payment-choice"
@@ -2786,36 +3402,48 @@ function openCheckout(){
           const info=
             $("paymentInfo");
 
-          if(!info){
-            return;
-          }
+          const cardFields=
+            $("cardFields");
 
           if(paymentMethod==="paypal"){
 
-            info.innerHTML=`
-              <div style="
-                padding:12px;
-                border-radius:12px;
-                background:rgba(60,130,255,.1);
-              ">
-                🅿️ Tu seras redirigé vers
-                PayPal pour effectuer
-                le paiement.
-              </div>
-            `;
+            if(cardFields){
+              cardFields.style.display="none";
+            }
+
+            if(info){
+
+              info.innerHTML=`
+                <div style="
+                  padding:12px;
+                  border-radius:12px;
+                  background:rgba(60,130,255,.1);
+                ">
+                  🅿️ Tu seras redirigé vers
+                  PayPal pour effectuer le paiement.
+                </div>
+              `;
+            }
 
           }else{
 
-            info.innerHTML=`
-              <div style="
-                padding:12px;
-                border-radius:12px;
-                background:rgba(255,180,0,.1);
-              ">
-                💳 Paiement CB en mode
-                démonstration.
-              </div>
-            `;
+            if(cardFields){
+              cardFields.style.display="block";
+            }
+
+            if(info){
+
+              info.innerHTML=`
+                <div style="
+                  padding:12px;
+                  border-radius:12px;
+                  background:rgba(80,120,255,.08);
+                ">
+                  💳 Entre les informations de ta carte
+                  pour continuer.
+                </div>
+              `;
+            }
           }
         }
       );
@@ -2829,23 +3457,52 @@ function openCheckout(){
 
         event.preventDefault();
 
-        const address=
-          $("checkoutAddress")
+        const firstName=
+          $("checkoutFirstName")
+            ?.value.trim()||"";
+
+        const lastName=
+          $("checkoutLastName")
+            ?.value.trim()||"";
+
+        const street=
+          $("checkoutStreet")
+            ?.value.trim()||"";
+
+        const postalCode=
+          $("checkoutPostalCode")
+            ?.value.trim()||"";
+
+        const city=
+          $("checkoutCity")
+            ?.value.trim()||"";
+
+        const country=
+          $("checkoutCountry")
             ?.value.trim()||"";
 
         const errorBox=
           $("checkoutError");
 
-        if(!address){
+
+        if(
+          !firstName||
+          !lastName||
+          !street||
+          !postalCode||
+          !city||
+          !country
+        ){
 
           errorBox.textContent=
-            "Indique ton adresse de livraison.";
+            "Remplis tous les champs de livraison.";
 
           errorBox.style.display=
             "block";
 
           return;
         }
+
 
         if(!paymentMethod){
 
@@ -2858,6 +3515,75 @@ function openCheckout(){
           return;
         }
 
+
+        if(paymentMethod==="card"){
+
+          const cardNumber=
+            $("checkoutCardNumber")
+              ?.value.trim()||"";
+
+          const cardName=
+            $("checkoutCardName")
+              ?.value.trim()||"";
+
+          const cardExpiry=
+            $("checkoutCardExpiry")
+              ?.value.trim()||"";
+
+          const cardCVV=
+            $("checkoutCardCVV")
+              ?.value.trim()||"";
+
+
+          if(!validCardNumber(cardNumber)){
+
+            errorBox.textContent=
+              "Le numéro de carte doit contenir 16 chiffres.";
+
+            errorBox.style.display=
+              "block";
+
+            return;
+          }
+
+
+          if(!cardName){
+
+            errorBox.textContent=
+              "Indique le nom présent sur la carte.";
+
+            errorBox.style.display=
+              "block";
+
+            return;
+          }
+
+
+          if(!validExpiry(cardExpiry)){
+
+            errorBox.textContent=
+              "Indique une expiration valide au format MM/AA.";
+
+            errorBox.style.display=
+              "block";
+
+            return;
+          }
+
+
+          if(!validCVV(cardCVV)){
+
+            errorBox.textContent=
+              "Le CVV doit contenir 3 ou 4 chiffres.";
+
+            errorBox.style.display=
+              "block";
+
+            return;
+          }
+        }
+
+
         const submit=
           $("checkoutSubmit");
 
@@ -2869,6 +3595,7 @@ function openCheckout(){
             "Création...";
         }
 
+
         try{
 
           const subtotal=
@@ -2876,6 +3603,7 @@ function openCheckout(){
 
           const total=
             subtotal;
+
 
           const orderItems=
             cart.map(item=>{
@@ -2922,7 +3650,21 @@ function openCheckout(){
 
             total,
 
-            address,
+            address:{
+
+              firstName,
+
+              lastName,
+
+              street,
+
+              postalCode,
+
+              city,
+
+              country
+
+            },
 
             status:
               "Enregistrée",
@@ -2930,13 +3672,11 @@ function openCheckout(){
             paymentMethod,
 
             paymentStatus:
-              total===0
-                ?"Payé"
-                :"En attente",
+              "En attente",
 
             tracking:"",
 
-            city:"",
+            city,
 
             estimatedDelivery:"",
 
@@ -2957,6 +3697,7 @@ function openCheckout(){
           saveCart();
           renderCart();
           closeModal();
+
 
           toast(
             `Commande #${orderRef.id.slice(0,8)} créée 🎉`,
@@ -3010,31 +3751,29 @@ function openCheckout(){
                   </div>
 
                   <h3>
-                    Paiement bancaire
+                    Paiement accepté
                   </h3>
 
                   <p style="
                     margin:15px 0;
                     color:var(--muted);
                   ">
-                    Le paiement CB direct est
-                    actuellement en mode
-                    démonstration.
+                    Ta commande a été enregistrée.
                   </p>
 
                   <p style="
                     opacity:.7;
                     font-size:13px;
                   ">
-                    Aucune donnée bancaire
-                    n'est enregistrée
-                    par NovaShop.
+                    Les informations de carte
+                    n'ont pas été enregistrées
+                    dans la commande.
                   </p>
 
                   <button
                     type="button"
                     class="add-btn"
-                    id="closePaymentDemo"
+                    id="closePayment"
                     style="
                       width:100%;
                       margin-top:15px;
@@ -3048,7 +3787,7 @@ function openCheckout(){
               `
             );
 
-            $("closePaymentDemo")
+            $("closePayment")
               ?.addEventListener(
                 "click",
                 closeModal
@@ -3144,6 +3883,24 @@ function printInvoice(order){
       `;
 
     }).join("");
+
+
+  const address=
+    order.address||{};
+
+  const addressText=
+    typeof address==="object"
+      ?`
+        ${escapeHTML(
+          `${address.firstName||""} ${address.lastName||""}`.trim()
+        )}<br>
+        ${escapeHTML(address.street||"")}<br>
+        ${escapeHTML(
+          `${address.postalCode||""} ${address.city||""}`.trim()
+        )}<br>
+        ${escapeHTML(address.country||"")}
+      `
+      :escapeHTML(address);
 
 
   const invoiceWindow=
@@ -3252,8 +4009,12 @@ function printInvoice(order){
         ${escapeHTML(order.userEmail||"")}
       </p>
 
+      <h3>
+        Livraison
+      </h3>
+
       <p>
-        ${escapeHTML(order.address||"")}
+        ${addressText}
       </p>
 
       <h3>
@@ -3444,6 +4205,317 @@ async function loadAdmin(){
 }
 
 
+// ============================================================
+// ADMIN - CARTE DE TEST
+// ============================================================
+
+function renderTestCardAdmin(){
+
+  const card=
+    getTestCard();
+
+  if(!card){
+
+    return `
+
+      <div style="
+        padding:16px;
+        border-radius:16px;
+        border:1px solid var(--line);
+        background:rgba(255,255,255,.03);
+        margin-bottom:20px;
+      ">
+
+        <h3>
+          💳 Carte de test NovaShop
+        </h3>
+
+        <p style="
+          color:var(--muted);
+          margin:8px 0 14px;
+        ">
+          Génère une carte fictive pour tester
+          l'interface de paiement.
+        </p>
+
+        <button
+          type="button"
+          class="add-btn"
+          id="generateTestCard"
+        >
+          💳 Générer une carte
+        </button>
+
+      </div>
+
+    `;
+  }
+
+
+  return `
+
+    <div style="
+      padding:16px;
+      border-radius:16px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.03);
+      margin-bottom:20px;
+    ">
+
+      <div style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        gap:10px;
+      ">
+
+        <div>
+
+          <h3>
+            💳 Carte de test NovaShop
+          </h3>
+
+          <p style="
+            color:var(--muted);
+            margin-top:5px;
+          ">
+            Carte fictive non utilisable.
+          </p>
+
+        </div>
+
+        <span style="
+          padding:5px 9px;
+          border-radius:8px;
+          background:rgba(80,120,255,.15);
+          font-size:11px;
+        ">
+          TEST
+        </span>
+
+      </div>
+
+      <div style="
+        margin-top:15px;
+        padding:20px;
+        border-radius:18px;
+        background:
+          linear-gradient(
+            135deg,
+            #111827,
+            #172554,
+            #0f172a
+          );
+        border:1px solid rgba(255,255,255,.12);
+        box-shadow:0 15px 35px rgba(0,0,0,.25);
+      ">
+
+        <div style="
+          display:flex;
+          justify-content:space-between;
+        ">
+
+          <strong>
+            NOVASHOP
+          </strong>
+
+          <span>
+            💳
+          </span>
+
+        </div>
+
+        <div style="
+          margin:28px 0 20px;
+          font-size:21px;
+          letter-spacing:3px;
+        ">
+          ${escapeHTML(
+            formatCardNumber(card.number)
+          )}
+        </div>
+
+        <div style="
+          display:flex;
+          justify-content:space-between;
+          font-size:12px;
+        ">
+
+          <div>
+
+            <div style="opacity:.55">
+              TITULAIRE
+            </div>
+
+            <strong>
+              ${escapeHTML(card.name)}
+            </strong>
+
+          </div>
+
+          <div>
+
+            <div style="opacity:.55">
+              EXP
+            </div>
+
+            <strong>
+              ${escapeHTML(card.expiry)}
+            </strong>
+
+          </div>
+
+          <div>
+
+            <div style="opacity:.55">
+              CVV
+            </div>
+
+            <strong>
+              ${escapeHTML(card.cvv)}
+            </strong>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <div style="
+        display:flex;
+        gap:8px;
+        flex-wrap:wrap;
+        margin-top:12px;
+      ">
+
+        <button
+          type="button"
+          class="add-btn"
+          id="generateTestCard"
+        >
+          🔄 Générer une nouvelle carte
+        </button>
+
+        <button
+          type="button"
+          class="view-btn"
+          id="copyTestCard"
+        >
+          📋 Copier
+        </button>
+
+      </div>
+
+    </div>
+
+  `;
+}
+
+
+function setupTestCardAdmin(){
+
+  $("generateTestCard")
+    ?.addEventListener(
+      "click",
+      ()=>{
+
+        const card=
+          generateTestCard();
+
+        toast(
+          "Nouvelle carte de test générée 💳",
+          "success"
+        );
+
+        renderAdminAfterCardChange();
+
+      }
+    );
+
+
+  $("copyTestCard")
+    ?.addEventListener(
+      "click",
+      async()=>{
+
+        const card=
+          getTestCard();
+
+        if(!card){
+          return;
+        }
+
+        const text=
+          `Numéro : ${formatCardNumber(card.number)}
+Expiration : ${card.expiry}
+CVV : ${card.cvv}
+Titulaire : ${card.name}`;
+
+        try{
+
+          await navigator.clipboard.writeText(
+            text
+          );
+
+          toast(
+            "Informations copiées 📋",
+            "success"
+          );
+
+        }catch{
+
+          toast(
+            text
+          );
+        }
+      }
+    );
+}
+
+
+async function renderAdminAfterCardChange(){
+
+  try{
+
+    const snapshot=
+      await getDocs(
+        collection(db,"orders")
+      );
+
+    const orders=[];
+
+    snapshot.forEach(item=>{
+
+      orders.push({
+        id:item.id,
+        ...item.data()
+      });
+
+    });
+
+    orders.sort(
+      (a,b)=>
+        (b.createdAt?.seconds||0)-
+        (a.createdAt?.seconds||0)
+    );
+
+    renderAdmin(orders);
+
+  }catch(error){
+
+    console.error(error);
+
+    toast(
+      `Erreur : ${
+        error.message||
+        "Impossible d'actualiser."
+      }`,
+      "error"
+    );
+  }
+}
+
+
 function renderAdmin(orders){
 
   $("adminLoading")?.remove();
@@ -3467,6 +4539,8 @@ function renderAdmin(orders){
   ];
 
   content.innerHTML=`
+
+    ${renderTestCardAdmin()}
 
     <div style="
       padding:15px;
@@ -3532,6 +4606,44 @@ function renderAdmin(orders){
                     item.quantity||1
                   }`
               ).join(", ");
+
+            const address=
+              order.address||{};
+
+            const structured=
+              typeof address==="object"&&
+              !Array.isArray(address);
+
+            const firstName=
+              structured
+                ?address.firstName||""
+                :"";
+
+            const lastName=
+              structured
+                ?address.lastName||""
+                :"";
+
+            const street=
+              structured
+                ?address.street||""
+                :"";
+
+            const postalCode=
+              structured
+                ?address.postalCode||""
+                :"";
+
+            const city=
+              structured
+                ?address.city||order.city||""
+                :order.city||"";
+
+            const country=
+              structured
+                ?address.country||""
+                :"";
+
 
             return `
 
@@ -3604,6 +4716,68 @@ function renderAdmin(orders){
 
                 </p>
 
+
+                <div style="
+                  margin:14px 0;
+                  padding:14px;
+                  border-radius:14px;
+                  background:rgba(255,255,255,.04);
+                ">
+
+                  <strong>
+                    📦 Adresse de livraison
+                  </strong>
+
+                  ${
+                    structured
+                      ?`
+
+                        <div style="
+                          margin-top:9px;
+                          line-height:1.7;
+                          color:var(--muted);
+                        ">
+
+                          <div>
+                            ${escapeHTML(
+                              `${firstName} ${lastName}`.trim()
+                            )}
+                          </div>
+
+                          <div>
+                            ${escapeHTML(street)}
+                          </div>
+
+                          <div>
+                            ${escapeHTML(
+                              `${postalCode} ${city}`.trim()
+                            )}
+                          </div>
+
+                          <div>
+                            ${escapeHTML(country)}
+                          </div>
+
+                        </div>
+
+                      `
+                      :`
+
+                        <div style="
+                          margin-top:9px;
+                          color:var(--muted);
+                        ">
+                          ${escapeHTML(
+                            order.address||""
+                          )}
+                        </div>
+
+                      `
+                  }
+
+                </div>
+
+
                 <label>
                   Statut
                 </label>
@@ -3636,10 +4810,11 @@ function renderAdmin(orders){
 
                 </select>
 
+
                 <input
                   class="input admin-city"
                   data-id="${escapeHTML(order.id)}"
-                  value="${escapeHTML(order.city||"")}"
+                  value="${escapeHTML(order.city||city||"")}"
                   placeholder="Ville de livraison"
                   style="margin-bottom:8px"
                 >
@@ -3659,6 +4834,7 @@ function renderAdmin(orders){
                   placeholder="Livraison estimée"
                   style="margin-bottom:10px"
                 >
+
 
                 <div style="
                   display:flex;
@@ -3730,6 +4906,9 @@ function renderAdmin(orders){
     </div>
 
   `;
+
+
+  setupTestCardAdmin();
 
 
   $("adminRefresh")
@@ -3826,6 +5005,10 @@ function renderAdmin(orders){
 }
 
 
+// ============================================================
+// SAUVEGARDE ADMIN
+// ============================================================
+
 async function saveAdminOrder(id){
 
   try{
@@ -3851,6 +5034,7 @@ async function saveAdminOrder(id){
         `.admin-delivery[data-id="${CSS.escape(id)}"]`
       )?.value||"";
 
+
     await updateDoc(
       doc(db,"orders",id),
       {
@@ -3861,10 +5045,14 @@ async function saveAdminOrder(id){
       }
     );
 
+
     toast(
       "Commande mise à jour ✅",
       "success"
     );
+
+
+    loadAdmin();
 
   }catch(error){
 
@@ -3879,6 +5067,10 @@ async function saveAdminOrder(id){
   }
 }
 
+
+// ============================================================
+// MARQUER PAYÉ
+// ============================================================
 
 async function markOrderPaid(id){
 
@@ -3911,6 +5103,10 @@ async function markOrderPaid(id){
   }
 }
 
+
+// ============================================================
+// SUPPRIMER COMMANDE
+// ============================================================
 
 async function deleteAdminOrder(id){
 
@@ -4178,6 +5374,9 @@ window.NovaShop={
 
   getCartCount,
   getCartSubtotal,
+
+  getTestCard,
+  generateTestCard,
 
   money
 };
