@@ -1,3 +1,8 @@
+// ============================================================
+// NOVASHOP - APP.JS COMPLET
+// Firebase Auth + Firestore
+// ============================================================
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 
 import {
@@ -15,16 +20,16 @@ import {
   getDocs,
   query,
   where,
-  doc,
-  updateDoc,
+  serverTimestamp,
   deleteDoc,
-  serverTimestamp
+  doc,
+  updateDoc
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 
-/* =========================================================
-   FIREBASE
-========================================================= */
+// ============================================================
+// FIREBASE
+// ============================================================
 
 const firebaseConfig = {
   apiKey: "AIzaSyAZ5vAkAEfIBpfLyhxgO7uvNdJ67KYKWD0",
@@ -41,26 +46,62 @@ const auth = getAuth(firebaseApp);
 const db = getFirestore(firebaseApp);
 
 
-/* =========================================================
-   CONFIG
-========================================================= */
+// ============================================================
+// CONFIGURATION
+// ============================================================
 
 const ADMIN_EMAIL = "pc2alex.les@gmail.com";
 const ADMIN_CODE = "NOVA-ADMIN-2026";
-const PAYPAL_BASE = "https://paypal.me/SH0PNOVA";
+const ADMIN_ACCESS_KEY = "novaAdminAuthorized";
 
-const CART_STORAGE_KEY = "novaCart";
-const FAVORITES_STORAGE_KEY = "novaFavorites";
-const ADMIN_AUTH_STORAGE_KEY = "novaAdminAuthorized";
-const THEME_STORAGE_KEY = "novaThemeChoice";
 const TEST_CARD_STORAGE_KEY = "novaTestCard";
 
+const FALLBACK_IMAGE =
+  "https://placehold.co/400x300/111827/ffffff?text=NovaShop";
 
-/* =========================================================
-   PRODUITS
-========================================================= */
+
+// ============================================================
+// DOM
+// ============================================================
+
+const $ = id => document.getElementById(id);
+
+const searchInput = $("searchInput");
+const categoriesEl = $("categories");
+const productsGrid = $("productGrid");
+const productCount = $("productCount");
+
+const cartBtn = $("cartBtn");
+const cartBadge = $("cartBadge");
+const cartOverlay = $("overlay");
+const cartDrawer = $("cartDrawer");
+const cartClose = $("closeCart");
+const cartItems = $("cartItems");
+const cartTotal = $("cartTotal");
+const checkoutBtn = $("checkoutBtn");
+
+const settingsBtn = $("settingsBtn");
+const accountBtn = $("accountBtn");
+const ordersBtn = $("ordersBtn");
+const adminBtn = $("adminBtn");
+
+const modal = $("modalLayer");
+const modalContent = $("modalContent");
+const modalClose = $("modalClose");
+const modalTitle = $("modalTitle");
+
+const toastContainer = $("toast");
+
+const heroCartBtn = $("heroCartBtn");
+const sortSelect = $("sortSelect");
+
+
+// ============================================================
+// PRODUITS
+// ============================================================
 
 const products = [
+
   {
     id: "p1",
     name: "Gigabyte B650 AORUS Elite AX",
@@ -68,6 +109,7 @@ const products = [
     price: 189.99,
     image: "https://m.media-amazon.com/images/I/81JFKzNyl+L._AC_SL1500_.jpg"
   },
+
   {
     id: "p2",
     name: "PC Gamer AMD Ryzen 7 7800X3D | RX 9070 XT | 32 Go DDR5",
@@ -75,6 +117,7 @@ const products = [
     price: 2237.65,
     image: "https://www.memorypc.fr/thumbnail/53/79/73/1786604635/019f8f1c2c6972a8a3ea1ee9516a0652_1784812416_800x800.png"
   },
+
   {
     id: "p3",
     name: "HyperX Cloud II",
@@ -82,6 +125,7 @@ const products = [
     price: 49.99,
     image: "https://fr.hyperx.com/cdn/shop/files/hyperx_cloud_ii_red_1_main.jpg?v=1764129756"
   },
+
   {
     id: "p4",
     name: "TECORS Clavier Gamer Mécanique 60% AZERTY",
@@ -89,6 +133,7 @@ const products = [
     price: 30,
     image: "https://m.media-amazon.com/images/I/71-lhAU97VL._AC_SL1500_.jpg"
   },
+
   {
     id: "p5",
     name: "Clavier Magnétique 65% Celshading Noir",
@@ -96,6 +141,7 @@ const products = [
     price: 120.90,
     image: "https://tryhard-gear.com/cdn/shop/files/TestCelshadingnoirV2.webp?v=1762273866&width=832"
   },
+
   {
     id: "p6",
     name: "Ajazz AJ199 MAX Carbon Fiber Wireless Gaming Mouse",
@@ -103,6 +149,7 @@ const products = [
     price: 49.99,
     image: "https://ae-pic-a1.aliexpress-media.com/kf/S1e981b53ccfe4e1391cd5b5deb4fce87o.png_960x960.png_.avif"
   },
+
   {
     id: "p7",
     name: "Logitech G PRO X2 Superstrike Blanc et Noir",
@@ -110,6 +157,7 @@ const products = [
     price: 150.99,
     image: "https://static.fnac-static.com/multimedia/Images/FR/MDM/7a/34/bc/29111418/1540-1.jpg"
   },
+
   {
     id: "p8",
     name: "Samsung 990 PRO 1TB",
@@ -117,6 +165,7 @@ const products = [
     price: 249.99,
     image: "https://content.pearl.fr/media/cache/default/article_ultralarge_high_nocrop/shared/images/articles/M/MW1/disque-dur-interne-ssd-990-pro-pcie-nvme-m-2-2280-1-to-ref_MW1148_2.jpg"
   },
+
   {
     id: "p9",
     name: "Samsung 990 PRO 2TB",
@@ -124,6 +173,7 @@ const products = [
     price: 199.93,
     image: "https://pc.comparer.fr/500x500/310191422.webp"
   },
+
   {
     id: "p10",
     name: "CORSAIR RM1000x EU",
@@ -131,6 +181,7 @@ const products = [
     price: 159.90,
     image: "https://assets.corsair.com/image/upload/c_pad,q_85,h_608,w_608,f_auto/products/Power-Supply-Units/base-rmx-2024-config/gallery/black/1000/RM1000x_2024_01.webp"
   },
+
   {
     id: "p11",
     name: "CORSAIR RM850x EU",
@@ -138,6 +189,7 @@ const products = [
     price: 134.90,
     image: "https://assets.corsair.com/image/upload/c_pad,q_85,h_608,w_608,f_auto/products/Power-Supply-Units/base-rmx-2024-config/gallery/black/850/RM850x_2024_01.webp"
   },
+
   {
     id: "p12",
     name: "Corsair Frame 5000D RS ARGB Noir",
@@ -145,6 +197,7 @@ const products = [
     price: 159.90,
     image: "https://media.ldlc.com/r1600/ld/products/00/06/26/05/LD0006260502.jpg"
   },
+
   {
     id: "p13",
     name: "ARCTIC Liquid Freezer III Pro 360 A-RGB Black",
@@ -152,6 +205,7 @@ const products = [
     price: 129.90,
     image: "https://cdn.idealo.com/folder/Product/206182/0/206182034/s4_produktbild_gross/arctic-liquid-freezer-iii-pro-360-a-rgb-black.jpg"
   },
+
   {
     id: "p14",
     name: "Samsung 27 QD-OLED Odyssey G6",
@@ -159,6 +213,7 @@ const products = [
     price: 399.95,
     image: "https://media.ldlc.com/r705/ld/products/00/06/32/99/LD0006329977.jpg"
   },
+
   {
     id: "p15",
     name: "ELGATO Wave Mic Arm Pro",
@@ -166,6 +221,7 @@ const products = [
     price: 229.90,
     image: "https://www.digit-photo.com/images/produits/ELGATO10AAT9901/1.jpg"
   },
+
   {
     id: "p16",
     name: "Sony DualSense Cosmic Red PS5/PC",
@@ -173,6 +229,7 @@ const products = [
     price: 74.90,
     image: "https://media.carrefour.fr/media/referential/media/cc07d7de4b9e4bea8c063e8f9bb46d94/p_200x200/0711719023005_0.jpg"
   },
+
   {
     id: "p17",
     name: "ASUS TUF Gaming B650-PLUS",
@@ -180,6 +237,7 @@ const products = [
     price: 179.90,
     image: "https://media.materiel.net/r550/products/MN0005986139.jpg"
   },
+
   {
     id: "p18",
     name: "MSI MAG B650 Tomahawk WiFi",
@@ -187,6 +245,7 @@ const products = [
     price: 189.90,
     image: "https://m.media-amazon.com/images/I/71TYAcZ4J8L._AC_SL1200_.jpg"
   },
+
   {
     id: "p19",
     name: "KOORUI Ecran PC Gamer 27 Pouces 200Hz IPS QHD HDR400 1ms",
@@ -194,6 +253,7 @@ const products = [
     price: 74.99,
     image: "https://m.media-amazon.com/images/I/71CJ1DF-8sL._AC_SL1500_.jpg"
   },
+
   {
     id: "p20",
     name: 'iiyama 23.8" LED - G-Master GB2471HS-B1 Red Eagle',
@@ -201,6 +261,7 @@ const products = [
     price: 65.99,
     image: "https://media.ldlc.com/r1600/ld/products/00/06/34/20/LD0006342033.jpg"
   },
+
   {
     id: "p21",
     name: "SONGMICS Chaise de jeu ergonomique avec repose-pieds 150 kg gris ardoise",
@@ -208,6 +269,7 @@ const products = [
     price: 129.99,
     image: "https://static.songmics.fr/fit-in/1000x1000/image/Product/B34OBG077G01/B34OBG077G01-1.jpg"
   },
+
   {
     id: "p22",
     name: "Dowinx Série Luxe Suède LS-66D68E Blanc",
@@ -215,6 +277,7 @@ const products = [
     price: 79.99,
     image: "https://eu.dowinx.com/cdn/shop/files/11_5f72b693-5f79-4d06-b48a-7cb2b2f0244a.png?v=1752139814&width=1220"
   },
+
   {
     id: "p23",
     name: "Chaise GTPLAYER Ergonomique Gaming Soutien Lombaire Repose-pieds",
@@ -222,6 +285,7 @@ const products = [
     price: 109.99,
     image: "https://thumb.pccomponentes.com/w-530-530/articles/1118/11186247/167-silla-gaming-gtplayer-ergonomica-con-reposapies-y-soporte-lumbar-4d.jpg"
   },
+
   {
     id: "p24",
     name: "Desk Lite - Height-Adjustable Desk",
@@ -229,6 +293,7 @@ const products = [
     price: 110.99,
     image: "https://yaasa.com/cdn/shop/files/yaasa-desk-lite_nr01_black_100_01-04545-01_1200x.jpg?v=1753169928"
   },
+
   {
     id: "p25",
     name: "EUREKA ERGONOMIC Bureau Gaming LED 182x76cm en Forme d'Aile",
@@ -236,6 +301,7 @@ const products = [
     price: 86.99,
     image: "https://m.media-amazon.com/images/I/71Gd5G3wRsL._AC_SL1500_.jpg"
   },
+
   {
     id: "p26",
     name: "Bureau gaming d’angle HOMCOM réversible support écran",
@@ -243,6 +309,7 @@ const products = [
     price: 44.99,
     image: "https://cdn.manomano.com/pim-media/images/medium/74eca1cb1cefa063c8f600ee293ae6ee826794f8.jpg"
   },
+
   {
     id: "p27",
     name: "Logitech G Pro X 2 Lightspeed Noir + Repose casque",
@@ -250,6 +317,7 @@ const products = [
     price: 99.99,
     image: "https://static.fnac-static.com/multimedia/Images/FR/MDMFR/MDM/6d/e9/6e/24045933/1540-1/tsp20260429154901/Casque-PC-gaming-sans-fil-Logitech-G-Pro-X-2-Lightspeed-Noir-Repose-casque.jpg"
   },
+
   {
     id: "p28",
     name: "Razer BlackShark V2 Pro 2023 Noir",
@@ -257,6 +325,7 @@ const products = [
     price: 75.99,
     image: "https://media.ldlc.com/r1600/ld/products/00/06/07/71/LD0006077125.jpg"
   },
+
   {
     id: "p29",
     name: "beyerdynamic DT-990 Pro 250 Ohm",
@@ -264,6 +333,7 @@ const products = [
     price: 60.99,
     image: "https://thumbs.static-thomann.de/thumb/padthumb600x600/pics/bdb/_10/106865/18443258_800.jpg"
   },
+
   {
     id: "p30",
     name: "Logitech PRO X TKL Rapid Noir, filaire AZERTY",
@@ -271,6 +341,7 @@ const products = [
     price: 78.99,
     image: "https://static.fnac-static.com/multimedia/Images/FR/MDM/6a/89/8f/26184042/1540-1.jpg"
   },
+
   {
     id: "p31",
     name: "QwertyKey75 HE Striker, Magnetic Hall Effect, Rapid Trigger, Snap Tap",
@@ -278,6 +349,7 @@ const products = [
     price: 56.99,
     image: "https://cdn.shopify.com/s/files/1/0814/2530/1746/files/QK75-HE-STRIKER-qwertykey-tastatura-mecanica-gaming-hotswap-2025_1eee355b-72ca-46e6-a458-751384d0595c_1800x.webp?v=1771799537"
   },
+
   {
     id: "p32",
     name: "GravaStar Mercury K1 Clavier Gamer sans Fil en Aluminium, Noir Dégradé",
@@ -285,6 +357,7 @@ const products = [
     price: 91.99,
     image: "https://m.media-amazon.com/images/I/6144lt2l5JL._AC_SL1200_.jpg"
   },
+
   {
     id: "p33",
     name: "ATTACK SHARK R11 Ultra, fibre de carbone, 8000Hz, 49g, 42000 DPI",
@@ -292,6 +365,7 @@ const products = [
     price: 26.99,
     image: "https://m.media-amazon.com/images/I/71bMz15SqcL._AC_SL1500_.jpg"
   },
+
   {
     id: "p34",
     name: "HyperX QuadCast 2 – Microphone USB – RGB",
@@ -299,6 +373,7 @@ const products = [
     price: 98.99,
     image: "https://fr.hyperx.com/cdn/shop/files/hyperx_quadcast_2_872v1aa_main_1_2d47a555-f537-457b-9002-8b9e9010dc00.jpg?v=1763067608"
   },
+
   {
     id: "p35",
     name: "Shure SM7 dB",
@@ -306,6 +381,7 @@ const products = [
     price: 121.99,
     image: "https://thumbs.static-thomann.de/thumb/padthumb600x600/pics/bdb/_57/573672/18492412_800.jpg"
   },
+
   {
     id: "p36",
     name: "Razer Seiren V3 Chroma Noir",
@@ -313,6 +389,7 @@ const products = [
     price: 13.99,
     image: "https://media.ldlc.com/r1600/ld/products/00/06/13/25/LD0006132588.jpg"
   },
+
   {
     id: "p37",
     name: "Stairville LED Pixel Rail 40 RGB MKII",
@@ -320,6 +397,7 @@ const products = [
     price: 18.90,
     image: "https://thumbs.static-thomann.de/thumb/padthumb600x600/pics/bdb/_44/449739/14448905_800.jpg"
   },
+
   {
     id: "p38",
     name: "Govee LED Strip Light RGBIC Wi-Fi + Bluetooth 5m Matter",
@@ -327,6 +405,7 @@ const products = [
     price: 8,
     image: "https://static.fnac-static.com/multimedia/Images/FR/MDM/ab/7a/9d/27097771/1520-2/tsp20260429155350/Ruban-LED-Govee-LED-Strip-Light-RGBIC-Wi-Fi-avec-BT-5M-Matter.jpg"
   },
+
   {
     id: "p39",
     name: "Lampe de plafond hexagone nid d’abeille LED 2.4m x 4.8m contour bleu",
@@ -334,6 +413,7 @@ const products = [
     price: 91.10,
     image: "https://www.discount-autosport.com/wp-content/webp-express/webp-images/uploads/2025/02/lampe-hexagone-plafond-led-4m80-contour-bleu-.jpg.webp"
   },
+
   {
     id: "p40",
     name: "GIGABYTE GeForce RTX 5050 WINDFORCE OC 8G",
@@ -341,6 +421,7 @@ const products = [
     price: 147,
     image: "https://m.media-amazon.com/images/I/41kmHFMFPOL._SL500_.jpg"
   },
+
   {
     id: "p41",
     name: "MSI GeForce RTX 3050 LP E 6G OC",
@@ -348,6 +429,7 @@ const products = [
     price: 100,
     image: "https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcTCe_rha_tAAHPWnQ8VV7GIvF-uSqUaEyU61TSnwgM4CK8g3-x_3Hq4wOgH36Ri63eAiWHsvhmRJHzVrUQR9-IwMx31WH0w"
   },
+
   {
     id: "p42",
     name: "ASUS Dual Radeon RX 7600 EVO OC Edition 8GB GDDR6",
@@ -355,6 +437,7 @@ const products = [
     price: 140,
     image: "https://m.media-amazon.com/images/I/81QItJufypL._AC_SL1500_.jpg"
   },
+
   {
     id: "p43",
     name: "PC Gamer Fixe, Ryzen 7 5700G, Vega 8, 16G DDR4, 1T SSD",
@@ -363,265 +446,586 @@ const products = [
     image: "https://m.media-amazon.com/images/I/81M3iU5S4QL._AC_SL1500_.jpg",
     new: true
   }
+
 ];
 
 
-/* =========================================================
-   ETAT
-========================================================= */
+// ============================================================
+// ÉTAT
+// ============================================================
 
 let currentUser = null;
+let selectedCategory = "Tous";
+let searchValue = "";
+let sortValue = "default";
 let cart = [];
 let favorites = [];
+let reviewsCache = {};
 
-let state = {
-  search: "",
-  category: "Tous",
-  brand: "",
-  sort: "default",
-  page: 1,
-  perPage: 12
-};
+try {
+  cart = JSON.parse(localStorage.getItem("novaCart") || "[]");
 
+  if (!Array.isArray(cart)) {
+    cart = [];
+  }
+} catch {
+  cart = [];
+}
 
-/* =========================================================
-   DOM
-========================================================= */
+try {
+  favorites = JSON.parse(
+    localStorage.getItem("novaFavorites") || "[]"
+  );
 
-const $ = id => document.getElementById(id);
-
-const searchInput = $("searchInput");
-const sortSelect = $("sortSelect");
-const categoryList = $("categoryList");
-const productGrid = $("productGrid");
-
-const cartCount = $("cartCount");
-const cartTotal = $("cartTotal");
-const cartItems = $("cartItems");
-
-const cartDrawer = $("cartDrawer");
-const cartOverlay = $("cartOverlay");
-
-const modal = $("modal");
-const modalTitle = $("modalTitle");
-const modalBody = $("modalBody");
-
-const toastContainer = $("toastContainer");
-
-const checkoutBtn = $("checkoutBtn");
-const accountBtn = $("accountBtn");
-const ordersBtn = $("ordersBtn");
-const adminBtn = $("adminBtn");
-const settingsBtn = $("settingsBtn");
+  if (!Array.isArray(favorites)) {
+    favorites = [];
+  }
+} catch {
+  favorites = [];
+}
 
 
-/* =========================================================
-   UTILITAIRES
-========================================================= */
+// ============================================================
+// UTILITAIRES
+// ============================================================
 
-function money(value){
+function money(value) {
 
   return Number(value || 0).toLocaleString(
     "fr-FR",
     {
-      style:"currency",
-      currency:"EUR"
+      style: "currency",
+      currency: "EUR"
     }
   );
-
 }
 
-function escapeHTML(value){
+
+function escapeHTML(value) {
 
   return String(value ?? "")
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
-
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 
-function getProduct(id){
+
+function escapeAttr(value) {
+  return escapeHTML(value);
+}
+
+
+function getProduct(id) {
 
   return products.find(
     product => product.id === id
-  ) || null;
-
+  );
 }
 
 
-/* =========================================================
-   PANIER
-========================================================= */
-
-function loadCart(){
-
-  try{
-
-    const raw =
-      localStorage.getItem(
-        CART_STORAGE_KEY
-      );
-
-    if(!raw){
-
-      cart = [];
-      return;
-
-    }
-
-    const parsed =
-      JSON.parse(raw);
-
-    cart =
-      Array.isArray(parsed)
-        ? parsed.filter(
-            item =>
-              item &&
-              item.id
-          )
-        : [];
-
-  }catch{
-
-    cart = [];
-
-  }
-
-}
-
-function saveCart(){
+function saveCart() {
 
   localStorage.setItem(
-    CART_STORAGE_KEY,
+    "novaCart",
     JSON.stringify(cart)
   );
-
 }
 
-function getCartCount(){
+
+function saveFavorites() {
+
+  localStorage.setItem(
+    "novaFavorites",
+    JSON.stringify(favorites)
+  );
+}
+
+
+function getCartCount() {
 
   return cart.reduce(
-    (total,item)=>
-      total +
-      Number(item.quantity || 1),
+    (total, item) =>
+      total + Number(item.quantity || 0),
     0
   );
-
 }
 
-function getCartSubtotal(){
+
+function getCartSubtotal() {
 
   return cart.reduce(
-    (total,item)=>{
+    (total, item) => {
 
       const product =
         getProduct(item.id);
 
-      if(!product){
+      if (!product) {
         return total;
       }
 
-      return total +
-        Number(product.price || 0) *
-        Number(item.quantity || 1);
+      return (
+        total +
+        product.price *
+        Number(item.quantity || 1)
+      );
 
     },
     0
   );
-
 }
 
 
-/* =========================================================
-   FAVORIS
-========================================================= */
+// ============================================================
+// TOAST
+// ============================================================
 
-function loadFavorites(){
+function toast(message, type = "info") {
 
-  try{
+  if (!toastContainer) {
+    return;
+  }
 
-    const raw =
-      localStorage.getItem(
-        FAVORITES_STORAGE_KEY
-      );
+  const item =
+    document.createElement("div");
 
-    if(!raw){
+  item.className =
+    `toast-item toast-${type}`;
 
-      favorites = [];
-      return;
+  item.textContent = message;
 
+  item.style.cssText = `
+    padding:12px 16px;
+    margin-top:10px;
+    border-radius:12px;
+    background:#111827;
+    color:white;
+    border:1px solid rgba(255,255,255,.1);
+    box-shadow:0 10px 30px rgba(0,0,0,.35);
+    animation:novaToastIn .2s ease;
+  `;
+
+  toastContainer.appendChild(item);
+
+  setTimeout(() => {
+
+    item.style.opacity = "0";
+
+    setTimeout(() => {
+      item.remove();
+    }, 250);
+
+  }, 2800);
+}
+
+
+// ============================================================
+// MODAL
+// ============================================================
+
+function showModal(title, content) {
+
+  if (!modal) {
+    return;
+  }
+
+  if (modalTitle) {
+    modalTitle.textContent = title;
+  }
+
+  if (modalContent) {
+    modalContent.innerHTML = content;
+  }
+
+  modal.style.display = "flex";
+
+  document.body.style.overflow = "hidden";
+}
+
+
+function closeModal() {
+
+  if (!modal) {
+    return;
+  }
+
+  modal.style.display = "none";
+
+  document.body.style.overflow = "";
+}
+
+
+modalClose?.addEventListener(
+  "click",
+  closeModal
+);
+
+
+// ============================================================
+// PANIER
+// ============================================================
+
+function openCart() {
+
+  if (!cartDrawer) {
+    return;
+  }
+
+  renderCart();
+
+  cartDrawer.classList.add("open");
+
+  if (cartOverlay) {
+    cartOverlay.classList.add("open");
+  }
+}
+
+
+function closeCart() {
+
+  cartDrawer?.classList.remove("open");
+  cartOverlay?.classList.remove("open");
+}
+
+
+cartBtn?.addEventListener(
+  "click",
+  openCart
+);
+
+
+heroCartBtn?.addEventListener(
+  "click",
+  openCart
+);
+
+
+cartClose?.addEventListener(
+  "click",
+  closeCart
+);
+
+
+cartOverlay?.addEventListener(
+  "click",
+  closeCart
+);
+
+
+function addToCart(id) {
+
+  const product =
+    getProduct(id);
+
+  if (!product) {
+    return;
+  }
+
+  const existing =
+    cart.find(item => item.id === id);
+
+  if (existing) {
+    existing.quantity =
+      Number(existing.quantity || 0) + 1;
+  } else {
+    cart.push({
+      id,
+      quantity: 1
+    });
+  }
+
+  saveCart();
+  renderCart();
+
+  toast(
+    `${product.name} ajouté au panier 🛒`,
+    "success"
+  );
+}
+
+
+function removeFromCart(id) {
+
+  cart =
+    cart.filter(
+      item => item.id !== id
+    );
+
+  saveCart();
+  renderCart();
+}
+
+
+function changeCartQuantity(id, quantity) {
+
+  const item =
+    cart.find(
+      item => item.id === id
+    );
+
+  if (!item) {
+    return;
+  }
+
+  item.quantity =
+    Math.max(
+      1,
+      Number(quantity || 1)
+    );
+
+  saveCart();
+  renderCart();
+}
+
+
+function renderCart() {
+
+  if (cartBadge) {
+    cartBadge.textContent =
+      getCartCount();
+  }
+
+  if (!cartItems) {
+    return;
+  }
+
+  if (!cart.length) {
+
+    cartItems.innerHTML = `
+      <div style="
+        text-align:center;
+        padding:30px 15px;
+        opacity:.75;
+      ">
+        <div style="font-size:45px;">
+          🛒
+        </div>
+
+        <h3>
+          Ton panier est vide
+        </h3>
+
+        <p>
+          Ajoute des produits pour commencer.
+        </p>
+      </div>
+    `;
+
+    if (cartTotal) {
+      cartTotal.textContent =
+        money(0);
     }
 
-    const parsed =
-      JSON.parse(raw);
+    if (checkoutBtn) {
+      checkoutBtn.disabled = true;
+    }
 
-    favorites =
-      Array.isArray(parsed)
-        ? parsed
-        : [];
-
-  }catch{
-
-    favorites = [];
-
+    return;
   }
 
-}
+  cartItems.innerHTML =
+    cart.map(item => {
 
-function saveFavorites(){
+      const product =
+        getProduct(item.id);
 
-  localStorage.setItem(
-    FAVORITES_STORAGE_KEY,
-    JSON.stringify(favorites)
-  );
+      if (!product) {
+        return "";
+      }
 
-}
+      const quantity =
+        Number(item.quantity || 1);
 
-function isFavorite(id){
+      return `
+        <div style="
+          display:grid;
+          grid-template-columns:70px 1fr;
+          gap:12px;
+          padding:12px 0;
+          border-bottom:1px solid rgba(255,255,255,.08);
+        ">
 
-  return favorites.includes(id);
+          <div style="
+            width:70px;
+            height:60px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            overflow:hidden;
+            border-radius:10px;
+            background:rgba(255,255,255,.04);
+          ">
+            <img
+              src="${escapeAttr(product.image)}"
+              alt="${escapeHTML(product.name)}"
+              style="
+                width:100%;
+                height:100%;
+                object-fit:contain;
+                display:block;
+              "
+              onerror="
+                this.onerror=null;
+                this.src='${FALLBACK_IMAGE}';
+              "
+            >
+          </div>
 
-}
+          <div>
 
-function toggleFavorite(id){
+            <strong style="
+              display:block;
+              font-size:14px;
+              line-height:1.3;
+            ">
+              ${escapeHTML(product.name)}
+            </strong>
 
-  if(isFavorite(id)){
+            <div style="
+              margin-top:5px;
+              color:var(--accent,#2d8cff);
+              font-weight:700;
+            ">
+              ${money(product.price)}
+            </div>
 
-    favorites =
-      favorites.filter(
-        item => item !== id
+            <div style="
+              display:flex;
+              align-items:center;
+              gap:7px;
+              margin-top:8px;
+            ">
+
+              <button
+                type="button"
+                class="view-btn cart-minus"
+                data-id="${escapeAttr(item.id)}"
+              >
+                −
+              </button>
+
+              <strong>
+                ${quantity}
+              </strong>
+
+              <button
+                type="button"
+                class="view-btn cart-plus"
+                data-id="${escapeAttr(item.id)}"
+              >
+                +
+              </button>
+
+              <button
+                type="button"
+                class="view-btn cart-remove"
+                data-id="${escapeAttr(item.id)}"
+                style="margin-left:auto;"
+              >
+                Supprimer
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+      `;
+
+    }).join("");
+
+  if (cartTotal) {
+    cartTotal.textContent =
+      money(getCartSubtotal());
+  }
+
+  if (checkoutBtn) {
+    checkoutBtn.disabled = false;
+  }
+
+  cartItems
+    .querySelectorAll(".cart-minus")
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          const item =
+            cart.find(
+              x => x.id === button.dataset.id
+            );
+
+          if (!item) {
+            return;
+          }
+
+          if (Number(item.quantity) <= 1) {
+            removeFromCart(item.id);
+          } else {
+            changeCartQuantity(
+              item.id,
+              Number(item.quantity) - 1
+            );
+          }
+
+        }
       );
 
-    toast(
-      "Retiré des favoris."
-    );
+    });
 
-  }else{
+  cartItems
+    .querySelectorAll(".cart-plus")
+    .forEach(button => {
 
-    favorites.push(id);
+      button.addEventListener(
+        "click",
+        () => {
 
-    toast(
-      "Ajouté aux favoris ❤️",
-      "success"
-    );
+          const item =
+            cart.find(
+              x => x.id === button.dataset.id
+            );
 
-  }
+          if (item) {
+            changeCartQuantity(
+              item.id,
+              Number(item.quantity) + 1
+            );
+          }
 
-  saveFavorites();
-  renderProducts();
+        }
+      );
 
+    });
+
+  cartItems
+    .querySelectorAll(".cart-remove")
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          removeFromCart(
+            button.dataset.id
+          );
+
+        }
+      );
+
+    });
 }
 
 
-/* =========================================================
-   CATEGORIES
-========================================================= */
+// ============================================================
+// CATÉGORIES
+// ============================================================
 
-function renderCategories(){
+function renderCategories() {
 
-  if(!categoryList){
+  if (!categoriesEl) {
     return;
   }
 
@@ -634,38 +1038,31 @@ function renderCategories(){
     )
   ];
 
-  categoryList.innerHTML =
-    categories.map(category=>`
-
+  categoriesEl.innerHTML =
+    categories.map(category => `
       <button
         type="button"
         class="category-btn ${
-          state.category === category
+          category === selectedCategory
             ? "active"
             : ""
         }"
-        data-category="${escapeHTML(category)}"
+        data-category="${escapeAttr(category)}"
       >
         ${escapeHTML(category)}
       </button>
-
     `).join("");
 
-  categoryList
-    .querySelectorAll(
-      ".category-btn"
-    )
-    .forEach(button=>{
+  categoriesEl
+    .querySelectorAll(".category-btn")
+    .forEach(button => {
 
       button.addEventListener(
         "click",
-        ()=>{
+        () => {
 
-          state.category =
-            button.dataset.category ||
-            "Tous";
-
-          state.page = 1;
+          selectedCategory =
+            button.dataset.category;
 
           renderCategories();
           renderProducts();
@@ -674,158 +1071,93 @@ function renderCategories(){
       );
 
     });
-
 }
 
 
-/* =========================================================
-   PRODUITS
-========================================================= */
+// ============================================================
+// PRODUITS
+// ============================================================
 
-function getFilteredProducts(){
+function getFilteredProducts() {
 
   let result =
-    [...products];
+    products.filter(product => {
 
-  const search =
-    state.search
-      .trim()
-      .toLowerCase();
+      const categoryMatch =
+        selectedCategory === "Tous" ||
+        product.category === selectedCategory;
 
-  if(search){
-
-    result =
-      result.filter(product=>
-        product.name
-          .toLowerCase()
-          .includes(search)
-
-        ||
-
-        product.category
-          .toLowerCase()
-          .includes(search)
-      );
-
-  }
-
-  if(state.category !== "Tous"){
-
-    result =
-      result.filter(
-        product =>
-          product.category ===
-          state.category
-      );
-
-  }
-
-  if(state.brand){
-
-    result =
-      result.filter(product=>
+      const searchMatch =
+        !searchValue ||
         product.name
           .toLowerCase()
           .includes(
-            state.brand.toLowerCase()
-          )
-      );
+            searchValue.toLowerCase()
+          );
 
-  }
+      return categoryMatch && searchMatch;
+    });
 
-  switch(state.sort){
+  if (sortValue === "priceAsc") {
 
-    case "price-asc":
+    result.sort(
+      (a, b) => a.price - b.price
+    );
 
-      result.sort(
-        (a,b)=>a.price-b.price
-      );
+  } else if (sortValue === "priceDesc") {
 
-      break;
+    result.sort(
+      (a, b) => b.price - a.price
+    );
 
-    case "price-desc":
+  } else if (sortValue === "name") {
 
-      result.sort(
-        (a,b)=>b.price-a.price
-      );
+    result.sort(
+      (a, b) =>
+        a.name.localeCompare(
+          b.name,
+          "fr"
+        )
+    );
 
-      break;
+  } else if (sortValue === "new") {
 
-    case "name-asc":
-
-      result.sort(
-        (a,b)=>
-          a.name.localeCompare(
-            b.name,
-            "fr"
-          )
-      );
-
-      break;
-
-    case "name-desc":
-
-      result.sort(
-        (a,b)=>
-          b.name.localeCompare(
-            a.name,
-            "fr"
-          )
-      );
-
-      break;
-
+    result.sort(
+      (a, b) =>
+        Number(!!b.new) -
+        Number(!!a.new)
+    );
   }
 
   return result;
-
 }
 
-function renderProducts(){
 
-  if(!productGrid){
+function renderProducts() {
+
+  if (!productsGrid) {
     return;
   }
 
-  const result =
+  const filtered =
     getFilteredProducts();
 
-  const totalPages =
-    Math.max(
-      1,
-      Math.ceil(
-        result.length /
-        state.perPage
-      )
-    );
-
-  if(state.page > totalPages){
-    state.page = totalPages;
+  if (productCount) {
+    productCount.textContent =
+      `${filtered.length} produit${
+        filtered.length > 1 ? "s" : ""
+      }`;
   }
 
-  const start =
-    (state.page - 1) *
-    state.perPage;
+  if (!filtered.length) {
 
-  const visible =
-    result.slice(
-      start,
-      start + state.perPage
-    );
-
-  if(!visible.length){
-
-    productGrid.innerHTML = `
+    productsGrid.innerHTML = `
       <div style="
         grid-column:1/-1;
         text-align:center;
-        padding:50px 20px;
-        color:var(--muted);
+        padding:40px;
       ">
-        <div style="
-          font-size:48px;
-          margin-bottom:12px;
-        ">
+        <div style="font-size:50px;">
           🔎
         </div>
 
@@ -833,7 +1165,7 @@ function renderProducts(){
           Aucun produit trouvé
         </h3>
 
-        <p style="margin-top:8px;">
+        <p>
           Essaie une autre recherche.
         </p>
       </div>
@@ -842,730 +1174,351 @@ function renderProducts(){
     return;
   }
 
-  productGrid.innerHTML =
-    visible.map(product=>{
+  productsGrid.innerHTML =
+    filtered.map(product => {
 
-      const favorite =
-        isFavorite(product.id);
+      const isFavorite =
+        favorites.includes(product.id);
 
       return `
+        <article
+          class="product-card"
+          data-product-id="${escapeAttr(product.id)}"
+          style="
+            overflow:hidden;
+          "
+        >
 
-        <article class="product-card">
+          <!-- IMAGE PETITE ET COMPACTE -->
+          <div
+            class="product-image-wrap"
+            style="
+              width:100%;
+              height:120px;
+              min-height:120px;
+              max-height:120px;
+              display:flex;
+              align-items:center;
+              justify-content:center;
+              overflow:hidden;
+              border-radius:12px;
+              background:rgba(255,255,255,.035);
+              margin-bottom:10px;
+            "
+          >
 
-          <div class="product-image-wrap">
+            <img
+              class="product-image"
+              src="${escapeAttr(product.image)}"
+              alt="${escapeHTML(product.name)}"
+              loading="lazy"
+              style="
+                display:block;
+                width:auto;
+                height:auto;
+                max-width:90%;
+                max-height:110px;
+                object-fit:contain;
+                object-position:center;
+                margin:auto;
+              "
+              onerror="
+                this.onerror=null;
+                this.src='${FALLBACK_IMAGE}';
+              "
+            >
+
+          </div>
+
+          <div
+            class="product-info"
+            style="
+              min-width:0;
+            "
+          >
 
             ${
               product.new
                 ? `
-                  <span class="new-badge">
+                  <span style="
+                    display:inline-block;
+                    padding:4px 7px;
+                    border-radius:7px;
+                    background:rgba(37,214,149,.12);
+                    color:#25d695;
+                    font-size:10px;
+                    font-weight:800;
+                    margin-bottom:6px;
+                  ">
                     NOUVEAU
                   </span>
                 `
                 : ""
             }
 
-            <button
-              type="button"
-              class="
-                favorite-btn
-                ${favorite?"active":""}
-              "
-              data-favorite="${escapeHTML(
-                product.id
-              )}"
-              aria-label="Favoris"
-            >
-              ${favorite?"♥":"♡"}
-            </button>
-
-            <img
-              src="${escapeHTML(
-                product.image
-              )}"
-              alt="${escapeHTML(
-                product.name
-              )}"
-              loading="lazy"
-              onerror="
-                this.style.display='none'
-              "
-            >
-
-          </div>
-
-          <div class="product-info">
-
-            <div class="product-category">
-              ${escapeHTML(
-                product.category
-              )}
+            <div style="
+              color:var(--muted,#8c96a8);
+              font-size:11px;
+              margin-bottom:4px;
+            ">
+              ${escapeHTML(product.category)}
             </div>
 
-            <h3 class="product-name">
-              ${escapeHTML(
-                product.name
-              )}
+            <h3
+              style="
+                font-size:14px;
+                line-height:1.25;
+                margin:0;
+                min-height:35px;
+              "
+            >
+              ${escapeHTML(product.name)}
             </h3>
 
-            <div class="product-bottom">
+            <div style="
+              display:flex;
+              align-items:center;
+              justify-content:space-between;
+              gap:8px;
+              margin-top:9px;
+            ">
 
-              <strong class="product-price">
+              <strong style="
+                font-size:17px;
+                color:var(--accent,#2d8cff);
+              ">
                 ${money(product.price)}
               </strong>
 
-              <div class="product-actions">
+              <button
+                type="button"
+                class="favorite-btn"
+                data-favorite="${escapeAttr(product.id)}"
+                title="Favori"
+                style="
+                  border:0;
+                  background:transparent;
+                  cursor:pointer;
+                  font-size:17px;
+                "
+              >
+                ${isFavorite ? "❤️" : "🤍"}
+              </button>
 
-                <button
-                  type="button"
-                  class="view-btn product-view"
-                  data-product="${escapeHTML(
-                    product.id
-                  )}"
-                >
-                  Voir
-                </button>
+            </div>
 
-                <button
-                  type="button"
-                  class="add-btn product-add"
-                  data-add="${escapeHTML(
-                    product.id
-                  )}"
-                >
-                  Ajouter
-                </button>
+            <div style="
+              display:grid;
+              grid-template-columns:1fr;
+              gap:6px;
+              margin-top:9px;
+            ">
 
-              </div>
+              <button
+                type="button"
+                class="add-btn product-add"
+                data-add="${escapeAttr(product.id)}"
+                style="
+                  width:100%;
+                  padding:8px 10px;
+                  font-size:12px;
+                "
+              >
+                Ajouter
+              </button>
+
+              <button
+                type="button"
+                class="view-btn product-view"
+                data-view="${escapeAttr(product.id)}"
+                style="
+                  width:100%;
+                  padding:7px 10px;
+                  font-size:12px;
+                "
+              >
+                Voir
+              </button>
 
             </div>
 
           </div>
 
         </article>
-
       `;
 
     }).join("");
 
-  productGrid
+  productsGrid
     .querySelectorAll("[data-add]")
-    .forEach(button=>{
+    .forEach(button => {
 
       button.addEventListener(
         "click",
-        ()=>{
-          addToCart(
-            button.dataset.add
-          );
+        () => {
+          addToCart(button.dataset.add);
         }
       );
 
     });
 
-  productGrid
-    .querySelectorAll("[data-product]")
-    .forEach(button=>{
+  productsGrid
+    .querySelectorAll("[data-view]")
+    .forEach(button => {
 
       button.addEventListener(
         "click",
-        ()=>{
-          openProduct(
-            button.dataset.product
-          );
+        () => {
+          openProduct(button.dataset.view);
         }
       );
 
     });
 
-  productGrid
+  productsGrid
     .querySelectorAll("[data-favorite]")
-    .forEach(button=>{
+    .forEach(button => {
 
       button.addEventListener(
         "click",
-        ()=>{
-          toggleFavorite(
-            button.dataset.favorite
-          );
+        () => {
+
+          const id =
+            button.dataset.favorite;
+
+          if (favorites.includes(id)) {
+
+            favorites =
+              favorites.filter(
+                item => item !== id
+              );
+
+          } else {
+
+            favorites.push(id);
+
+          }
+
+          saveFavorites();
+          renderProducts();
+
         }
       );
 
     });
-
-  renderPagination(
-    result.length,
-    totalPages
-  );
-
 }
 
 
-/* =========================================================
-   PAGINATION
-========================================================= */
+// ============================================================
+// RECHERCHE
+// ============================================================
 
-function renderPagination(
-  total,
-  totalPages
-){
+searchInput?.addEventListener(
+  "input",
+  () => {
 
-  const existing =
-    $("productsPagination");
+    searchValue =
+      searchInput.value.trim();
 
-  if(!existing){
-    return;
-  }
-
-  if(totalPages <= 1){
-
-    existing.innerHTML = "";
-    return;
+    renderProducts();
 
   }
-
-  existing.innerHTML = `
-
-    <div style="
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      gap:8px;
-      flex-wrap:wrap;
-      margin:24px 0;
-    ">
-
-      <button
-        type="button"
-        class="view-btn"
-        id="previousPage"
-        ${state.page<=1?"disabled":""}
-      >
-        ←
-      </button>
-
-      <span style="
-        padding:8px 14px;
-        color:var(--muted);
-      ">
-        Page ${state.page} / ${totalPages}
-        · ${total} produits
-      </span>
-
-      <button
-        type="button"
-        class="view-btn"
-        id="nextPage"
-        ${state.page>=totalPages?"disabled":""}
-      >
-        →
-      </button>
-
-    </div>
-  `;
-
-  $("previousPage")
-    ?.addEventListener(
-      "click",
-      ()=>{
-        if(state.page > 1){
-
-          state.page--;
-
-          renderProducts();
-
-          window.scrollTo({
-            top:0,
-            behavior:"smooth"
-          });
-
-        }
-      }
-    );
-
-  $("nextPage")
-    ?.addEventListener(
-      "click",
-      ()=>{
-        if(state.page < totalPages){
-
-          state.page++;
-
-          renderProducts();
-
-          window.scrollTo({
-            top:0,
-            behavior:"smooth"
-          });
-
-        }
-      }
-    );
-
-}
+);
 
 
-/* =========================================================
-   PANIER
-========================================================= */
+// ============================================================
+// TRI
+// ============================================================
 
-function addToCart(id){
+sortSelect?.addEventListener(
+  "change",
+  () => {
+
+    sortValue =
+      sortSelect.value;
+
+    renderProducts();
+
+  }
+);
+
+
+// ============================================================
+// PRODUIT
+// ============================================================
+
+function openProduct(id) {
 
   const product =
     getProduct(id);
 
-  if(!product){
+  if (!product) {
     return;
   }
-
-  const existing =
-    cart.find(
-      item => item.id === id
-    );
-
-  if(existing){
-
-    existing.quantity =
-      Number(existing.quantity || 1) + 1;
-
-  }else{
-
-    cart.push({
-      id,
-      quantity:1
-    });
-
-  }
-
-  saveCart();
-  renderCart();
-
-  toast(
-    `${product.name} ajouté au panier 🛒`,
-    "success"
-  );
-
-}
-
-function removeFromCart(id){
-
-  cart =
-    cart.filter(
-      item => item.id !== id
-    );
-
-  saveCart();
-  renderCart();
-
-  toast(
-    "Produit retiré du panier."
-  );
-
-}
-
-function changeCartQuantity(
-  id,
-  delta
-){
-
-  const item =
-    cart.find(
-      cartItem => cartItem.id === id
-    );
-
-  if(!item){
-    return;
-  }
-
-  item.quantity =
-    Number(item.quantity || 1) +
-    delta;
-
-  if(item.quantity <= 0){
-
-    removeFromCart(id);
-    return;
-
-  }
-
-  saveCart();
-  renderCart();
-
-}
-
-function renderCart(){
-
-  if(cartCount){
-
-    cartCount.textContent =
-      String(getCartCount());
-
-  }
-
-  if(cartTotal){
-
-    cartTotal.textContent =
-      money(getCartSubtotal());
-
-  }
-
-  if(!cartItems){
-    return;
-  }
-
-  if(!cart.length){
-
-    cartItems.innerHTML = `
-      <div style="
-        text-align:center;
-        padding:35px 15px;
-        color:var(--muted);
-      ">
-
-        <div style="font-size:48px;">
-          🛒
-        </div>
-
-        <h3 style="margin-top:10px;">
-          Ton panier est vide
-        </h3>
-
-      </div>
-    `;
-
-    return;
-
-  }
-
-  cartItems.innerHTML =
-    cart.map(item=>{
-
-      const product =
-        getProduct(item.id);
-
-      if(!product){
-        return "";
-      }
-
-      const quantity =
-        Number(
-          item.quantity || 1
-        );
-
-      return `
-
-        <div class="cart-item">
-
-          <img
-            src="${escapeHTML(
-              product.image
-            )}"
-            alt="${escapeHTML(
-              product.name
-            )}"
-            onerror="
-              this.style.display='none'
-            "
-          >
-
-          <div class="cart-item-info">
-
-            <strong>
-              ${escapeHTML(
-                product.name
-              )}
-            </strong>
-
-            <span>
-              ${money(product.price)}
-            </span>
-
-            <div class="quantity-controls">
-
-              <button
-                type="button"
-                data-minus="${escapeHTML(
-                  product.id
-                )}"
-              >
-                −
-              </button>
-
-              <span>
-                ${quantity}
-              </span>
-
-              <button
-                type="button"
-                data-plus="${escapeHTML(
-                  product.id
-                )}"
-              >
-                +
-              </button>
-
-            </div>
-
-          </div>
-
-          <button
-            type="button"
-            class="remove-cart"
-            data-remove="${escapeHTML(
-              product.id
-            )}"
-          >
-            ×
-          </button>
-
-        </div>
-      `;
-
-    }).join("");
-
-  cartItems
-    .querySelectorAll("[data-minus]")
-    .forEach(button=>{
-
-      button.addEventListener(
-        "click",
-        ()=>{
-          changeCartQuantity(
-            button.dataset.minus,
-            -1
-          );
-        }
-      );
-
-    });
-
-  cartItems
-    .querySelectorAll("[data-plus]")
-    .forEach(button=>{
-
-      button.addEventListener(
-        "click",
-        ()=>{
-          changeCartQuantity(
-            button.dataset.plus,
-            1
-          );
-        }
-      );
-
-    });
-
-  cartItems
-    .querySelectorAll("[data-remove]")
-    .forEach(button=>{
-
-      button.addEventListener(
-        "click",
-        ()=>{
-          removeFromCart(
-            button.dataset.remove
-          );
-        }
-      );
-
-    });
-
-}
-
-function openCart(){
-
-  cartDrawer?.classList.add("open");
-  cartOverlay?.classList.add("open");
-
-}
-
-function closeCart(){
-
-  cartDrawer?.classList.remove("open");
-  cartOverlay?.classList.remove("open");
-
-}
-
-
-/* =========================================================
-   MODALE
-========================================================= */
-
-function showModal(
-  title,
-  body
-){
-
-  if(!modal){
-    return;
-  }
-
-  if(modalTitle){
-
-    modalTitle.textContent =
-      title;
-
-  }
-
-  if(modalBody){
-
-    modalBody.innerHTML =
-      body;
-
-  }
-
-  modal.classList.add("open");
-
-}
-
-function closeModal(){
-
-  modal?.classList.remove(
-    "open"
-  );
-
-}
-
-
-/* =========================================================
-   TOAST
-========================================================= */
-
-function toast(
-  message,
-  type="info"
-){
-
-  if(!toastContainer){
-    return;
-  }
-
-  const item =
-    document.createElement("div");
-
-  item.className =
-    `toast ${type}`;
-
-  item.textContent =
-    message;
-
-  toastContainer.appendChild(item);
-
-  setTimeout(()=>{
-
-    item.classList.add("hide");
-
-    setTimeout(()=>{
-      item.remove();
-    },300);
-
-  },3200);
-
-}
-
-
-/* =========================================================
-   PRODUIT
-========================================================= */
-
-function openProduct(id){
-
-  const product =
-    getProduct(id);
-
-  if(!product){
-    return;
-  }
-
-  const favorite =
-    isFavorite(id);
 
   showModal(
     product.name,
     `
-
       <div>
 
         <div style="
           width:100%;
-          height:280px;
-          border-radius:18px;
-          background:rgba(255,255,255,.04);
+          height:180px;
           display:flex;
           align-items:center;
           justify-content:center;
           overflow:hidden;
-          margin-bottom:18px;
+          border-radius:15px;
+          background:rgba(255,255,255,.04);
+          margin-bottom:16px;
         ">
 
           <img
-            src="${escapeHTML(
-              product.image
-            )}"
-            alt="${escapeHTML(
-              product.name
-            )}"
+            src="${escapeAttr(product.image)}"
+            alt="${escapeHTML(product.name)}"
             style="
-              max-width:100%;
-              max-height:100%;
+              width:auto;
+              height:auto;
+              max-width:90%;
+              max-height:165px;
               object-fit:contain;
             "
             onerror="
-              this.style.display='none'
+              this.onerror=null;
+              this.src='${FALLBACK_IMAGE}';
             "
           >
 
         </div>
 
         <div style="
-          color:var(--muted);
-          font-size:14px;
-          margin-bottom:8px;
+          opacity:.7;
+          margin-bottom:7px;
         ">
-          ${escapeHTML(
-            product.category
-          )}
+          ${escapeHTML(product.category)}
         </div>
 
-        <h2 style="margin-bottom:10px;">
-          ${money(product.price)}
+        <h2>
+          ${escapeHTML(product.name)}
         </h2>
 
-        <p style="
-          color:var(--muted);
-          line-height:1.6;
-          margin-bottom:18px;
-        ">
-          Produit gaming disponible sur NovaShop.
-        </p>
-
         <div style="
-          display:grid;
-          grid-template-columns:1fr 1fr;
-          gap:10px;
+          font-size:24px;
+          font-weight:800;
+          color:var(--accent,#2d8cff);
+          margin:12px 0;
         ">
-
-          <button
-            type="button"
-            class="add-btn"
-            id="modalAddToCart"
-          >
-            🛒 Ajouter au panier
-          </button>
-
-          <button
-            type="button"
-            class="view-btn"
-            id="modalFavorite"
-          >
-            ${
-              favorite
-                ? "♥ Retirer"
-                : "♡ Ajouter"
-            }
-            aux favoris
-          </button>
-
+          ${money(product.price)}
         </div>
+
+        <button
+          type="button"
+          class="add-btn"
+          id="modalAddProduct"
+          style="width:100%;"
+        >
+          🛒 Ajouter au panier
+        </button>
 
         <button
           type="button"
@@ -1573,7 +1526,7 @@ function openProduct(id){
           id="modalReviews"
           style="
             width:100%;
-            margin-top:10px;
+            margin-top:8px;
           "
         >
           ⭐ Voir les avis
@@ -1583,155 +1536,193 @@ function openProduct(id){
     `
   );
 
-  $("modalAddToCart")
+  $("modalAddProduct")
     ?.addEventListener(
       "click",
-      ()=>{
-        addToCart(id);
-        closeModal();
-      }
-    );
+      () => {
 
-  $("modalFavorite")
-    ?.addEventListener(
-      "click",
-      ()=>{
-        toggleFavorite(id);
-        closeModal();
+        addToCart(product.id);
+
       }
     );
 
   $("modalReviews")
     ?.addEventListener(
       "click",
-      ()=>{
-        openProductReviews(id);
+      () => {
+
+        openProductReviews(product.id);
+
       }
     );
-
 }
 
 
-/* =========================================================
-   AVIS
-========================================================= */
+// ============================================================
+// AVIS
+// ============================================================
 
-function openProductReviews(id){
+async function openProductReviews(productId) {
 
   const product =
-    getProduct(id);
+    getProduct(productId);
 
-  if(!product){
+  if (!product) {
     return;
   }
 
-  const reviews = [
-    {
-      name:"Alex",
-      rating:5,
-      text:
-        "Très bon produit, livraison rapide."
-    },
-    {
-      name:"Max",
-      rating:4,
-      text:
-        "Bonne qualité et conforme à la description."
-    },
-    {
-      name:"Lucas",
-      rating:5,
-      text:
-        "Rien à redire, fonctionne parfaitement."
-    }
-  ];
-
   showModal(
-    `Avis · ${product.name}`,
+    `Avis - ${product.name}`,
     `
-
-      <div>
-
-        <div style="
-          display:flex;
-          align-items:center;
-          gap:12px;
-          padding:15px;
-          border-radius:14px;
-          background:rgba(255,255,255,.05);
-          margin-bottom:15px;
-        ">
-
-          <strong style="font-size:25px;">
-            ⭐ 4.7
-          </strong>
-
-          <span style="color:var(--muted);">
-            Avis clients
-          </span>
-
-        </div>
-
-        <div style="
-          display:grid;
-          gap:10px;
-        ">
-
-          ${reviews.map(review=>`
-
-            <div style="
-              padding:15px;
-              border:1px solid var(--line);
-              border-radius:14px;
-            ">
-
-              <div style="
-                display:flex;
-                justify-content:space-between;
-                gap:10px;
-              ">
-
-                <strong>
-                  ${escapeHTML(
-                    review.name
-                  )}
-                </strong>
-
-                <span>
-                  ${"⭐".repeat(
-                    review.rating
-                  )}
-                </span>
-
-              </div>
-
-              <p style="
-                margin-top:8px;
-                color:var(--muted);
-              ">
-                ${escapeHTML(
-                  review.text
-                )}
-              </p>
-
-            </div>
-
-          `).join("")}
-
-        </div>
-
+      <div id="reviewsLoading"
+        style="
+          text-align:center;
+          padding:25px;
+        "
+      >
+        Chargement des avis...
       </div>
+
+      <div id="reviewsList"></div>
     `
   );
 
+  try {
+
+    const reviewsQuery =
+      query(
+        collection(db, "reviews"),
+        where(
+          "productId",
+          "==",
+          productId
+        )
+      );
+
+    const snapshot =
+      await getDocs(reviewsQuery);
+
+    const reviews = [];
+
+    snapshot.forEach(item => {
+
+      reviews.push({
+        id: item.id,
+        ...item.data()
+      });
+
+    });
+
+    reviewsCache[productId] =
+      reviews;
+
+    const loading =
+      $("reviewsLoading");
+
+    loading?.remove();
+
+    const list =
+      $("reviewsList");
+
+    if (!list) {
+      return;
+    }
+
+    if (!reviews.length) {
+
+      list.innerHTML = `
+        <div style="
+          text-align:center;
+          padding:25px;
+          opacity:.7;
+        ">
+          ⭐ Aucun avis pour le moment.
+        </div>
+      `;
+
+      return;
+    }
+
+    list.innerHTML =
+      reviews.map(review => {
+
+        const rating =
+          Math.max(
+            1,
+            Math.min(
+              5,
+              Number(review.rating || 5)
+            )
+          );
+
+        const stars =
+          "★".repeat(rating) +
+          "☆".repeat(5 - rating);
+
+        return `
+          <div style="
+            padding:14px 0;
+            border-bottom:1px solid rgba(255,255,255,.08);
+          ">
+
+            <div style="
+              color:#ffd45a;
+              font-size:18px;
+            ">
+              ${stars}
+            </div>
+
+            <strong>
+              ${escapeHTML(
+                review.userName ||
+                "Client"
+              )}
+            </strong>
+
+            <p style="
+              margin-top:7px;
+              opacity:.85;
+            ">
+              ${escapeHTML(
+                review.text || ""
+              )}
+            </p>
+
+          </div>
+        `;
+
+      }).join("");
+
+  } catch (error) {
+
+    console.error(error);
+
+    $("reviewsLoading")?.remove();
+
+    const list =
+      $("reviewsList");
+
+    if (list) {
+
+      list.innerHTML = `
+        <div style="
+          color:#ff7777;
+          padding:20px;
+        ">
+          Impossible de charger les avis.
+        </div>
+      `;
+
+    }
+  }
 }
 
 
-/* =========================================================
-   AUTH
-========================================================= */
+// ============================================================
+// AUTH
+// ============================================================
 
-function authError(error){
+function authError(error) {
 
   const code =
     error?.code || "";
@@ -1760,8 +1751,7 @@ function authError(error){
       "Trop de tentatives. Réessaie plus tard.",
 
     "auth/network-request-failed":
-      "Erreur réseau. Vérifie ta connexion."
-
+      "Erreur réseau."
   };
 
   return (
@@ -1769,10 +1759,10 @@ function authError(error){
     error?.message ||
     "Une erreur est survenue."
   );
-
 }
 
-function showLoginForm(){
+
+function showLoginForm() {
 
   showModal(
     "Connexion",
@@ -1846,17 +1836,15 @@ function showLoginForm(){
   $("loginForm")
     ?.addEventListener(
       "submit",
-      async event=>{
+      async event => {
 
         event.preventDefault();
 
         const email =
-          $("loginEmail")
-            ?.value.trim() || "";
+          $("loginEmail")?.value.trim() || "";
 
         const password =
-          $("loginPassword")
-            ?.value || "";
+          $("loginPassword")?.value || "";
 
         const errorBox =
           $("loginError");
@@ -1864,7 +1852,7 @@ function showLoginForm(){
         const submit =
           $("loginSubmit");
 
-        if(submit){
+        if (submit) {
 
           submit.disabled = true;
           submit.textContent =
@@ -1872,7 +1860,7 @@ function showLoginForm(){
 
         }
 
-        try{
+        try {
 
           await signInWithEmailAndPassword(
             auth,
@@ -1887,9 +1875,11 @@ function showLoginForm(){
             "success"
           );
 
-        }catch(error){
+        } catch (error) {
 
-          if(errorBox){
+          console.error(error);
+
+          if (errorBox) {
 
             errorBox.textContent =
               authError(error);
@@ -1899,9 +1889,9 @@ function showLoginForm(){
 
           }
 
-        }finally{
+        } finally {
 
-          if(submit){
+          if (submit) {
 
             submit.disabled = false;
             submit.textContent =
@@ -1919,10 +1909,10 @@ function showLoginForm(){
       "click",
       showRegisterForm
     );
-
 }
 
-function showRegisterForm(){
+
+function showRegisterForm() {
 
   showModal(
     "Créer un compte",
@@ -2010,28 +2000,25 @@ function showRegisterForm(){
   $("registerForm")
     ?.addEventListener(
       "submit",
-      async event=>{
+      async event => {
 
         event.preventDefault();
 
         const email =
-          $("registerEmail")
-            ?.value.trim() || "";
+          $("registerEmail")?.value.trim() || "";
 
         const password =
-          $("registerPassword")
-            ?.value || "";
+          $("registerPassword")?.value || "";
 
         const password2 =
-          $("registerPassword2")
-            ?.value || "";
+          $("registerPassword2")?.value || "";
 
         const errorBox =
           $("registerError");
 
-        if(password !== password2){
+        if (password !== password2) {
 
-          if(errorBox){
+          if (errorBox) {
 
             errorBox.textContent =
               "Les deux mots de passe sont différents.";
@@ -2047,7 +2034,7 @@ function showRegisterForm(){
         const submit =
           $("registerSubmit");
 
-        if(submit){
+        if (submit) {
 
           submit.disabled = true;
           submit.textContent =
@@ -2055,7 +2042,7 @@ function showRegisterForm(){
 
         }
 
-        try{
+        try {
 
           await createUserWithEmailAndPassword(
             auth,
@@ -2070,9 +2057,11 @@ function showRegisterForm(){
             "success"
           );
 
-        }catch(error){
+        } catch (error) {
 
-          if(errorBox){
+          console.error(error);
+
+          if (errorBox) {
 
             errorBox.textContent =
               authError(error);
@@ -2082,9 +2071,9 @@ function showRegisterForm(){
 
           }
 
-        }finally{
+        } finally {
 
-          if(submit){
+          if (submit) {
 
             submit.disabled = false;
             submit.textContent =
@@ -2102,81 +2091,103 @@ function showRegisterForm(){
       "click",
       showLoginForm
     );
-
 }
 
-async function logout(){
 
-  try{
+accountBtn?.addEventListener(
+  "click",
+  openAccount
+);
 
-    await signOut(auth);
 
-    toast(
-      "Déconnexion réussie.",
-      "success"
-    );
+// ============================================================
+// ÉTAT AUTH
+// ============================================================
 
-  }catch(error){
+onAuthStateChanged(
+  auth,
+  user => {
 
-    toast(
-      authError(error),
-      "error"
-    );
+    currentUser = user;
+
+    if (accountBtn) {
+
+      if (user) {
+
+        const email =
+          user.email || "";
+
+        const username =
+          email.split("@")[0] ||
+          "Compte";
+
+        accountBtn.textContent =
+          `👤 ${username}`;
+
+      } else {
+
+        accountBtn.textContent =
+          "👤 Compte";
+
+      }
+
+    }
+
+    if (adminBtn) {
+
+      const isAdmin =
+        !!user &&
+        (
+          user.email || ""
+        ).toLowerCase() ===
+        ADMIN_EMAIL.toLowerCase();
+
+      adminBtn.style.display =
+        isAdmin ? "" : "none";
+
+    }
 
   }
+);
 
-}
 
-function openAccount(){
+// ============================================================
+// COMPTE
+// ============================================================
 
-  if(!currentUser){
+function openAccount() {
+
+  if (!currentUser) {
 
     showLoginForm();
+
     return;
-
   }
-
-  const email =
-    currentUser.email || "";
-
-  const username =
-    email.split("@")[0] ||
-    "Compte";
 
   showModal(
     "Mon compte",
     `
-
       <div>
 
         <div style="
-          padding:18px;
-          border-radius:16px;
-          background:rgba(255,255,255,.05);
+          padding:16px;
+          border-radius:15px;
+          background:rgba(80,120,255,.08);
           margin-bottom:15px;
         ">
 
-          <div style="
-            font-size:12px;
-            color:var(--muted);
-          ">
-            COMPTE
-          </div>
-
-          <strong style="
-            display:block;
-            margin-top:5px;
-            font-size:19px;
-          ">
-            ${escapeHTML(username)}
+          <strong>
+            👤 Compte connecté
           </strong>
 
-          <div style="
+          <p style="
             margin-top:7px;
-            color:var(--muted);
+            opacity:.8;
           ">
-            ${escapeHTML(email)}
-          </div>
+            ${escapeHTML(
+              currentUser.email || ""
+            )}
+          </p>
 
         </div>
 
@@ -2184,7 +2195,10 @@ function openAccount(){
           type="button"
           class="add-btn"
           id="accountOrders"
-          style="width:100%;"
+          style="
+            width:100%;
+            margin-bottom:8px;
+          "
         >
           📦 Mes commandes
         </button>
@@ -2195,10 +2209,9 @@ function openAccount(){
           id="accountLogout"
           style="
             width:100%;
-            margin-top:10px;
           "
         >
-          Se déconnecter
+          🚪 Se déconnecter
         </button>
 
       </div>
@@ -2214,30 +2227,74 @@ function openAccount(){
   $("accountLogout")
     ?.addEventListener(
       "click",
-      async ()=>{
-        closeModal();
-        await logout();
+      async () => {
+
+        try {
+
+          await signOut(auth);
+
+          closeModal();
+
+          toast(
+            "Déconnexion réussie.",
+            "success"
+          );
+
+        } catch (error) {
+
+          toast(
+            authError(error),
+            "error"
+          );
+
+        }
+
       }
     );
-
 }
 
 
-/* =========================================================
-   COMMANDES
-========================================================= */
+// ============================================================
+// COMMANDES
+// ============================================================
 
-async function getUserOrders(){
+ordersBtn?.addEventListener(
+  "click",
+  openOrders
+);
 
-  if(!currentUser){
-    return [];
+
+async function openOrders() {
+
+  if (!currentUser) {
+
+    showLoginForm();
+
+    return;
   }
 
-  try{
+  showModal(
+    "Mes commandes",
+    `
+      <div
+        id="ordersLoading"
+        style="
+          text-align:center;
+          padding:30px;
+        "
+      >
+        Chargement des commandes...
+      </div>
 
-    const q =
+      <div id="ordersList"></div>
+    `
+  );
+
+  try {
+
+    const ordersQuery =
       query(
-        collection(db,"orders"),
+        collection(db, "orders"),
         where(
           "userId",
           "==",
@@ -2246,185 +2303,188 @@ async function getUserOrders(){
       );
 
     const snapshot =
-      await getDocs(q);
+      await getDocs(ordersQuery);
 
-    const orders =
-      snapshot.docs.map(item=>({
-        id:item.id,
+    const orders = [];
+
+    snapshot.forEach(item => {
+
+      orders.push({
+        id: item.id,
         ...item.data()
-      }));
-
-    orders.sort((a,b)=>{
-
-      const aDate =
-        a.createdAt?.seconds || 0;
-
-      const bDate =
-        b.createdAt?.seconds || 0;
-
-      return bDate - aDate;
+      });
 
     });
 
-    return orders;
+    orders.sort(
+      (a, b) => {
 
-  }catch(error){
+        const dateA =
+          a.createdAt?.seconds || 0;
+
+        const dateB =
+          b.createdAt?.seconds || 0;
+
+        return dateB - dateA;
+      }
+    );
+
+    $("ordersLoading")?.remove();
+
+    const list =
+      $("ordersList");
+
+    if (!list) {
+      return;
+    }
+
+    if (!orders.length) {
+
+      list.innerHTML = `
+        <div style="
+          text-align:center;
+          padding:30px;
+        ">
+
+          <div style="font-size:50px;">
+            📦
+          </div>
+
+          <h3>
+            Aucune commande
+          </h3>
+
+          <p>
+            Tu n'as pas encore passé de commande.
+          </p>
+
+        </div>
+      `;
+
+      return;
+    }
+
+    list.innerHTML =
+      orders.map(order => {
+
+        const total =
+          Number(order.total || 0);
+
+        const status =
+          order.status ||
+          "Enregistrée";
+
+        return `
+          <div
+            class="order-card"
+            style="
+              padding:16px;
+              margin-bottom:12px;
+              border:1px solid rgba(255,255,255,.08);
+              border-radius:16px;
+            "
+          >
+
+            <div style="
+              display:flex;
+              justify-content:space-between;
+              gap:10px;
+              margin-bottom:8px;
+            ">
+
+              <strong>
+                Commande #${escapeHTML(
+                  order.id.slice(0, 8)
+                )}
+              </strong>
+
+              <strong>
+                ${money(total)}
+              </strong>
+
+            </div>
+
+            <div style="
+              margin-bottom:12px;
+            ">
+              Statut :
+              <strong>
+                ${escapeHTML(status)}
+              </strong>
+            </div>
+
+            <button
+              type="button"
+              class="view-btn"
+              data-order-id="${escapeAttr(order.id)}"
+            >
+              Voir la commande
+            </button>
+
+          </div>
+        `;
+
+      }).join("");
+
+    list.addEventListener(
+      "click",
+      event => {
+
+        const button =
+          event.target.closest(
+            "[data-order-id]"
+          );
+
+        if (!button) {
+          return;
+        }
+
+        const order =
+          orders.find(
+            item =>
+              item.id ===
+              button.dataset.orderId
+          );
+
+        if (order) {
+          openOrderDetails(order);
+        }
+
+      }
+    );
+
+  } catch (error) {
 
     console.error(
-      "Orders error:",
+      "Firestore Orders Error:",
       error
     );
 
-    return [];
+    const loading =
+      $("ordersLoading");
 
-  }
+    if (loading) {
 
-}
-
-async function openOrders(){
-
-  if(!currentUser){
-
-    showLoginForm();
-    return;
-
-  }
-
-  showModal(
-    "Mes commandes",
-    `
-      <div
-        id="ordersContent"
-        style="min-height:120px;"
-      >
-        <div style="
-          text-align:center;
-          padding:35px;
-          color:var(--muted);
-        ">
-          Chargement...
+      loading.innerHTML = `
+        <div style="color:#ff7777;">
+          Impossible de charger les commandes.
+          <br><br>
+          ${escapeHTML(
+            error.message || ""
+          )}
         </div>
-      </div>
-    `
-  );
-
-  const orders =
-    await getUserOrders();
-
-  const content =
-    $("ordersContent");
-
-  if(!content){
-    return;
-  }
-
-  if(!orders.length){
-
-    content.innerHTML = `
-      <div style="
-        text-align:center;
-        padding:30px 10px;
-        color:var(--muted);
-      ">
-
-        <div style="font-size:45px;">
-          📦
-        </div>
-
-        <h3 style="
-          margin-top:10px;
-          color:var(--text);
-        ">
-          Aucune commande
-        </h3>
-
-        <p style="margin-top:8px;">
-          Tes commandes apparaîtront ici.
-        </p>
-
-      </div>
-    `;
-
-    return;
-  }
-
-  content.innerHTML =
-    orders.map(order=>{
-
-      const status =
-        order.status ||
-        "Enregistrée";
-
-      return `
-
-        <button
-          type="button"
-          class="order-card"
-          data-order-id="${escapeHTML(
-            order.id
-          )}"
-        >
-
-          <div>
-
-            <strong>
-              Commande #${escapeHTML(
-                order.id.slice(0,8)
-              )}
-            </strong>
-
-            <div style="
-              margin-top:6px;
-              color:var(--muted);
-            ">
-              ${money(order.total || 0)}
-            </div>
-
-          </div>
-
-          <span class="order-status">
-            ${escapeHTML(status)}
-          </span>
-
-        </button>
       `;
 
-    }).join("");
-
-  content
-    .querySelectorAll(
-      "[data-order-id]"
-    )
-    .forEach(button=>{
-
-      button.addEventListener(
-        "click",
-        ()=>{
-
-          const order =
-            orders.find(
-              item =>
-                item.id ===
-                button.dataset.orderId
-            );
-
-          if(order){
-            openOrderDetails(order);
-          }
-
-        }
-      );
-
-    });
-
+    }
+  }
 }
 
 
-/* =========================================================
-   DETAIL COMMANDE
-========================================================= */
+// ============================================================
+// DÉTAIL COMMANDE
+// ============================================================
 
-function openOrderDetails(order){
+function openOrderDetails(order) {
 
   const items =
     Array.isArray(order.items)
@@ -2448,7 +2508,7 @@ function openOrderDetails(order){
     timeline.indexOf(status);
 
   const productsHTML =
-    items.map(item=>{
+    items.map(item => {
 
       const product =
         getProduct(item.id);
@@ -2466,9 +2526,7 @@ function openOrderDetails(order){
         );
 
       const quantity =
-        Number(
-          item.quantity || 1
-        );
+        Number(item.quantity || 1);
 
       return `
         <div style="
@@ -2476,7 +2534,7 @@ function openOrderDetails(order){
           justify-content:space-between;
           gap:12px;
           padding:10px 0;
-          border-bottom:1px solid var(--line);
+          border-bottom:1px solid rgba(255,255,255,.07);
         ">
 
           <span>
@@ -2485,9 +2543,7 @@ function openOrderDetails(order){
           </span>
 
           <strong>
-            ${money(
-              price * quantity
-            )}
+            ${money(price * quantity)}
           </strong>
 
         </div>
@@ -2507,35 +2563,39 @@ function openOrderDetails(order){
           ❌ Commande annulée
         </div>
       `
-      :
-      timeline.map(
-        (step,index)=>{
+      : timeline.map(
+          (step, index) => {
 
-          const active =
-            currentIndex >= index;
+            const active =
+              currentIndex >= index;
 
-          return `
-            <div class="
-              timeline-step
-              ${active?"active":""}
-            ">
+            return `
+              <div style="
+                display:flex;
+                align-items:center;
+                gap:10px;
+                margin:8px 0;
+                opacity:${active ? 1 : .4};
+              ">
 
-              <span>
-                ${active?"●":"○"}
-              </span>
+                <span>
+                  ${active ? "●" : "○"}
+                </span>
 
-              <span>
-                ${step}
-              </span>
+                <span>
+                  ${step}
+                </span>
 
-            </div>
-          `;
+              </div>
+            `;
 
-        }
-      ).join("");
+          }
+        ).join("");
 
   showModal(
-    `Commande #${order.id.slice(0,8)}`,
+    `Commande #${escapeHTML(
+      order.id.slice(0, 8)
+    )}`,
     `
       <div>
 
@@ -2554,7 +2614,7 @@ function openOrderDetails(order){
           ${
             order.tracking
               ? `
-                <div style="margin-top:8px">
+                <div style="margin-top:8px;">
                   Suivi :
                   ${escapeHTML(
                     order.tracking
@@ -2565,12 +2625,12 @@ function openOrderDetails(order){
           }
 
           ${
-            order.city
+            order.estimatedDelivery
               ? `
-                <div style="margin-top:8px">
-                  📍 Ville :
+                <div style="margin-top:8px;">
+                  Livraison estimée :
                   ${escapeHTML(
-                    order.city
+                    order.estimatedDelivery
                   )}
                 </div>
               `
@@ -2578,13 +2638,11 @@ function openOrderDetails(order){
           }
 
           ${
-            order.estimatedDelivery
+            order.city
               ? `
-                <div style="margin-top:8px">
-                  Livraison estimée :
-                  ${escapeHTML(
-                    order.estimatedDelivery
-                  )}
+                <div style="margin-top:8px;">
+                  📍 Destination :
+                  ${escapeHTML(order.city)}
                 </div>
               `
               : ""
@@ -2621,7 +2679,6 @@ function openOrderDetails(order){
 
               <p style="
                 margin:8px 0 20px;
-                color:var(--muted);
               ">
                 ${escapeHTML(
                   order.address
@@ -2636,7 +2693,7 @@ function openOrderDetails(order){
           justify-content:space-between;
           font-size:20px;
           padding-top:15px;
-          border-top:1px solid var(--line);
+          border-top:1px solid rgba(255,255,255,.1);
         ">
 
           <strong>
@@ -2644,9 +2701,7 @@ function openOrderDetails(order){
           </strong>
 
           <strong>
-            ${money(
-              order.total || 0
-            )}
+            ${money(order.total || 0)}
           </strong>
 
         </div>
@@ -2670,279 +2725,76 @@ function openOrderDetails(order){
   $("invoiceBtn")
     ?.addEventListener(
       "click",
-      ()=>printInvoice(order)
+      () => printInvoice(order)
     );
-
 }
 
 
-/* =========================================================
-   FACTURE
-========================================================= */
+// ============================================================
+// CARTE LOCALE
+// ============================================================
 
-function printInvoice(order){
+function getTestCard() {
 
-  const items =
-    Array.isArray(order.items)
-      ? order.items
-      : [];
-
-  const rows =
-    items.map(item=>{
-
-      const product =
-        getProduct(item.id);
-
-      const name =
-        product?.name ||
-        item.name ||
-        "Produit";
-
-      const price =
-        Number(
-          product?.price ??
-          item.price ??
-          0
-        );
-
-      const quantity =
-        Number(
-          item.quantity || 1
-        );
-
-      return `
-        <tr>
-
-          <td>
-            ${escapeHTML(name)}
-          </td>
-
-          <td>
-            ${quantity}
-          </td>
-
-          <td>
-            ${money(price)}
-          </td>
-
-          <td>
-            ${money(
-              price * quantity
-            )}
-          </td>
-
-        </tr>
-      `;
-
-    }).join("");
-
-  const invoice = `
-<!DOCTYPE html>
-
-<html lang="fr">
-
-<head>
-
-<meta charset="UTF-8">
-
-<title>
-Facture NovaShop
-</title>
-
-<style>
-
-body{
-  font-family:Arial,sans-serif;
-  padding:40px;
-  color:#111;
-}
-
-h1{
-  margin-bottom:5px;
-}
-
-small{
-  color:#666;
-}
-
-table{
-  width:100%;
-  border-collapse:collapse;
-  margin-top:30px;
-}
-
-th,
-td{
-  padding:12px;
-  border-bottom:1px solid #ddd;
-  text-align:left;
-}
-
-.total{
-  margin-top:25px;
-  text-align:right;
-  font-size:22px;
-  font-weight:700;
-}
-
-</style>
-
-</head>
-
-<body>
-
-<h1>
-NovaShop
-</h1>
-
-<small>
-Commande #${escapeHTML(
-  order.id.slice(0,8)
-)}
-</small>
-
-<p>
-Client :
-${escapeHTML(
-  order.userEmail || ""
-)}
-</p>
-
-<p>
-Adresse :
-${escapeHTML(
-  order.address || ""
-)}
-</p>
-
-<table>
-
-<thead>
-
-<tr>
-<th>Produit</th>
-<th>Qté</th>
-<th>Prix</th>
-<th>Total</th>
-</tr>
-
-</thead>
-
-<tbody>
-${rows}
-</tbody>
-
-</table>
-
-<div class="total">
-Total :
-${money(order.total || 0)}
-</div>
-
-<script>
-
-window.onload=()=>{
-  window.print();
-};
-
-<\/script>
-
-</body>
-
-</html>
-  `;
-
-  const popup =
-    window.open(
-      "",
-      "_blank",
-      "width=900,height=700"
-    );
-
-  if(!popup){
-
-    toast(
-      "Impossible d'ouvrir la facture.",
-      "error"
-    );
-
-    return;
-  }
-
-  popup.document.open();
-  popup.document.write(invoice);
-  popup.document.close();
-
-}
-
-
-/* =========================================================
-   CARTE ADMIN
-========================================================= */
-
-function getTestCard(){
-
-  try{
+  try {
 
     const raw =
       localStorage.getItem(
         TEST_CARD_STORAGE_KEY
       );
 
-    if(!raw){
+    if (!raw) {
       return null;
     }
 
     const parsed =
       JSON.parse(raw);
 
-    if(
+    if (
       !parsed ||
       typeof parsed.number !== "string" ||
       typeof parsed.expiry !== "string" ||
       typeof parsed.cvv !== "string" ||
       typeof parsed.holder !== "string"
-    ){
-
+    ) {
       return null;
-
     }
 
     return parsed;
 
-  }catch{
+  } catch {
 
     return null;
-
   }
-
 }
 
-function generateTestCard(){
+
+function generateTestCard() {
 
   const digits =
     Array.from(
-      {length:12},
-      ()=>Math.floor(
-        Math.random()*10
-      )
+      { length: 12 },
+      () =>
+        Math.floor(
+          Math.random() * 10
+        )
     ).join("");
 
   const number =
-    `9999 ${digits.slice(0,4)} ${digits.slice(4,8)} ${digits.slice(8,12)}`;
+    `9999 ${digits.slice(0, 4)} ${digits.slice(4, 8)} ${digits.slice(8, 12)}`;
 
   const month =
     String(
       Math.floor(
-        Math.random()*12
+        Math.random() * 12
       ) + 1
-    ).padStart(2,"0");
+    ).padStart(2, "0");
 
   const year =
     String(
       new Date().getFullYear() +
       Math.floor(
-        Math.random()*5
+        Math.random() * 5
       ) +
       1
     ).slice(-2);
@@ -2950,15 +2802,22 @@ function generateTestCard(){
   const cvv =
     String(
       Math.floor(
-        Math.random()*900
+        Math.random() * 900
       ) + 100
     );
 
   const card = {
+
     number,
-    holder:"NOVASHOP CARD",
-    expiry:`${month}/${year}`,
+
+    holder:
+      "NOVASHOP CARD",
+
+    expiry:
+      `${month}/${year}`,
+
     cvv
+
   };
 
   localStorage.setItem(
@@ -2967,225 +2826,184 @@ function generateTestCard(){
   );
 
   return card;
-
 }
 
-function renderTestCardHTML(){
+
+function renderTestCardHTML() {
 
   const card =
     getTestCard();
 
-  if(!card){
+  if (!card) {
 
     return `
       <div style="
-        padding:18px;
+        padding:16px;
         border-radius:15px;
-        border:1px solid var(--line);
-        color:var(--muted);
-        text-align:center;
+        background:rgba(255,255,255,.04);
+        margin-top:15px;
       ">
-        Aucune carte créée.
+
+        <strong>
+          💳 Carte
+        </strong>
+
+        <p style="
+          margin-top:7px;
+          opacity:.7;
+        ">
+          Aucune carte créée.
+        </p>
+
+        <button
+          type="button"
+          class="add-btn"
+          id="generateTestCard"
+          style="
+            width:100%;
+            margin-top:12px;
+          "
+        >
+          Générer une carte
+        </button>
+
       </div>
     `;
-
   }
 
   return `
-
     <div style="
-      width:100%;
-      max-width:420px;
-      min-height:235px;
-      margin:12px auto 16px;
-      padding:24px;
-      border-radius:22px;
-      background:#050505;
-      color:#ffffff !important;
-      border:1px solid #252525;
-      box-shadow:
-        0 18px 50px rgba(0,0,0,.45);
-      display:flex;
-      flex-direction:column;
-      justify-content:space-between;
+      margin-top:15px;
     ">
 
       <div style="
-        font-size:24px;
-        font-weight:700;
-        letter-spacing:3px;
-        color:#ffffff !important;
-      ">
-        ${escapeHTML(
-          card.number
-        )}
-      </div>
-
-      <div style="
-        display:grid;
-        grid-template-columns:
-          1fr auto auto;
-        gap:18px;
-        align-items:end;
-        color:#ffffff !important;
+        width:100%;
+        max-width:420px;
+        min-height:235px;
+        margin:12px auto 16px;
+        padding:24px;
+        border-radius:22px;
+        background:#050505;
+        color:#fff !important;
+        border:1px solid #252525;
+        box-shadow:0 18px 50px rgba(0,0,0,.45);
+        display:flex;
+        flex-direction:column;
+        justify-content:space-between;
       ">
 
-        <div>
-
-          <div style="
-            font-size:10px;
-            letter-spacing:1.5px;
-            color:#ffffff !important;
-          ">
-            TITULAIRE
-          </div>
-
-          <div style="
-            font-size:15px;
-            font-weight:700;
-            color:#ffffff !important;
-            margin-top:4px;
-          ">
-            ${escapeHTML(
-              card.holder
-            )}
-          </div>
-
+        <div style="
+          font-size:24px;
+          font-weight:700;
+          letter-spacing:3px;
+          color:#fff !important;
+        ">
+          ${escapeHTML(card.number)}
         </div>
-
-        <div>
-
-          <div style="
-            font-size:10px;
-            letter-spacing:1.5px;
-            color:#ffffff !important;
-          ">
-            EXP
-          </div>
-
-          <div style="
-            font-size:15px;
-            font-weight:700;
-            color:#ffffff !important;
-            margin-top:4px;
-          ">
-            ${escapeHTML(
-              card.expiry
-            )}
-          </div>
-
-        </div>
-
-        <div>
-
-          <div style="
-            font-size:10px;
-            letter-spacing:1.5px;
-            color:#ffffff !important;
-          ">
-            CVV
-          </div>
-
-          <div style="
-            font-size:15px;
-            font-weight:700;
-            color:#ffffff !important;
-            margin-top:4px;
-          ">
-            ${escapeHTML(
-              card.cvv
-            )}
-          </div>
-
-        </div>
-
-      </div>
-
-    </div>
-
-    <div style="
-      display:grid;
-      gap:8px;
-      padding:12px;
-      border-radius:12px;
-      background:rgba(255,255,255,.04);
-      margin-bottom:12px;
-    ">
-
-      <div>
-        <strong>
-          Numéro de carte
-        </strong>
 
         <div style="
-          color:var(--muted);
-          margin-top:3px;
+          display:grid;
+          grid-template-columns:1fr auto auto;
+          gap:18px;
+          align-items:end;
         ">
-          ${escapeHTML(
-            card.number
-          )}
+
+          <div>
+
+            <div style="
+              font-size:10px;
+              letter-spacing:1.5px;
+              color:#fff !important;
+            ">
+              TITULAIRE
+            </div>
+
+            <div style="
+              font-size:15px;
+              font-weight:700;
+              color:#fff !important;
+              margin-top:4px;
+            ">
+              ${escapeHTML(card.holder)}
+            </div>
+
+          </div>
+
+          <div>
+
+            <div style="
+              font-size:10px;
+              letter-spacing:1.5px;
+              color:#fff !important;
+            ">
+              EXP
+            </div>
+
+            <div style="
+              font-size:15px;
+              font-weight:700;
+              color:#fff !important;
+              margin-top:4px;
+            ">
+              ${escapeHTML(card.expiry)}
+            </div>
+
+          </div>
+
+          <div>
+
+            <div style="
+              font-size:10px;
+              letter-spacing:1.5px;
+              color:#fff !important;
+            ">
+              CVV
+            </div>
+
+            <div style="
+              font-size:15px;
+              font-weight:700;
+              color:#fff !important;
+              margin-top:4px;
+            ">
+              ${escapeHTML(card.cvv)}
+            </div>
+
+          </div>
+
         </div>
+
       </div>
 
-      <div>
-        <strong>
-          Nom sur la carte
-        </strong>
-
-        <div style="
-          color:var(--muted);
-          margin-top:3px;
-        ">
-          ${escapeHTML(
-            card.holder
-          )}
-        </div>
-      </div>
-
-      <div>
-        <strong>
-          Expiration
-        </strong>
-
-        <div style="
-          color:var(--muted);
-          margin-top:3px;
-        ">
-          ${escapeHTML(
-            card.expiry
-          )}
-        </div>
-      </div>
-
-      <div>
-        <strong>
-          CVV
-        </strong>
-
-        <div style="
-          color:var(--muted);
-          margin-top:3px;
-        ">
-          ${escapeHTML(
-            card.cvv
-          )}
-        </div>
-      </div>
+      <button
+        type="button"
+        class="add-btn"
+        id="generateTestCard"
+        style="
+          width:100%;
+        "
+      >
+        🔄 Générer une nouvelle carte
+      </button>
 
     </div>
   `;
-
 }
 
 
-/* =========================================================
-   CHECKOUT
-   CARTE NON PRE-REMPLIE
-========================================================= */
+// ============================================================
+// CHECKOUT
+// ============================================================
 
-function openCheckout(){
+checkoutBtn?.addEventListener(
+  "click",
+  openCheckout
+);
 
-  if(!cart.length){
+
+function openCheckout() {
+
+  if (!cart.length) {
 
     toast(
       "Ton panier est vide 🛒"
@@ -3194,7 +3012,7 @@ function openCheckout(){
     return;
   }
 
-  if(!currentUser){
+  if (!currentUser) {
 
     toast(
       "Connecte-toi pour commander."
@@ -3213,23 +3031,28 @@ function openCheckout(){
     `
       <form id="checkoutForm">
 
-        <label for="checkoutAddress">
-          Adresse de livraison
-        </label>
+        <div style="
+          margin-bottom:14px;
+        ">
 
-        <textarea
-          id="checkoutAddress"
-          required
-          rows="4"
-          placeholder="Adresse complète"
-        ></textarea>
+          <label for="checkoutAddress">
+            Adresse de livraison
+          </label>
 
+          <textarea
+            id="checkoutAddress"
+            required
+            rows="4"
+            placeholder="Adresse complète"
+          ></textarea>
+
+        </div>
 
         <div style="
           padding:15px;
           border-radius:14px;
           background:rgba(255,255,255,.05);
-          margin:18px 0;
+          margin:15px 0;
         ">
 
           <div style="
@@ -3266,16 +3089,14 @@ function openCheckout(){
 
         </div>
 
-
         <h3>
           Mode de paiement
         </h3>
 
-
         <div style="
           display:grid;
           gap:10px;
-          margin:12px 0;
+          margin:12px 0 18px;
         ">
 
           <button
@@ -3296,29 +3117,25 @@ function openCheckout(){
 
         </div>
 
-
         <input
           type="hidden"
           id="paymentMethod"
           value=""
         >
 
-
         <div
           id="paymentInfo"
-          style="margin:12px 0"
+          style="margin-bottom:14px;"
         ></div>
-
 
         <button
           type="submit"
           class="add-btn"
           id="checkoutSubmit"
-          style="width:100%"
+          style="width:100%;"
         >
           Continuer
         </button>
-
 
         <div
           id="checkoutError"
@@ -3333,220 +3150,170 @@ function openCheckout(){
     `
   );
 
-
   let paymentMethod = "";
 
-
-  const subtotalEl =
-    $("checkoutSubtotal");
-
-  const finalEl =
-    $("checkoutFinal");
-
-
-  function updateCheckout(){
-
-    const currentSubtotal =
-      getCartSubtotal();
-
-    if(subtotalEl){
-
-      subtotalEl.textContent =
-        money(currentSubtotal);
-
-    }
-
-    if(finalEl){
-
-      finalEl.textContent =
-        money(currentSubtotal);
-
-    }
-
-  }
-
-
-  updateCheckout();
-
-
   document
-    .querySelectorAll(
-      ".payment-choice"
-    )
-    .forEach(button=>{
+    .querySelectorAll(".payment-choice")
+    .forEach(button => {
 
       button.addEventListener(
         "click",
-        ()=>{
+        () => {
 
           paymentMethod =
             button.dataset.payment || "";
 
-          $("paymentMethod").value =
-            paymentMethod;
+          const input =
+            $("paymentMethod");
 
+          if (input) {
+            input.value =
+              paymentMethod;
+          }
 
           document
             .querySelectorAll(
               ".payment-choice"
             )
-            .forEach(item=>
+            .forEach(item => {
+
               item.classList.remove(
                 "selected"
-              )
-            );
+              );
 
+            });
 
           button.classList.add(
             "selected"
           );
 
-
           const info =
             $("paymentInfo");
 
-          if(!info){
+          if (!info) {
             return;
           }
 
-
-          if(paymentMethod === "paypal"){
+          if (
+            paymentMethod ===
+            "paypal"
+          ) {
 
             info.innerHTML = `
-
               <div style="
                 padding:12px;
                 border-radius:12px;
-                background:
-                  rgba(60,130,255,.1);
+                background:rgba(60,130,255,.1);
               ">
-
-                🅿️ Tu seras redirigé vers
-                PayPal pour effectuer le paiement.
-
+                Tu seras redirigé vers PayPal
+                pour effectuer le paiement.
               </div>
-
             `;
 
-            return;
+          } else {
+
+            info.innerHTML = `
+              <div style="
+                padding:15px;
+                border-radius:14px;
+                background:rgba(255,255,255,.05);
+              ">
+
+                <div style="
+                  font-weight:700;
+                  margin-bottom:12px;
+                ">
+                  💳 Informations de carte
+                </div>
+
+                <label for="cardNumber">
+                  Numéro de carte
+                </label>
+
+                <input
+                  id="cardNumber"
+                  type="text"
+                  inputmode="numeric"
+                  autocomplete="off"
+                  value=""
+                  placeholder="Numéro de carte"
+                  required
+                >
+
+                <label
+                  for="cardHolder"
+                  style="margin-top:10px"
+                >
+                  Nom sur la carte
+                </label>
+
+                <input
+                  id="cardHolder"
+                  type="text"
+                  autocomplete="off"
+                  value=""
+                  placeholder="Nom sur la carte"
+                  required
+                >
+
+                <div style="
+                  display:grid;
+                  grid-template-columns:1fr 1fr;
+                  gap:10px;
+                  margin-top:10px;
+                ">
+
+                  <div>
+
+                    <label for="cardExpiry">
+                      Expiration
+                    </label>
+
+                    <input
+                      id="cardExpiry"
+                      type="text"
+                      autocomplete="off"
+                      value=""
+                      placeholder="MM/AA"
+                      required
+                    >
+
+                  </div>
+
+                  <div>
+
+                    <label for="cardCvv">
+                      CVV
+                    </label>
+
+                    <input
+                      id="cardCvv"
+                      type="text"
+                      inputmode="numeric"
+                      autocomplete="off"
+                      value=""
+                      placeholder="CVV"
+                      required
+                    >
+
+                  </div>
+
+                </div>
+
+                <p style="
+                  margin-top:12px;
+                  color:var(--muted);
+                  font-size:13px;
+                ">
+                  Entre les informations de la carte
+                  créée depuis l’administration.
+                </p>
+
+              </div>
+            `;
           }
 
-
-          /*
-            IMPORTANT :
-            aucun numéro,
-            aucun nom,
-            aucune expiration
-            et aucun CVV n'est prérempli.
-          */
-
-          info.innerHTML = `
-
-            <div style="
-              padding:15px;
-              border-radius:14px;
-              background:
-                rgba(255,255,255,.05);
-            ">
-
-              <div style="
-                font-weight:700;
-                margin-bottom:12px;
-              ">
-                💳 Informations de carte
-              </div>
-
-
-              <label for="cardNumber">
-                Numéro de carte
-              </label>
-
-              <input
-                id="cardNumber"
-                type="text"
-                inputmode="numeric"
-                autocomplete="off"
-                placeholder="XXXX XXXX XXXX XXXX"
-                required
-              >
-
-
-              <label
-                for="cardHolder"
-                style="margin-top:10px"
-              >
-                Nom sur la carte
-              </label>
-
-              <input
-                id="cardHolder"
-                type="text"
-                autocomplete="off"
-                placeholder="Nom du titulaire"
-                required
-              >
-
-
-              <div style="
-                display:grid;
-                grid-template-columns:
-                  1fr 1fr;
-                gap:10px;
-                margin-top:10px;
-              ">
-
-                <div>
-
-                  <label for="cardExpiry">
-                    Expiration
-                  </label>
-
-                  <input
-                    id="cardExpiry"
-                    type="text"
-                    autocomplete="off"
-                    placeholder="MM/AA"
-                    required
-                  >
-
-                </div>
-
-
-                <div>
-
-                  <label for="cardCvv">
-                    CVV
-                  </label>
-
-                  <input
-                    id="cardCvv"
-                    type="text"
-                    inputmode="numeric"
-                    autocomplete="off"
-                    placeholder="CVV"
-                    required
-                  >
-
-                </div>
-
-              </div>
-
-
-              <p style="
-                margin-top:12px;
-                color:var(--muted);
-                font-size:13px;
-              ">
-                Saisis manuellement les informations
-                de la carte créée dans l’administration.
-              </p>
-
-            </div>
-
-          `;
-
         }
-
       );
 
     });
@@ -3555,10 +3322,9 @@ function openCheckout(){
   $("checkoutForm")
     ?.addEventListener(
       "submit",
-      async event=>{
+      async event => {
 
         event.preventDefault();
-
 
         const address =
           $("checkoutAddress")
@@ -3567,169 +3333,149 @@ function openCheckout(){
         const errorBox =
           $("checkoutError");
 
+        if (!address) {
 
-        if(!address){
+          if (errorBox) {
 
-          errorBox.textContent =
-            "Indique ton adresse de livraison.";
+            errorBox.textContent =
+              "Indique ton adresse de livraison.";
 
-          errorBox.style.display =
-            "block";
+            errorBox.style.display =
+              "block";
 
-          return;
-        }
-
-
-        if(!paymentMethod){
-
-          errorBox.textContent =
-            "Choisis un moyen de paiement.";
-
-          errorBox.style.display =
-            "block";
+          }
 
           return;
         }
 
+        if (!paymentMethod) {
+
+          if (errorBox) {
+
+            errorBox.textContent =
+              "Choisis un moyen de paiement.";
+
+            errorBox.style.display =
+              "block";
+
+          }
+
+          return;
+        }
 
         const submit =
           $("checkoutSubmit");
 
-
-        if(submit){
+        if (submit) {
 
           submit.disabled = true;
-
           submit.textContent =
             "Création...";
 
         }
 
-
-        try{
-
-          const subtotal =
-            getCartSubtotal();
+        try {
 
           const total =
-            subtotal;
+            getCartSubtotal();
 
+          let paymentStatus =
+            total === 0
+              ? "Payé"
+              : "En attente";
 
-          /*
-            Vérification de la carte :
-            elle reste uniquement dans le navigateur
-            et aucune donnée de carte n'est enregistrée
-            dans Firestore.
-          */
+          if (
+            paymentMethod ===
+            "card"
+          ) {
 
-          if(paymentMethod === "card"){
-
-            const storedCard =
+            const card =
               getTestCard();
 
+            if (!card) {
 
-            if(!storedCard){
-
-              errorBox.textContent =
-                "Aucune carte n’a encore été créée dans l’administration.";
-
-              errorBox.style.display =
-                "block";
-
-              return;
+              throw new Error(
+                "Aucune carte n'a été créée dans l'administration."
+              );
             }
-
 
             const enteredNumber =
-              ($("cardNumber")
-                ?.value || "")
-                .replace(/\s+/g,"")
+              (
+                $("cardNumber")
+                  ?.value || ""
+              )
+                .replace(/\s+/g, "")
                 .trim();
-
 
             const storedNumber =
-              storedCard.number
-                .replace(/\s+/g,"")
+              card.number
+                .replace(/\s+/g, "")
                 .trim();
-
 
             const enteredHolder =
-              ($("cardHolder")
-                ?.value || "")
+              (
+                $("cardHolder")
+                  ?.value || ""
+              )
                 .trim()
-                .toUpperCase();
-
+                .toLowerCase();
 
             const storedHolder =
-              storedCard.holder
+              card.holder
                 .trim()
-                .toUpperCase();
-
+                .toLowerCase();
 
             const enteredExpiry =
-              ($("cardExpiry")
-                ?.value || "")
-                .trim();
-
+              (
+                $("cardExpiry")
+                  ?.value || ""
+              ).trim();
 
             const enteredCvv =
-              ($("cardCvv")
-                ?.value || "")
-                .trim();
+              (
+                $("cardCvv")
+                  ?.value || ""
+              ).trim();
 
+            if (
+              enteredNumber !==
+                storedNumber ||
+              enteredHolder !==
+                storedHolder ||
+              enteredExpiry !==
+                card.expiry ||
+              enteredCvv !==
+                card.cvv
+            ) {
 
-            const valid =
-              enteredNumber === storedNumber &&
-              enteredHolder === storedHolder &&
-              enteredExpiry === storedCard.expiry &&
-              enteredCvv === storedCard.cvv;
-
-
-            if(!valid){
-
-              errorBox.textContent =
-                "Les informations de la carte ne correspondent pas à la carte créée dans l’administration.";
-
-              errorBox.style.display =
-                "block";
-
-              return;
+              throw new Error(
+                "Les informations de carte sont incorrectes."
+              );
             }
 
+            paymentStatus =
+              "Payé";
           }
 
-
           const orderItems =
-            cart.map(item=>{
+            cart.map(item => {
 
               const product =
                 getProduct(item.id);
 
               return {
-
-                id:item.id,
-
+                id: item.id,
                 name:
                   product?.name ||
                   "Produit",
-
                 price:
                   product?.price ||
                   0,
-
                 quantity:
-                  Number(
-                    item.quantity || 1
-                  ),
-
-                image:
-                  product?.image ||
-                  ""
-
+                  item.quantity
               };
 
             });
-
 
           const orderData = {
 
@@ -3742,7 +3488,8 @@ function openCheckout(){
             items:
               orderItems,
 
-            subtotal,
+            subtotal:
+              total,
 
             total,
 
@@ -3753,11 +3500,7 @@ function openCheckout(){
 
             paymentMethod,
 
-            paymentStatus:
-              total === 0 ||
-              paymentMethod === "card"
-                ? "Payé"
-                : "En attente",
+            paymentStatus,
 
             tracking:
               "",
@@ -3770,96 +3513,78 @@ function openCheckout(){
 
             createdAt:
               serverTimestamp()
-
           };
-
 
           const orderRef =
             await addDoc(
-              collection(
-                db,
-                "orders"
-              ),
+              collection(db, "orders"),
               orderData
             );
-
 
           cart = [];
 
           saveCart();
           renderCart();
+
           closeModal();
 
-
           toast(
-            `Commande #${orderRef.id.slice(0,8)} créée 🎉`,
+            `Commande #${orderRef.id.slice(0, 8)} créée 🎉`,
             "success"
           );
 
-
-          if(
-            paymentMethod === "paypal" &&
+          if (
+            paymentMethod ===
+              "paypal" &&
             total > 0
-          ){
+          ) {
 
             const paypalUrl =
-              `${PAYPAL_BASE}/${encodeURIComponent(
+              `https://paypal.me/SH0PNOVA/${encodeURIComponent(
                 total.toFixed(2)
               )}EUR`;
 
+            setTimeout(
+              () => {
 
-            setTimeout(()=>{
+                window.open(
+                  paypalUrl,
+                  "_blank",
+                  "noopener,noreferrer"
+                );
 
-              window.open(
-                paypalUrl,
-                "_blank",
-                "noopener,noreferrer"
-              );
-
-            },400);
-
-          }
-
-
-          if(
-            paymentMethod === "card" &&
-            total > 0
-          ){
-
-            toast(
-              "Paiement accepté 💳",
-              "success"
+              },
+              400
             );
 
           }
 
-
-        }catch(error){
+        } catch (error) {
 
           console.error(
-            "Checkout error:",
+            "Firestore Checkout Error:",
             error
           );
 
+          if (errorBox) {
 
-          errorBox.textContent =
-            `Erreur : ${
-              error.message ||
-              error.code ||
-              "inconnue"
-            }`;
+            errorBox.textContent =
+              `Erreur : ${
+                error.message ||
+                error.code ||
+                "inconnue"
+              }`;
 
+            errorBox.style.display =
+              "block";
 
-          errorBox.style.display =
-            "block";
+          }
 
+        } finally {
 
-        }finally{
-
-          if(submit){
+          if (submit) {
 
             submit.disabled = false;
-
             submit.textContent =
               "Continuer";
 
@@ -3869,52 +3594,288 @@ function openCheckout(){
 
       }
     );
-
 }
 
 
-/* =========================================================
-   ADMIN
-========================================================= */
+// ============================================================
+// FACTURE
+// ============================================================
 
-function isAdminUser(){
+function printInvoice(order) {
 
-  return !!currentUser &&
-    (
-      currentUser.email || ""
-    ).toLowerCase() ===
-    ADMIN_EMAIL.toLowerCase();
+  const items =
+    Array.isArray(order.items)
+      ? order.items
+      : [];
 
-}
+  const rows =
+    items.map(item => {
 
-async function openAdmin(){
+      const product =
+        getProduct(item.id);
 
-  if(!isAdminUser()){
+      const name =
+        product?.name ||
+        item.name ||
+        "Produit";
+
+      const price =
+        Number(
+          product?.price ??
+          item.price ??
+          0
+        );
+
+      const quantity =
+        Number(item.quantity || 1);
+
+      return `
+        <tr>
+
+          <td>
+            ${escapeHTML(name)}
+          </td>
+
+          <td>
+            ${quantity}
+          </td>
+
+          <td>
+            ${money(price)}
+          </td>
+
+          <td>
+            ${money(
+              price * quantity
+            )}
+          </td>
+
+        </tr>
+      `;
+
+    }).join("");
+
+  const invoiceWindow =
+    window.open(
+      "",
+      "_blank",
+      "width=900,height=700"
+    );
+
+  if (!invoiceWindow) {
 
     toast(
-      "Accès administrateur refusé.",
-      "error"
+      "La fenêtre de facture a été bloquée."
     );
 
     return;
   }
 
+  invoiceWindow.document.write(`
+    <!DOCTYPE html>
 
-  const alreadyAuthorized =
+    <html lang="fr">
+
+    <head>
+
+      <meta charset="UTF-8">
+
+      <title>
+        Facture NovaShop
+      </title>
+
+      <style>
+
+        body {
+          font-family:Arial,sans-serif;
+          padding:40px;
+          color:#111827;
+        }
+
+        h1 {
+          margin-bottom:5px;
+        }
+
+        .top {
+          display:flex;
+          justify-content:space-between;
+          margin-bottom:40px;
+        }
+
+        table {
+          width:100%;
+          border-collapse:collapse;
+          margin-top:30px;
+        }
+
+        th,
+        td {
+          border-bottom:1px solid #ddd;
+          padding:12px;
+          text-align:left;
+        }
+
+        .total {
+          margin-top:30px;
+          text-align:right;
+          font-size:24px;
+          font-weight:bold;
+        }
+
+        .small {
+          color:#666;
+          margin-top:30px;
+        }
+
+      </style>
+
+    </head>
+
+    <body>
+
+      <div class="top">
+
+        <div>
+
+          <h1>
+            NovaShop
+          </h1>
+
+          <p>
+            Boutique gaming
+          </p>
+
+        </div>
+
+        <div>
+
+          <strong>
+            Facture
+          </strong>
+
+          <p>
+            Commande #${escapeHTML(
+              order.id
+            )}
+          </p>
+
+        </div>
+
+      </div>
+
+      <h3>
+        Client
+      </h3>
+
+      <p>
+        ${escapeHTML(
+          order.userEmail || ""
+        )}
+      </p>
+
+      <p>
+        ${escapeHTML(
+          order.address || ""
+        )}
+      </p>
+
+      <h3>
+        Produits
+      </h3>
+
+      <table>
+
+        <thead>
+
+          <tr>
+            <th>Produit</th>
+            <th>Qté</th>
+            <th>Prix</th>
+            <th>Total</th>
+          </tr>
+
+        </thead>
+
+        <tbody>
+          ${rows}
+        </tbody>
+
+      </table>
+
+      <div class="total">
+        Total :
+        ${money(order.total || 0)}
+      </div>
+
+      <p class="small">
+        Statut :
+        ${escapeHTML(
+          order.status ||
+          "Enregistrée"
+        )}
+      </p>
+
+      <script>
+        window.onload = function() {
+          window.print();
+        };
+      <\/script>
+
+    </body>
+
+    </html>
+  `);
+
+  invoiceWindow.document.close();
+}
+
+
+// ============================================================
+// ADMIN
+// ============================================================
+
+adminBtn?.addEventListener(
+  "click",
+  openAdmin
+);
+
+
+function isAdminUser() {
+
+  return (
+    currentUser &&
+    (
+      currentUser.email || ""
+    ).toLowerCase() ===
+    ADMIN_EMAIL.toLowerCase()
+  );
+}
+
+
+function openAdmin() {
+
+  if (!isAdminUser()) {
+
+    toast(
+      "Accès administrateur refusé."
+    );
+
+    return;
+  }
+
+  const authorized =
     localStorage.getItem(
-      ADMIN_AUTH_STORAGE_KEY
+      ADMIN_ACCESS_KEY
     ) === "true";
 
-
-  if(!alreadyAuthorized){
+  if (!authorized) {
 
     const code =
-      window.prompt(
-        "Code administrateur :"
+      prompt(
+        "Code administrateur NovaShop :"
       );
 
-
-    if(code !== ADMIN_CODE){
+    if (code !== ADMIN_CODE) {
 
       toast(
         "Code administrateur incorrect.",
@@ -3924,369 +3885,554 @@ async function openAdmin(){
       return;
     }
 
-
     localStorage.setItem(
-      ADMIN_AUTH_STORAGE_KEY,
+      ADMIN_ACCESS_KEY,
       "true"
     );
-
   }
 
-
-  await loadAdmin();
-
+  loadAdmin();
 }
 
-async function loadAdmin(){
+
+async function loadAdmin() {
 
   showModal(
-    "Administration",
+    "Administration NovaShop",
     `
-      <div style="
-        text-align:center;
-        padding:30px;
-        color:var(--muted);
-      ">
+      <div
+        id="adminLoading"
+        style="
+          text-align:center;
+          padding:30px;
+        "
+      >
         Chargement...
       </div>
+
+      <div id="adminContent"></div>
     `
   );
 
-
-  try{
+  try {
 
     const snapshot =
       await getDocs(
-        collection(
-          db,
-          "orders"
-        )
+        collection(db, "orders")
       );
 
+    const orders = [];
 
-    const orders =
-      snapshot.docs.map(item=>({
+    snapshot.forEach(item => {
 
-        id:item.id,
-
+      orders.push({
+        id: item.id,
         ...item.data()
-
-      }));
-
-
-    orders.sort((a,b)=>{
-
-      const aDate =
-        a.createdAt?.seconds || 0;
-
-      const bDate =
-        b.createdAt?.seconds || 0;
-
-      return bDate - aDate;
+      });
 
     });
 
+    orders.sort(
+      (a, b) => {
 
-    renderAdmin(orders);
+        const aTime =
+          a.createdAt?.seconds || 0;
 
+        const bTime =
+          b.createdAt?.seconds || 0;
 
-  }catch(error){
-
-    console.error(
-      "Admin error:",
-      error
-    );
-
-
-    showModal(
-      "Administration",
-      `
-        <div style="
-          color:#ff7777;
-          padding:15px;
-        ">
-
-          Erreur :
-          ${escapeHTML(
-            error.message ||
-            "Impossible de charger les commandes."
-          )}
-
-        </div>
-      `
-    );
-
-  }
-
-}
-
-function renderAdmin(orders){
-
-  const card =
-    getTestCard();
-
-
-  showModal(
-    "Administration",
-    `
-
-      <div>
-
-
-        <div style="
-          display:grid;
-          grid-template-columns:
-            repeat(
-              auto-fit,
-              minmax(150px,1fr)
-            );
-          gap:10px;
-          margin-bottom:18px;
-        ">
-
-
-          <div style="
-            padding:15px;
-            border-radius:14px;
-            background:
-              rgba(255,255,255,.05);
-          ">
-
-            <div style="
-              color:var(--muted);
-              font-size:12px;
-            ">
-              COMMANDES
-            </div>
-
-            <strong style="
-              font-size:25px;
-            ">
-              ${orders.length}
-            </strong>
-
-          </div>
-
-
-          <div style="
-            padding:15px;
-            border-radius:14px;
-            background:
-              rgba(255,255,255,.05);
-          ">
-
-            <div style="
-              color:var(--muted);
-              font-size:12px;
-            ">
-              TOTAL
-            </div>
-
-            <strong style="
-              font-size:25px;
-            ">
-              ${money(
-                orders.reduce(
-                  (sum,order)=>
-                    sum +
-                    Number(
-                      order.total || 0
-                    ),
-                  0
-                )
-              )}
-            </strong>
-
-          </div>
-
-
-        </div>
-
-
-        <!-- CARTE UNIQUEMENT DANS LE DASHBOARD -->
-
-        <div style="
-          padding:18px;
-          border-radius:18px;
-          background:
-            rgba(255,255,255,.04);
-          border:1px solid var(--line);
-          margin-bottom:18px;
-        ">
-
-          <h3>
-            💳 Carte de test
-          </h3>
-
-          <p style="
-            color:var(--muted);
-            margin:7px 0 14px;
-            font-size:13px;
-          ">
-            Utilisable uniquement sur ce site.
-          </p>
-
-
-          <div id="adminCardContainer">
-            ${renderTestCardHTML()}
-          </div>
-
-
-          <button
-            type="button"
-            class="add-btn"
-            id="generateTestCard"
-            style="
-              width:100%;
-              margin-top:8px;
-            "
-          >
-            ${
-              card
-                ? "🔄 Générer une nouvelle carte"
-                : "💳 Créer une carte"
-            }
-          </button>
-
-
-        </div>
-
-
-        <div style="
-          display:flex;
-          gap:8px;
-          flex-wrap:wrap;
-          margin-bottom:18px;
-        ">
-
-          <button
-            type="button"
-            class="view-btn"
-            id="refreshAdmin"
-          >
-            🔄 Actualiser
-          </button>
-
-          <button
-            type="button"
-            class="view-btn"
-            id="quitAdmin"
-          >
-            Quitter
-          </button>
-
-        </div>
-
-
-        <div id="adminOrders">
-
-          ${
-            orders.length
-              ? orders
-                  .map(order=>
-                    renderAdminOrder(
-                      order
-                    )
-                  )
-                  .join("")
-              : `
-                <div style="
-                  padding:30px;
-                  text-align:center;
-                  color:var(--muted);
-                ">
-                  Aucune commande.
-                </div>
-              `
-          }
-
-        </div>
-
-
-      </div>
-    `
-  );
-
-
-  $("generateTestCard")
-    ?.addEventListener(
-      "click",
-      ()=>{
-
-        generateTestCard();
-
-
-        const container =
-          $("adminCardContainer");
-
-
-        if(container){
-
-          container.innerHTML =
-            renderTestCardHTML();
-
-        }
-
-
-        const button =
-          $("generateTestCard");
-
-
-        if(button){
-
-          button.textContent =
-            "🔄 Générer une nouvelle carte";
-
-        }
-
-
-        toast(
-          "Carte créée 💳",
-          "success"
-        );
-
+        return bTime - aTime;
       }
     );
 
+    renderAdmin(orders);
 
-  $("refreshAdmin")
+  } catch (error) {
+
+    console.error(
+      "Admin Firestore Error:",
+      error
+    );
+
+    const loading =
+      $("adminLoading");
+
+    if (loading) {
+
+      loading.innerHTML = `
+        <div style="color:#ff7777;">
+          Erreur Firestore :
+          ${escapeHTML(
+            error.message || ""
+          )}
+        </div>
+      `;
+
+    }
+  }
+}
+
+
+function renderAdmin(orders) {
+
+  $("adminLoading")?.remove();
+
+  const content =
+    $("adminContent");
+
+  if (!content) {
+    return;
+  }
+
+  const statuses = [
+    "Enregistrée",
+    "Acceptée",
+    "Préparation",
+    "En transit",
+    "Livraison proche",
+    "Livrée",
+    "Annulée",
+    "Remboursement en cours"
+  ];
+
+  content.innerHTML = `
+
+    <div style="
+      padding:15px;
+      margin-bottom:18px;
+      border-radius:16px;
+      background:rgba(80,120,255,.08);
+    ">
+
+      <strong>
+        🛡️ Administration
+      </strong>
+
+      <p style="margin-top:6px;">
+        ${orders.length}
+        commande${orders.length > 1 ? "s" : ""}
+      </p>
+
+    </div>
+
+    <div style="
+      padding:16px;
+      margin-bottom:18px;
+      border-radius:16px;
+      background:rgba(255,255,255,.04);
+    ">
+
+      <strong>
+        💳 Carte
+      </strong>
+
+      <p style="
+        margin-top:6px;
+        opacity:.7;
+      ">
+        Carte utilisable uniquement sur NovaShop.
+      </p>
+
+      <div id="testCardContainer">
+        ${renderTestCardHTML()}
+      </div>
+
+    </div>
+
+    <div style="
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-bottom:20px;
+    ">
+
+      <button
+        type="button"
+        class="view-btn"
+        id="adminRefresh"
+      >
+        🔄 Actualiser
+      </button>
+
+      <button
+        type="button"
+        class="view-btn"
+        id="adminLogout"
+      >
+        🔐 Quitter admin
+      </button>
+
+    </div>
+
+    <div id="adminOrders">
+
+      ${
+        orders.length
+          ? orders.map(order => {
+
+              const items =
+                Array.isArray(order.items)
+                  ? order.items
+                  : [];
+
+              const productsText =
+                items
+                  .map(
+                    item =>
+                      `${
+                        item.name ||
+                        item.id
+                      } ×${
+                        item.quantity ||
+                        1
+                      }`
+                  )
+                  .join(", ");
+
+              return `
+
+                <div
+                  class="admin-order"
+                  style="
+                    padding:16px;
+                    margin-bottom:15px;
+                    border:1px solid rgba(255,255,255,.1);
+                    border-radius:16px;
+                  "
+                >
+
+                  <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    gap:10px;
+                    flex-wrap:wrap;
+                  ">
+
+                    <strong>
+                      #${escapeHTML(
+                        order.id.slice(0, 8)
+                      )}
+                    </strong>
+
+                    <strong>
+                      ${money(
+                        order.total || 0
+                      )}
+                    </strong>
+
+                  </div>
+
+                  <p style="
+                    margin:8px 0;
+                  ">
+                    👤 ${
+                      escapeHTML(
+                        order.userEmail ||
+                        "Inconnu"
+                      )
+                    }
+                  </p>
+
+                  <p style="
+                    margin:8px 0;
+                  ">
+                    💳 ${
+                      escapeHTML(
+                        order.paymentMethod ||
+                        "N/A"
+                      )
+                    }
+                    |
+                    ${
+                      escapeHTML(
+                        order.paymentStatus ||
+                        "En attente"
+                      )
+                    }
+                  </p>
+
+                  <p style="
+                    margin:8px 0;
+                    opacity:.8;
+                  ">
+                    ${escapeHTML(
+                      productsText
+                    )}
+                  </p>
+
+                  <label>
+                    Statut
+                  </label>
+
+                  <select
+                    class="admin-status"
+                    data-id="${escapeAttr(
+                      order.id
+                    )}"
+                    style="
+                      width:100%;
+                      margin:6px 0 10px;
+                    "
+                  >
+
+                    ${
+                      statuses
+                        .map(
+                          status => `
+                            <option
+                              value="${escapeAttr(
+                                status
+                              )}"
+                              ${
+                                order.status ===
+                                status
+                                  ? "selected"
+                                  : ""
+                              }
+                            >
+                              ${escapeHTML(
+                                status
+                              )}
+                            </option>
+                          `
+                        )
+                        .join("")
+                    }
+
+                  </select>
+
+                  <input
+                    class="admin-city"
+                    data-id="${escapeAttr(
+                      order.id
+                    )}"
+                    value="${escapeAttr(
+                      order.city || ""
+                    )}"
+                    placeholder="Ville de destination"
+                    style="
+                      width:100%;
+                      margin-bottom:8px;
+                    "
+                  >
+
+                  <input
+                    class="admin-tracking"
+                    data-id="${escapeAttr(
+                      order.id
+                    )}"
+                    value="${escapeAttr(
+                      order.tracking || ""
+                    )}"
+                    placeholder="Numéro de suivi"
+                    style="
+                      width:100%;
+                      margin-bottom:8px;
+                    "
+                  >
+
+                  <input
+                    class="admin-delivery"
+                    data-id="${escapeAttr(
+                      order.id
+                    )}"
+                    value="${escapeAttr(
+                      order.estimatedDelivery ||
+                      ""
+                    )}"
+                    placeholder="Livraison estimée"
+                    style="
+                      width:100%;
+                      margin-bottom:10px;
+                    "
+                  >
+
+                  <div style="
+                    display:flex;
+                    gap:8px;
+                    flex-wrap:wrap;
+                  ">
+
+                    <button
+                      type="button"
+                      class="add-btn admin-save"
+                      data-id="${escapeAttr(
+                        order.id
+                      )}"
+                    >
+                      💾 Enregistrer
+                    </button>
+
+                    <button
+                      type="button"
+                      class="view-btn admin-paid"
+                      data-id="${escapeAttr(
+                        order.id
+                      )}"
+                    >
+                      💰 Marquer payé
+                    </button>
+
+                    <button
+                      type="button"
+                      class="view-btn admin-invoice"
+                      data-id="${escapeAttr(
+                        order.id
+                      )}"
+                    >
+                      🧾 Facture
+                    </button>
+
+                    <button
+                      type="button"
+                      class="view-btn admin-delete"
+                      data-id="${escapeAttr(
+                        order.id
+                      )}"
+                      style="
+                        color:#ff7777;
+                      "
+                    >
+                      🗑️ Supprimer
+                    </button>
+
+                  </div>
+
+                </div>
+
+              `;
+
+            }).join("")
+          : `
+            <div style="
+              text-align:center;
+              padding:30px;
+            ">
+
+              <div style="
+                font-size:50px;
+              ">
+                📦
+              </div>
+
+              <h3>
+                Aucune commande
+              </h3>
+
+            </div>
+          `
+      }
+
+    </div>
+  `;
+
+
+  $("adminRefresh")
     ?.addEventListener(
       "click",
       loadAdmin
     );
 
 
-  $("quitAdmin")
+  $("adminLogout")
     ?.addEventListener(
       "click",
-      ()=>{
+      () => {
 
         localStorage.removeItem(
-          ADMIN_AUTH_STORAGE_KEY
+          ADMIN_ACCESS_KEY
         );
 
         closeModal();
 
         toast(
-          "Mode administrateur quitté."
+          "Mode admin fermé."
         );
 
       }
     );
 
 
+  $("generateTestCard")
+    ?.addEventListener(
+      "click",
+      () => {
+
+        generateTestCard();
+
+        const container =
+          $("testCardContainer");
+
+        if (container) {
+
+          container.innerHTML =
+            renderTestCardHTML();
+
+          $("generateTestCard")
+            ?.addEventListener(
+              "click",
+              () => {
+
+                generateTestCard();
+
+                const updated =
+                  $("testCardContainer");
+
+                if (updated) {
+
+                  updated.innerHTML =
+                    renderTestCardHTML();
+
+                  attachTestCardButton();
+                }
+
+              }
+            );
+
+        }
+
+      }
+    );
+
+
+  function attachTestCardButton() {
+
+    $("generateTestCard")
+      ?.addEventListener(
+        "click",
+        () => {
+
+          generateTestCard();
+
+          const container =
+            $("testCardContainer");
+
+          if (container) {
+
+            container.innerHTML =
+              renderTestCardHTML();
+
+            attachTestCardButton();
+
+          }
+
+        }
+      );
+  }
+
+
   document
-    .querySelectorAll(
-      "[data-save-order]"
-    )
-    .forEach(button=>{
+    .querySelectorAll(".admin-save")
+    .forEach(button => {
 
       button.addEventListener(
         "click",
-        ()=>{
-          saveAdminOrder(
-            button.dataset.saveOrder
+        async () => {
+
+          await saveAdminOrder(
+            button.dataset.id
           );
+
         }
       );
 
@@ -4294,17 +4440,17 @@ function renderAdmin(orders){
 
 
   document
-    .querySelectorAll(
-      "[data-paid-order]"
-    )
-    .forEach(button=>{
+    .querySelectorAll(".admin-paid")
+    .forEach(button => {
 
       button.addEventListener(
         "click",
-        ()=>{
-          markOrderPaid(
-            button.dataset.paidOrder
+        async () => {
+
+          await markOrderPaid(
+            button.dataset.id
           );
+
         }
       );
 
@@ -4312,28 +4458,22 @@ function renderAdmin(orders){
 
 
   document
-    .querySelectorAll(
-      "[data-invoice-order]"
-    )
-    .forEach(button=>{
+    .querySelectorAll(".admin-invoice")
+    .forEach(button => {
 
       button.addEventListener(
         "click",
-        ()=>{
+        () => {
 
           const order =
             orders.find(
               item =>
                 item.id ===
-                button.dataset.invoiceOrder
+                button.dataset.id
             );
 
-          if(order){
-
-            printInvoice(
-              order
-            );
-
+          if (order) {
+            printInvoice(order);
           }
 
         }
@@ -4343,290 +4483,54 @@ function renderAdmin(orders){
 
 
   document
-    .querySelectorAll(
-      "[data-delete-order]"
-    )
-    .forEach(button=>{
+    .querySelectorAll(".admin-delete")
+    .forEach(button => {
 
       button.addEventListener(
         "click",
-        ()=>{
-          deleteAdminOrder(
-            button.dataset.deleteOrder
+        async () => {
+
+          await deleteAdminOrder(
+            button.dataset.id
           );
+
         }
       );
 
     });
-
 }
 
-function renderAdminOrder(order){
 
-  return `
+async function saveAdminOrder(id) {
 
-    <div style="
-      padding:18px;
-      border-radius:18px;
-      border:1px solid var(--line);
-      background:
-        rgba(255,255,255,.025);
-      margin-bottom:12px;
-    ">
-
-
-      <div style="
-        display:flex;
-        justify-content:space-between;
-        align-items:flex-start;
-        gap:12px;
-        flex-wrap:wrap;
-      ">
-
-
-        <div>
-
-          <strong>
-            Commande #${escapeHTML(
-              order.id.slice(0,8)
-            )}
-          </strong>
-
-          <div style="
-            margin-top:6px;
-            color:var(--muted);
-          ">
-            ${escapeHTML(
-              order.userEmail || ""
-            )}
-          </div>
-
-        </div>
-
-
-        <strong style="
-          font-size:19px;
-        ">
-          ${money(
-            order.total || 0
-          )}
-        </strong>
-
-
-      </div>
-
-
-      <div style="
-        display:grid;
-        gap:10px;
-        margin-top:15px;
-      ">
-
-
-        <label>
-
-          Statut
-
-          <select
-            id="status-${escapeHTML(
-              order.id
-            )}"
-          >
-
-            ${
-              [
-                "Enregistrée",
-                "Acceptée",
-                "Préparation",
-                "En transit",
-                "Livraison proche",
-                "Livrée",
-                "Annulée"
-              ]
-              .map(status=>`
-
-                <option
-                  value="${escapeHTML(
-                    status
-                  )}"
-                  ${
-                    (
-                      order.status ||
-                      "Enregistrée"
-                    ) === status
-                      ? "selected"
-                      : ""
-                  }
-                >
-                  ${escapeHTML(
-                    status
-                  )}
-                </option>
-
-              `)
-              .join("")
-            }
-
-          </select>
-
-        </label>
-
-
-        <label>
-
-          Ville de livraison
-
-          <input
-            id="city-${escapeHTML(
-              order.id
-            )}"
-            type="text"
-            value="${escapeHTML(
-              order.city || ""
-            )}"
-            placeholder="Ville"
-          >
-
-        </label>
-
-
-        <label>
-
-          Numéro de suivi
-
-          <input
-            id="tracking-${escapeHTML(
-              order.id
-            )}"
-            type="text"
-            value="${escapeHTML(
-              order.tracking || ""
-            )}"
-            placeholder="Numéro de suivi"
-          >
-
-        </label>
-
-
-        <label>
-
-          Livraison estimée
-
-          <input
-            id="delivery-${escapeHTML(
-              order.id
-            )}"
-            type="text"
-            value="${escapeHTML(
-              order.estimatedDelivery || ""
-            )}"
-            placeholder="Ex : 25 septembre 2026"
-          >
-
-        </label>
-
-
-      </div>
-
-
-      <div style="
-        display:flex;
-        gap:8px;
-        flex-wrap:wrap;
-        margin-top:14px;
-      ">
-
-
-        <button
-          type="button"
-          class="add-btn"
-          data-save-order="${escapeHTML(
-            order.id
-          )}"
-        >
-          💾 Enregistrer
-        </button>
-
-
-        <button
-          type="button"
-          class="view-btn"
-          data-paid-order="${escapeHTML(
-            order.id
-          )}"
-        >
-          💳 Marquer payé
-        </button>
-
-
-        <button
-          type="button"
-          class="view-btn"
-          data-invoice-order="${escapeHTML(
-            order.id
-          )}"
-        >
-          🧾 Facture
-        </button>
-
-
-        <button
-          type="button"
-          class="view-btn"
-          data-delete-order="${escapeHTML(
-            order.id
-          )}"
-          style="
-            color:#ff7777;
-          "
-        >
-          🗑️ Supprimer
-        </button>
-
-
-      </div>
-
-
-    </div>
-
-  `;
-
-}
-
-async function saveAdminOrder(id){
-
-  if(!isAdminUser()){
-    return;
-  }
-
-  try{
+  try {
 
     const status =
-      $(`status-${id}`)?.value ||
+      document.querySelector(
+        `.admin-status[data-id="${CSS.escape(id)}"]`
+      )?.value ||
       "Enregistrée";
 
     const city =
-      $(`city-${id}`)
-        ?.value.trim() ||
+      document.querySelector(
+        `.admin-city[data-id="${CSS.escape(id)}"]`
+      )?.value ||
       "";
 
     const tracking =
-      $(`tracking-${id}`)
-        ?.value.trim() ||
+      document.querySelector(
+        `.admin-tracking[data-id="${CSS.escape(id)}"]`
+      )?.value ||
       "";
 
     const estimatedDelivery =
-      $(`delivery-${id}`)
-        ?.value.trim() ||
+      document.querySelector(
+        `.admin-delivery[data-id="${CSS.escape(id)}"]`
+      )?.value ||
       "";
 
-
     await updateDoc(
-      doc(
-        db,
-        "orders",
-        id
-      ),
+      doc(db, "orders", id),
       {
         status,
         city,
@@ -4635,159 +4539,139 @@ async function saveAdminOrder(id){
       }
     );
 
-
     toast(
       "Commande mise à jour ✅",
       "success"
     );
 
+  } catch (error) {
 
-  }catch(error){
-
-    console.error(
-      "Save admin order:",
-      error
-    );
+    console.error(error);
 
     toast(
-      "Impossible de mettre à jour la commande.",
+      `Erreur : ${
+        error.message ||
+        error.code
+      }`,
       "error"
     );
-
   }
-
 }
 
-async function markOrderPaid(id){
 
-  if(!isAdminUser()){
-    return;
-  }
+async function markOrderPaid(id) {
 
-  try{
+  try {
 
     await updateDoc(
-      doc(
-        db,
-        "orders",
-        id
-      ),
+      doc(db, "orders", id),
       {
         paymentStatus:
           "Payé"
       }
     );
 
-
     toast(
-      "Commande marquée comme payée 💳",
+      "Paiement marqué comme payé 💰",
       "success"
     );
 
+    loadAdmin();
 
-    await loadAdmin();
+  } catch (error) {
 
-
-  }catch(error){
-
-    console.error(
-      "Mark paid error:",
-      error
-    );
+    console.error(error);
 
     toast(
-      "Impossible de modifier le paiement.",
+      `Erreur : ${
+        error.message ||
+        error.code
+      }`,
       "error"
     );
-
   }
-
 }
 
-async function deleteAdminOrder(id){
 
-  if(!isAdminUser()){
-    return;
-  }
+async function deleteAdminOrder(id) {
 
   const confirmed =
-    window.confirm(
+    confirm(
       "Supprimer définitivement cette commande ?"
     );
 
-  if(!confirmed){
+  if (!confirmed) {
     return;
   }
 
-  try{
+  try {
 
     await deleteDoc(
-      doc(
-        db,
-        "orders",
-        id
-      )
+      doc(db, "orders", id)
     );
 
-
     toast(
-      "Commande supprimée.",
+      "Commande supprimée 🗑️",
       "success"
     );
 
+    loadAdmin();
 
-    await loadAdmin();
+  } catch (error) {
 
-
-  }catch(error){
-
-    console.error(
-      "Delete order error:",
-      error
-    );
+    console.error(error);
 
     toast(
-      "Impossible de supprimer la commande.",
+      `Erreur : ${
+        error.message ||
+        error.code
+      }`,
       "error"
     );
-
   }
-
 }
 
 
-/* =========================================================
-   PARAMETRES
-========================================================= */
+// ============================================================
+// SETTINGS
+// ============================================================
 
-function getTheme(){
+settingsBtn?.addEventListener(
+  "click",
+  openSettings
+);
 
-  return localStorage.getItem(
-    THEME_STORAGE_KEY
-  ) || "dark";
 
+function getTheme() {
+
+  return (
+    localStorage.getItem(
+      "novaThemeChoice"
+    ) || "dark"
+  );
 }
 
-function applyTheme(){
+
+function applyTheme() {
 
   const theme =
     getTheme();
 
-
-  if(theme === "light"){
+  if (theme === "light") {
 
     document.documentElement.dataset.theme =
       "light";
 
-  }else if(theme === "dark"){
+  } else if (theme === "dark") {
 
     document.documentElement.dataset.theme =
       "dark";
 
-  }else{
+  } else {
 
     const prefersDark =
-      window.matchMedia?.(
+      window.matchMedia &&
+      window.matchMedia(
         "(prefers-color-scheme: dark)"
       ).matches;
 
@@ -4795,79 +4679,78 @@ function applyTheme(){
       prefersDark
         ? "dark"
         : "light";
-
   }
-
 }
 
-function openSettings(){
+
+function openSettings() {
 
   const current =
     getTheme();
 
-
   showModal(
     "Paramètres",
     `
-      <h3>
-        Apparence
-      </h3>
+      <div>
 
-      <div style="
-        display:grid;
-        gap:10px;
-        margin-top:12px;
-      ">
+        <h3>
+          Apparence
+        </h3>
 
-        <button
-          type="button"
-          class="view-btn theme-choice"
-          data-theme="dark"
-        >
-          🌙 Mode sombre
-        </button>
+        <div style="
+          display:grid;
+          gap:10px;
+          margin-top:12px;
+        ">
 
-        <button
-          type="button"
-          class="view-btn theme-choice"
-          data-theme="light"
-        >
-          ☀️ Mode clair
-        </button>
+          <button
+            type="button"
+            class="view-btn theme-choice"
+            data-theme="dark"
+          >
+            🌙 Mode sombre
+          </button>
 
-        <button
-          type="button"
-          class="view-btn theme-choice"
-          data-theme="auto"
-        >
-          🖥️ Automatique
-        </button>
+          <button
+            type="button"
+            class="view-btn theme-choice"
+            data-theme="light"
+          >
+            ☀️ Mode clair
+          </button>
+
+          <button
+            type="button"
+            class="view-btn theme-choice"
+            data-theme="auto"
+          >
+            🖥️ Automatique
+          </button>
+
+        </div>
+
+        <p style="
+          margin-top:20px;
+          opacity:.7;
+        ">
+          Thème actuel :
+          ${escapeHTML(current)}
+        </p>
 
       </div>
-
-      <p style="
-        margin-top:20px;
-        color:var(--muted);
-      ">
-        Thème actuel :
-        ${escapeHTML(current)}
-      </p>
     `
   );
 
-
   document
-    .querySelectorAll(
-      ".theme-choice"
-    )
-    .forEach(button=>{
+    .querySelectorAll(".theme-choice")
+    .forEach(button => {
 
       button.addEventListener(
         "click",
-        ()=>{
+        () => {
 
           localStorage.setItem(
-            THEME_STORAGE_KEY,
+            "novaThemeChoice",
             button.dataset.theme
           );
 
@@ -4884,146 +4767,18 @@ function openSettings(){
       );
 
     });
-
 }
 
 
-/* =========================================================
-   EVENEMENTS
-========================================================= */
-
-searchInput?.addEventListener(
-  "input",
-  event=>{
-
-    state.search =
-      event.target.value || "";
-
-    state.page = 1;
-
-    renderProducts();
-
-  }
-);
-
-
-sortSelect?.addEventListener(
-  "change",
-  event=>{
-
-    state.sort =
-      event.target.value ||
-      "default";
-
-    state.page = 1;
-
-    renderProducts();
-
-  }
-);
-
-
-checkoutBtn?.addEventListener(
-  "click",
-  openCheckout
-);
-
-
-accountBtn?.addEventListener(
-  "click",
-  openAccount
-);
-
-
-ordersBtn?.addEventListener(
-  "click",
-  openOrders
-);
-
-
-adminBtn?.addEventListener(
-  "click",
-  openAdmin
-);
-
-
-settingsBtn?.addEventListener(
-  "click",
-  openSettings
-);
-
-
-cartOverlay?.addEventListener(
-  "click",
-  closeCart
-);
-
-
-/* =========================================================
-   AUTH STATE
-========================================================= */
-
-onAuthStateChanged(
-  auth,
-  user=>{
-
-    currentUser =
-      user;
-
-
-    if(accountBtn){
-
-      if(user){
-
-        const email =
-          user.email || "";
-
-        const username =
-          email.split("@")[0] ||
-          "Compte";
-
-        accountBtn.textContent =
-          `👤 ${username}`;
-
-      }else{
-
-        accountBtn.textContent =
-          "👤 Compte";
-
-      }
-
-    }
-
-
-    if(adminBtn){
-
-      const isAdmin =
-        !!user &&
-        (
-          user.email || ""
-        ).toLowerCase() ===
-        ADMIN_EMAIL.toLowerCase();
-
-      adminBtn.style.display =
-        isAdmin
-          ? ""
-          : "none";
-
-    }
-
-  }
-);
-
-
-/* =========================================================
-   ESC / ERREURS
-========================================================= */
+// ============================================================
+// ESC
+// ============================================================
 
 document.addEventListener(
   "keydown",
-  event=>{
+  event => {
 
-    if(event.key !== "Escape"){
+    if (event.key !== "Escape") {
       return;
     }
 
@@ -5034,9 +4789,29 @@ document.addEventListener(
 );
 
 
+// ============================================================
+// CLIC DEHORS MODAL
+// ============================================================
+
+modal?.addEventListener(
+  "click",
+  event => {
+
+    if (event.target === modal) {
+      closeModal();
+    }
+
+  }
+);
+
+
+// ============================================================
+// ERREURS FIREBASE
+// ============================================================
+
 window.addEventListener(
   "unhandledrejection",
-  event=>{
+  event => {
 
     const error =
       event.reason;
@@ -5046,12 +4821,11 @@ window.addEventListener(
       error
     );
 
-
-    if(
+    if (
       error?.code?.startsWith(
         "auth/"
       )
-    ){
+    ) {
 
       toast(
         authError(error),
@@ -5064,69 +4838,52 @@ window.addEventListener(
 );
 
 
-/* =========================================================
-   INITIALISATION
-========================================================= */
-
-loadCart();
-loadFavorites();
+// ============================================================
+// INITIALISATION
+// ============================================================
 
 applyTheme();
 
 renderCategories();
+
 renderProducts();
+
 renderCart();
 
 
-/* =========================================================
-   API NOVASHOP
-========================================================= */
+// ============================================================
+// API PUBLIQUE
+// ============================================================
 
 window.NovaShop = {
 
   products,
 
-  get currentUser(){
+  get currentUser() {
     return currentUser;
   },
 
   addToCart,
-
   removeFromCart,
-
   changeCartQuantity,
 
   openCart,
-
   closeCart,
 
   openProduct,
 
-  openProductReviews,
-
   openAccount,
-
   openOrders,
 
   openSettings,
 
-  openCheckout,
-
-  openAdmin,
-
   renderProducts,
-
   renderCart,
 
   getCartCount,
-
   getCartSubtotal,
 
-  money,
-
-  getTestCard,
-
-  generateTestCard
+  money
 
 };
 
