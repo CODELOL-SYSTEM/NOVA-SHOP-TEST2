@@ -464,14 +464,17 @@ function loadCart(){
   try{
 
     const raw =
-      localStorage.getItem(CART_STORAGE_KEY);
+      localStorage.getItem(
+        CART_STORAGE_KEY
+      );
 
     if(!raw){
       cart=[];
       return;
     }
 
-    const parsed=JSON.parse(raw);
+    const parsed=
+      JSON.parse(raw);
 
     cart=
       Array.isArray(parsed)
@@ -501,15 +504,18 @@ function loadFavorites(){
 
   try{
 
-    const raw =
-      localStorage.getItem(FAVORITES_STORAGE_KEY);
+    const raw=
+      localStorage.getItem(
+        FAVORITES_STORAGE_KEY
+      );
 
     if(!raw){
       favorites=[];
       return;
     }
 
-    const parsed=JSON.parse(raw);
+    const parsed=
+      JSON.parse(raw);
 
     favorites=
       Array.isArray(parsed)
@@ -553,15 +559,15 @@ function escapeHTML(value){
 
 function money(value){
 
-  const number=Number(value)||0;
-
   return new Intl.NumberFormat(
     "fr-FR",
     {
       style:"currency",
       currency:"EUR"
     }
-  ).format(number);
+  ).format(
+    Number(value)||0
+  );
 
 }
 
@@ -579,7 +585,8 @@ function getCartCount(){
 
   return cart.reduce(
     (total,item)=>
-      total+Number(item.quantity||0),
+      total+
+      Number(item.quantity||0),
     0
   );
 
@@ -588,20 +595,23 @@ function getCartCount(){
 
 function getCartSubtotal(){
 
-  return cart.reduce((total,item)=>{
+  return cart.reduce(
+    (total,item)=>{
 
-    const product=
-      getProduct(item.id);
+      const product=
+        getProduct(item.id);
 
-    if(!product){
-      return total;
-    }
+      if(!product){
+        return total;
+      }
 
-    return total+
-      Number(product.price||0)*
-      Number(item.quantity||1);
+      return total+
+        Number(product.price||0)*
+        Number(item.quantity||1);
 
-  },0);
+    },
+    0
+  );
 
 }
 
@@ -610,11 +620,16 @@ function getCartSubtotal(){
    TOAST
 ========================================================= */
 
-function toast(message,type="info"){
+function toast(
+  message,
+  type="info"
+){
 
   if(!toastContainer){
+
     alert(message);
     return;
+
   }
 
   const element=
@@ -623,20 +638,28 @@ function toast(message,type="info"){
   element.className=
     `toast ${type}`;
 
-  element.textContent=message;
+  element.textContent=
+    message;
 
-  toastContainer.appendChild(element);
+  toastContainer.appendChild(
+    element
+  );
 
-  setTimeout(()=>{
+  setTimeout(
+    ()=>{
 
-    element.classList.add("hide");
+      element.classList.add(
+        "hide"
+      );
 
-    setTimeout(
-      ()=>element.remove(),
-      300
-    );
+      setTimeout(
+        ()=>element.remove(),
+        300
+      );
 
-  },3000);
+    },
+    3000
+  );
 
 }
 
@@ -645,28 +668,37 @@ function toast(message,type="info"){
    MODAL
 ========================================================= */
 
-function showModal(title,body){
+function showModal(
+  title,
+  body
+){
 
   if(!modal){
     return;
   }
 
   if(modalTitle){
-    modalTitle.textContent=title;
+    modalTitle.textContent=
+      title;
   }
 
   if(modalBody){
-    modalBody.innerHTML=body;
+    modalBody.innerHTML=
+      body;
   }
 
-  modal.classList.add("open");
+  modal.classList.add(
+    "open"
+  );
 
 }
 
 
 function closeModal(){
 
-  modal?.classList.remove("open");
+  modal?.classList.remove(
+    "open"
+  );
 
 }
 
@@ -691,24 +723,30 @@ function renderCategories(){
   ];
 
   categoryList.innerHTML=
-    categories.map(category=>`
+    categories.map(
+      category=>`
 
-      <button
-        type="button"
-        class="category-btn ${
-          state.category===category
-            ?"active"
-            :""
-        }"
-        data-category="${escapeHTML(category)}"
-      >
-        ${escapeHTML(category)}
-      </button>
+        <button
+          type="button"
+          class="category-btn ${
+            state.category===category
+              ?"active"
+              :""
+          }"
+          data-category="${escapeHTML(
+            category
+          )}"
+        >
+          ${escapeHTML(category)}
+        </button>
 
-    `).join("");
+      `
+    ).join("");
 
   categoryList
-    .querySelectorAll(".category-btn")
+    .querySelectorAll(
+      ".category-btn"
+    )
     .forEach(button=>{
 
       button.addEventListener(
@@ -716,7 +754,8 @@ function renderCategories(){
         ()=>{
 
           state.category=
-            button.dataset.category||"Tous";
+            button.dataset.category||
+            "Tous";
 
           renderCategories();
           renderProducts();
@@ -739,7 +778,9 @@ function renderProducts(){
     return;
   }
 
-  let list=[...products];
+  let list=[
+    ...products
+  ];
 
   const search=
     state.search
@@ -748,24 +789,30 @@ function renderProducts(){
 
   if(search){
 
-    list=list.filter(product=>
-      product.name
-        .toLowerCase()
-        .includes(search)
-      ||
-      product.category
-        .toLowerCase()
-        .includes(search)
-    );
+    list=
+      list.filter(
+        product=>
+          product.name
+            .toLowerCase()
+            .includes(search)
+          ||
+          product.category
+            .toLowerCase()
+            .includes(search)
+      );
 
   }
 
-  if(state.category!=="Tous"){
+  if(
+    state.category!=="Tous"
+  ){
 
-    list=list.filter(
-      product=>
-        product.category===state.category
-    );
+    list=
+      list.filter(
+        product=>
+          product.category===
+          state.category
+      );
 
   }
 
@@ -814,7 +861,9 @@ function renderProducts(){
           🔎
         </div>
 
-        <h3>Aucun produit trouvé</h3>
+        <h3>
+          Aucun produit trouvé
+        </h3>
 
         <p>
           Essaie une autre recherche.
@@ -825,97 +874,114 @@ function renderProducts(){
     `;
 
     return;
+
   }
 
   productGrid.innerHTML=
-    list.map(product=>{
+    list.map(
+      product=>{
 
-      const favorite=
-        favorites.includes(product.id);
+        const favorite=
+          favorites.includes(
+            product.id
+          );
 
-      return `
+        return `
 
-        <article
-          class="product-card"
-          data-product-id="${product.id}"
-        >
+          <article
+            class="product-card"
+            data-product-id="${product.id}"
+          >
 
-          <div class="product-image-wrap">
+            <div class="product-image-wrap">
 
-            ${
-              product.new
-                ?`
-                  <span class="new-badge">
-                    NOUVEAU
-                  </span>
-                `
-                :""
-            }
-
-            <button
-              type="button"
-              class="favorite-btn ${
-                favorite?"active":""
-              }"
-              data-favorite="${product.id}"
-              aria-label="Favori"
-            >
-              ${favorite?"♥":"♡"}
-            </button>
-
-            <img
-              src="${escapeHTML(product.image)}"
-              alt="${escapeHTML(product.name)}"
-              loading="lazy"
-              onerror="this.style.display='none'"
-            >
-
-          </div>
-
-          <div class="product-info">
-
-            <div class="product-category">
-              ${escapeHTML(product.category)}
-            </div>
-
-            <h3 class="product-name">
-              ${escapeHTML(product.name)}
-            </h3>
-
-            <div class="product-bottom">
-
-              <strong class="product-price">
-                ${money(product.price)}
-              </strong>
+              ${
+                product.new
+                  ?`
+                    <span class="new-badge">
+                      NOUVEAU
+                    </span>
+                  `
+                  :""
+              }
 
               <button
                 type="button"
-                class="add-btn"
-                data-add="${product.id}"
+                class="favorite-btn ${
+                  favorite?"active":""
+                }"
+                data-favorite="${product.id}"
+                aria-label="Favori"
               >
-                Ajouter
+                ${favorite?"♥":"♡"}
+              </button>
+
+              <img
+                src="${escapeHTML(
+                  product.image
+                )}"
+                alt="${escapeHTML(
+                  product.name
+                )}"
+                loading="lazy"
+                onerror="this.style.display='none'"
+              >
+
+            </div>
+
+            <div class="product-info">
+
+              <div class="product-category">
+                ${escapeHTML(
+                  product.category
+                )}
+              </div>
+
+              <h3 class="product-name">
+                ${escapeHTML(
+                  product.name
+                )}
+              </h3>
+
+              <div class="product-bottom">
+
+                <strong class="product-price">
+                  ${money(
+                    product.price
+                  )}
+                </strong>
+
+                <button
+                  type="button"
+                  class="add-btn"
+                  data-add="${product.id}"
+                >
+                  Ajouter
+                </button>
+
+              </div>
+
+              <button
+                type="button"
+                class="view-btn"
+                data-view="${product.id}"
+              >
+                Voir le produit
               </button>
 
             </div>
 
-            <button
-              type="button"
-              class="view-btn"
-              data-view="${product.id}"
-            >
-              Voir le produit
-            </button>
+          </article>
 
-          </div>
+        `;
 
-        </article>
-
-      `;
-
-    }).join("");
+      }
+    ).join("");
 
   productGrid
-    .querySelectorAll("[data-add]")
+    .querySelectorAll(
+      "[data-add]"
+    )
     .forEach(button=>{
 
       button.addEventListener(
@@ -928,7 +994,9 @@ function renderProducts(){
     });
 
   productGrid
-    .querySelectorAll("[data-view]")
+    .querySelectorAll(
+      "[data-view]"
+    )
     .forEach(button=>{
 
       button.addEventListener(
@@ -941,7 +1009,9 @@ function renderProducts(){
     });
 
   productGrid
-    .querySelectorAll("[data-favorite]")
+    .querySelectorAll(
+      "[data-favorite]"
+    )
     .forEach(button=>{
 
       button.addEventListener(
@@ -968,7 +1038,9 @@ function renderProducts(){
 
 function toggleFavorite(id){
 
-  if(favorites.includes(id)){
+  if(
+    favorites.includes(id)
+  ){
 
     favorites=
       favorites.filter(
@@ -1002,7 +1074,8 @@ function toggleFavorite(id){
 
 function addToCart(id){
 
-  const product=getProduct(id);
+  const product=
+    getProduct(id);
 
   if(!product){
     return;
@@ -1016,7 +1089,9 @@ function addToCart(id){
   if(existing){
 
     existing.quantity=
-      Number(existing.quantity||0)+1;
+      Number(
+        existing.quantity||0
+      )+1;
 
   }else{
 
@@ -1051,7 +1126,10 @@ function removeFromCart(id){
 }
 
 
-function changeCartQuantity(id,change){
+function changeCartQuantity(
+  id,
+  change
+){
 
   const item=
     cart.find(
@@ -1063,7 +1141,9 @@ function changeCartQuantity(id,change){
   }
 
   item.quantity=
-    Number(item.quantity||1)+change;
+    Number(
+      item.quantity||1
+    )+change;
 
   if(item.quantity<=0){
 
@@ -1081,13 +1161,19 @@ function changeCartQuantity(id,change){
 function renderCart(){
 
   if(cartCount){
+
     cartCount.textContent=
       getCartCount();
+
   }
 
   if(cartTotal){
+
     cartTotal.textContent=
-      money(getCartSubtotal());
+      money(
+        getCartSubtotal()
+      );
+
   }
 
   if(!cartItems){
@@ -1104,7 +1190,9 @@ function renderCart(){
           🛒
         </div>
 
-        <h3>Ton panier est vide</h3>
+        <h3>
+          Ton panier est vide
+        </h3>
 
         <p>
           Ajoute des produits pour commencer.
@@ -1115,81 +1203,96 @@ function renderCart(){
     `;
 
     return;
+
   }
 
   cartItems.innerHTML=
-    cart.map(item=>{
+    cart.map(
+      item=>{
 
-      const product=
-        getProduct(item.id);
+        const product=
+          getProduct(item.id);
 
-      if(!product){
-        return "";
-      }
+        if(!product){
+          return "";
+        }
 
-      const quantity=
-        Number(item.quantity||1);
+        const quantity=
+          Number(
+            item.quantity||1
+          );
 
-      return `
+        return `
 
-        <div class="cart-item">
+          <div class="cart-item">
 
-          <img
-            src="${escapeHTML(product.image)}"
-            alt="${escapeHTML(product.name)}"
-            onerror="this.style.display='none'"
-          >
+            <img
+              src="${escapeHTML(
+                product.image
+              )}"
+              alt="${escapeHTML(
+                product.name
+              )}"
+              onerror="this.style.display='none'"
+            >
 
-          <div class="cart-item-info">
+            <div class="cart-item-info">
 
-            <strong>
-              ${escapeHTML(product.name)}
-            </strong>
-
-            <span>
-              ${money(product.price)}
-            </span>
-
-            <div class="quantity-controls">
-
-              <button
-                type="button"
-                data-minus="${product.id}"
-              >
-                −
-              </button>
+              <strong>
+                ${escapeHTML(
+                  product.name
+                )}
+              </strong>
 
               <span>
-                ${quantity}
+                ${money(
+                  product.price
+                )}
               </span>
 
-              <button
-                type="button"
-                data-plus="${product.id}"
-              >
-                +
-              </button>
+              <div class="quantity-controls">
+
+                <button
+                  type="button"
+                  data-minus="${product.id}"
+                >
+                  −
+                </button>
+
+                <span>
+                  ${quantity}
+                </span>
+
+                <button
+                  type="button"
+                  data-plus="${product.id}"
+                >
+                  +
+                </button>
+
+              </div>
 
             </div>
 
+            <button
+              type="button"
+              class="remove-cart"
+              data-remove="${product.id}"
+            >
+              ✕
+            </button>
+
           </div>
 
-          <button
-            type="button"
-            class="remove-cart"
-            data-remove="${product.id}"
-          >
-            ✕
-          </button>
+        `;
 
-        </div>
-
-      `;
-
-    }).join("");
+      }
+    ).join("");
 
   cartItems
-    .querySelectorAll("[data-minus]")
+    .querySelectorAll(
+      "[data-minus]"
+    )
     .forEach(button=>{
 
       button.addEventListener(
@@ -1203,7 +1306,9 @@ function renderCart(){
     });
 
   cartItems
-    .querySelectorAll("[data-plus]")
+    .querySelectorAll(
+      "[data-plus]"
+    )
     .forEach(button=>{
 
       button.addEventListener(
@@ -1217,7 +1322,9 @@ function renderCart(){
     });
 
   cartItems
-    .querySelectorAll("[data-remove]")
+    .querySelectorAll(
+      "[data-remove]"
+    )
     .forEach(button=>{
 
       button.addEventListener(
@@ -1234,16 +1341,26 @@ function renderCart(){
 
 function openCart(){
 
-  cartDrawer?.classList.add("open");
-  cartOverlay?.classList.add("open");
+  cartDrawer?.classList.add(
+    "open"
+  );
+
+  cartOverlay?.classList.add(
+    "open"
+  );
 
 }
 
 
 function closeCart(){
 
-  cartDrawer?.classList.remove("open");
-  cartOverlay?.classList.remove("open");
+  cartDrawer?.classList.remove(
+    "open"
+  );
+
+  cartOverlay?.classList.remove(
+    "open"
+  );
 
 }
 
@@ -1260,7 +1377,8 @@ cartOverlay?.addEventListener(
 
 function openProduct(id){
 
-  const product=getProduct(id);
+  const product=
+    getProduct(id);
 
   if(!product){
     return;
@@ -1273,8 +1391,12 @@ function openProduct(id){
       <div class="product-detail">
 
         <img
-          src="${escapeHTML(product.image)}"
-          alt="${escapeHTML(product.name)}"
+          src="${escapeHTML(
+            product.image
+          )}"
+          alt="${escapeHTML(
+            product.name
+          )}"
           style="
             width:100%;
             max-height:320px;
@@ -1287,11 +1409,15 @@ function openProduct(id){
         <div style="margin-top:18px">
 
           <span class="product-category">
-            ${escapeHTML(product.category)}
+            ${escapeHTML(
+              product.category
+            )}
           </span>
 
           <h2 style="margin:8px 0">
-            ${escapeHTML(product.name)}
+            ${escapeHTML(
+              product.name
+            )}
           </h2>
 
           <div style="
@@ -1299,7 +1425,9 @@ function openProduct(id){
             font-weight:800;
             margin:15px 0;
           ">
-            ${money(product.price)}
+            ${money(
+              product.price
+            )}
           </div>
 
           <button
@@ -1315,7 +1443,10 @@ function openProduct(id){
             type="button"
             class="view-btn"
             id="productReviewsButton"
-            style="width:100%;margin-top:10px"
+            style="
+              width:100%;
+              margin-top:10px;
+            "
           >
             ⭐ Voir les avis
           </button>
@@ -1332,7 +1463,10 @@ function openProduct(id){
       "click",
       ()=>{
 
-        addToCart(product.id);
+        addToCart(
+          product.id
+        );
+
         closeModal();
 
       }
@@ -1341,7 +1475,9 @@ function openProduct(id){
   $("productReviewsButton")
     ?.addEventListener(
       "click",
-      ()=>openProductReviews(product.id)
+      ()=>openProductReviews(
+        product.id
+      )
     );
 
 }
@@ -1349,28 +1485,33 @@ function openProduct(id){
 
 function openProductReviews(id){
 
-  const product=getProduct(id);
+  const product=
+    getProduct(id);
 
   if(!product){
     return;
   }
 
   const reviews=[
+
     {
       name:"Alex",
       rating:5,
       text:"Très bon produit, livraison rapide."
     },
+
     {
       name:"Max",
       rating:4,
       text:"Produit conforme à la description."
     },
+
     {
       name:"Lucas",
       rating:5,
       text:"Très satisfait de mon achat."
     }
+
   ];
 
   showModal(
@@ -1380,28 +1521,38 @@ function openProductReviews(id){
       <div>
 
         ${
-          reviews.map(review=>`
+          reviews.map(
+            review=>`
 
-            <div style="
-              padding:14px;
-              border-bottom:1px solid var(--line);
-            ">
+              <div style="
+                padding:14px;
+                border-bottom:1px solid var(--line);
+              ">
 
-              <strong>
-                ${escapeHTML(review.name)}
-              </strong>
+                <strong>
+                  ${escapeHTML(
+                    review.name
+                  )}
+                </strong>
 
-              <div style="margin:5px 0">
-                ${"⭐".repeat(review.rating)}
+                <div style="margin:5px 0">
+                  ${"⭐".repeat(
+                    review.rating
+                  )}
+                </div>
+
+                <p style="
+                  color:var(--muted)
+                ">
+                  ${escapeHTML(
+                    review.text
+                  )}
+                </p>
+
               </div>
 
-              <p style="color:var(--muted)">
-                ${escapeHTML(review.text)}
-              </p>
-
-            </div>
-
-          `).join("")
+            `
+          ).join("")
         }
 
       </div>
@@ -1418,7 +1569,9 @@ function openProductReviews(id){
 
 function authError(error){
 
-  const code=error?.code||"";
+  const code=
+    error?.code||
+    "";
 
   const messages={
 
@@ -1720,7 +1873,9 @@ function showRegisterForm(){
         const errorBox=
           $("registerError");
 
-        if(password!==password2){
+        if(
+          password!==password2
+        ){
 
           if(errorBox){
 
@@ -1818,7 +1973,8 @@ function openAccount(){
   }
 
   const email=
-    currentUser.email||"";
+    currentUser.email||
+    "";
 
   const username=
     email.split("@")[0]||
@@ -1841,14 +1997,18 @@ function openAccount(){
           </div>
 
           <h3 style="margin-top:8px">
-            ${escapeHTML(username)}
+            ${escapeHTML(
+              username
+            )}
           </h3>
 
           <p style="
             color:var(--muted);
             margin-top:5px;
           ">
-            ${escapeHTML(email)}
+            ${escapeHTML(
+              email
+            )}
           </p>
 
         </div>
@@ -1910,7 +2070,7 @@ async function logout(){
       "success"
     );
 
-  }catch(error){
+  }catch{
 
     toast(
       "Impossible de se déconnecter.",
@@ -1957,37 +2117,45 @@ async function openOrders(){
 
   try{
 
-    const q=query(
-      collection(db,"orders"),
-      where(
-        "userId",
-        "==",
-        currentUser.uid
-      )
-    );
+    const q=
+      query(
+        collection(
+          db,
+          "orders"
+        ),
+        where(
+          "userId",
+          "==",
+          currentUser.uid
+        )
+      );
 
     const snapshot=
       await getDocs(q);
 
     const orders=
       snapshot.docs
-        .map(item=>({
-          id:item.id,
-          ...item.data()
-        }))
-        .sort((a,b)=>{
+        .map(
+          item=>({
+            id:item.id,
+            ...item.data()
+          })
+        )
+        .sort(
+          (a,b)=>{
 
-          const aTime=
-            a.createdAt?.seconds||
-            0;
+            const aTime=
+              a.createdAt?.seconds||
+              0;
 
-          const bTime=
-            b.createdAt?.seconds||
-            0;
+            const bTime=
+              b.createdAt?.seconds||
+              0;
 
-          return bTime-aTime;
+            return bTime-aTime;
 
-        });
+          }
+        );
 
     if(!orders.length){
 
@@ -2001,7 +2169,9 @@ async function openOrders(){
               📦
             </div>
 
-            <h3>Aucune commande</h3>
+            <h3>
+              Aucune commande
+            </h3>
 
             <p>
               Tes commandes apparaîtront ici.
@@ -2026,63 +2196,71 @@ async function openOrders(){
         ">
 
           ${
-            orders.map(order=>`
+            orders.map(
+              order=>`
 
-              <button
-                type="button"
-                class="view-btn order-card"
-                data-order="${order.id}"
-                style="
-                  text-align:left;
-                  padding:16px;
-                "
-              >
+                <button
+                  type="button"
+                  class="view-btn order-card"
+                  data-order="${order.id}"
+                  style="
+                    text-align:left;
+                    padding:16px;
+                  "
+                >
 
-                <div style="
-                  display:flex;
-                  justify-content:space-between;
-                  gap:12px;
-                ">
+                  <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    gap:12px;
+                  ">
 
-                  <strong>
-                    #${escapeHTML(
-                      order.id.slice(0,8)
+                    <strong>
+                      #${escapeHTML(
+                        order.id.slice(0,8)
+                      )}
+                    </strong>
+
+                    <strong>
+                      ${money(
+                        order.total||0
+                      )}
+                    </strong>
+
+                  </div>
+
+                  <div style="
+                    margin-top:8px;
+                    color:var(--muted);
+                  ">
+                    ${escapeHTML(
+                      order.status||
+                      "Enregistrée"
                     )}
-                  </strong>
+                  </div>
 
-                  <strong>
-                    ${money(order.total||0)}
-                  </strong>
+                  ${
+                    order.city
+                      ?`
 
-                </div>
+                        <div style="
+                          margin-top:5px;
+                          color:var(--muted);
+                        ">
+                          📍
+                          ${escapeHTML(
+                            order.city
+                          )}
+                        </div>
 
-                <div style="
-                  margin-top:8px;
-                  color:var(--muted);
-                ">
-                  ${escapeHTML(
-                    order.status||
-                    "Enregistrée"
-                  )}
-                </div>
+                      `
+                      :""
+                  }
 
-                ${
-                  order.city
-                    ?`
-                      <div style="
-                        margin-top:5px;
-                        color:var(--muted);
-                      ">
-                        📍
-                        ${escapeHTML(order.city)}
-                      </div>
-                    `
-                    :""
-                }
+                </button>
 
-              </button>
-
-            `).join("")
+              `
+            ).join("")
           }
 
         </div>
@@ -2091,7 +2269,9 @@ async function openOrders(){
     );
 
     document
-      .querySelectorAll("[data-order]")
+      .querySelectorAll(
+        "[data-order]"
+      )
       .forEach(button=>{
 
         button.addEventListener(
@@ -2106,7 +2286,11 @@ async function openOrders(){
               );
 
             if(order){
-              openOrderDetails(order);
+
+              openOrderDetails(
+                order
+              );
+
             }
 
           }
@@ -2168,52 +2352,56 @@ function openOrderDetails(order){
     timeline.indexOf(status);
 
   const productsHTML=
-    items.map(item=>{
+    items.map(
+      item=>{
 
-      const product=
-        getProduct(item.id);
+        const product=
+          getProduct(item.id);
 
-      const name=
-        product?.name||
-        item.name||
-        "Produit";
+        const name=
+          product?.name||
+          item.name||
+          "Produit";
 
-      const price=
-        Number(
-          product?.price??
-          item.price??
-          0
-        );
+        const price=
+          Number(
+            product?.price??
+            item.price??
+            0
+          );
 
-      const quantity=
-        Number(
-          item.quantity||1
-        );
+        const quantity=
+          Number(
+            item.quantity||1
+          );
 
-      return `
+        return `
 
-        <div style="
-          display:flex;
-          justify-content:space-between;
-          gap:12px;
-          padding:10px 0;
-          border-bottom:1px solid var(--line);
-        ">
+          <div style="
+            display:flex;
+            justify-content:space-between;
+            gap:12px;
+            padding:10px 0;
+            border-bottom:1px solid var(--line);
+          ">
 
-          <span>
-            ${escapeHTML(name)}
-            × ${quantity}
-          </span>
+            <span>
+              ${escapeHTML(name)}
+              × ${quantity}
+            </span>
 
-          <strong>
-            ${money(price*quantity)}
-          </strong>
+            <strong>
+              ${money(
+                price*quantity
+              )}
+            </strong>
 
-        </div>
+          </div>
 
-      `;
+        `;
 
-    }).join("");
+      }
+    ).join("");
 
   const timelineHTML=
     status==="Annulée"
@@ -2230,30 +2418,32 @@ function openOrderDetails(order){
 
       `
       :
-      timeline.map((step,index)=>{
+      timeline.map(
+        (step,index)=>{
 
-        const active=
-          currentIndex>=index;
+          const active=
+            currentIndex>=index;
 
-        return `
+          return `
 
-          <div class="timeline-step ${
-            active?"active":""
-          }">
+            <div class="timeline-step ${
+              active?"active":""
+            }">
 
-            <span>
-              ${active?"●":"○"}
-            </span>
+              <span>
+                ${active?"●":"○"}
+              </span>
 
-            <span>
-              ${step}
-            </span>
+              <span>
+                ${step}
+              </span>
 
-          </div>
+            </div>
 
-        `;
+          `;
 
-      }).join("");
+        }
+      ).join("");
 
   showModal(
     `Commande #${order.id.slice(0,8)}`,
@@ -2279,7 +2469,9 @@ function openOrderDetails(order){
 
                 <div style="margin-top:8px">
                   Suivi :
-                  ${escapeHTML(order.tracking)}
+                  ${escapeHTML(
+                    order.tracking
+                  )}
                 </div>
 
               `
@@ -2292,7 +2484,9 @@ function openOrderDetails(order){
 
                 <div style="margin-top:8px">
                   📍 Ville :
-                  ${escapeHTML(order.city)}
+                  ${escapeHTML(
+                    order.city
+                  )}
                 </div>
 
               `
@@ -2316,7 +2510,9 @@ function openOrderDetails(order){
 
         </div>
 
-        <h3>Suivi</h3>
+        <h3>
+          Suivi
+        </h3>
 
         <div style="
           margin:12px 0 20px;
@@ -2324,7 +2520,9 @@ function openOrderDetails(order){
           ${timelineHTML}
         </div>
 
-        <h3>Produits</h3>
+        <h3>
+          Produits
+        </h3>
 
         <div style="
           margin:10px 0 20px;
@@ -2336,13 +2534,17 @@ function openOrderDetails(order){
           order.address
             ?`
 
-              <h3>Livraison</h3>
+              <h3>
+                Livraison
+              </h3>
 
               <p style="
                 margin:8px 0 20px;
                 color:var(--muted);
               ">
-                ${escapeHTML(order.address)}
+                ${escapeHTML(
+                  order.address
+                )}
               </p>
 
             `
@@ -2357,10 +2559,14 @@ function openOrderDetails(order){
           border-top:1px solid var(--line);
         ">
 
-          <strong>Total</strong>
+          <strong>
+            Total
+          </strong>
 
           <strong>
-            ${money(order.total||0)}
+            ${money(
+              order.total||0
+            )}
           </strong>
 
         </div>
@@ -2403,51 +2609,57 @@ function printInvoice(order){
       :[];
 
   const rows=
-    items.map(item=>{
+    items.map(
+      item=>{
 
-      const product=
-        getProduct(item.id);
+        const product=
+          getProduct(item.id);
 
-      const name=
-        product?.name||
-        item.name||
-        "Produit";
+        const name=
+          product?.name||
+          item.name||
+          "Produit";
 
-      const price=
-        Number(
-          product?.price??
-          item.price??
-          0
-        );
+        const price=
+          Number(
+            product?.price??
+            item.price??
+            0
+          );
 
-      const quantity=
-        Number(item.quantity||1);
+        const quantity=
+          Number(
+            item.quantity||1
+          );
 
-      return `
+        return `
 
-        <tr>
+          <tr>
 
-          <td>
-            ${escapeHTML(name)}
-          </td>
+            <td>
+              ${escapeHTML(name)}
+            </td>
 
-          <td>
-            ${quantity}
-          </td>
+            <td>
+              ${quantity}
+            </td>
 
-          <td>
-            ${money(price)}
-          </td>
+            <td>
+              ${money(price)}
+            </td>
 
-          <td>
-            ${money(price*quantity)}
-          </td>
+            <td>
+              ${money(
+                price*quantity
+              )}
+            </td>
 
-        </tr>
+          </tr>
 
-      `;
+        `;
 
-    }).join("");
+      }
+    ).join("");
 
   const invoiceWindow=
     window.open(
@@ -2538,7 +2750,9 @@ function printInvoice(order){
 
     <body>
 
-      <h1>NovaShop</h1>
+      <h1>
+        NovaShop
+      </h1>
 
       <p class="muted">
         Facture de commande
@@ -2596,8 +2810,12 @@ function printInvoice(order){
       </table>
 
       <div class="total">
+
         Total :
-        ${money(order.total||0)}
+        ${money(
+          order.total||0
+        )}
+
       </div>
 
       <button
@@ -2622,7 +2840,7 @@ function printInvoice(order){
 
 
 /* =========================================================
-   CARTE NOVASHOP
+   CARTE
 ========================================================= */
 
 function getNovaCard(){
@@ -2644,6 +2862,7 @@ function getNovaCard(){
     if(
       !card||
       typeof card.number!=="string"||
+      typeof card.holder!=="string"||
       typeof card.expiry!=="string"||
       typeof card.cvv!=="string"
     ){
@@ -2667,7 +2886,9 @@ function generateNovaCard(){
 
   const randomDigits=
     Array.from(
-      {length:12},
+      {
+        length:12
+      },
       ()=>Math.floor(
         Math.random()*10
       )
@@ -2687,7 +2908,10 @@ function generateNovaCard(){
       Math.floor(
         Math.random()*12
       )+1
-    ).padStart(2,"0");
+    ).padStart(
+      2,
+      "0"
+    );
 
   const year=
     String(
@@ -2706,9 +2930,17 @@ function generateNovaCard(){
     );
 
   const card={
+
     number,
-    expiry:`${month}/${year}`,
+
+    holder:
+      "CARTE NOVASHOP",
+
+    expiry:
+      `${month}/${year}`,
+
     cvv
+
   };
 
   localStorage.setItem(
@@ -2721,9 +2953,207 @@ function generateNovaCard(){
 }
 
 
+/* =========================================================
+   CARTE VISUELLE ADMIN
+========================================================= */
+
+function novaCardHTML(card){
+
+  if(!card){
+
+    return `
+
+      <div style="
+        color:rgba(255,255,255,.65);
+        font-size:14px;
+      ">
+        Aucune carte créée.
+      </div>
+
+    `;
+
+  }
+
+  return `
+
+    <div
+      style="
+        width:100%;
+        max-width:430px;
+        aspect-ratio:1.586;
+        border-radius:22px;
+        padding:25px;
+        position:relative;
+        overflow:hidden;
+        color:#fff;
+        background:
+          linear-gradient(
+            135deg,
+            #111827 0%,
+            #26354d 48%,
+            #0b101a 100%
+          );
+        box-shadow:
+          0 20px 45px rgba(0,0,0,.45);
+        border:1px solid rgba(255,255,255,.15);
+        font-family:Arial,sans-serif;
+      "
+    >
+
+      <div style="
+        position:absolute;
+        width:180px;
+        height:180px;
+        right:-60px;
+        top:-70px;
+        border-radius:50%;
+        background:rgba(255,255,255,.08);
+      "></div>
+
+      <div style="
+        position:absolute;
+        width:150px;
+        height:150px;
+        left:-70px;
+        bottom:-80px;
+        border-radius:50%;
+        background:rgba(255,255,255,.05);
+      "></div>
+
+      <div style="
+        position:relative;
+        z-index:2;
+        height:100%;
+        display:flex;
+        flex-direction:column;
+        justify-content:space-between;
+      ">
+
+        <div style="
+          display:flex;
+          justify-content:flex-end;
+        ">
+
+          <div style="
+            width:45px;
+            height:32px;
+            border-radius:7px;
+            background:
+              linear-gradient(
+                135deg,
+                #d7d7d7,
+                #858585
+              );
+            opacity:.9;
+          "></div>
+
+        </div>
+
+        <div style="
+          font-size:24px;
+          font-weight:700;
+          letter-spacing:3px;
+          text-shadow:
+            0 2px 5px rgba(0,0,0,.4);
+        ">
+          ${escapeHTML(
+            card.number
+          )}
+        </div>
+
+        <div style="
+          display:grid;
+          grid-template-columns:1fr auto auto;
+          gap:20px;
+          align-items:end;
+        ">
+
+          <div>
+
+            <div style="
+              font-size:9px;
+              letter-spacing:1px;
+              opacity:.65;
+              margin-bottom:4px;
+            ">
+              TITULAIRE
+            </div>
+
+            <div style="
+              font-size:13px;
+              font-weight:700;
+              letter-spacing:1px;
+            ">
+              ${escapeHTML(
+                card.holder
+              )}
+            </div>
+
+          </div>
+
+          <div>
+
+            <div style="
+              font-size:9px;
+              letter-spacing:1px;
+              opacity:.65;
+              margin-bottom:4px;
+            ">
+              EXP
+            </div>
+
+            <div style="
+              font-size:13px;
+              font-weight:700;
+            ">
+              ${escapeHTML(
+                card.expiry
+              )}
+            </div>
+
+          </div>
+
+          <div>
+
+            <div style="
+              font-size:9px;
+              letter-spacing:1px;
+              opacity:.65;
+              margin-bottom:4px;
+            ">
+              CVV
+            </div>
+
+            <div style="
+              font-size:13px;
+              font-weight:700;
+            ">
+              ${escapeHTML(
+                card.cvv
+              )}
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+
+/* =========================================================
+   ADMIN CARTE
+========================================================= */
+
 function renderNovaCardAdmin(){
 
-  const card=getNovaCard();
+  const card=
+    getNovaCard();
 
   return `
 
@@ -2731,132 +3161,29 @@ function renderNovaCardAdmin(){
       margin-top:20px;
       padding:18px;
       border-radius:18px;
-      background:
-        linear-gradient(
-          135deg,
-          rgba(45,140,255,.18),
-          rgba(37,214,149,.10)
-        );
-      border:1px solid rgba(100,150,255,.2);
+      background:rgba(255,255,255,.035);
+      border:1px solid var(--line);
     ">
 
       <div style="
-        display:flex;
-        justify-content:space-between;
-        align-items:center;
-        gap:10px;
+        margin-bottom:16px;
       ">
 
-        <div>
-
-          <div style="
-            font-size:12px;
-            color:var(--muted);
-          ">
-            PAIEMENT NOVASHOP
-          </div>
-
-          <strong style="
-            font-size:19px;
-          ">
-            💳 Carte NovaShop
-          </strong>
-
-        </div>
-
-        <div style="
-          font-size:28px;
-        ">
-          💳
-        </div>
+        <strong>
+          Carte
+        </strong>
 
       </div>
 
       <div
         id="adminNovaCardDisplay"
         style="
-          margin-top:16px;
+          display:flex;
+          justify-content:center;
         "
       >
 
-        ${
-          card
-            ?`
-
-              <div style="
-                display:grid;
-                gap:8px;
-              ">
-
-                <div>
-                  <small>
-                    Numéro
-                  </small>
-
-                  <strong
-                    style="
-                      display:block;
-                      font-size:18px;
-                      letter-spacing:1px;
-                    "
-                  >
-                    ${escapeHTML(card.number)}
-                  </strong>
-                </div>
-
-                <div style="
-                  display:flex;
-                  gap:30px;
-                ">
-
-                  <div>
-
-                    <small>
-                      Expiration
-                    </small>
-
-                    <strong
-                      style="
-                        display:block;
-                      "
-                    >
-                      ${escapeHTML(card.expiry)}
-                    </strong>
-
-                  </div>
-
-                  <div>
-
-                    <small>
-                      CVV
-                    </small>
-
-                    <strong
-                      style="
-                        display:block;
-                      "
-                    >
-                      ${escapeHTML(card.cvv)}
-                    </strong>
-
-                  </div>
-
-                </div>
-
-              </div>
-
-            `
-            :`
-
-              <div style="
-                color:var(--muted);
-              ">
-                Aucune carte NovaShop générée.
-              </div>
-
-            `
-
-        }
+        ${novaCardHTML(card)}
 
       </div>
 
@@ -2866,23 +3193,15 @@ function renderNovaCardAdmin(){
         id="generateNovaCard"
         style="
           width:100%;
-          margin-top:16px;
+          margin-top:18px;
         "
       >
-        🎴 ${
+        💳 ${
           card
-            ?"Générer une nouvelle carte"
-            :"Générer une carte NovaShop"
+            ?"Créer une nouvelle carte"
+            :"Créer une carte"
         }
       </button>
-
-      <p style="
-        margin-top:10px;
-        font-size:12px;
-        color:var(--muted);
-      ">
-        Cette carte fonctionne uniquement dans NovaShop.
-      </p>
 
     </div>
 
@@ -3009,7 +3328,7 @@ function openCheckout(){
             class="view-btn payment-choice"
             data-payment="card"
           >
-            💳 Carte NovaShop
+            💳 Carte
           </button>
 
         </div>
@@ -3029,9 +3348,7 @@ function openCheckout(){
           type="submit"
           class="add-btn"
           id="checkoutSubmit"
-          style="
-            width:100%;
-          "
+          style="width:100%"
         >
           Continuer
         </button>
@@ -3082,7 +3399,9 @@ function openCheckout(){
   updateCheckout();
 
   document
-    .querySelectorAll(".payment-choice")
+    .querySelectorAll(
+      ".payment-choice"
+    )
     .forEach(button=>{
 
       button.addEventListener(
@@ -3117,7 +3436,10 @@ function openCheckout(){
             return;
           }
 
-          if(paymentMethod==="paypal"){
+          if(
+            paymentMethod===
+            "paypal"
+          ){
 
             info.innerHTML=`
 
@@ -3135,130 +3457,140 @@ function openCheckout(){
 
             `;
 
-          }else{
+            return;
 
-            const card=
-              getNovaCard();
+          }
 
-            if(!card){
+          const card=
+            getNovaCard();
 
-              info.innerHTML=`
-
-                <div style="
-                  padding:14px;
-                  border-radius:12px;
-                  background:rgba(255,80,80,.10);
-                  color:#ff9999;
-                ">
-
-                  💳
-                  Aucune carte NovaShop n'est disponible.
-
-                  <br><br>
-
-                  Génère une carte depuis
-                  ton espace administration.
-
-                </div>
-
-              `;
-
-              return;
-
-            }
+          if(!card){
 
             info.innerHTML=`
 
               <div style="
-                padding:15px;
-                border-radius:14px;
-                background:rgba(37,214,149,.08);
-                border:1px solid rgba(37,214,149,.18);
+                padding:14px;
+                border-radius:12px;
+                background:rgba(255,80,80,.10);
+                color:#ff9999;
               ">
 
-                <strong>
-                  💳 Carte NovaShop
-                </strong>
+                💳
+                Aucune carte disponible.
 
-                <label
-                  for="cardNumber"
-                  style="
-                    display:block;
-                    margin-top:14px;
-                  "
-                >
-                  Numéro
-                </label>
+                <br><br>
 
-                <input
-                  id="cardNumber"
-                  type="text"
-                  inputmode="numeric"
-                  autocomplete="off"
-                  required
-                  value="${escapeHTML(card.number)}"
-                  placeholder="9999 0000 0000 0000"
-                >
-
-                <div style="
-                  display:grid;
-                  grid-template-columns:1fr 1fr;
-                  gap:10px;
-                  margin-top:10px;
-                ">
-
-                  <div>
-
-                    <label for="cardExpiry">
-                      Expiration
-                    </label>
-
-                    <input
-                      id="cardExpiry"
-                      type="text"
-                      autocomplete="off"
-                      required
-                      value="${escapeHTML(card.expiry)}"
-                      placeholder="12/30"
-                    >
-
-                  </div>
-
-                  <div>
-
-                    <label for="cardCvv">
-                      CVV
-                    </label>
-
-                    <input
-                      id="cardCvv"
-                      type="text"
-                      inputmode="numeric"
-                      autocomplete="off"
-                      required
-                      value="${escapeHTML(card.cvv)}"
-                      placeholder="123"
-                    >
-
-                  </div>
-
-                </div>
-
-                <div style="
-                  margin-top:10px;
-                  font-size:12px;
-                  color:var(--muted);
-                ">
-                  Carte utilisable uniquement sur NovaShop.
-                </div>
+                Crée une carte depuis
+                ton espace administration.
 
               </div>
 
             `;
 
+            return;
+
           }
 
+          info.innerHTML=`
+
+            <div style="
+              padding:15px;
+              border-radius:14px;
+              background:rgba(255,255,255,.04);
+              border:1px solid var(--line);
+            ">
+
+              <label for="cardNumber">
+                Numéro de carte
+              </label>
+
+              <input
+                id="cardNumber"
+                type="text"
+                inputmode="numeric"
+                autocomplete="off"
+                required
+                value="${escapeHTML(
+                  card.number
+                )}"
+                placeholder="Numéro de carte"
+              >
+
+              <label
+                for="cardHolder"
+                style="
+                  display:block;
+                  margin-top:10px;
+                "
+              >
+                Nom sur la carte
+              </label>
+
+              <input
+                id="cardHolder"
+                type="text"
+                autocomplete="off"
+                required
+                value="${escapeHTML(
+                  card.holder
+                )}"
+                placeholder="Nom sur la carte"
+              >
+
+              <div style="
+                display:grid;
+                grid-template-columns:1fr 1fr;
+                gap:10px;
+                margin-top:10px;
+              ">
+
+                <div>
+
+                  <label for="cardExpiry">
+                    Expiration
+                  </label>
+
+                  <input
+                    id="cardExpiry"
+                    type="text"
+                    autocomplete="off"
+                    required
+                    value="${escapeHTML(
+                      card.expiry
+                    )}"
+                    placeholder="12/31"
+                  >
+
+                </div>
+
+                <div>
+
+                  <label for="cardCvv">
+                    CVV
+                  </label>
+
+                  <input
+                    id="cardCvv"
+                    type="text"
+                    inputmode="numeric"
+                    autocomplete="off"
+                    required
+                    value="${escapeHTML(
+                      card.cvv
+                    )}"
+                    placeholder="CVV"
+                  >
+
+                </div>
+
+              </div>
+
+            </div>
+
+          `;
+
         }
+
       );
 
     });
@@ -3304,17 +3636,18 @@ function openCheckout(){
 
         }
 
-        let novaCard=null;
+        if(
+          paymentMethod===
+          "card"
+        ){
 
-        if(paymentMethod==="card"){
-
-          novaCard=
+          const card=
             getNovaCard();
 
-          if(!novaCard){
+          if(!card){
 
             errorBox.textContent=
-              "Aucune carte NovaShop n'est disponible.";
+              "Aucune carte disponible.";
 
             errorBox.style.display=
               "block";
@@ -3329,7 +3662,18 @@ function openCheckout(){
                 ?.value||
               ""
             )
-            .replace(/\s+/g,"")
+            .replace(
+              /\s+/g,
+              ""
+            )
+            .trim();
+
+          const holder=
+            (
+              $("cardHolder")
+                ?.value||
+              ""
+            )
             .trim();
 
           const expiry=
@@ -3350,16 +3694,17 @@ function openCheckout(){
 
           if(
             number!==
-            novaCard.number.replace(
-              /\s+/g,
-              ""
-            )||
-            expiry!==novaCard.expiry||
-            cvv!==novaCard.cvv
+              card.number.replace(
+                /\s+/g,
+                ""
+              )||
+            holder!==card.holder||
+            expiry!==card.expiry||
+            cvv!==card.cvv
           ){
 
             errorBox.textContent=
-              "Les informations de la carte NovaShop sont incorrectes.";
+              "Les informations de la carte sont incorrectes.";
 
             errorBox.style.display=
               "block";
@@ -3390,35 +3735,39 @@ function openCheckout(){
             subtotal;
 
           const orderItems=
-            cart.map(item=>{
+            cart.map(
+              item=>{
 
-              const product=
-                getProduct(item.id);
+                const product=
+                  getProduct(
+                    item.id
+                  );
 
-              return {
+                return {
 
-                id:item.id,
+                  id:item.id,
 
-                name:
-                  product?.name||
-                  "Produit",
+                  name:
+                    product?.name||
+                    "Produit",
 
-                price:
-                  product?.price||
-                  0,
+                  price:
+                    product?.price||
+                    0,
 
-                quantity:
-                  Number(
-                    item.quantity||1
-                  ),
+                  quantity:
+                    Number(
+                      item.quantity||1
+                    ),
 
-                image:
-                  product?.image||
-                  ""
+                  image:
+                    product?.image||
+                    ""
 
-              };
+                };
 
-            });
+              }
+            );
 
           const orderData={
 
@@ -3492,15 +3841,18 @@ function openCheckout(){
                 total.toFixed(2)
               )}EUR`;
 
-            setTimeout(()=>{
+            setTimeout(
+              ()=>{
 
-              window.open(
-                paypalUrl,
-                "_blank",
-                "noopener,noreferrer"
-              );
+                window.open(
+                  paypalUrl,
+                  "_blank",
+                  "noopener,noreferrer"
+                );
 
-            },400);
+              },
+              400
+            );
 
           }
 
@@ -3509,7 +3861,7 @@ function openCheckout(){
           ){
 
             toast(
-              "Paiement NovaShop accepté 💳",
+              "Paiement accepté 💳",
               "success"
             );
 
@@ -3588,7 +3940,8 @@ async function openAdmin(){
   const authorized=
     localStorage.getItem(
       "novaAdminAuthorized"
-    )==="true";
+    )===
+    "true";
 
   if(!authorized){
 
@@ -3648,25 +4001,31 @@ async function loadAdmin(){
 
     const orders=
       snapshot.docs
-        .map(item=>({
-          id:item.id,
-          ...item.data()
-        }))
-        .sort((a,b)=>{
+        .map(
+          item=>({
+            id:item.id,
+            ...item.data()
+          })
+        )
+        .sort(
+          (a,b)=>{
 
-          const aTime=
-            a.createdAt?.seconds||
-            0;
+            const aTime=
+              a.createdAt?.seconds||
+              0;
 
-          const bTime=
-            b.createdAt?.seconds||
-            0;
+            const bTime=
+              b.createdAt?.seconds||
+              0;
 
-          return bTime-aTime;
+            return bTime-aTime;
 
-        });
+          }
+        );
 
-    renderAdmin(orders);
+    renderAdmin(
+      orders
+    );
 
   }catch(error){
 
@@ -3753,183 +4112,193 @@ function renderAdmin(orders){
           ${
             orders.length
               ?
-              orders.map(order=>`
-
-                <div style="
-                  padding:16px;
-                  border:1px solid var(--line);
-                  border-radius:16px;
-                  background:rgba(255,255,255,.03);
-                ">
+              orders.map(
+                order=>`
 
                   <div style="
-                    display:flex;
-                    justify-content:space-between;
-                    gap:12px;
-                    flex-wrap:wrap;
+                    padding:16px;
+                    border:1px solid var(--line);
+                    border-radius:16px;
+                    background:rgba(255,255,255,.03);
                   ">
 
-                    <strong>
-                      Commande #
+                    <div style="
+                      display:flex;
+                      justify-content:space-between;
+                      gap:12px;
+                      flex-wrap:wrap;
+                    ">
+
+                      <strong>
+                        Commande #
+                        ${escapeHTML(
+                          order.id.slice(0,8)
+                        )}
+                      </strong>
+
+                      <strong>
+                        ${money(
+                          order.total||0
+                        )}
+                      </strong>
+
+                    </div>
+
+                    <div style="
+                      margin-top:8px;
+                      color:var(--muted);
+                    ">
+
+                      👤
                       ${escapeHTML(
-                        order.id.slice(0,8)
+                        order.userEmail||""
                       )}
-                    </strong>
 
-                    <strong>
-                      ${money(order.total||0)}
-                    </strong>
+                    </div>
+
+                    <label style="
+                      display:block;
+                      margin-top:14px;
+                    ">
+                      Statut
+                    </label>
+
+                    <select
+                      id="status-${order.id}"
+                      style="width:100%"
+                    >
+
+                      ${
+                        [
+                          "Enregistrée",
+                          "Acceptée",
+                          "Préparation",
+                          "En transit",
+                          "Livraison proche",
+                          "Livrée",
+                          "Annulée"
+                        ]
+                        .map(
+                          status=>`
+
+                            <option
+                              value="${escapeHTML(
+                                status
+                              )}"
+                              ${
+                                (
+                                  order.status||
+                                  "Enregistrée"
+                                )===status
+                                  ?"selected"
+                                  :""
+                              }
+                            >
+                              ${escapeHTML(
+                                status
+                              )}
+                            </option>
+
+                          `
+                        ).join("")
+                      }
+
+                    </select>
+
+                    <label style="
+                      display:block;
+                      margin-top:10px;
+                    ">
+                      Ville
+                    </label>
+
+                    <input
+                      id="city-${order.id}"
+                      type="text"
+                      value="${escapeHTML(
+                        order.city||""
+                      )}"
+                      placeholder="Ville"
+                    >
+
+                    <label style="
+                      display:block;
+                      margin-top:10px;
+                    ">
+                      Numéro de suivi
+                    </label>
+
+                    <input
+                      id="tracking-${order.id}"
+                      type="text"
+                      value="${escapeHTML(
+                        order.tracking||""
+                      )}"
+                      placeholder="Numéro de suivi"
+                    >
+
+                    <label style="
+                      display:block;
+                      margin-top:10px;
+                    ">
+                      Livraison estimée
+                    </label>
+
+                    <input
+                      id="delivery-${order.id}"
+                      type="text"
+                      value="${escapeHTML(
+                        order.estimatedDelivery||""
+                      )}"
+                      placeholder="Ex : 25 septembre"
+                    >
+
+                    <div style="
+                      display:flex;
+                      gap:8px;
+                      flex-wrap:wrap;
+                      margin-top:14px;
+                    ">
+
+                      <button
+                        type="button"
+                        class="add-btn"
+                        data-save-order="${order.id}"
+                      >
+                        💾 Enregistrer
+                      </button>
+
+                      <button
+                        type="button"
+                        class="view-btn"
+                        data-paid-order="${order.id}"
+                      >
+                        💳 Marquer payé
+                      </button>
+
+                      <button
+                        type="button"
+                        class="view-btn"
+                        data-invoice-order="${order.id}"
+                      >
+                        🧾 Facture
+                      </button>
+
+                      <button
+                        type="button"
+                        class="view-btn"
+                        data-delete-order="${order.id}"
+                        style="color:#ff7777"
+                      >
+                        🗑️ Supprimer
+                      </button>
+
+                    </div>
 
                   </div>
 
-                  <div style="
-                    margin-top:8px;
-                    color:var(--muted);
-                  ">
-
-                    👤
-                    ${escapeHTML(
-                      order.userEmail||""
-                    )}
-
-                  </div>
-
-                  <label style="
-                    display:block;
-                    margin-top:14px;
-                  ">
-                    Statut
-                  </label>
-
-                  <select
-                    id="status-${order.id}"
-                    style="width:100%"
-                  >
-
-                    ${
-                      [
-                        "Enregistrée",
-                        "Acceptée",
-                        "Préparation",
-                        "En transit",
-                        "Livraison proche",
-                        "Livrée",
-                        "Annulée"
-                      ]
-                      .map(status=>`
-
-                        <option
-                          value="${escapeHTML(status)}"
-                          ${
-                            (
-                              order.status||
-                              "Enregistrée"
-                            )===status
-                              ?"selected"
-                              :""
-                          }
-                        >
-                          ${escapeHTML(status)}
-                        </option>
-
-                      `).join("")
-                    }
-
-                  </select>
-
-                  <label style="
-                    display:block;
-                    margin-top:10px;
-                  ">
-                    Ville
-                  </label>
-
-                  <input
-                    id="city-${order.id}"
-                    type="text"
-                    value="${escapeHTML(
-                      order.city||""
-                    )}"
-                    placeholder="Ville"
-                  >
-
-                  <label style="
-                    display:block;
-                    margin-top:10px;
-                  ">
-                    Numéro de suivi
-                  </label>
-
-                  <input
-                    id="tracking-${order.id}"
-                    type="text"
-                    value="${escapeHTML(
-                      order.tracking||""
-                    )}"
-                    placeholder="Numéro de suivi"
-                  >
-
-                  <label style="
-                    display:block;
-                    margin-top:10px;
-                  ">
-                    Livraison estimée
-                  </label>
-
-                  <input
-                    id="delivery-${order.id}"
-                    type="text"
-                    value="${escapeHTML(
-                      order.estimatedDelivery||""
-                    )}"
-                    placeholder="Ex : 25 septembre"
-                  >
-
-                  <div style="
-                    display:flex;
-                    gap:8px;
-                    flex-wrap:wrap;
-                    margin-top:14px;
-                  ">
-
-                    <button
-                      type="button"
-                      class="add-btn"
-                      data-save-order="${order.id}"
-                    >
-                      💾 Enregistrer
-                    </button>
-
-                    <button
-                      type="button"
-                      class="view-btn"
-                      data-paid-order="${order.id}"
-                    >
-                      💳 Marquer payé
-                    </button>
-
-                    <button
-                      type="button"
-                      class="view-btn"
-                      data-invoice-order="${order.id}"
-                    >
-                      🧾 Facture
-                    </button>
-
-                    <button
-                      type="button"
-                      class="view-btn"
-                      data-delete-order="${order.id}"
-                      style="color:#ff7777"
-                    >
-                      🗑️ Supprimer
-                    </button>
-
-                  </div>
-
-                </div>
-
-              `).join("")
+                `
+              ).join("")
               :
               `
 
@@ -3988,78 +4357,13 @@ function renderAdmin(orders){
 
         if(display){
 
-          display.innerHTML=`
-
-            <div style="
-              display:grid;
-              gap:8px;
-            ">
-
-              <div>
-
-                <small>
-                  Numéro
-                </small>
-
-                <strong
-                  style="
-                    display:block;
-                    font-size:18px;
-                    letter-spacing:1px;
-                  "
-                >
-                  ${escapeHTML(card.number)}
-                </strong>
-
-              </div>
-
-              <div style="
-                display:flex;
-                gap:30px;
-              ">
-
-                <div>
-
-                  <small>
-                    Expiration
-                  </small>
-
-                  <strong
-                    style="
-                      display:block;
-                    "
-                  >
-                    ${escapeHTML(card.expiry)}
-                  </strong>
-
-                </div>
-
-                <div>
-
-                  <small>
-                    CVV
-                  </small>
-
-                  <strong
-                    style="
-                      display:block;
-                    "
-                  >
-                    ${escapeHTML(card.cvv)}
-                  </strong>
-
-                </div>
-
-              </div>
-
-            </div>
-
-          `;
+          display.innerHTML=
+            novaCardHTML(card);
 
         }
 
         toast(
-          "Nouvelle carte NovaShop générée 💳",
+          "Carte créée 💳",
           "success"
         );
 
@@ -4114,7 +4418,11 @@ function renderAdmin(orders){
             );
 
           if(order){
-            printInvoice(order);
+
+            printInvoice(
+              order
+            );
+
           }
 
         }
@@ -4339,7 +4647,8 @@ function getTheme(){
 
 function applyTheme(){
 
-  const theme=getTheme();
+  const theme=
+    getTheme();
 
   if(theme==="light"){
 
@@ -4420,7 +4729,9 @@ function openSettings(){
         color:var(--muted);
       ">
         Thème actuel :
-        ${escapeHTML(current)}
+        ${escapeHTML(
+          current
+        )}
       </p>
 
     `
@@ -4498,7 +4809,9 @@ document.addEventListener(
   "keydown",
   event=>{
 
-    if(event.key!=="Escape"){
+    if(
+      event.key!=="Escape"
+    ){
       return;
     }
 
@@ -4550,7 +4863,8 @@ onAuthStateChanged(
   auth,
   user=>{
 
-    currentUser=user;
+    currentUser=
+      user;
 
     if(accountBtn){
 
