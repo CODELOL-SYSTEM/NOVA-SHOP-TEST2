@@ -1,584 +1,4 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-import { getAuth,onAuthStateChanged,signInWithEmailAndPassword,createUserWithEmailAndPassword,signOut } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
-import { getFirestore,collection,addDoc,getDocs,query,where,serverTimestamp,deleteDoc,doc,updateDoc } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
-
-const firebaseConfig={
-  apiKey:"AIzaSyAZ5vAkAEfIBpfLyhxgO7uvNdJ67KYKWD0",
-  authDomain:"novashop-4ee63.firebaseapp.com",
-  projectId:"novashop-4ee63",
-  storageBucket:"novashop-4ee63.firebasestorage.app",
-  messagingSenderId:"1044964015809",
-  appId:"1:1044964015809:web:4eafe0b1aede48f8539e40",
-  measurementId:"G-XNY5X2VMY9"
-};
-
-const firebaseApp=initializeApp(firebaseConfig);
-const auth=getAuth(firebaseApp);
-const db=getFirestore(firebaseApp);
-
-const ADMIN_EMAIL="pc2alex.les@gmail.com";
-const ADMIN_CODE="NOVA-ADMIN-2026";
-const ADMIN_KEY="novaAdminAuthorized";
-const PAYPAL_URL="https://paypal.me/SH0PNOVA";
-
-const $=id=>document.getElementById(id);
-
-const searchInput=$("searchInput");
-const categoriesEl=$("categories");
-const productsGrid=$("productGrid");
-const productCount=$("productCount");
-
-const cartBtn=$("cartBtn");
-const cartBadge=$("cartBadge");
-const overlay=$("overlay");
-const cartDrawer=$("cartDrawer");
-const cartClose=$("closeCart");
-const cartItems=$("cartItems");
-const cartTotal=$("cartTotal");
-const checkoutBtn=$("checkoutBtn");
-
-const settingsBtn=$("settingsBtn");
-const accountBtn=$("accountBtn");
-const ordersBtn=$("ordersBtn");
-const adminBtn=$("adminBtn");
-
-const modal=$("modalLayer");
-const modalContent=$("modalContent");
-const modalClose=$("modalClose");
-
-const FALLBACK_IMAGE="https://placehold.co/800x800/111827/ffffff?text=NovaShop";
-
-const toastContainer=document.createElement("div");
-toastContainer.id="novaToastContainer";
-toastContainer.style.cssText="position:fixed;z-index:9999;left:50%;bottom:22px;transform:translateX(-50%);display:flex;flex-direction:column;gap:8px;pointer-events:none";
-document.body.appendChild(toastContainer);
-
-let currentUser=null;
-let selectedCategory="Toutes";
-let searchValue="";
-let cart=[];
-let reviewCache={};
-
-function esc(v){
-  return String(v??"")
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
-}
-
-function imageUrl(url){
-  if(!url)return FALLBACK_IMAGE;
-
-  if(/^(\.|data:|blob:)/.test(url)){
-    return url;
-  }
-
-  return "https://wsrv.nl/?url="+encodeURIComponent(url);
-}
-
-function imageSrc(url){
-  return esc(imageUrl(url));
-}
-
-function imageError(img){
-  if(!img)return;
-
-  const original=img.dataset.original;
-
-  if(img.dataset.stage!=="original"){
-    img.dataset.stage="original";
-    img.src=original||FALLBACK_IMAGE;
-  }else{
-    img.src=FALLBACK_IMAGE;
-  }
-}
-
-window.imageError=imageError;
-
-function money(v){
-  return new Intl.NumberFormat(
-    "fr-FR",
-    {
-      style:"currency",
-      currency:"EUR"
-    }
-  ).format(Number(v)||0);
-}
-
-function productPrice(v){
-  return Number(v)===0
-    ? "Prix à venir"
-    : money(v);
-}
-
-function toast(message){
-  const t=document.createElement("div");
-  t.className="toast";
-  t.textContent=message;
-
-  toastContainer.appendChild(t);
-
-  requestAnimationFrame(()=>{
-    t.classList.add("show");
-  });
-
-  setTimeout(()=>{
-    t.classList.remove("show");
-
-    setTimeout(()=>{
-      t.remove();
-    },250);
-
-  },2200);
-}
-
-
-const products=[
-
-{
-  id:"p1",
-  name:"Gigabyte B650 AORUS Elite AX",
-  category:"Composants",
-  price:189.99,
-  image:"https://m.media-amazon.com/images/I/81JFKzNyl+L._AC_SL1500_.jpg"
-},
-
-{
-  id:"p2",
-  name:"PC Gamer AMD Ryzen 7 7800X3D | RX 9070 XT | 32 Go DDR5",
-  category:"PC Gamer",
-  price:2237.65,
-  image:"https://www.memorypc.fr/thumbnail/53/79/73/1786604635/019f8f1c2c6972a8a3ea1ee9516a0652_1784812416_800x800.png"
-},
-
-{
-  id:"p3",
-  name:"HyperX Cloud II",
-  category:"Casques",
-  price:49.99,
-  image:"https://fr.hyperx.com/cdn/shop/files/hyperx_cloud_ii_red_1_main.jpg?v=1764129756"
-},
-
-{
-  id:"p4",
-  name:"TECORS Clavier Gamer Mécanique 60% AZERTY",
-  category:"Claviers",
-  price:30,
-  image:"https://m.media-amazon.com/images/I/71-lhAU97VL._AC_SL1500_.jpg"
-},
-
-{
-  id:"p5",
-  name:"Clavier Magnétique 65% Celshading Noir",
-  category:"Claviers",
-  price:120.90,
-  image:"https://tryhard-gear.com/cdn/shop/files/TestCelshadingnoirV2.webp?v=1762273866&width=832"
-},
-
-{
-  id:"p6",
-  name:"Ajazz AJ199 MAX Carbon Fiber Wireless Gaming Mouse",
-  category:"Souris",
-  price:49.99,
-  image:"https://ae-pic-a1.aliexpress-media.com/kf/S1e981b53ccfe4e1391cd5b5deb4fce87o.png_960x960.png_.avif"
-},
-
-{
-  id:"p7",
-  name:"Logitech G PRO X2 Superstrike Blanc et Noir",
-  category:"Souris",
-  price:150.99,
-  image:"https://static.fnac-static.com/multimedia/Images/FR/MDM/7a/34/bc/29111418/1540-1.jpg"
-},
-
-{
-  id:"p8",
-  name:"Samsung 990 PRO 1TB",
-  category:"Stockage",
-  price:249.99,
-  image:"https://content.pearl.fr/media/cache/default/article_ultralarge_high_nocrop/shared/images/articles/M/MW1/disque-dur-interne-ssd-990-pro-pcie-nvme-m-2-2280-1-to-ref_MW1148_2.jpg"
-},
-
-{
-  id:"p9",
-  name:"Samsung 990 PRO 2TB",
-  category:"Stockage",
-  price:199.93,
-  image:"https://pc.comparer.fr/500x500/310191422.webp"
-},
-
-{
-  id:"p10",
-  name:"CORSAIR RM1000x EU",
-  category:"Alimentations",
-  price:159.90,
-  image:"https://assets.corsair.com/image/upload/c_pad,q_85,h_608,w_608,f_auto/products/Power-Supply-Units/base-rmx-2024-config/gallery/black/1000/RM1000x_2024_01.webp"
-},
-
-{
-  id:"p11",
-  name:"CORSAIR RM850x EU",
-  category:"Alimentations",
-  price:134.90,
-  image:"https://assets.corsair.com/image/upload/c_pad,q_85,h_608,w_608,f_auto/products/Power-Supply-Units/base-rmx-2024-config/gallery/black/850/RM850x_2024_01.webp"
-},
-
-{
-  id:"p12",
-  name:"Corsair Frame 5000D RS ARGB Noir",
-  category:"Boîtiers",
-  price:159.90,
-  image:"https://media.ldlc.com/r1600/ld/products/00/06/26/05/LD0006260502.jpg"
-},
-
-{
-  id:"p13",
-  name:"ARCTIC Liquid Freezer III Pro 360 A-RGB Black",
-  category:"Refroidissement",
-  price:129.90,
-  image:"https://cdn.idealo.com/folder/Product/206182/0/206182034/s4_produktbild_gross/arctic-liquid-freezer-iii-pro-360-a-rgb-black.jpg"
-},
-
-{
-  id:"p14",
-  name:"Samsung 27 QD-OLED Odyssey G6",
-  category:"Écrans",
-  price:399.95,
-  image:"https://media.ldlc.com/r705/ld/products/00/06/32/99/LD0006329977.jpg"
-},
-
-{
-  id:"p15",
-  name:"ELGATO Wave Mic Arm Pro",
-  category:"Streaming",
-  price:229.90,
-  image:"https://www.digit-photo.com/images/produits/ELGATO10AAT9901/1.jpg"
-},
-
-{
-  id:"p16",
-  name:"Sony DualSense Cosmic Red PS5/PC",
-  category:"Manettes",
-  price:74.90,
-  image:"https://media.carrefour.fr/media/referential/media/cc07d7de4b9e4bea8c063e8f9bb46d94/p_200x200/0711719023005_0.jpg"
-},
-
-{
-  id:"p17",
-  name:"ASUS TUF Gaming B650-PLUS",
-  category:"Composants",
-  price:179.90,
-  image:"https://media.materiel.net/r550/products/MN0005986139.jpg"
-},
-
-{
-  id:"p18",
-  name:"MSI MAG B650 Tomahawk WiFi",
-  category:"Composants",
-  price:189.90,
-  image:"https://m.media-amazon.com/images/I/71TYAcZ4J8L._AC_SL1200_.jpg"
-},
-
-{
-  id:"p19",
-  name:"KOORUI Ecran PC Gamer 27 Pouces 200Hz IPS QHD HDR400 1ms",
-  category:"Écrans",
-  price:74.99,
-  image:"https://m.media-amazon.com/images/I/71CJ1DF-8sL._AC_SL1500_.jpg"
-},
-
-{
-  id:"p20",
-  name:'iiyama 23.8" LED - G-Master GB2471HS-B1 Red Eagle',
-  category:"Écrans",
-  price:65.99,
-  image:"https://media.ldlc.com/r1600/ld/products/00/06/34/20/LD0006342033.jpg"
-},
-
-{
-  id:"p21",
-  name:"SONGMICS Chaise de jeu ergonomique avec repose-pieds 150 kg gris ardoise",
-  category:"Chaises gaming",
-  price:129.99,
-  image:"https://static.songmics.fr/fit-in/1000x1000/image/Product/B34OBG077G01/B34OBG077G01-1.jpg"
-},
-
-{
-  id:"p22",
-  name:"Dowinx Série Luxe Suède LS-66D68E Blanc",
-  category:"Chaises gaming",
-  price:79.99,
-  image:"https://eu.dowinx.com/cdn/shop/files/11_5f72b693-5f79-4d06-b48a-7cb2b2f0244a.png?v=1752139814&width=1220"
-},
-
-{
-  id:"p23",
-  name:"Chaise GTPLAYER Ergonomique Gaming Soutien Lombaire Repose-pieds",
-  category:"Chaises gaming",
-  price:109.99,
-  image:"https://thumb.pccomponentes.com/w-530-530/articles/1118/11186247/167-silla-gaming-gtplayer-ergonomica-con-reposapies-y-soporte-lumbar-4d.jpg"
-},
-
-{
-  id:"p24",
-  name:"Desk Lite - Height-Adjustable Desk",
-  category:"Bureaux gaming",
-  price:110.99,
-  image:"https://yaasa.com/cdn/shop/files/yaasa-desk-lite_nr01_black_100_01-04545-01_1200x.jpg?v=1753169928"
-},
-
-{
-  id:"p25",
-  name:"EUREKA ERGONOMIC Bureau Gaming LED 182x76cm en Forme d'Aile",
-  category:"Bureaux gaming",
-  price:86.99,
-  image:"https://m.media-amazon.com/images/I/71Gd5G3wRsL._AC_SL1500_.jpg"
-},
-
-{
-  id:"p26",
-  name:"Bureau gaming d’angle HOMCOM réversible support écran",
-  category:"Bureaux gaming",
-  price:44.99,
-  image:"https://cdn.manomano.com/pim-media/images/medium/74eca1cb1cefa063c8f600ee293ae6ee826794f8.jpg"
-},
-
-{
-  id:"p27",
-  name:"Logitech G Pro X 2 Lightspeed Noir + Repose casque",
-  category:"Casques",
-  price:99.99,
-  image:"https://static.fnac-static.com/multimedia/Images/FR/MDMFR/MDM/6d/e9/6e/24045933/1540-1/tsp20260429154901/Casque-PC-gaming-sans-fil-Logitech-G-Pro-X-2-Lightspeed-Noir-Repose-casque.jpg"
-},
-
-{
-  id:"p28",
-  name:"Razer BlackShark V2 Pro 2023 Noir",
-  category:"Casques",
-  price:75.99,
-  image:"https://media.ldlc.com/r1600/ld/products/00/06/07/71/LD0006077125.jpg"
-},
-
-{
-  id:"p29",
-  name:"beyerdynamic DT-990 Pro 250 Ohm",
-  category:"Casques",
-  price:60.99,
-  image:"https://thumbs.static-thomann.de/thumb/padthumb600x600/pics/bdb/_10/106865/18443258_800.jpg"
-},
-
-{
-  id:"p30",
-  name:"Logitech PRO X TKL Rapid Noir, filaire AZERTY",
-  category:"Claviers",
-  price:78.99,
-  image:"https://static.fnac-static.com/multimedia/Images/FR/MDM/6a/89/8f/26184042/1540-1.jpg"
-},
-
-{
-  id:"p31",
-  name:"QwertyKey75 HE Striker, Magnetic Hall Effect, Rapid Trigger, Snap Tap",
-  category:"Claviers",
-  price:56.99,
-  image:"https://cdn.shopify.com/s/files/1/0814/2530/1746/files/QK75-HE-STRIKER-qwertykey-tastatura-mecanica-gaming-hotswap-2025_1eee355b-72ca-46e6-a458-751384d0595c_1800x.webp?v=1771799537"
-},
-
-{
-  id:"p32",
-  name:"GravaStar Mercury K1 Clavier Gamer sans Fil en Aluminium, Noir Dégradé",
-  category:"Claviers",
-  price:91.99,
-  image:"https://m.media-amazon.com/images/I/6144lt2l5JL._AC_SL1200_.jpg"
-},
-
-{
-  id:"p33",
-  name:"ATTACK SHARK R11 Ultra, fibre de carbone, 8000Hz, 49g, 42000 DPI",
-  category:"Souris",
-  price:26.99,
-  image:"https://m.media-amazon.com/images/I/71bMz15SqcL._AC_SL1500_.jpg"
-},
-
-{
-  id:"p34",
-  name:"HyperX QuadCast 2 – Microphone USB – RGB",
-  category:"Microphones",
-  price:98.99,
-  image:"https://fr.hyperx.com/cdn/shop/files/hyperx_quadcast_2_872v1aa_main_1_2d47a555-f537-457b-9002-8b9e9010dc00.jpg?v=1763067608"
-},
-
-{
-  id:"p35",
-  name:"Shure SM7 dB",
-  category:"Microphones",
-  price:121.99,
-  image:"https://thumbs.static-thomann.de/thumb/padthumb600x600/pics/bdb/_57/573672/18492412_800.jpg"
-},
-
-{
-  id:"p36",
-  name:"Razer Seiren V3 Chroma Noir",
-  category:"Microphones",
-  price:13.99,
-  image:"https://media.ldlc.com/r1600/ld/products/00/06/13/25/LD0006132588.jpg"
-},
-
-{
-  id:"p37",
-  name:"Stairville LED Pixel Rail 40 RGB MKII",
-  category:"Éclairage RGB",
-  price:18.90,
-  image:"https://thumbs.static-thomann.de/thumb/padthumb600x600/pics/bdb/_44/449739/14448905_800.jpg"
-},
-
-{
-  id:"p38",
-  name:"Govee LED Strip Light RGBIC Wi-Fi + Bluetooth 5m Matter",
-  category:"Éclairage RGB",
-  price:8,
-  image:"https://static.fnac-static.com/multimedia/Images/FR/MDM/ab/7a/9d/27097771/1520-2/tsp20260429155350/Ruban-LED-Govee-LED-Strip-Light-RGBIC-Wi-Fi-avec-BT-5M-Matter.jpg"
-},
-
-{
-  id:"p39",
-  name:"Lampe de plafond hexagone nid d’abeille LED 2.4m x 4.8m contour bleu",
-  category:"Éclairage RGB",
-  price:91.10,
-  image:"https://www.discount-autosport.com/wp-content/webp-express/webp-images/uploads/2025/02/lampe-hexagone-plafond-led-4m80-contour-bleu-.jpg.webp"
-},
-
-{
-  id:"p40",
-  name:"GIGABYTE GeForce RTX 5050 WINDFORCE OC 8G",
-  category:"Cartes graphiques",
-  price:147,
-  image:"https://m.media-amazon.com/images/I/41kmHFMFPOL._SL500_.jpg"
-},
-
-{
-  id:"p41",
-  name:"MSI GeForce RTX 3050 LP E 6G OC",
-  category:"Cartes graphiques",
-  price:100,
-  image:"https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcTCe_rha_tAAHPWnQ8VV7GIvF-uSqUaEyU61TSnwgM4CK8g3-x_3Hq4wOgH36Ri63eAiWHsvhmRJHzVrUQR9-IwMx31WH0w"
-},
-
-{
-  id:"p42",
-  name:"ASUS Dual Radeon RX 7600 EVO OC Edition 8GB GDDR6",
-  category:"Cartes graphiques",
-  price:140,
-  image:"https://m.media-amazon.com/images/I/81QItJufypL._AC_SL1500_.jpg"
-},
-
-{
-  id:"p43",
-  name:"PC Gamer Fixe, Ryzen 7 5700G, Vega 8, 16G DDR4, 1T SSD",
-  category:"PC Gamer",
-  price:650,
-  image:"https://m.media-amazon.com/images/I/81M3iU5S4QL._AC_SL1500_.jpg",
-  new:true
-},
-
-{
-  id:"p44",
-  name:"Apple iPhone 14 Pro 6,1\" 5G Double SIM 128 Go Argent",
-  category:"Téléphones",
-  price:400,
-  image:"https://static.fnac-static.com/multimedia/Images/FR/MDM/07/3b/32/20069127/1540-1/tsp20260630131025/Apple-iPhone-14-Pro-6-1-5G-Double-SIM-128-Go-Argent.jpg"
-},
-
-{
-  id:"p45",
-  name:"Apple iPhone 15 6,1\" 5G Double SIM 128 Go Noir",
-  category:"Téléphones",
-  price:750,
-  image:"https://static.fnac-static.com/multimedia/Images/FR/MDM/cd/f0/52/22212813/1540-1/tsp20260914144304/Apple-iPhone-15-6-1-5G-Double-SIM-128-Go-Noir.jpg"
-},
-
-{
-  id:"p46",
-  name:"Apple iPhone 16 6,1\" 5G 128 Go Double SIM Noir",
-  category:"Téléphones",
-  price:949.99,
-  image:"https://static.fnac-static.com/multimedia/Images/FR/MDMFR/MDM/fe/47/66/23480318/3756-1/tsp20260920085557/Apple-iPhone-16-6-1-5G-128-Go-Double-SIM-Noir.jpg"
-},
-
-{
-  id:"p47",
-  name:"Apple iPhone 17 6,3\" 5G Double SIM 256 Go Noir",
-  category:"Téléphones",
-  price:0,
-  image:"https://static.fnac-static.com/multimedia/Images/FR/MDM/19/86/b6/28739097/3756-1/tsp20260909180923/Apple-iPhone-17-6-3-5G-Double-SIM-256-Go-Noir.jpg"
-},
-
-{
-  id:"p48",
-  name:"Apple iPhone 18 Pro 6,3\" 5G Double SIM 256 Go Noir",
-  category:"Téléphones",
-  price:1199.99,
-  image:"https://static.fnac-static.com/multimedia/Images/FR/MDM/62/73/c7/29848418/1540-1/tsp20260920091102/Apple-iPhone-18-Pro-6-3-5G-Double-SIM-256-Go-Noir.jpg"
-},
-
-{
-  id:"p49",
-  name:"Smartphone Samsung Galaxy S23 6.1\" Nano SIM 5G 8 Go RAM 256 Go Noir",
-  category:"Téléphones",
-  price:230,
-  image:"https://static.fnac-static.com/multimedia/Images/FR/MDM/0d/c0/44/21282829/1540-1/tsp20260829031739/Smartphone-Samsung-Galaxy-S23-6-1-Nano-SIM-5G-8-Go-RAM-256-Go-Noir.jpg"
-},
-
-{
-  id:"p50",
-  name:"Smartphone Samsung Galaxy S24 6,2\" 5G Nano SIM 256 Go Noir",
-  category:"Téléphones",
-  price:449.90,
-  image:"https://static.fnac-static.com/multimedia/Images/FR/MDM/a6/f6/5a/22738598/1540-1/tsp20260319135101/Smartphone-Samsung-Galaxy-S24-6-2-5G-Nano-SIM-256-Go-Noir.jpg"
-},
-
-{
-  id:"p51",
-  name:"Smartphone Samsung Galaxy S25 Edge 6,7\" 5G Nano SIM 256 Go Noir absolu Titane",
-  category:"Téléphones",
-  price:469.99,
-  image:"https://static.fnac-static.com/multimedia/Images/FR/MDM/42/7b/ab/28015426/1540-1/tsp20260909180103/Smartphone-Samsung-Galaxy-S25-Edge-6-7-5G-Nano-SIM-256-Go-Noir-absolu-Titane.jpg"
-},
-
-{
-  id:"p52",
-  name:"Pack Smartphone Samsung Galaxy S26 6,3\" 5G Nano SIM 256 Go Noir + Buds4 Noir",
-  category:"Téléphones",
-  price:650.99,
-  image:"https://static.fnac-static.com/multimedia/Images/FR/MDM/e8/a2/c7/29860584/1540-1/tsp20260903144909/Pack-Smartphone-Samsung-Galaxy-S26-6-3-5G-Nano-SIM-256-Go-Noir-Buds4-Noir.jpg"
-},
-
-{
-  id:"p53",
-  name:"Smartphone Google Pixel 8 6.2\" 5G Double SIM 128 Go Vert Sauge",
-  category:"Téléphones",
-  price:200,
-  image:"https://static.fnac-static.com/multimedia/Images/FR/MDM/37/bc/52/22199351/1540-1/tsp20260722081937/Smartphone-Google-Pixel-8-6-2-5G-Double-SIM-128-Go-Vert-Sauge.jpg"
-},
-
-{
-  id:"p54",
-  name:"Smartphone Google Pixel 9 6,3\" 5G Double nano-SIM 128 Go Noir Obsidienne",
-  category:"Téléphones",
-  price:400,
-  image:"https://static.fnac-static.com/multimedia/Images/FR/MDM/f6/00/6d/23920886/1540-1/tsp20260914084700/Smartphone-Google-Pixel-9-6-3-5G-Double-nano-SIM-128-Go-Noir-Obsidienne.jpg"
-},
-
-{
-  id:"p55",
-  name:"Smartphone Google Pixel 10 6,3\" 5G Double SIM 256 Go Noir Volcanique",
-  category:"Téléphones",
-  price:600,
-  image:"https://static.fnac-static.com/multimedia/Images/FR/MDM/4a/5f/b3/28532554/1540-1/tsp20260717111851/Smartphone-Google-Pixel-10-6-3-5G-Double-SIM-256-Go-Noir-Volcanique.jpg"
-}
-
-];const seedCart=()=>{
+const seedCart=()=>{
   try{
     const x=JSON.parse(localStorage.getItem("novaCart")||"[]");
     return Array.isArray(x)?x:[];
@@ -3216,4 +2636,1384 @@ window.NovaShop={
 
 console.log(
   `NovaShop chargé : ${products.length} produits`
+);// ============================================================
+// NOVASHOP - APP.JS
+// PARTIE 2 / 2 - FINALE
+// Interface + produits + panier + favoris + recherche
+// ============================================================
+
+
+// ============================================================
+// ÉLÉMENTS DOM
+// ============================================================
+
+const $ = (selector) => document.querySelector(selector);
+const $$ = (selector) => [...document.querySelectorAll(selector)];
+
+
+// ============================================================
+// TOAST
+// ============================================================
+
+function showToast(message, type = "success") {
+
+  let toast = document.querySelector(".nova-toast");
+
+  if (!toast) {
+    toast = document.createElement("div");
+    toast.className = "nova-toast";
+
+    toast.style.cssText = `
+      position:fixed;
+      right:20px;
+      bottom:20px;
+      z-index:99999;
+      padding:14px 18px;
+      border-radius:12px;
+      background:#0d1728;
+      color:#fff;
+      border:1px solid rgba(255,255,255,.1);
+      box-shadow:0 15px 40px rgba(0,0,0,.45);
+      font-family:Arial,sans-serif;
+      font-size:14px;
+      opacity:0;
+      transform:translateY(15px);
+      transition:.25s ease;
+      pointer-events:none;
+    `;
+
+    document.body.appendChild(toast);
+  }
+
+  toast.textContent = message;
+
+  toast.style.borderColor =
+    type === "error"
+      ? "rgba(255,70,70,.5)"
+      : "rgba(37,214,149,.35)";
+
+  toast.style.opacity = "1";
+  toast.style.transform = "translateY(0)";
+
+  clearTimeout(toast._timer);
+
+  toast._timer = setTimeout(() => {
+    toast.style.opacity = "0";
+    toast.style.transform = "translateY(15px)";
+  }, 2600);
+}
+
+
+// ============================================================
+// PRODUITS FILTRÉS
+// ============================================================
+
+function getFilteredProducts() {
+
+  let result = [...products];
+
+  const search = state.search
+    .trim()
+    .toLowerCase();
+
+  if (search) {
+    result = result.filter(product => {
+
+      const name = product.name.toLowerCase();
+      const category = product.category.toLowerCase();
+
+      return (
+        name.includes(search) ||
+        category.includes(search)
+      );
+    });
+  }
+
+  if (
+    state.category &&
+    state.category !== "Tous"
+  ) {
+    result = result.filter(
+      product => product.category === state.category
+    );
+  }
+
+  if (
+    state.brand &&
+    state.brand !== "Toutes"
+  ) {
+    result = result.filter(product =>
+      product.name
+        .toLowerCase()
+        .includes(
+          state.brand.toLowerCase()
+        )
+    );
+  }
+
+  switch (state.sort) {
+
+    case "price-asc":
+      result.sort(
+        (a, b) => a.price - b.price
+      );
+      break;
+
+    case "price-desc":
+      result.sort(
+        (a, b) => b.price - a.price
+      );
+      break;
+
+    case "name":
+      result.sort(
+        (a, b) =>
+          a.name.localeCompare(
+            b.name,
+            "fr"
+          )
+      );
+      break;
+
+    default:
+      break;
+  }
+
+  return result;
+}
+
+
+// ============================================================
+// PRODUIT DANS LE PANIER
+// ============================================================
+
+function getCartQuantity(productId) {
+
+  const item = state.cart.find(
+    item => item.id === productId
+  );
+
+  return item
+    ? Number(item.quantity || 0)
+    : 0;
+}
+
+
+// ============================================================
+// AJOUT PANIER
+// ============================================================
+
+function addToCart(productId) {
+
+  const product =
+    NovaShopCatalog.getById(productId);
+
+  if (!product) return;
+
+  if (!product.price || product.price <= 0) {
+    showToast(
+      "Prix du produit non disponible.",
+      "error"
+    );
+    return;
+  }
+
+  const existing =
+    state.cart.find(
+      item => item.id === productId
+    );
+
+  if (existing) {
+    existing.quantity =
+      Number(existing.quantity || 0) + 1;
+  } else {
+    state.cart.push({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.image,
+      quantity: 1
+    });
+  }
+
+  saveCart();
+
+  renderProducts();
+  renderCart();
+
+  showToast(
+    `${product.name} ajouté au panier`
+  );
+}
+
+
+// ============================================================
+// RETIRER DU PANIER
+// ============================================================
+
+function removeFromCart(productId) {
+
+  state.cart =
+    state.cart.filter(
+      item => item.id !== productId
+    );
+
+  saveCart();
+
+  renderProducts();
+  renderCart();
+}
+
+
+// ============================================================
+// MODIFIER QUANTITÉ
+// ============================================================
+
+function changeCartQuantity(
+  productId,
+  amount
+) {
+
+  const item =
+    state.cart.find(
+      item => item.id === productId
+    );
+
+  if (!item) return;
+
+  item.quantity =
+    Number(item.quantity || 0) + amount;
+
+  if (item.quantity <= 0) {
+    removeFromCart(productId);
+    return;
+  }
+
+  saveCart();
+
+  renderProducts();
+  renderCart();
+}
+
+
+// ============================================================
+// FAVORIS
+// ============================================================
+
+function toggleFavorite(productId) {
+
+  const index =
+    state.favorites.indexOf(productId);
+
+  if (index >= 0) {
+
+    state.favorites.splice(index, 1);
+
+    showToast(
+      "Retiré des favoris"
+    );
+
+  } else {
+
+    state.favorites.push(productId);
+
+    showToast(
+      "Ajouté aux favoris"
+    );
+  }
+
+  saveFavorites();
+
+  renderProducts();
+}
+
+
+// ============================================================
+// TOTAL PANIER
+// ============================================================
+
+function getCartSubtotal() {
+
+  return state.cart.reduce(
+    (total, item) => {
+
+      return total +
+        Number(item.price || 0) *
+        Number(item.quantity || 0);
+
+    },
+    0
+  );
+}
+
+
+// ============================================================
+// NOMBRE D'ARTICLES
+// ============================================================
+
+function getCartCount() {
+
+  return state.cart.reduce(
+    (total, item) =>
+      total +
+      Number(item.quantity || 0),
+    0
+  );
+}
+
+
+// ============================================================
+// RENDU DES PRODUITS
+// ============================================================
+
+function renderProducts() {
+
+  const container =
+    document.querySelector(
+      "#productsGrid"
+    ) ||
+    document.querySelector(
+      ".products-grid"
+    ) ||
+    document.querySelector(
+      ".products"
+    );
+
+  if (!container) return;
+
+  const filtered =
+    getFilteredProducts();
+
+  const start =
+    (state.page - 1) *
+    state.perPage;
+
+  const visible =
+    filtered.slice(
+      start,
+      start + state.perPage
+    );
+
+  if (!visible.length) {
+
+    container.innerHTML = `
+      <div style="
+        grid-column:1/-1;
+        padding:50px 20px;
+        text-align:center;
+        color:#9aa8bd;
+      ">
+        <div style="
+          font-size:42px;
+          margin-bottom:12px;
+        ">🔎</div>
+
+        <strong style="
+          color:white;
+          font-size:18px;
+        ">
+          Aucun produit trouvé
+        </strong>
+
+        <p style="
+          margin-top:8px;
+        ">
+          Essaie une autre recherche ou catégorie.
+        </p>
+      </div>
+    `;
+
+    updateCartCounters();
+    return;
+  }
+
+  container.innerHTML =
+    visible.map(product => {
+
+      const favorite =
+        state.favorites.includes(
+          product.id
+        );
+
+      const quantity =
+        getCartQuantity(
+          product.id
+        );
+
+      return `
+        <article
+          class="product-card"
+          data-product-id="${escapeHTML(product.id)}"
+          style="
+            position:relative;
+            overflow:hidden;
+          "
+        >
+
+          <button
+            class="favorite-btn"
+            data-favorite="${escapeHTML(product.id)}"
+            aria-label="Favoris"
+            style="
+              position:absolute;
+              top:10px;
+              right:10px;
+              z-index:5;
+              width:34px;
+              height:34px;
+              border:0;
+              border-radius:10px;
+              cursor:pointer;
+              background:rgba(5,9,18,.85);
+              color:${favorite ? "#ff4d6d" : "#fff"};
+              font-size:18px;
+            "
+          >
+            ${favorite ? "♥" : "♡"}
+          </button>
+
+          <div
+            class="product-image"
+            style="
+              height:125px;
+              width:100%;
+              display:flex;
+              align-items:center;
+              justify-content:center;
+              overflow:hidden;
+              padding:12px;
+            "
+          >
+
+            <img
+              src="${escapeHTML(product.image)}"
+              alt="${escapeHTML(product.name)}"
+              loading="lazy"
+              style="
+                width:100%;
+                height:100%;
+                object-fit:contain;
+                display:block;
+              "
+              onerror="
+                this.style.display='none';
+              "
+            >
+
+          </div>
+
+          <div
+            class="product-info"
+            style="
+              padding:12px;
+            "
+          >
+
+            <div
+              style="
+                color:#7f8da3;
+                font-size:11px;
+                margin-bottom:6px;
+              "
+            >
+              ${escapeHTML(product.category)}
+            </div>
+
+            <h3
+              style="
+                color:#fff;
+                font-size:14px;
+                line-height:1.35;
+                min-height:38px;
+                margin:0 0 10px;
+              "
+            >
+              ${escapeHTML(product.name)}
+            </h3>
+
+            <div
+              style="
+                display:flex;
+                align-items:center;
+                justify-content:space-between;
+                gap:8px;
+              "
+            >
+
+              <strong
+                style="
+                  color:#fff;
+                  font-size:17px;
+                "
+              >
+                ${
+                  product.price > 0
+                    ? formatPrice(product.price)
+                    : "Prix à venir"
+                }
+              </strong>
+
+              <button
+                class="add-cart-btn"
+                data-add-cart="${escapeHTML(product.id)}"
+                style="
+                  border:0;
+                  border-radius:9px;
+                  padding:9px 12px;
+                  cursor:pointer;
+                  background:#2d8cff;
+                  color:white;
+                  font-weight:700;
+                  font-size:12px;
+                "
+              >
+                ${
+                  quantity > 0
+                    ? `+ Ajouter (${quantity})`
+                    : "Ajouter"
+                }
+              </button>
+
+            </div>
+
+          </div>
+
+        </article>
+      `;
+
+    }).join("");
+
+  updateCartCounters();
+  renderPagination(filtered.length);
+}
+
+
+// ============================================================
+// PAGINATION
+// ============================================================
+
+function renderPagination(total) {
+
+  const container =
+    document.querySelector(
+      "#pagination"
+    ) ||
+    document.querySelector(
+      ".pagination"
+    );
+
+  if (!container) return;
+
+  const pages =
+    Math.max(
+      1,
+      Math.ceil(
+        total / state.perPage
+      )
+    );
+
+  if (pages <= 1) {
+
+    container.innerHTML = "";
+    return;
+  }
+
+  let html = "";
+
+  for (
+    let page = 1;
+    page <= pages;
+    page++
+  ) {
+
+    html += `
+      <button
+        data-page="${page}"
+        style="
+          min-width:36px;
+          height:36px;
+          margin:3px;
+          border:0;
+          border-radius:9px;
+          cursor:pointer;
+          background:${
+            page === state.page
+              ? "#2d8cff"
+              : "#111c2d"
+          };
+          color:white;
+        "
+      >
+        ${page}
+      </button>
+    `;
+  }
+
+  container.innerHTML = html;
+}
+
+
+// ============================================================
+// PANIER
+// ============================================================
+
+function renderCart() {
+
+  const container =
+    document.querySelector(
+      "#cartItems"
+    ) ||
+    document.querySelector(
+      ".cart-items"
+    );
+
+  if (!container) {
+    updateCartCounters();
+    return;
+  }
+
+  if (!state.cart.length) {
+
+    container.innerHTML = `
+      <div style="
+        text-align:center;
+        padding:35px 15px;
+        color:#8d9bb0;
+      ">
+        <div style="
+          font-size:42px;
+          margin-bottom:10px;
+        ">
+          🛒
+        </div>
+
+        <strong style="
+          display:block;
+          color:#fff;
+          margin-bottom:6px;
+        ">
+          Ton panier est vide
+        </strong>
+
+        <span>
+          Ajoute des produits pour commencer.
+        </span>
+      </div>
+    `;
+
+  } else {
+
+    container.innerHTML =
+      state.cart.map(item => {
+
+        return `
+          <div
+            class="cart-item"
+            style="
+              display:flex;
+              gap:10px;
+              padding:12px 0;
+              border-bottom:1px solid rgba(255,255,255,.07);
+            "
+          >
+
+            <img
+              src="${escapeHTML(item.image)}"
+              alt=""
+              style="
+                width:65px;
+                height:65px;
+                object-fit:contain;
+                border-radius:9px;
+                background:#09111f;
+              "
+              onerror="
+                this.style.display='none';
+              "
+            >
+
+            <div
+              style="
+                flex:1;
+                min-width:0;
+              "
+            >
+
+              <div style="
+                color:#fff;
+                font-size:13px;
+                font-weight:700;
+                line-height:1.3;
+              ">
+                ${escapeHTML(item.name)}
+              </div>
+
+              <div style="
+                color:#2d8cff;
+                font-weight:700;
+                margin-top:5px;
+              ">
+                ${formatPrice(item.price)}
+              </div>
+
+              <div style="
+                display:flex;
+                align-items:center;
+                gap:7px;
+                margin-top:8px;
+              ">
+
+                <button
+                  data-cart-minus="${escapeHTML(item.id)}"
+                  style="
+                    width:28px;
+                    height:28px;
+                    border:0;
+                    border-radius:7px;
+                    cursor:pointer;
+                  "
+                >
+                  −
+                </button>
+
+                <span style="
+                  color:#fff;
+                  min-width:20px;
+                  text-align:center;
+                ">
+                  ${item.quantity}
+                </span>
+
+                <button
+                  data-cart-plus="${escapeHTML(item.id)}"
+                  style="
+                    width:28px;
+                    height:28px;
+                    border:0;
+                    border-radius:7px;
+                    cursor:pointer;
+                  "
+                >
+                  +
+                </button>
+
+                <button
+                  data-cart-remove="${escapeHTML(item.id)}"
+                  style="
+                    margin-left:auto;
+                    border:0;
+                    background:none;
+                    color:#ff667d;
+                    cursor:pointer;
+                  "
+                >
+                  Supprimer
+                </button>
+
+              </div>
+
+            </div>
+
+          </div>
+        `;
+
+      }).join("");
+  }
+
+  updateCartTotals();
+  updateCartCounters();
+}
+
+
+// ============================================================
+// TOTALS DU PANIER
+// ============================================================
+
+function updateCartTotals() {
+
+  const subtotal =
+    getCartSubtotal();
+
+  const elements = [
+    "#cartSubtotal",
+    "#checkoutSubtotal"
+  ];
+
+  elements.forEach(selector => {
+
+    const element =
+      document.querySelector(selector);
+
+    if (element) {
+      element.textContent =
+        formatPrice(subtotal);
+    }
+  });
+
+  const totalElements = [
+    "#cartTotal",
+    "#checkoutTotal"
+  ];
+
+  totalElements.forEach(selector => {
+
+    const element =
+      document.querySelector(selector);
+
+    if (element) {
+      element.textContent =
+        formatPrice(subtotal);
+    }
+  });
+
+  const discount =
+    document.querySelector(
+      "#checkoutDiscount"
+    );
+
+  if (discount) {
+    discount.textContent =
+      formatPrice(0);
+  }
+}
+
+
+// ============================================================
+// COMPTEURS PANIER
+// ============================================================
+
+function updateCartCounters() {
+
+  const count =
+    getCartCount();
+
+  document
+    .querySelectorAll(
+      "[data-cart-count], #cartCount, .cart-count"
+    )
+    .forEach(element => {
+
+      element.textContent = count;
+
+      element.style.display =
+        count > 0
+          ? ""
+          : "none";
+    });
+}
+
+
+// ============================================================
+// CATÉGORIES
+// ============================================================
+
+function renderCategories() {
+
+  const containers = [
+    document.querySelector("#categories"),
+    document.querySelector(".categories"),
+    document.querySelector("[data-categories]")
+  ];
+
+  const container =
+    containers.find(Boolean);
+
+  if (!container) return;
+
+  const categories =
+    NovaShopCatalog.getCategories();
+
+  container.innerHTML = `
+    <button
+      data-category="Tous"
+      class="${
+        state.category === "Tous"
+          ? "active"
+          : ""
+      }"
+    >
+      Tous
+    </button>
+
+    ${
+      categories.map(category => `
+        <button
+          data-category="${escapeHTML(category)}"
+          class="${
+            state.category === category
+              ? "active"
+              : ""
+          }"
+        >
+          ${escapeHTML(category)}
+        </button>
+      `).join("")
+    }
+  `;
+}
+
+
+// ============================================================
+// RECHERCHE
+// ============================================================
+
+function setupSearch() {
+
+  const searchInputs =
+    document.querySelectorAll(
+      "#searchInput, .search-input, [data-search]"
+    );
+
+  searchInputs.forEach(input => {
+
+    input.addEventListener(
+      "input",
+      event => {
+
+        state.search =
+          event.target.value;
+
+        state.page = 1;
+
+        renderProducts();
+      }
+    );
+  });
+}
+
+
+// ============================================================
+// TRI
+// ============================================================
+
+function setupSort() {
+
+  const sortInputs =
+    document.querySelectorAll(
+      "#sortSelect, .sort-select, [data-sort]"
+    );
+
+  sortInputs.forEach(select => {
+
+    select.addEventListener(
+      "change",
+      event => {
+
+        state.sort =
+          event.target.value;
+
+        state.page = 1;
+
+        renderProducts();
+      }
+    );
+  });
+}
+
+
+// ============================================================
+// CLICS PRODUITS / PANIER / FAVORIS
+// ============================================================
+
+document.addEventListener(
+  "click",
+  event => {
+
+    const addButton =
+      event.target.closest(
+        "[data-add-cart]"
+      );
+
+    if (addButton) {
+
+      addToCart(
+        addButton.dataset.addCart
+      );
+
+      return;
+    }
+
+    const favoriteButton =
+      event.target.closest(
+        "[data-favorite]"
+      );
+
+    if (favoriteButton) {
+
+      toggleFavorite(
+        favoriteButton.dataset.favorite
+      );
+
+      return;
+    }
+
+    const plusButton =
+      event.target.closest(
+        "[data-cart-plus]"
+      );
+
+    if (plusButton) {
+
+      changeCartQuantity(
+        plusButton.dataset.cartPlus,
+        1
+      );
+
+      return;
+    }
+
+    const minusButton =
+      event.target.closest(
+        "[data-cart-minus]"
+      );
+
+    if (minusButton) {
+
+      changeCartQuantity(
+        minusButton.dataset.cartMinus,
+        -1
+      );
+
+      return;
+    }
+
+    const removeButton =
+      event.target.closest(
+        "[data-cart-remove]"
+      );
+
+    if (removeButton) {
+
+      removeFromCart(
+        removeButton.dataset.cartRemove
+      );
+
+      return;
+    }
+
+    const pageButton =
+      event.target.closest(
+        "[data-page]"
+      );
+
+    if (pageButton) {
+
+      state.page =
+        Number(
+          pageButton.dataset.page
+        );
+
+      renderProducts();
+
+      window.scrollTo({
+        top:0,
+        behavior:"smooth"
+      });
+
+      return;
+    }
+
+    const categoryButton =
+      event.target.closest(
+        "[data-category]"
+      );
+
+    if (categoryButton) {
+
+      state.category =
+        categoryButton.dataset.category;
+
+      state.page = 1;
+
+      renderCategories();
+      renderProducts();
+
+      return;
+    }
+  }
 );
+
+
+// ============================================================
+// OUVERTURE / FERMETURE PANIER
+// ============================================================
+
+function openCart() {
+
+  const cart =
+    document.querySelector(
+      "#cartDrawer"
+    ) ||
+    document.querySelector(
+      ".cart-drawer"
+    );
+
+  if (!cart) return;
+
+  cart.classList.add("open");
+
+  cart.style.display =
+    "block";
+
+  renderCart();
+}
+
+
+function closeCart() {
+
+  const cart =
+    document.querySelector(
+      "#cartDrawer"
+    ) ||
+    document.querySelector(
+      ".cart-drawer"
+    );
+
+  if (!cart) return;
+
+  cart.classList.remove("open");
+}
+
+
+// ============================================================
+// BOUTONS PANIER
+// ============================================================
+
+document.addEventListener(
+  "click",
+  event => {
+
+    if (
+      event.target.closest(
+        "#openCart, [data-open-cart], .open-cart"
+      )
+    ) {
+      openCart();
+    }
+
+    if (
+      event.target.closest(
+        "#closeCart, [data-close-cart], .close-cart"
+      )
+    ) {
+      closeCart();
+    }
+  }
+);
+
+
+// ============================================================
+// AUTHENTIFICATION GOOGLE
+// ============================================================
+
+async function loginWithGoogle() {
+
+  try {
+
+    await signInWithPopup(
+      auth,
+      googleProvider
+    );
+
+    showToast(
+      "Connexion réussie"
+    );
+
+  } catch (error) {
+
+    console.error(error);
+
+    showToast(
+      "Connexion impossible",
+      "error"
+    );
+  }
+}
+
+
+async function logoutUser() {
+
+  try {
+
+    await signOut(auth);
+
+    showToast(
+      "Déconnexion réussie"
+    );
+
+  } catch (error) {
+
+    console.error(error);
+
+    showToast(
+      "Erreur de déconnexion",
+      "error"
+    );
+  }
+}
+
+
+// ============================================================
+// ÉTAT UTILISATEUR FIREBASE
+// ============================================================
+
+onAuthStateChanged(
+  auth,
+  user => {
+
+    currentUser = user;
+
+    window.NovaShopUser =
+      currentUser;
+
+    document
+      .querySelectorAll(
+        "[data-user-email], #userEmail"
+      )
+      .forEach(element => {
+
+        element.textContent =
+          user?.email ||
+          "Non connecté";
+      });
+
+    document
+      .querySelectorAll(
+        "[data-login]"
+      )
+      .forEach(button => {
+
+        button.style.display =
+          user
+            ? "none"
+            : "";
+      });
+
+    document
+      .querySelectorAll(
+        "[data-logout]"
+      )
+      .forEach(button => {
+
+        button.style.display =
+          user
+            ? ""
+            : "none";
+      });
+  }
+);
+
+
+// ============================================================
+// ÉVÉNEMENTS LOGIN / LOGOUT
+// ============================================================
+
+document.addEventListener(
+  "click",
+  event => {
+
+    if (
+      event.target.closest(
+        "[data-login]"
+      )
+    ) {
+      loginWithGoogle();
+    }
+
+    if (
+      event.target.closest(
+        "[data-logout]"
+      )
+    ) {
+      logoutUser();
+    }
+  }
+);
+
+
+// ============================================================
+// INITIALISATION
+// ============================================================
+
+function initNovaShop() {
+
+  renderCategories();
+
+  renderProducts();
+
+  renderCart();
+
+  setupSearch();
+
+  setupSort();
+
+  updateCartCounters();
+
+  updateCartTotals();
+
+  console.log(
+    `NovaShop chargé : ${products.length} produits`
+  );
+}
+
+
+// ============================================================
+// DÉMARRAGE
+// ============================================================
+
+if (
+  document.readyState === "loading"
+) {
+
+  document.addEventListener(
+    "DOMContentLoaded",
+    initNovaShop
+  );
+
+} else {
+
+  initNovaShop();
+}
+
+
+// ============================================================
+// API GLOBALE NOVASHOP
+// ============================================================
+
+window.NovaShop = {
+
+  products,
+
+  state,
+
+  addToCart,
+
+  removeFromCart,
+
+  changeCartQuantity,
+
+  toggleFavorite,
+
+  getCartCount,
+
+  getCartSubtotal,
+
+  renderProducts,
+
+  renderCart,
+
+  formatPrice,
+
+  openCart,
+
+  closeCart,
+
+  loginWithGoogle,
+
+  logoutUser
+};
+
+
+// ============================================================
+// FIN APP.JS
+// ============================================================
