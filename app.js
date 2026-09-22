@@ -760,6 +760,77 @@ const products = [
     image:"https://m.media-amazon.com/images/I/61PI59RfWvL._AC_SX425_.jpg"
   }
 
+    {
+    id:"p85",
+    name:"AMD Ryzen 7 7800X3D Processeur avec La Technologie 3D V-Cache",
+    category:"Composants PC",
+    price:210,
+    image:"https://m.media-amazon.com/images/I/51HqC0rU9HL._AC_SL1500_.jpg"
+  },
+
+  {
+    id:"p86",
+    name:"Gigabyte GeForce RTX 5060 Gaming OC 8 GB GDDR7 Carte Graphique",
+    category:"Composants PC",
+    price:370,
+    image:"https://owp.klarna.com/product/3255091236/Gigabyte-GeForce-RTX-5060-Gaming-OC-8-GB-GDDR7-Carte-Graphique.jpg"
+  },
+
+  {
+    id:"p87",
+    name:"Kingston Fury Beast 16 Go (kit de 2 x 8 Go) DDR4 3200 MHz CL16",
+    category:"Composants PC",
+    price:130,
+    image:"https://media.carrefour.fr/medias/200b40feb62d42f6a4c771cda396d77b/p_1500x1500/243be29db1e34fc180ed7c680853713a_image.jpg"
+  },
+
+  {
+    id:"p88",
+    name:"Kingston Fury Beast RGB - 2 x 8 Go (16 Go) - DDR5 5600 MHz - CL40",
+    category:"Composants PC",
+    price:224.99,
+    image:"https://media.materiel.net/r1600/products/MN0005959138_0005959149_0005959155.jpg"
+  },
+
+  {
+    id:"p89",
+    name:"PC de bureau gaming NitroPC Avancé - AMD Ryzen 5 3400G, Radeon Graphics, 16 GB RAM, 480 GB SSD, Windows 11 Pro",
+    category:"PC Gamer préconstruits",
+    price:400,
+    image:"https://media.cdn.kaufland.de/product-images/1024x1024/57311bd00475df1753bd85ef932af8d2.webp"
+  },
+
+  {
+    id:"p90",
+    name:"PC Gamer FIREFLY",
+    category:"PC Gamer préconstruits",
+    price:500,
+    image:"https://powerlab.fr/24081-large_default/pc-gamer-firefly-rtx-5060-ti.jpg"
+  },
+
+  {
+    id:"p91",
+    name:"PC - CSL Sprint 5700 (Ryzen 7)",
+    category:"PC Gamer préconstruits",
+    price:700,
+    image:"https://www.csl-computer.com/fr/media/catalog/product/cache/5/image/3000x3000/9df78eab33525d08d6e5fb8d27136e95/c/s/csl_aerovision-haupt_c40_nvidia_rot_3000px_3.webp"
+  },
+
+  {
+    id:"p92",
+    name:"STGsivir PC Gamer Fixe, Ryzen 5 3400G, Vega 11, 16G DDR4, 512G SSD",
+    category:"PC Gamer préconstruits",
+    price:499.99,
+    image:"https://m.media-amazon.com/images/I/71klP2vcMEL._AC_SL1500_.jpg"
+  },
+
+  {
+    id:"p93",
+    name:"Unité centrale Gamer MSI EDM0009-R5/RTX 5060/16Go/480Go",
+    category:"PC Gamer préconstruits",
+    price:565.99,
+    image:"https://www.electrodepot.fr/media/catalog/product/cache/207e23213cf636ccdef205098cf3c8a3/P10019951.jpg?frz-v=4764"
+  }
 ];
 
 
