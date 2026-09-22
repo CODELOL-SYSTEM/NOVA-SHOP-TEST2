@@ -56,7 +56,7 @@ const ADMIN_ACCESS_KEY = "novaAdminAuthorized";
 const TEST_CARD_STORAGE_KEY = "novaTestCard";
 
 const FALLBACK_IMAGE =
-  "";
+  "https://cdn.shopify.com/s/files/1/0839/1026/3070/files/1_MediaGallery_XB_Rematch_Core_Black_2400x1350_d337c287-3226-4c01-b5a9-9bd44da03973.png?v=1786040746&width=2000&height=1125&crop=center";
 
 
 // ============================================================
