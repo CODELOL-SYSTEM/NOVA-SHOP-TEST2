@@ -585,7 +585,7 @@ const products = [
     name: "GTA VI Key PlayStation",
     category: "Logiciels & licences",
     image: "https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcQ9VsG_IxAanmrCSqCyACtuyCqCD5rwiQ3P3Iylexch3XnCT4sevDBCz-vnqlVCBvZroOpYIX9T0Flc8EzGSZuyPMibCcQm",
-    price: 0
+    price: 80
   },
 
   {
@@ -593,7 +593,7 @@ const products = [
     name: "Microsoft Windows 11 Pro Key",
     category: "Logiciels & licences",
     image: "https://imgproxy.eneba.games/0A9PW8DP7_YSTA-WUru4IVJnFXsKikaoYM5RHNb3nHQ/rs:fit:300/ar:1/czM6Ly9wcm9kdWN0/cy5lbmViYS5nYW1l/cy9wcm9kdWN0cy93/YUFhcnZicFhzSm8y/NjZSZ3hKSVpuYjVX/ZzRkVWY3a3YyUDQx/bm1nakJjLnBuZw",
-    price: 0
+    price: 14.99,
   },
 
   {
@@ -616,7 +616,7 @@ const products = [
     id: "p63",
     name: "Cable Relier ecran pour pc Certifié Câble DP vers DP 10K 240Hz",
     category: "Adaptateurs / câbles / chargeurs",
-    price: 0,
+    price: 3,
     image: "https://m.media-amazon.com/images/I/71BeNtX7nuL._SL1500_.jpg"
   },
 
@@ -633,7 +633,7 @@ const products = [
     name: "Cables USB Accsup CABLE USB-C VERS USB-A 1M NOIR",
     category: "Adaptateurs / câbles / chargeurs",
     price: 1,
-    image: ""
+    image: "https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcR0-twgsT6OlRzHzpmb30OcxmJBzQpwoFJNDj93_zBHHm7qSsUsFLkdCEOPQfQbari2Q6S8j40HCWG0yFNtHyMe3E-C0gdFtCAvGos6iA3OPZvJwjOqQtiUZw"
   },
 
   {
@@ -704,7 +704,7 @@ const products = [
     id: "p74",
     name: "BONTEC Support Ecran PC 2 Ecran Articulé à Ressort à Gaz, 13-32 Pouces",
     category: "Supports écrans / écrans / TV",
-    price: 0,
+    price: 25,
     image: "https://m.media-amazon.com/images/I/71kZjwcU4SL._AC_SL1500_.jpg"
   },
 
@@ -712,7 +712,7 @@ const products = [
     id: "p75",
     name: "BONTEC Bras Ecran PC Mural à Ressort à Gaz, 13-42 Pouces, Charge 38kg",
     category: "Supports écrans / écrans / TV",
-    price: 0,
+    price: 16,
     image: "https://m.media-amazon.com/images/I/71-oseIdQXL._AC_SL1500_.jpg"
   },
 
@@ -761,7 +761,7 @@ const products = [
     name: "Xbox Manette sans fil",
     category: "Manettes & consoles",
     price: 59.99,
-    image: "https://m.media-amazon.com/images/I/71fQ5g9X8PL._AC_SL1500_.jpg",
+    image: "https://cdn.shopify.com/s/files/1/0839/1026/3070/files/1_MediaGallery_XB_Rematch_Core_Black_2400x1350_d337c287-3226-4c01-b5a9-9bd44da03973.png?v=1786040746&width=2000&height=1125&crop=center",
     options: {
       label: "Couleur",
       required: true,
