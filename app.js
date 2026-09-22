@@ -26,12 +26,13 @@ import {
   updateDoc
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
+
 // ============================================================
 // FIREBASE
 // ============================================================
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAZ5vAkAEfIBpfLyhxGgO7uvNdJ67KYKWD0",
+  apiKey: "AIzaSyAZ5vAkAEfIBpfLyhxG8ovNdJ67KYKWD0",
   authDomain: "novashop-4ee63.firebaseapp.com",
   projectId: "novashop-4ee63",
   storageBucket: "novashop-4ee63.firebasestorage.app",
@@ -44,6 +45,7 @@ const firebaseApp = initializeApp(firebaseConfig);
 const auth = getAuth(firebaseApp);
 const db = getFirestore(firebaseApp);
 
+
 // ============================================================
 // CONFIGURATION
 // ============================================================
@@ -52,7 +54,6 @@ const ADMIN_EMAIL = "pc2alex.les@gmail.com";
 const ADMIN_CODE = "NOVA-ADMIN-2026";
 const ADMIN_ACCESS_KEY = "novaAdminAuthorized";
 const TEST_CARD_STORAGE_KEY = "novaTestCard";
-
 
 
 // ============================================================
@@ -89,6 +90,7 @@ const toastContainer = $("toast");
 
 const heroCartBtn = $("heroCartBtn");
 const sortSelect = $("sortSelect");
+
 
 // ============================================================
 // PRODUITS
@@ -488,7 +490,7 @@ const products = [
     name: "Apple iPhone 18 Pro 6,3\" 5G Double SIM 256 Go Noir",
     category: "Smartphones",
     price: 1199.99,
-    image: "https://static.fnac-static.com/multimedia/Images/FR/MDM/62/73/c7/29848418/1540-1/tsp20260920091102/Apple-iPhone-18-Pro-6-3-5G-Double-SIM-Noir.jpg"
+    image: "https://static.fnac-static.com/multimedia/Images/FR/MDM/62/73/c7/29848418/1540-1/tsp20260920091102/Apple-iPhone-18-Pro-6-3-5G-Double-SIM-256-Go-Noir.jpg"
   },
 
   {
@@ -547,6 +549,10 @@ const products = [
     image: "https://static.fnac-static.com/multimedia/Images/FR/MDM/4a/5f/b3/28532554/1540-1/tsp20260717111851/Smartphone-Google-Pixel-10-6-3-5G-Double-SIM-256-Go-Noir-Volcanique.jpg"
   },
 
+  // ==========================================================
+  // NOUVEAUX PRODUITS
+  // ==========================================================
+
   {
     id: "p56",
     name: "Flashforge Adventurer 5M Pro",
@@ -575,16 +581,16 @@ const products = [
     id: "p59",
     name: "GTA VI Key PlayStation",
     category: "Logiciels & licences",
-    price: 80,
-    image: "https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcQ9VsG_IxAanmrCSqCyACtuyCqCD5rwiQ3P3Iylexch3XnCT4sevDBCz-vnqlVCBvZroOpYIX9T0Flc8EzGSZuyPMibCcQm"
+    image: "https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcQ9VsG_IxAanmrCSqCyACtuyCqCD5rwiQ3P3Iylexch3XnCT4sevDBCz-vnqlVCBvZroOpYIX9T0Flc8EzGSZuyPMibCcQm",
+    price: 0
   },
 
   {
     id: "p60",
     name: "Microsoft Windows 11 Pro Key",
     category: "Logiciels & licences",
-    price: 12,
-    image: "https://imgproxy.eneba.games/0A9PW8DP7_YSTA-WUru4IVJnFXsKikaoYM5RHNb3nHQ/rs:fit:300/ar:1/czM6Ly9wcm9kdWN0/cy5lbmViYS5nYW1l/cy9wcm9kdWN0cy93/YUFhcnZicFhzSm8y/NjZSZ3hKSVpuYjVX/ZzRkVWY3a3YyUDQx/bm1nakJjLnBuZw"
+    image: "https://imgproxy.eneba.games/0A9PW8DP7_YSTA-WUru4IVJnFXsKikaoYM5RHNb3nHQ/rs:fit:300/ar:1/czM6Ly9wcm9kdWN0/cy5lbmViYS5nYW1l/cy9wcm9kdWN0cy93/YUFhcnZicFhzSm8y/NjZSZ3hKSVpuYjVX/ZzRkVWY3a3YyUDQx/bm1nakJjLnBuZw",
+    price: 0
   },
 
   {
@@ -686,7 +692,7 @@ const products = [
   {
     id: "p73",
     name: "BONTEC Bras Ecran PC à Ressort à Gaz, 13-32 Pouces",
-    category: "Supports écrans",
+    category: "Supports écrans / écrans / TV",
     price: 16,
     image: "https://m.media-amazon.com/images/I/61gjjZxKbeL._AC_SL1500_.jpg"
   },
@@ -694,23 +700,23 @@ const products = [
   {
     id: "p74",
     name: "BONTEC Support Ecran PC 2 Ecran Articulé à Ressort à Gaz, 13-32 Pouces",
-    category: "Supports écrans",
-    price: 25,
+    category: "Supports écrans / écrans / TV",
+    price: 0,
     image: "https://m.media-amazon.com/images/I/71kZjwcU4SL._AC_SL1500_.jpg"
   },
 
   {
     id: "p75",
     name: "BONTEC Bras Ecran PC Mural à Ressort à Gaz, 13-42 Pouces, Charge 38kg",
-    category: "Supports écrans",
-    price: 16,
+    category: "Supports écrans / écrans / TV",
+    price: 0,
     image: "https://m.media-amazon.com/images/I/71-oseIdQXL._AC_SL1500_.jpg"
   },
 
   {
     id: "p76",
     name: "KTC Écran PC Gamer Incurvé 24 Pouces FHD 240 Hz (VESA 100×100 mm)",
-    category: "Écrans",
+    category: "Supports écrans / écrans / TV",
     price: 80,
     image: "https://m.media-amazon.com/images/I/71wUlFXcaZL._AC_SL1500_.jpg"
   },
@@ -718,7 +724,7 @@ const products = [
   {
     id: "p77",
     name: "KTC Écran PC Gamer Incurvé 27 Pouces QHD 180Hz (OC 185Hz) H27S5 (VESA 100×100 mm)",
-    category: "Écrans",
+    category: "Supports écrans / écrans / TV",
     price: 110,
     image: "https://m.media-amazon.com/images/I/61Rehn5YTWL._AC_SL1000_.jpg"
   },
@@ -726,7 +732,7 @@ const products = [
   {
     id: "p78",
     name: "HKC Écran PC Gaming 34 Pouces Incurvé UWQHD 120 Hz HDR400 (VESA 100×100 mm)",
-    category: "Écrans",
+    category: "Supports écrans / écrans / TV",
     price: 170,
     image: "https://m.media-amazon.com/images/I/71useoNrGEL._AC_SL1500_.jpg"
   },
@@ -734,7 +740,7 @@ const products = [
   {
     id: "p79",
     name: "HKC 27 Pouces Ecran Gaming 4K Dual Mode UHD 160Hz / FHD 320Hz G27H7P (VESA 100×100 mm)",
-    category: "Écrans",
+    category: "Supports écrans / écrans / TV",
     price: 140,
     image: "https://m.media-amazon.com/images/I/81MjOWRE0SL._AC_SL1500_.jpg"
   },
@@ -742,7 +748,7 @@ const products = [
   {
     id: "p80",
     name: "XIAOMI TV F 65 Pouces 2025 4K UHD Smart TV",
-    category: "TV",
+    category: "Supports écrans / écrans / TV",
     price: 249.99,
     image: "https://m.media-amazon.com/images/I/61Jk8xxkLZL._AC_SL1000_.jpg"
   },
@@ -801,6 +807,7 @@ const products = [
 
 ];
 
+
 // ============================================================
 // NOTES AUTOMATIQUES
 // ============================================================
@@ -820,6 +827,7 @@ products.forEach((product, index) => {
     ((index * 137) % 2028);
 
 });
+
 
 // ============================================================
 // ÉTAT
@@ -867,6 +875,7 @@ try {
 
 }
 
+
 // ============================================================
 // UTILITAIRES
 // ============================================================
@@ -883,6 +892,7 @@ function money(value) {
 
 }
 
+
 function escapeHTML(value) {
 
   return String(value ?? "")
@@ -894,11 +904,13 @@ function escapeHTML(value) {
 
 }
 
+
 function escapeAttr(value) {
 
   return escapeHTML(value);
 
 }
+
 
 function getProduct(id) {
 
@@ -907,6 +919,7 @@ function getProduct(id) {
   );
 
 }
+
 
 function saveCart() {
 
@@ -917,6 +930,7 @@ function saveCart() {
 
 }
 
+
 function saveFavorites() {
 
   localStorage.setItem(
@@ -925,6 +939,7 @@ function saveFavorites() {
   );
 
 }
+
 
 function getCartCount() {
 
@@ -935,6 +950,7 @@ function getCartCount() {
   );
 
 }
+
 
 function getCartSubtotal() {
 
@@ -960,6 +976,7 @@ function getCartSubtotal() {
 
 }
 
+
 // ============================================================
 // VARIANTES / OPTIONS
 // ============================================================
@@ -973,6 +990,7 @@ function hasRequiredOption(product) {
   );
 
 }
+
 
 function getCartProductName(item) {
 
@@ -992,6 +1010,7 @@ function getCartProductName(item) {
 
 }
 
+
 function findCartItem(id, option = "") {
 
   return cart.find(
@@ -1002,10 +1021,8 @@ function findCartItem(id, option = "") {
 
 }
 
-function showProductOptions(
-  product,
-  containerId = "productOptions"
-) {
+
+function showProductOptions(product, containerId = "productOptions") {
 
   if (!hasRequiredOption(product)) {
     return "";
@@ -1078,9 +1095,8 @@ function showProductOptions(
 
 }
 
-function setupProductOptions(
-  containerId = "productOptions"
-) {
+
+function setupProductOptions(containerId = "productOptions") {
 
   const container =
     $(containerId);
@@ -1140,9 +1156,8 @@ function setupProductOptions(
 
 }
 
-function getSelectedProductOption(
-  containerId = "productOptions"
-) {
+
+function getSelectedProductOption(containerId = "productOptions") {
 
   return (
     $(`${containerId}Value`)?.value.trim() ||
@@ -1150,6 +1165,7 @@ function getSelectedProductOption(
   );
 
 }
+
 
 // ============================================================
 // ÉTOILES
@@ -1175,6 +1191,7 @@ function getRatingStars(rating) {
   );
 
 }
+
 
 // ============================================================
 // TOAST
@@ -1220,6 +1237,7 @@ function toast(message, type = "info") {
 
 }
 
+
 // ============================================================
 // MODAL
 // ============================================================
@@ -1248,6 +1266,7 @@ function showModal(title, content) {
 
 }
 
+
 function closeModal() {
 
   if (!modal) {
@@ -1262,10 +1281,12 @@ function closeModal() {
 
 }
 
+
 modalClose?.addEventListener(
   "click",
   closeModal
 );
+
 
 // ============================================================
 // PANIER
@@ -1285,12 +1306,14 @@ function openCart() {
 
 }
 
+
 function closeCart() {
 
   cartDrawer?.classList.remove("open");
   cartOverlay?.classList.remove("open");
 
 }
+
 
 cartBtn?.addEventListener(
   "click",
@@ -1311,6 +1334,7 @@ cartOverlay?.addEventListener(
   "click",
   closeCart
 );
+
 
 // ============================================================
 // AJOUT PANIER
@@ -1376,6 +1400,7 @@ function addToCart(id, option = null) {
 
 }
 
+
 function removeFromCart(id, option = "") {
 
   cart =
@@ -1391,6 +1416,7 @@ function removeFromCart(id, option = "") {
   renderCart();
 
 }
+
 
 function changeCartQuantity(
   id,
@@ -1418,6 +1444,7 @@ function changeCartQuantity(
   renderCart();
 
 }
+
 
 // ============================================================
 // AFFICHAGE PANIER
@@ -1466,7 +1493,6 @@ function renderCart() {
       (checkoutBtn.disabled = true);
 
     return;
-
   }
 
   cartItems.innerHTML =
@@ -1507,20 +1533,26 @@ function renderCart() {
             background:rgba(255,255,255,.04);
           ">
 
-            <img
-              src="${escapeAttr(product.image || FALLBACK_IMAGE)}"
-              alt="${escapeHTML(product.name)}"
-              style="
-                width:100%;
-                height:100%;
-                object-fit:contain;
-                display:block;
-              "
-              onerror="
-                this.onerror=null;
-                this.src='${FALLBACK_IMAGE}';
-              "
-            >
+            ${
+              product.image
+                ? `
+                  <img
+                    src="${escapeAttr(product.image)}"
+                    alt="${escapeHTML(product.name)}"
+                    style="
+                      width:100%;
+                      height:100%;
+                      object-fit:contain;
+                      display:block;
+                    "
+                    onerror="
+                      this.onerror=null;
+                      this.style.display='none';
+                    "
+                  >
+                `
+                : ""
+            }
 
           </div>
 
@@ -1704,6 +1736,7 @@ function renderCart() {
 
 }
 
+
 // ============================================================
 // CATÉGORIES
 // ============================================================
@@ -1760,6 +1793,7 @@ function renderCategories() {
     });
 
 }
+
 
 // ============================================================
 // FILTRES
@@ -1835,6 +1869,7 @@ function getFilteredProducts() {
   return result;
 
 }
+
 
 // ============================================================
 // AFFICHAGE PRODUITS
@@ -1931,26 +1966,32 @@ function renderProducts() {
             "
           >
 
-            <img
-              class="product-image"
-              src="${escapeAttr(product.image || FALLBACK_IMAGE)}"
-              alt="${escapeHTML(product.name)}"
-              loading="lazy"
-              style="
-                display:block;
-                width:auto !important;
-                height:auto !important;
-                max-width:90% !important;
-                max-height:110px !important;
-                object-fit:contain !important;
-                object-position:center;
-                margin:auto;
-              "
-              onerror="
-                this.onerror=null;
-                this.src='${FALLBACK_IMAGE}';
-              "
-            >
+            ${
+              product.image
+                ? `
+                  <img
+                    class="product-image"
+                    src="${escapeAttr(product.image)}"
+                    alt="${escapeHTML(product.name)}"
+                    loading="lazy"
+                    style="
+                      display:block;
+                      width:auto !important;
+                      height:auto !important;
+                      max-width:90% !important;
+                      max-height:110px !important;
+                      object-fit:contain !important;
+                      object-position:center;
+                      margin:auto;
+                    "
+                    onerror="
+                      this.onerror=null;
+                      this.style.display='none';
+                    "
+                  >
+                `
+                : ""
+            }
 
           </div>
 
@@ -2200,6 +2241,7 @@ function renderProducts() {
 
 }
 
+
 // ============================================================
 // RECHERCHE
 // ============================================================
@@ -2216,6 +2258,7 @@ searchInput?.addEventListener(
   }
 );
 
+
 // ============================================================
 // TRI
 // ============================================================
@@ -2231,6 +2274,7 @@ sortSelect?.addEventListener(
 
   }
 );
+
 
 // ============================================================
 // PRODUIT
@@ -2272,21 +2316,27 @@ function openProduct(id) {
           margin-bottom:16px;
         ">
 
-          <img
-            src="${escapeAttr(product.image || FALLBACK_IMAGE)}"
-            alt="${escapeHTML(product.name)}"
-            style="
-              width:auto;
-              height:auto;
-              max-width:90%;
-              max-height:165px;
-              object-fit:contain;
-            "
-            onerror="
-              this.onerror=null;
-              this.src='${FALLBACK_IMAGE}';
-            "
-          >
+          ${
+            product.image
+              ? `
+                <img
+                  src="${escapeAttr(product.image)}"
+                  alt="${escapeHTML(product.name)}"
+                  style="
+                    width:auto;
+                    height:auto;
+                    max-width:90%;
+                    max-height:165px;
+                    object-fit:contain;
+                  "
+                  onerror="
+                    this.onerror=null;
+                    this.style.display='none';
+                  "
+                >
+              `
+              : ""
+          }
 
         </div>
 
@@ -2433,7 +2483,8 @@ function openProduct(id) {
       }
     );
 
-}// ============================================================
+}
+// ============================================================
 // AVIS
 // ============================================================
 
