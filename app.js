@@ -1,5 +1,5 @@
 // ============================================================
-// NOVASHOP - APP.JS
+// NOVASHOP - APP.JS COMPLET
 // Firebase Auth + Firestore
 // ============================================================
 
@@ -42,6 +42,7 @@ const firebaseConfig = {
 };
 
 const firebaseApp = initializeApp(firebaseConfig);
+
 const auth = getAuth(firebaseApp);
 const db = getFirestore(firebaseApp);
 
@@ -54,42 +55,6 @@ const ADMIN_EMAIL = "pc2alex.les@gmail.com";
 const ADMIN_CODE = "NOVA-ADMIN-2026";
 const ADMIN_ACCESS_KEY = "novaAdminAuthorized";
 const TEST_CARD_STORAGE_KEY = "novaTestCard";
-
-
-// ============================================================
-// DOM
-// ============================================================
-
-const $ = id => document.getElementById(id);
-
-const searchInput = $("searchInput");
-const categoriesEl = $("categories");
-const productsGrid = $("productGrid");
-const productCount = $("productCount");
-
-const cartBtn = $("cartBtn");
-const cartBadge = $("cartBadge");
-const cartOverlay = $("overlay");
-const cartDrawer = $("cartDrawer");
-const cartClose = $("closeCart");
-const cartItems = $("cartItems");
-const cartTotal = $("cartTotal");
-const checkoutBtn = $("checkoutBtn");
-
-const settingsBtn = $("settingsBtn");
-const accountBtn = $("accountBtn");
-const ordersBtn = $("ordersBtn");
-const adminBtn = $("adminBtn");
-
-const modal = $("modalLayer");
-const modalContent = $("modalContent");
-const modalClose = $("modalClose");
-const modalTitle = $("modalTitle");
-
-const toastContainer = $("toast");
-
-const heroCartBtn = $("heroCartBtn");
-const sortSelect = $("sortSelect");
 
 
 // ============================================================
@@ -225,7 +190,12 @@ const products = [
     price:74.90,
     image:"https://media.carrefour.fr/media/referential/media/cc07d7de4b9e4bea8c063e8f9bb46d94/p_200x200/0711719023005_0.jpg",
     options:{
-      "Couleur":["Rouge","Blanc","Noir","Bleu"]
+      "Couleur":[
+        "Rouge",
+        "Blanc",
+        "Noir",
+        "Bleu"
+      ]
     }
   },
 
@@ -255,7 +225,7 @@ const products = [
 
   {
     id:"p20",
-    name:"iiyama 23.8 LED - G-Master GB2471HS-B1 Red Eagle",
+    name:"iiyama 23.8\" LED - G-Master GB2471HS-B1 Red Eagle",
     category:"Écrans",
     price:65.99,
     image:"https://media.ldlc.com/r1600/ld/products/00/06/34/20/LD0006342033.jpg"
@@ -539,7 +509,7 @@ const products = [
     name:"Google Pixel 10 6,3\" 5G Double SIM 256 Go Noir Volcanique",
     category:"Smartphones",
     price:600,
-    image:"https://static.fnac-static.com/multimedia/Images/FR/MDM/4a/5f/b3/28532554/1540-1/tsp20260717111851/Smartphone-Google-Pixel-10-6-3-5G-Double-SIM-256-Go-Noir-Volcanique.jpg"
+    image:"https://static.fnac-static.com/multimedia/Images/FR/MDM/4a/5f/b3/28532554/1540-1/tsp20260717111851/Google-Pixel-10-6-3-5G-Double-SIM-256-Go-Noir-Volcanique.jpg"
   },
 
   {
@@ -704,7 +674,7 @@ const products = [
 
   {
     id:"p76",
-    name:"KTC Écran PC Gamer Incurvé 24 Pouces FHD 240 Hz (VESA 100×100 mm)",
+    name:"KTC Écran PC Gamer Incurvé 24 Pouces FHD 240 Hz",
     category:"Supports écrans / écrans / TV",
     price:80,
     image:"https://m.media-amazon.com/images/I/71wUlFXcaZL._AC_SL1500_.jpg"
@@ -712,7 +682,7 @@ const products = [
 
   {
     id:"p77",
-    name:"KTC Écran PC Gamer Incurvé 27 Pouces QHD 180Hz (OC 185Hz) H27S5 (VESA 100×100 mm)",
+    name:"KTC Écran PC Gamer Incurvé 27 Pouces QHD 180Hz",
     category:"Supports écrans / écrans / TV",
     price:110,
     image:"https://m.media-amazon.com/images/I/61Rehn5YTWL._AC_SL1000_.jpg"
@@ -720,7 +690,7 @@ const products = [
 
   {
     id:"p78",
-    name:"HKC Écran PC Gaming 34 Pouces Incurvé UWQHD 120 Hz HDR400 (VESA 100×100 mm)",
+    name:"HKC Écran PC Gaming 34 Pouces Incurvé UWQHD 120 Hz HDR400",
     category:"Supports écrans / écrans / TV",
     price:170,
     image:"https://m.media-amazon.com/images/I/71useoNrGEL._AC_SL1500_.jpg"
@@ -728,7 +698,7 @@ const products = [
 
   {
     id:"p79",
-    name:"HKC 27 Pouces Ecran Gaming 4K Dual Mode UHD 160Hz / FHD 320Hz G27H7P (VESA 100×100 mm)",
+    name:"HKC 27 Pouces Ecran Gaming 4K Dual Mode UHD 160Hz / FHD 320Hz G27H7P",
     category:"Supports écrans / écrans / TV",
     price:140,
     image:"https://m.media-amazon.com/images/I/81MjOWRE0SL._AC_SL1500_.jpg"
@@ -749,7 +719,14 @@ const products = [
     price:59.99,
     image:"https://m.media-amazon.com/images/I/71fQ5g9X8PL._AC_SL1500_.jpg",
     options:{
-      "Couleur":["Rose","Bleu","Noir","Rouge","Blanc","Vert"]
+      "Couleur":[
+        "Rose",
+        "Bleu",
+        "Noir",
+        "Rouge",
+        "Blanc",
+        "Vert"
+      ]
     }
   },
 
@@ -760,7 +737,10 @@ const products = [
     price:320,
     image:"https://m.media-amazon.com/images/I/61h7VjYt-fL._AC_SL1500_.jpg",
     options:{
-      "Console":["PS5 avec lecteur","PS5 Pro"]
+      "Console":[
+        "PS5 avec lecteur",
+        "PS5 Pro"
+      ]
     }
   },
 
@@ -784,81 +764,196 @@ const products = [
 
 
 // ============================================================
-// NOTES / AVIS
-// ============================================================
-
-products.forEach((product,index)=>{
-  product.rating = Number(
-    (4.2 + ((index * 17) % 81) / 100).toFixed(1)
-  );
-
-  product.reviewCount =
-    1248 + ((index * 137) % 2028);
-});
-
-
-// ============================================================
 // ÉTAT
 // ============================================================
 
 let currentUser = null;
-let selectedCategory = "Tous";
-let searchValue = "";
-let sortValue = "default";
-let cart = [];
-let favorites = [];
-let reviewsCache = {};
+
+let cart = loadStorage(
+  "nova_cart",
+  []
+);
+
+let favorites = loadStorage(
+  "nova_favorites",
+  []
+);
+
+let state = {
+  search:"",
+  category:"Toutes",
+  sort:"default"
+};
 
 
 // ============================================================
-// LOCAL STORAGE
+// DOM
 // ============================================================
 
-try{
-  cart = JSON.parse(
-    localStorage.getItem("novaCart") || "[]"
-  );
+const $ = id =>
+  document.getElementById(id);
 
-  if(!Array.isArray(cart)){
-    cart = [];
-  }
-}catch{
-  cart = [];
-}
+const productGrid =
+  $("productGrid");
 
-try{
-  favorites = JSON.parse(
-    localStorage.getItem("novaFavorites") || "[]"
-  );
+const productCount =
+  $("productCount");
 
-  if(!Array.isArray(favorites)){
-    favorites = [];
-  }
-}catch{
-  favorites = [];
-}
+const categories =
+  $("categories");
+
+const searchInput =
+  $("searchInput");
+
+const sortSelect =
+  $("sortSelect");
+
+const cartBtn =
+  $("cartBtn");
+
+const heroCartBtn =
+  $("heroCartBtn");
+
+const cartDrawer =
+  $("cartDrawer");
+
+const cartItems =
+  $("cartItems");
+
+const cartTotal =
+  $("cartTotal");
+
+const cartBadge =
+  $("cartBadge");
+
+const checkoutBtn =
+  $("checkoutBtn");
+
+const overlay =
+  $("overlay");
+
+const modal =
+  $("modalLayer");
+
+const modalTitle =
+  $("modalTitle");
+
+const modalContent =
+  $("modalContent");
+
+const modalClose =
+  $("modalClose");
+
+const closeCartButton =
+  $("closeCart");
+
+const accountBtn =
+  $("accountBtn");
+
+const ordersBtn =
+  $("ordersBtn");
+
+const adminBtn =
+  $("adminBtn");
+
+const settingsBtn =
+  $("settingsBtn");
+
+const toastContainer =
+  $("toast");
 
 
 // ============================================================
 // UTILITAIRES
 // ============================================================
 
+function loadStorage(key, fallback){
+
+  try{
+
+    const raw =
+      localStorage.getItem(key);
+
+    if(!raw){
+      return fallback;
+    }
+
+    const parsed =
+      JSON.parse(raw);
+
+    return parsed;
+
+  }catch{
+
+    return fallback;
+
+  }
+
+}
+
+
+function saveStorage(key,value){
+
+  try{
+
+    localStorage.setItem(
+      key,
+      JSON.stringify(value)
+    );
+
+  }catch(error){
+
+    console.error(
+      "LocalStorage error:",
+      error
+    );
+
+  }
+
+}
+
+
+function saveCart(){
+
+  saveStorage(
+    "nova_cart",
+    cart
+  );
+
+}
+
+
+function saveFavorites(){
+
+  saveStorage(
+    "nova_favorites",
+    favorites
+  );
+
+}
+
+
 function money(value){
 
-  return Number(value || 0).toLocaleString(
+  const number =
+    Number(value) || 0;
+
+  return number.toLocaleString(
     "fr-FR",
     {
-      minimumFractionDigits:2,
-      maximumFractionDigits:2
+      style:"currency",
+      currency:"EUR"
     }
-  ) + " €";
+  );
 
 }
 
 
 function escapeHTML(value){
 
-  return String(value ?? "")
+  return String(
+    value ?? ""
+  )
     .replaceAll("&","&amp;")
     .replaceAll("<","&lt;")
     .replaceAll(">","&gt;")
@@ -869,258 +964,23 @@ function escapeHTML(value){
 
 
 function escapeAttr(value){
+
   return escapeHTML(value);
+
 }
 
 
 function getProduct(id){
 
   return products.find(
-    product => product.id === id
+    product =>
+      product.id === id
   );
 
 }
 
 
-function saveCart(){
-
-  localStorage.setItem(
-    "novaCart",
-    JSON.stringify(cart)
-  );
-
-}
-
-
-function saveFavorites(){
-
-  localStorage.setItem(
-    "novaFavorites",
-    JSON.stringify(favorites)
-  );
-
-}
-
-
-function getCartCount(){
-
-  return cart.reduce(
-    (total,item) => total + Number(item.quantity || 0),
-    0
-  );
-
-}
-
-
-function getCartSubtotal(){
-
-  return cart.reduce(
-    (total,item)=>{
-
-      const product = getProduct(item.productId);
-
-      if(!product){
-        return total;
-      }
-
-      return total +
-        Number(product.price || 0) *
-        Number(item.quantity || 0);
-
-    },
-    0
-  );
-
-}
-
-
-// ============================================================
-// OPTIONS PRODUIT
-// ============================================================
-
-function hasRequiredOption(product){
-
-  return product &&
-    product.options &&
-    Object.keys(product.options).length > 0;
-
-}
-
-
-function getCartProductName(item){
-
-  const product = getProduct(item.productId);
-
-  if(!product){
-    return "Produit";
-  }
-
-  let name = product.name;
-
-  if(item.options){
-
-    Object.entries(item.options).forEach(
-      ([key,value])=>{
-        name += ` • ${key}: ${value}`;
-      }
-    );
-
-  }
-
-  return name;
-
-}
-
-
-function findCartItem(productId,options={}){
-
-  return cart.find(item=>{
-
-    if(item.productId !== productId){
-      return false;
-    }
-
-    return JSON.stringify(item.options || {}) ===
-      JSON.stringify(options || {});
-
-  });
-
-}
-
-
-function showProductOptions(product){
-
-  if(!hasRequiredOption(product)){
-    return {};
-  }
-
-  const options = {};
-
-  for(const [key,values] of Object.entries(product.options)){
-
-    const selected =
-      prompt(
-        `${key} :\n\n${values.join("\n")}`
-      );
-
-    if(selected === null){
-      return null;
-    }
-
-    const clean = selected.trim();
-
-    if(!values.includes(clean)){
-
-      toast(
-        `Choix invalide pour ${key}.`,
-        "error"
-      );
-
-      return null;
-    }
-
-    options[key] = clean;
-  }
-
-  return options;
-
-}
-
-
-function setupProductOptions(product){
-
-  if(!hasRequiredOption(product)){
-    return;
-  }
-
-  Object.entries(product.options).forEach(
-    ([key,values])=>{
-
-      const select =
-        document.querySelector(
-          `[data-option="${product.id}-${escapeAttr(key)}"]`
-        );
-
-      if(!select){
-        return;
-      }
-
-      values.forEach(value=>{
-
-        const option =
-          document.createElement("option");
-
-        option.value = value;
-        option.textContent = value;
-
-        select.appendChild(option);
-
-      });
-
-    }
-  );
-
-}
-
-
-function getSelectedProductOption(product){
-
-  if(!hasRequiredOption(product)){
-    return {};
-  }
-
-  const options = {};
-
-  for(const key of Object.keys(product.options)){
-
-    const select =
-      document.querySelector(
-        `[data-option="${product.id}-${escapeAttr(key)}"]`
-      );
-
-    if(!select || !select.value){
-      toast(
-        `Choisis ${key}.`,
-        "error"
-      );
-      return null;
-    }
-
-    options[key] = select.value;
-
-  }
-
-  return options;
-
-}
-
-
-// ============================================================
-// ÉTOILES
-// ============================================================
-
-function getRatingStars(rating){
-
-  const rounded =
-    Math.max(
-      0,
-      Math.min(
-        5,
-        Math.round(Number(rating || 0))
-      )
-    );
-
-  return "★".repeat(rounded) +
-    "☆".repeat(5-rounded);
-
-}
-
-
-// ============================================================
-// TOAST
-// ============================================================
-
-function toast(message,type="success"){
+function toast(message,type="info"){
 
   if(!toastContainer){
     return;
@@ -1133,1183 +993,46 @@ function toast(message,type="success"){
     `toast-item ${type}`;
 
   item.innerHTML = `
-    <span>${escapeHTML(message)}</span>
-    <button type="button">×</button>
+    <span>
+      ${escapeHTML(message)}
+    </span>
+
+    <button
+      type="button"
+      aria-label="Fermer"
+    >
+      ×
+    </button>
   `;
 
-  item.querySelector("button")
-    .addEventListener(
+  item
+    .querySelector("button")
+    ?.addEventListener(
       "click",
-      ()=>item.remove()
+      () => item.remove()
     );
 
   toastContainer.appendChild(item);
 
   setTimeout(
-    ()=>item.remove(),
-    3500
+    () => item.remove(),
+    4500
   );
 
 }
 
 
 // ============================================================
-// MODAL
+// FIREBASE ERREURS
 // ============================================================
 
-function showModal(title,html){
+function authError(error){
 
-  modalTitle.textContent = title;
-  modalContent.innerHTML = html;
-
-  modal.classList.add("open");
-
-  document.body.classList.add("modal-open");
-
-}
-
-
-function closeModal(){
-
-  modal.classList.remove("open");
-
-  document.body.classList.remove("modal-open");
-
-}
-
-
-modalClose?.addEventListener(
-  "click",
-  closeModal
-);
-
-modal?.addEventListener(
-  "click",
-  event=>{
-
-    if(event.target === modal){
-      closeModal();
-    }
-
-  }
-);
-
-
-// ============================================================
-// PANIER
-// ============================================================
-
-function openCart(){
-
-  cartOverlay.classList.add("open");
-  cartDrawer.classList.add("open");
-
-}
-
-
-function closeCart(){
-
-  cartOverlay.classList.remove("open");
-  cartDrawer.classList.remove("open");
-
-}
-
-
-cartBtn?.addEventListener(
-  "click",
-  openCart
-);
-
-heroCartBtn?.addEventListener(
-  "click",
-  openCart
-);
-
-cartClose?.addEventListener(
-  "click",
-  closeCart
-);
-
-cartOverlay?.addEventListener(
-  "click",
-  closeCart
-);
-
-
-// ============================================================
-// AJOUT PANIER
-// ============================================================
-
-function addToCart(productId){
-
-  const product =
-    getProduct(productId);
-
-  if(!product){
-    return;
-  }
-
-  const options =
-    showProductOptions(product);
-
-  if(options === null){
-    return;
-  }
-
-  const existing =
-    findCartItem(
-      productId,
-      options
-    );
-
-  if(existing){
-
-    existing.quantity =
-      Number(existing.quantity || 0) + 1;
-
-  }else{
-
-    cart.push({
-      productId,
-      quantity:1,
-      options
-    });
-
-  }
-
-  saveCart();
-  renderCart();
-
-  toast(
-    `${product.name} ajouté au panier.`,
-    "success"
-  );
-
-}
-
-
-// ============================================================
-// SUPPRESSION
-// ============================================================
-
-function removeFromCart(productId,options={}){
-
-  cart =
-    cart.filter(
-      item =>
-        !(
-          item.productId === productId &&
-          JSON.stringify(item.options || {}) ===
-          JSON.stringify(options || {})
-        )
-    );
-
-  saveCart();
-  renderCart();
-
-}
-
-
-function changeCartQuantity(
-  productId,
-  options,
-  delta
-){
-
-  const item =
-    findCartItem(
-      productId,
-      options
-    );
-
-  if(!item){
-    return;
-  }
-
-  item.quantity =
-    Number(item.quantity || 0) + delta;
-
-  if(item.quantity <= 0){
-
-    removeFromCart(
-      productId,
-      options
-    );
-
-    return;
-  }
-
-  saveCart();
-  renderCart();
-
-}
-
-
-// ============================================================
-// RENDU PANIER
-// ============================================================
-
-function renderCart(){
-
-  const count =
-    getCartCount();
-
-  cartBadge.textContent =
-    count;
-
-  cartBadge.style.display =
-    count > 0 ? "flex" : "none";
-
-  cartTotal.textContent =
-    money(getCartSubtotal());
-
-  if(!cart.length){
-
-    cartItems.innerHTML = `
-      <div class="empty-cart">
-        <h3>Ton panier est vide 🛒</h3>
-        <p style="margin-top:8px">
-          Ajoute un produit pour commencer.
-        </p>
-      </div>
-    `;
-
-    checkoutBtn.disabled = true;
-
-    return;
-
-  }
-
-  checkoutBtn.disabled = false;
-
-  cartItems.innerHTML =
-    cart.map(item=>{
-
-      const product =
-        getProduct(item.productId);
-
-      if(!product){
-        return "";
-      }
-
-      const options =
-        item.options || {};
-
-      return `
-        <div
-          class="cart-item"
-          data-product-id="${escapeAttr(product.id)}"
-        >
-
-          <img
-            src="${escapeAttr(product.image)}"
-            alt="${escapeAttr(product.name)}"
-            onerror="this.style.display='none'"
-          >
-
-          <div class="cart-item-info">
-
-            <strong>
-              ${escapeHTML(getCartProductName(item))}
-            </strong>
-
-            <span>
-              ${money(product.price)}
-            </span>
-
-            <div class="cart-quantity">
-
-              <button
-                type="button"
-                class="cart-minus"
-                data-id="${escapeAttr(product.id)}"
-              >
-                −
-              </button>
-
-              <strong>
-                ${Number(item.quantity || 0)}
-              </strong>
-
-              <button
-                type="button"
-                class="cart-plus"
-                data-id="${escapeAttr(product.id)}"
-              >
-                +
-              </button>
-
-            </div>
-
-          </div>
-
-          <button
-            type="button"
-            class="remove-cart"
-            data-id="${escapeAttr(product.id)}"
-            aria-label="Supprimer"
-          >
-            ×
-          </button>
-
-        </div>
-      `;
-
-    }).join("");
-
-
-  cartItems
-    .querySelectorAll(".cart-minus")
-    .forEach(button=>{
-
-      button.addEventListener(
-        "click",
-        ()=>{
-
-          const item =
-            cart.find(
-              x => x.productId === button.dataset.id
-            );
-
-          if(item){
-
-            changeCartQuantity(
-              item.productId,
-              item.options || {},
-              -1
-            );
-
-          }
-
-        }
-      );
-
-    });
-
-
-  cartItems
-    .querySelectorAll(".cart-plus")
-    .forEach(button=>{
-
-      button.addEventListener(
-        "click",
-        ()=>{
-
-          const item =
-            cart.find(
-              x => x.productId === button.dataset.id
-            );
-
-          if(item){
-
-            changeCartQuantity(
-              item.productId,
-              item.options || {},
-              1
-            );
-
-          }
-
-        }
-      );
-
-    });
-
-
-  cartItems
-    .querySelectorAll(".remove-cart")
-    .forEach(button=>{
-
-      button.addEventListener(
-        "click",
-        ()=>{
-
-          const item =
-            cart.find(
-              x => x.productId === button.dataset.id
-            );
-
-          if(item){
-
-            removeFromCart(
-              item.productId,
-              item.options || {}
-            );
-
-          }
-
-        }
-      );
-
-    });
-
-}
-
-
-// ============================================================
-// CATÉGORIES
-// ============================================================
-
-function renderCategories(){
-
-  const categories = [
-    "Tous",
-    ...new Set(
-      products.map(product=>product.category)
-    )
-  ];
-
-  categoriesEl.innerHTML =
-    categories.map(category=>`
-
-      <button
-        type="button"
-        class="category-btn ${
-          selectedCategory === category
-            ? "active"
-            : ""
-        }"
-        data-category="${escapeAttr(category)}"
-      >
-        ${escapeHTML(category)}
-      </button>
-
-    `).join("");
-
-  categoriesEl
-    .querySelectorAll(".category-btn")
-    .forEach(button=>{
-
-      button.addEventListener(
-        "click",
-        ()=>{
-
-          selectedCategory =
-            button.dataset.category;
-
-          renderCategories();
-          renderProducts();
-
-        }
-      );
-
-    });
-
-}
-
-
-// ============================================================
-// FILTRES
-// ============================================================
-
-function getFilteredProducts(){
-
-  let result =
-    products.filter(product=>{
-
-      const categoryOK =
-        selectedCategory === "Tous" ||
-        product.category === selectedCategory;
-
-      const text =
-        `${product.name} ${product.category}`
-          .toLowerCase();
-
-      const searchOK =
-        !searchValue ||
-        text.includes(
-          searchValue.toLowerCase()
-        );
-
-      return categoryOK && searchOK;
-
-    });
-
-
-  if(
-    sortValue === "price-low" ||
-    sortValue === "priceAsc"
-  ){
-
-    result.sort(
-      (a,b)=>Number(a.price)-Number(b.price)
-    );
-
-  }
-
-
-  if(
-    sortValue === "price-high" ||
-    sortValue === "priceDesc"
-  ){
-
-    result.sort(
-      (a,b)=>Number(b.price)-Number(a.price)
-    );
-
-  }
-
-
-  if(sortValue === "name"){
-
-    result.sort(
-      (a,b)=>
-        a.name.localeCompare(
-          b.name,
-          "fr"
-        )
-    );
-
-  }
-
-
-  if(sortValue === "new"){
-
-    result =
-      result.filter(
-        product => product.new === true
-      );
-
-  }
-
-  return result;
-
-}
-
-
-// ============================================================
-// PRODUITS
-// ============================================================
-
-function renderProducts(){
-
-  const result =
-    getFilteredProducts();
-
-  productCount.textContent =
-    `${result.length} produit${result.length > 1 ? "s" : ""}`;
-
-  if(!result.length){
-
-    productsGrid.innerHTML = `
-      <div class="empty-products">
-        <h3>Aucun produit trouvé</h3>
-        <p style="margin-top:8px">
-          Essaie une autre recherche ou catégorie.
-        </p>
-      </div>
-    `;
-
-    return;
-
-  }
-
-  productsGrid.innerHTML =
-    result.map(product=>{
-
-      const favorite =
-        favorites.includes(product.id);
-
-      return `
-        <article
-          class="product product-card"
-          data-product-id="${escapeAttr(product.id)}"
-        >
-
-          <div class="product-img">
-
-            ${
-              product.new
-              ? `<span class="new-badge">NOUVEAU</span>`
-              : ""
-            }
-
-            <img
-              src="${escapeAttr(product.image)}"
-              alt="${escapeAttr(product.name)}"
-              loading="lazy"
-              onerror="this.style.display='none'"
-            >
-
-          </div>
-
-          <div class="product-body">
-
-            <div class="product-cat">
-              ${escapeHTML(product.category)}
-            </div>
-
-            <h3>
-              ${escapeHTML(product.name)}
-            </h3>
-
-            <div class="rating">
-
-              <span class="stars">
-                ${getRatingStars(product.rating)}
-              </span>
-
-              <span>
-                ${product.rating} (${product.reviewCount})
-              </span>
-
-            </div>
-
-            <div class="price">
-              ${money(product.price)}
-            </div>
-
-            <div class="product-actions">
-
-              <button
-                type="button"
-                class="add-btn add-product"
-                data-id="${escapeAttr(product.id)}"
-              >
-                🛒 Ajouter
-              </button>
-
-              <button
-                type="button"
-                class="view-btn view-product"
-                data-id="${escapeAttr(product.id)}"
-              >
-                Voir
-              </button>
-
-            </div>
-
-            <button
-              type="button"
-              class="view-btn favorite-product"
-              data-id="${escapeAttr(product.id)}"
-              style="width:100%;margin-top:8px"
-            >
-              ${favorite ? "❤️ Retirer des favoris" : "♡ Ajouter aux favoris"}
-            </button>
-
-          </div>
-
-        </article>
-      `;
-
-    }).join("");
-
-
-  productsGrid
-    .querySelectorAll(".add-product")
-    .forEach(button=>{
-
-      button.addEventListener(
-        "click",
-        ()=>{
-          addToCart(
-            button.dataset.id
-          );
-        }
-      );
-
-    });
-
-
-  productsGrid
-    .querySelectorAll(".view-product")
-    .forEach(button=>{
-
-      button.addEventListener(
-        "click",
-        ()=>{
-          openProduct(
-            button.dataset.id
-          );
-        }
-      );
-
-    });
-
-
-  productsGrid
-    .querySelectorAll(".favorite-product")
-    .forEach(button=>{
-
-      button.addEventListener(
-        "click",
-        ()=>{
-
-          const id =
-            button.dataset.id;
-
-          if(favorites.includes(id)){
-
-            favorites =
-              favorites.filter(
-                x => x !== id
-              );
-
-            toast(
-              "Retiré des favoris.",
-              "success"
-            );
-
-          }else{
-
-            favorites.push(id);
-
-            toast(
-              "Ajouté aux favoris ❤️",
-              "success"
-            );
-
-          }
-
-          saveFavorites();
-          renderProducts();
-
-        }
-      );
-
-    });
-
-}
-
-
-// ============================================================
-// RECHERCHE + TRI
-// ============================================================
-
-searchInput?.addEventListener(
-  "input",
-  ()=>{
-    searchValue =
-      searchInput.value.trim();
-
-    renderProducts();
-  }
-);
-
-sortSelect?.addEventListener(
-  "change",
-  ()=>{
-    sortValue =
-      sortSelect.value;
-
-    renderProducts();
-  }
-);
-
-
-// ============================================================
-// PRODUIT
-// ============================================================
-
-function openProduct(productId){
-
-  const product =
-    getProduct(productId);
-
-  if(!product){
-    return;
-  }
-
-  let optionsHTML = "";
-
-  if(hasRequiredOption(product)){
-
-    optionsHTML =
-      Object.entries(product.options)
-        .map(([key,values])=>`
-
-          <label
-            style="
-              display:block;
-              margin-top:15px;
-              font-weight:800
-            "
-          >
-
-            ${escapeHTML(key)}
-
-            <select
-              class="input product-option"
-              data-option="${escapeAttr(product.id)}-${escapeAttr(key)}"
-              style="margin-top:7px"
-            >
-
-              <option value="">
-                Choisir...
-              </option>
-
-              ${values.map(value=>`
-                <option value="${escapeAttr(value)}">
-                  ${escapeHTML(value)}
-                </option>
-              `).join("")}
-
-            </select>
-
-          </label>
-
-        `).join("");
-
-  }
-
-
-  showModal(
-    product.name,
-    `
-
-      <div style="
-        display:grid;
-        gap:20px;
-      ">
-
-        <img
-          src="${escapeAttr(product.image)}"
-          alt="${escapeAttr(product.name)}"
-          style="
-            width:100%;
-            max-height:320px;
-            object-fit:contain;
-            background:#fff;
-            border-radius:15px;
-          "
-          onerror="this.style.display='none'"
-        >
-
-        <div>
-
-          <div class="product-cat">
-            ${escapeHTML(product.category)}
-          </div>
-
-          <h2>
-            ${escapeHTML(product.name)}
-          </h2>
-
-          <div class="rating">
-            <span class="stars">
-              ${getRatingStars(product.rating)}
-            </span>
-            ${product.rating}/5
-          </div>
-
-          <div class="price">
-            ${money(product.price)}
-          </div>
-
-          ${optionsHTML}
-
-          <button
-            type="button"
-            id="modalAddProduct"
-            class="add-btn"
-            style="
-              width:100%;
-              margin-top:20px;
-            "
-          >
-            🛒 Ajouter au panier
-          </button>
-
-          <button
-            type="button"
-            id="modalReviews"
-            class="view-btn"
-            style="
-              width:100%;
-              margin-top:8px;
-            "
-          >
-            ⭐ Voir les avis
-          </button>
-
-        </div>
-
-      </div>
-
-    `
-  );
-
-
-  document
-    .getElementById("modalAddProduct")
-    ?.addEventListener(
-      "click",
-      ()=>{
-
-        const options =
-          getSelectedProductOption(product);
-
-        if(options === null){
-          return;
-        }
-
-        const existing =
-          findCartItem(
-            product.id,
-            options
-          );
-
-        if(existing){
-
-          existing.quantity++;
-
-        }else{
-
-          cart.push({
-            productId:product.id,
-            quantity:1,
-            options
-          });
-
-        }
-
-        saveCart();
-        renderCart();
-
-        closeModal();
-
-        toast(
-          "Produit ajouté au panier 🛒",
-          "success"
-        );
-
-      }
-    );
-
-
-  document
-    .getElementById("modalReviews")
-    ?.addEventListener(
-      "click",
-      ()=>{
-        openProductReviews(product.id);
-      }
-    );
-
-}
-
-
-// ============================================================
-// AVIS PRODUIT
-// ============================================================
-
-async function openProductReviews(productId){
-
-  const product =
-    getProduct(productId);
-
-  if(!product){
-    return;
-  }
-
-  showModal(
-    `Avis - ${product.name}`,
-    `
-      <p>
-        Chargement des avis...
-      </p>
-    `
-  );
-
-  try{
-
-    const q =
-      query(
-        collection(db,"reviews"),
-        where(
-          "productId",
-          "==",
-          productId
-        )
-      );
-
-    const snapshot =
-      await getDocs(q);
-
-    const reviews =
-      snapshot.docs.map(
-        review=>({
-          id:review.id,
-          ...review.data()
-        })
-      );
-
-    reviewsCache[productId] =
-      reviews;
-
-    showModal(
-      `Avis - ${product.name}`,
-      `
-
-        ${
-          reviews.length
-          ?
-          reviews.map(review=>`
-
-            <div
-              class="trust-card"
-              style="margin-bottom:10px"
-            >
-
-              <strong>
-                ${escapeHTML(
-                  review.name || "Client"
-                )}
-                ⭐ ${Number(
-                  review.rating || 5
-                )}
-              </strong>
-
-              <p
-                style="
-                  margin-top:8px;
-                  color:var(--muted)
-                "
-              >
-                ${escapeHTML(
-                  review.comment || ""
-                )}
-              </p>
-
-            </div>
-
-          `).join("")
-          :
-          `
-            <div class="empty-products">
-              Aucun avis pour le moment.
-            </div>
-          `
-        }
-
-        <button
-          type="button"
-          class="add-btn"
-          id="writeReviewBtn"
-          style="width:100%;margin-top:12px"
-        >
-          ✍️ Écrire un avis
-        </button>
-
-      `
-    );
-
-
-    document
-      .getElementById("writeReviewBtn")
-      ?.addEventListener(
-        "click",
-        ()=>writeReview(product)
-      );
-
-  }catch(error){
-
-    console.error(error);
-
-    showModal(
-      `Avis - ${product.name}`,
-      `
-        <p>
-          Impossible de charger les avis pour le moment.
-        </p>
-      `
-    );
-
-  }
-
-}
-
-
-async function writeReview(product){
-
-  if(!currentUser){
-
-    toast(
-      "Connecte-toi pour laisser un avis.",
-      "error"
-    );
-
-    openAccount();
-
-    return;
-
-  }
-
-  const rating =
-    Number(
-      prompt(
-        "Note sur 5 :"
-      )
-    );
-
-  if(
-    !rating ||
-    rating < 1 ||
-    rating > 5
-  ){
-
-    toast(
-      "Note invalide.",
-      "error"
-    );
-
-    return;
-  }
-
-  const comment =
-    prompt(
-      "Ton avis :"
-    );
-
-  if(!comment || !comment.trim()){
-    return;
-  }
-
-  try{
-
-    await addDoc(
-      collection(db,"reviews"),
-      {
-        productId:product.id,
-        uid:currentUser.uid,
-        name:
-          currentUser.email
-            ? currentUser.email.split("@")[0]
-            : "Client",
-        rating,
-        comment:comment.trim(),
-        createdAt:serverTimestamp()
-      }
-    );
-
-    toast(
-      "Avis publié ⭐",
-      "success"
-    );
-
-    openProductReviews(product.id);
-
-  }catch(error){
-
-    console.error(error);
-
-    toast(
-      "Impossible de publier l'avis.",
-      "error"
-    );
-
-  }
-
-}// ============================================================
-// ERREURS FIREBASE
-// ============================================================
-
-function firebaseErrorMessage(error){
-
-  const code = error?.code || "";
+  const code =
+    error?.code || "";
 
   const messages = {
+
     "auth/invalid-credential":
       "Email ou mot de passe incorrect.",
 
@@ -2336,52 +1059,1340 @@ function firebaseErrorMessage(error){
 
     "permission-denied":
       "Accès refusé par Firebase."
+
   };
 
-  return messages[code] ||
+  return (
+    messages[code] ||
     error?.message ||
-    "Une erreur est survenue.";
+    "Une erreur est survenue."
+  );
 
 }
 
 
 // ============================================================
-// COMPTE
+// PRODUITS
 // ============================================================
 
-async function login(){
+function renderCategories(){
 
-  const email =
-    prompt("Ton adresse email :");
-
-  if(email === null){
+  if(!categories){
     return;
   }
 
-  const password =
-    prompt("Ton mot de passe :");
+  const list = [
+    "Toutes",
+    ...new Set(
+      products.map(
+        product =>
+          product.category
+      )
+    )
+  ];
 
-  if(password === null){
+  categories.innerHTML =
+    list.map(
+      category => `
+        <button
+          type="button"
+          class="category-btn ${
+            state.category === category
+              ? "active"
+              : ""
+          }"
+          data-category="${escapeAttr(category)}"
+        >
+          ${escapeHTML(category)}
+        </button>
+      `
+    ).join("");
+
+  categories
+    .querySelectorAll(
+      ".category-btn"
+    )
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          state.category =
+            button.dataset.category ||
+            "Toutes";
+
+          renderCategories();
+          renderProducts();
+
+        }
+      );
+
+    });
+
+}
+
+
+function getFilteredProducts(){
+
+  let list =
+    [...products];
+
+  const search =
+    state.search
+      .trim()
+      .toLowerCase();
+
+  if(search){
+
+    list =
+      list.filter(
+        product =>
+          product.name
+            .toLowerCase()
+            .includes(search) ||
+          product.category
+            .toLowerCase()
+            .includes(search)
+      );
+
+  }
+
+  if(
+    state.category !==
+    "Toutes"
+  ){
+
+    list =
+      list.filter(
+        product =>
+          product.category ===
+          state.category
+      );
+
+  }
+
+  switch(state.sort){
+
+    case "price-low":
+
+      list.sort(
+        (a,b) =>
+          Number(a.price || 0) -
+          Number(b.price || 0)
+      );
+
+      break;
+
+    case "price-high":
+
+      list.sort(
+        (a,b) =>
+          Number(b.price || 0) -
+          Number(a.price || 0)
+      );
+
+      break;
+
+    case "name":
+
+      list.sort(
+        (a,b) =>
+          a.name.localeCompare(
+            b.name,
+            "fr"
+          )
+      );
+
+      break;
+
+    case "new":
+
+      list.sort(
+        (a,b) =>
+          Number(Boolean(b.new)) -
+          Number(Boolean(a.new))
+      );
+
+      break;
+
+  }
+
+  return list;
+
+}
+
+
+function renderProducts(){
+
+  if(!productGrid){
     return;
   }
 
-  if(!email.trim() || !password){
+  const list =
+    getFilteredProducts();
+
+  if(productCount){
+
+    productCount.textContent =
+      `${list.length} produit${
+        list.length > 1
+          ? "s"
+          : ""
+      }`;
+
+  }
+
+  if(!list.length){
+
+    productGrid.innerHTML = `
+      <div class="empty-products">
+        <div style="font-size:48px;">
+          🔎
+        </div>
+
+        <h3>
+          Aucun produit trouvé
+        </h3>
+
+        <p style="margin-top:8px;">
+          Essaie une autre recherche ou catégorie.
+        </p>
+      </div>
+    `;
+
+    return;
+
+  }
+
+  productGrid.innerHTML =
+    list.map(
+      product => {
+
+        const favorite =
+          favorites.includes(
+            product.id
+          );
+
+        const rating =
+          product.rating ||
+          4.7;
+
+        return `
+          <article
+            class="product"
+            data-product-id="${escapeAttr(product.id)}"
+          >
+
+            <div class="product-img">
+
+              ${
+                product.new
+                  ? `
+                    <span class="new-badge">
+                      NOUVEAU
+                    </span>
+                  `
+                  : ""
+              }
+
+              ${
+                product.image
+                  ? `
+                    <img
+                      src="${escapeAttr(product.image)}"
+                      alt="${escapeAttr(product.name)}"
+                      loading="lazy"
+                      onerror="this.style.display='none'"
+                    >
+                  `
+                  : ""
+              }
+
+            </div>
+
+            <div class="product-body">
+
+              <div class="product-cat">
+                ${escapeHTML(product.category)}
+              </div>
+
+              <h3>
+                ${escapeHTML(product.name)}
+              </h3>
+
+              <div class="rating">
+
+                <span class="stars">
+                  ★★★★★
+                </span>
+
+                <span>
+                  ${Number(rating).toFixed(1)}
+                </span>
+
+              </div>
+
+              <div class="price">
+                ${money(product.price)}
+              </div>
+
+              <div class="product-actions">
+
+                <button
+                  type="button"
+                  class="view-btn product-view"
+                  data-id="${escapeAttr(product.id)}"
+                >
+                  Voir
+                </button>
+
+                <button
+                  type="button"
+                  class="add-btn product-add"
+                  data-id="${escapeAttr(product.id)}"
+                >
+                  Ajouter
+                </button>
+
+              </div>
+
+              <button
+                type="button"
+                class="view-btn favorite-btn"
+                data-favorite-id="${escapeAttr(product.id)}"
+                style="
+                  width:100%;
+                  margin-top:8px;
+                "
+              >
+                ${
+                  favorite
+                    ? "❤️ Retirer des favoris"
+                    : "♡ Ajouter aux favoris"
+                }
+              </button>
+
+            </div>
+
+          </article>
+        `;
+
+      }
+    ).join("");
+
+  productGrid
+    .querySelectorAll(
+      ".product-view"
+    )
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          openProduct(
+            button.dataset.id
+          );
+
+        }
+      );
+
+    });
+
+  productGrid
+    .querySelectorAll(
+      ".product-add"
+    )
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          addToCart(
+            button.dataset.id
+          );
+
+        }
+      );
+
+    });
+
+  productGrid
+    .querySelectorAll(
+      ".favorite-btn"
+    )
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          toggleFavorite(
+            button.dataset.favoriteId
+          );
+
+        }
+      );
+
+    });
+
+}
+
+
+// ============================================================
+// FAVORIS
+// ============================================================
+
+function toggleFavorite(id){
+
+  if(!id){
+    return;
+  }
+
+  if(
+    favorites.includes(id)
+  ){
+
+    favorites =
+      favorites.filter(
+        item => item !== id
+      );
 
     toast(
-      "Remplis tous les champs.",
-      "error"
+      "Retiré des favoris."
     );
 
+  }else{
+
+    favorites.push(id);
+
+    toast(
+      "Ajouté aux favoris ❤️",
+      "success"
+    );
+
+  }
+
+  saveFavorites();
+
+  renderProducts();
+
+}
+
+
+// ============================================================
+// OPTIONS PRODUITS
+// ============================================================
+
+function productHasOptions(product){
+
+  return (
+    product &&
+    product.options &&
+    Object.keys(
+      product.options
+    ).length > 0
+  );
+
+}
+
+
+function openProduct(id){
+
+  const product =
+    getProduct(id);
+
+  if(!product){
     return;
   }
+
+  let optionsHTML = "";
+
+  if(
+    productHasOptions(product)
+  ){
+
+    optionsHTML = `
+      <div style="
+        display:grid;
+        gap:12px;
+        margin-top:18px;
+      ">
+
+        ${
+          Object.entries(
+            product.options
+          ).map(
+            ([label,values]) => `
+              <div>
+
+                <label>
+                  ${escapeHTML(label)}
+                </label>
+
+                <select
+                  class="product-option"
+                  data-option-label="${escapeAttr(label)}"
+                  style="width:100%;margin-top:6px;"
+                >
+
+                  ${values.map(
+                    value => `
+                      <option value="${escapeAttr(value)}">
+                        ${escapeHTML(value)}
+                      </option>
+                    `
+                  ).join("")}
+
+                </select>
+
+              </div>
+            `
+          ).join("")
+        }
+
+      </div>
+    `;
+
+  }
+
+  showModal(
+    product.name,
+    `
+      <div>
+
+        ${
+          product.image
+            ? `
+              <div style="
+                background:#fff;
+                border-radius:16px;
+                padding:20px;
+                margin-bottom:18px;
+                text-align:center;
+              ">
+
+                <img
+                  src="${escapeAttr(product.image)}"
+                  alt="${escapeAttr(product.name)}"
+                  style="
+                    width:100%;
+                    max-height:360px;
+                    object-fit:contain;
+                  "
+                  onerror="this.style.display='none'"
+                >
+
+              </div>
+            `
+            : ""
+        }
+
+        <div class="product-cat">
+          ${escapeHTML(product.category)}
+        </div>
+
+        <h2 style="
+          margin-top:7px;
+          line-height:1.35;
+        ">
+          ${escapeHTML(product.name)}
+        </h2>
+
+        <div style="
+          margin-top:12px;
+          color:var(--yellow);
+        ">
+          ★★★★★
+          <span style="
+            color:var(--muted);
+            margin-left:7px;
+          ">
+            4.7
+          </span>
+        </div>
+
+        <div style="
+          font-size:28px;
+          font-weight:900;
+          margin-top:18px;
+        ">
+          ${money(product.price)}
+        </div>
+
+        ${optionsHTML}
+
+        <button
+          type="button"
+          class="add-btn"
+          id="modalAddProduct"
+          style="
+            width:100%;
+            margin-top:20px;
+          "
+        >
+          🛒 Ajouter au panier
+        </button>
+
+        <button
+          type="button"
+          class="view-btn"
+          id="modalFavoriteProduct"
+          style="
+            width:100%;
+            margin-top:8px;
+          "
+        >
+          ${
+            favorites.includes(product.id)
+              ? "❤️ Retirer des favoris"
+              : "♡ Ajouter aux favoris"
+          }
+        </button>
+
+      </div>
+    `
+  );
+
+  $("modalAddProduct")
+    ?.addEventListener(
+      "click",
+      () => {
+
+        let option = "";
+
+        const optionElements =
+          document.querySelectorAll(
+            ".product-option"
+          );
+
+        if(optionElements.length){
+
+          option =
+            Array.from(
+              optionElements
+            )
+              .map(
+                element =>
+                  `${element.dataset.optionLabel}: ${element.value}`
+              )
+              .join(" | ");
+
+        }
+
+        addToCart(
+          product.id,
+          option
+        );
+
+        closeModal();
+
+      }
+    );
+
+  $("modalFavoriteProduct")
+    ?.addEventListener(
+      "click",
+      () => {
+
+        toggleFavorite(
+          product.id
+        );
+
+        closeModal();
+
+      }
+    );
+
+}
+
+
+// ============================================================
+// PANIER
+// ============================================================
+
+function getCartCount(){
+
+  return cart.reduce(
+    (total,item) =>
+      total +
+      Number(item.quantity || 1),
+    0
+  );
+
+}
+
+
+function getCartSubtotal(){
+
+  return cart.reduce(
+    (total,item) => {
+
+      const product =
+        getProduct(item.id);
+
+      if(!product){
+        return total;
+      }
+
+      return total +
+        Number(product.price || 0) *
+        Number(item.quantity || 1);
+
+    },
+    0
+  );
+
+}
+
+
+function addToCart(id,option=""){
+
+  const product =
+    getProduct(id);
+
+  if(!product){
+    return;
+  }
+
+  const existing =
+    cart.find(
+      item =>
+        item.id === id &&
+        item.option === option
+    );
+
+  if(existing){
+
+    existing.quantity =
+      Number(existing.quantity || 1) + 1;
+
+  }else{
+
+    cart.push({
+      id,
+      option,
+      quantity:1
+    });
+
+  }
+
+  saveCart();
+  renderCart();
+
+  toast(
+    "Produit ajouté au panier 🛒",
+    "success"
+  );
+
+}
+
+
+function removeFromCart(index){
+
+  if(
+    index < 0 ||
+    index >= cart.length
+  ){
+    return;
+  }
+
+  cart.splice(index,1);
+
+  saveCart();
+  renderCart();
+
+}
+
+
+function changeCartQuantity(index,delta){
+
+  const item =
+    cart[index];
+
+  if(!item){
+    return;
+  }
+
+  item.quantity =
+    Number(item.quantity || 1) +
+    Number(delta);
+
+  if(item.quantity <= 0){
+
+    cart.splice(index,1);
+
+  }
+
+  saveCart();
+  renderCart();
+
+}
+
+
+function renderCart(){
+
+  if(cartBadge){
+
+    const count =
+      getCartCount();
+
+    cartBadge.textContent =
+      count;
+
+    cartBadge.style.display =
+      count > 0
+        ? "flex"
+        : "none";
+
+  }
+
+  if(cartTotal){
+
+    cartTotal.textContent =
+      money(
+        getCartSubtotal()
+      );
+
+  }
+
+  if(!cartItems){
+    return;
+  }
+
+  if(!cart.length){
+
+    cartItems.innerHTML = `
+      <div class="empty-cart">
+
+        <div style="
+          font-size:50px;
+          margin-bottom:10px;
+        ">
+          🛒
+        </div>
+
+        <h3>
+          Ton panier est vide
+        </h3>
+
+        <p style="margin-top:7px;">
+          Ajoute des produits pour commencer.
+        </p>
+
+      </div>
+    `;
+
+    if(checkoutBtn){
+      checkoutBtn.disabled = true;
+    }
+
+    return;
+
+  }
+
+  if(checkoutBtn){
+    checkoutBtn.disabled = false;
+  }
+
+  cartItems.innerHTML =
+    cart.map(
+      (item,index) => {
+
+        const product =
+          getProduct(item.id);
+
+        if(!product){
+          return "";
+        }
+
+        const quantity =
+          Number(
+            item.quantity || 1
+          );
+
+        const price =
+          Number(
+            product.price || 0
+          );
+
+        return `
+          <div class="cart-item">
+
+            <div>
+
+              ${
+                product.image
+                  ? `
+                    <img
+                      src="${escapeAttr(product.image)}"
+                      alt="${escapeAttr(product.name)}"
+                      onerror="this.style.display='none'"
+                    >
+                  `
+                  : ""
+              }
+
+            </div>
+
+            <div class="cart-item-info">
+
+              <strong>
+                ${escapeHTML(product.name)}
+              </strong>
+
+              ${
+                item.option
+                  ? `
+                    <span style="
+                      color:var(--muted);
+                      font-size:12px;
+                      margin-top:4px;
+                    ">
+                      ${escapeHTML(item.option)}
+                    </span>
+                  `
+                  : ""
+              }
+
+              <span>
+                ${money(price)}
+              </span>
+
+              <div class="cart-quantity">
+
+                <button
+                  type="button"
+                  data-cart-minus="${index}"
+                >
+                  −
+                </button>
+
+                <strong>
+                  ${quantity}
+                </strong>
+
+                <button
+                  type="button"
+                  data-cart-plus="${index}"
+                >
+                  +
+                </button>
+
+              </div>
+
+            </div>
+
+            <button
+              type="button"
+              class="remove-cart"
+              data-cart-remove="${index}"
+              aria-label="Supprimer"
+            >
+              ×
+            </button>
+
+          </div>
+        `;
+
+      }
+    ).join("");
+
+  cartItems
+    .querySelectorAll(
+      "[data-cart-minus]"
+    )
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          changeCartQuantity(
+            Number(
+              button.dataset.cartMinus
+            ),
+            -1
+          );
+
+        }
+      );
+
+    });
+
+  cartItems
+    .querySelectorAll(
+      "[data-cart-plus]"
+    )
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          changeCartQuantity(
+            Number(
+              button.dataset.cartPlus
+            ),
+            1
+          );
+
+        }
+      );
+
+    });
+
+  cartItems
+    .querySelectorAll(
+      "[data-cart-remove]"
+    )
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          removeFromCart(
+            Number(
+              button.dataset.cartRemove
+            )
+          );
+
+        }
+      );
+
+    });
+
+}
+
+
+function openCart(){
+
+  cartDrawer?.classList.add(
+    "open"
+  );
+
+  overlay?.classList.add(
+    "open"
+  );
+
+}
+
+
+function closeCart(){
+
+  cartDrawer?.classList.remove(
+    "open"
+  );
+
+  overlay?.classList.remove(
+    "open"
+  );
+
+}
+
+
+cartBtn?.addEventListener(
+  "click",
+  openCart
+);
+
+
+heroCartBtn?.addEventListener(
+  "click",
+  openCart
+);
+
+
+closeCartButton?.addEventListener(
+  "click",
+  closeCart
+);
+
+
+overlay?.addEventListener(
+  "click",
+  closeCart
+);
+
+
+// ============================================================
+// MODALES
+// ============================================================
+
+function showModal(title,content){
+
+  if(!modal){
+    return;
+  }
+
+  modalTitle.textContent =
+    title;
+
+  modalContent.innerHTML =
+    content;
+
+  modal.classList.add(
+    "open"
+  );
+
+  document.body.classList.add(
+    "modal-open"
+  );
+
+}
+
+
+function closeModal(){
+
+  modal?.classList.remove(
+    "open"
+  );
+
+  document.body.classList.remove(
+    "modal-open"
+  );
+
+}
+
+
+modalClose?.addEventListener(
+  "click",
+  closeModal
+);
+
+
+// ============================================================
+// RECHERCHE / TRI
+// ============================================================
+
+searchInput?.addEventListener(
+  "input",
+  event => {
+
+    state.search =
+      event.target.value || "";
+
+    renderProducts();
+
+  }
+);
+
+
+sortSelect?.addEventListener(
+  "change",
+  event => {
+
+    state.sort =
+      event.target.value || "default";
+
+    renderProducts();
+
+  }
+);
+
+
+// ============================================================
+// LOGIN
+// ============================================================
+
+function showLoginForm(){
+
+  showModal(
+    "Connexion",
+    `
+      <form id="loginForm">
+
+        <label for="loginEmail">
+          Email
+        </label>
+
+        <input
+          id="loginEmail"
+          type="email"
+          autocomplete="email"
+          placeholder="ton@email.com"
+          required
+        >
+
+        <label
+          for="loginPassword"
+          style="display:block;margin-top:12px;"
+        >
+          Mot de passe
+        </label>
+
+        <input
+          id="loginPassword"
+          type="password"
+          autocomplete="current-password"
+          placeholder="Mot de passe"
+          required
+        >
+
+        <button
+          type="submit"
+          class="add-btn"
+          style="
+            width:100%;
+            margin-top:16px;
+          "
+        >
+          Se connecter
+        </button>
+
+        <button
+          type="button"
+          class="view-btn"
+          id="openRegister"
+          style="
+            width:100%;
+            margin-top:8px;
+          "
+        >
+          Créer un compte
+        </button>
+
+        <div
+          id="loginError"
+          style="
+            display:none;
+            color:#ff7777;
+            margin-top:12px;
+          "
+        ></div>
+
+      </form>
+    `
+  );
+
+  $("openRegister")
+    ?.addEventListener(
+      "click",
+      showRegisterForm
+    );
+
+  $("loginForm")
+    ?.addEventListener(
+      "submit",
+      login
+    );
+
+}
+
+
+function showRegisterForm(){
+
+  showModal(
+    "Créer un compte",
+    `
+      <form id="registerForm">
+
+        <label for="registerEmail">
+          Email
+        </label>
+
+        <input
+          id="registerEmail"
+          type="email"
+          autocomplete="email"
+          placeholder="ton@email.com"
+          required
+        >
+
+        <label
+          for="registerPassword"
+          style="display:block;margin-top:12px;"
+        >
+          Mot de passe
+        </label>
+
+        <input
+          id="registerPassword"
+          type="password"
+          autocomplete="new-password"
+          placeholder="Mot de passe"
+          minlength="6"
+          required
+        >
+
+        <button
+          type="submit"
+          class="add-btn"
+          style="
+            width:100%;
+            margin-top:16px;
+          "
+        >
+          Créer mon compte
+        </button>
+
+        <button
+          type="button"
+          class="view-btn"
+          id="backToLogin"
+          style="
+            width:100%;
+            margin-top:8px;
+          "
+        >
+          Retour à la connexion
+        </button>
+
+        <div
+          id="registerError"
+          style="
+            display:none;
+            color:#ff7777;
+            margin-top:12px;
+          "
+        ></div>
+
+      </form>
+    `
+  );
+
+  $("backToLogin")
+    ?.addEventListener(
+      "click",
+      showLoginForm
+    );
+
+  $("registerForm")
+    ?.addEventListener(
+      "submit",
+      register
+    );
+
+}
+
+
+async function login(event){
+
+  event.preventDefault();
+
+  const email =
+    $("loginEmail")
+      ?.value.trim() || "";
+
+  const password =
+    $("loginPassword")
+      ?.value || "";
+
+  const errorBox =
+    $("loginError");
 
   try{
 
     await signInWithEmailAndPassword(
       auth,
-      email.trim(),
+      email,
       password
     );
+
+    closeModal();
 
     toast(
       "Connexion réussie 👋",
@@ -2392,61 +2403,45 @@ async function login(){
 
     console.error(error);
 
-    toast(
-      firebaseErrorMessage(error),
-      "error"
-    );
+    if(errorBox){
+
+      errorBox.textContent =
+        authError(error);
+
+      errorBox.style.display =
+        "block";
+
+    }
 
   }
 
 }
 
 
-async function register(){
+async function register(event){
+
+  event.preventDefault();
 
   const email =
-    prompt("Ton adresse email :");
-
-  if(email === null){
-    return;
-  }
+    $("registerEmail")
+      ?.value.trim() || "";
 
   const password =
-    prompt(
-      "Choisis un mot de passe :"
-    );
+    $("registerPassword")
+      ?.value || "";
 
-  if(password === null){
-    return;
-  }
-
-  if(!email.trim() || !password){
-
-    toast(
-      "Remplis tous les champs.",
-      "error"
-    );
-
-    return;
-  }
-
-  if(password.length < 6){
-
-    toast(
-      "Le mot de passe doit contenir au moins 6 caractères.",
-      "error"
-    );
-
-    return;
-  }
+  const errorBox =
+    $("registerError");
 
   try{
 
     await createUserWithEmailAndPassword(
       auth,
-      email.trim(),
+      email,
       password
     );
+
+    closeModal();
 
     toast(
       "Compte créé avec succès 🎉",
@@ -2457,10 +2452,15 @@ async function register(){
 
     console.error(error);
 
-    toast(
-      firebaseErrorMessage(error),
-      "error"
-    );
+    if(errorBox){
+
+      errorBox.textContent =
+        authError(error);
+
+      errorBox.style.display =
+        "block";
+
+    }
 
   }
 
@@ -2473,6 +2473,8 @@ async function logout(){
 
     await signOut(auth);
 
+    closeModal();
+
     toast(
       "Déconnexion réussie.",
       "success"
@@ -2480,10 +2482,8 @@ async function logout(){
 
   }catch(error){
 
-    console.error(error);
-
     toast(
-      "Impossible de se déconnecter.",
+      authError(error),
       "error"
     );
 
@@ -2493,87 +2493,44 @@ async function logout(){
 
 
 // ============================================================
-// OUVRIR LE COMPTE
+// COMPTE
 // ============================================================
+
+accountBtn?.addEventListener(
+  "click",
+  openAccount
+);
+
 
 function openAccount(){
 
   if(!currentUser){
 
-    showModal(
-      "👤 Compte",
-      `
-
-        <div style="display:grid;gap:12px">
-
-          <p style="color:var(--muted)">
-            Connecte-toi ou crée ton compte NovaShop.
-          </p>
-
-          <button
-            type="button"
-            class="add-btn"
-            id="loginBtn"
-          >
-            🔐 Se connecter
-          </button>
-
-          <button
-            type="button"
-            class="view-btn"
-            id="registerBtn"
-          >
-            📝 Créer un compte
-          </button>
-
-        </div>
-
-      `
-    );
-
-    document
-      .getElementById("loginBtn")
-      ?.addEventListener(
-        "click",
-        async ()=>{
-
-          closeModal();
-          await login();
-
-        }
-      );
-
-    document
-      .getElementById("registerBtn")
-      ?.addEventListener(
-        "click",
-        async ()=>{
-
-          closeModal();
-          await register();
-
-        }
-      );
+    showLoginForm();
 
     return;
+
   }
 
-
   showModal(
-    "👤 Mon compte",
+    "Mon compte",
     `
+      <div>
 
-      <div style="display:grid;gap:15px">
-
-        <div class="trust-card">
+        <div style="
+          padding:16px;
+          border-radius:15px;
+          background:rgba(80,120,255,.08);
+          margin-bottom:15px;
+        ">
 
           <strong>
-            Compte connecté
+            👤 Compte connecté
           </strong>
 
           <p style="
-            margin-top:8px;
-            color:var(--muted)
+            margin-top:7px;
+            opacity:.8;
           ">
             ${escapeHTML(
               currentUser.email || ""
@@ -2585,7 +2542,11 @@ function openAccount(){
         <button
           type="button"
           class="add-btn"
-          id="accountOrdersBtn"
+          id="accountOrders"
+          style="
+            width:100%;
+            margin-bottom:8px;
+          "
         >
           📦 Mes commandes
         </button>
@@ -2593,58 +2554,26 @@ function openAccount(){
         <button
           type="button"
           class="view-btn"
-          id="accountSettingsBtn"
-        >
-          ⚙️ Paramètres
-        </button>
-
-        <button
-          type="button"
-          class="view-btn"
-          id="accountLogoutBtn"
-          style="color:var(--red)"
+          id="accountLogout"
+          style="width:100%;"
         >
           🚪 Se déconnecter
         </button>
 
       </div>
-
     `
   );
 
-
-  document
-    .getElementById("accountOrdersBtn")
+  $("accountOrders")
     ?.addEventListener(
       "click",
-      ()=>{
-        closeModal();
-        openOrders();
-      }
+      openOrders
     );
 
-
-  document
-    .getElementById("accountSettingsBtn")
+  $("accountLogout")
     ?.addEventListener(
       "click",
-      ()=>{
-        closeModal();
-        openSettings();
-      }
-    );
-
-
-  document
-    .getElementById("accountLogoutBtn")
-    ?.addEventListener(
-      "click",
-      async ()=>{
-
-        closeModal();
-        await logout();
-
-      }
+      logout
     );
 
 }
@@ -2654,2176 +2583,244 @@ function openAccount(){
 // COMMANDES
 // ============================================================
 
+ordersBtn?.addEventListener(
+  "click",
+  openOrders
+);
+
+
 async function openOrders(){
 
   if(!currentUser){
 
-    toast(
-      "Connecte-toi pour voir tes commandes.",
-      "error"
-    );
-
-    openAccount();
+    showLoginForm();
 
     return;
+
   }
 
-
   showModal(
-    "📦 Mes commandes",
+    "Mes commandes",
     `
-      <p style="color:var(--muted)">
-        Chargement de tes commandes...
-      </p>
+      <div
+        id="ordersLoading"
+        style="
+          text-align:center;
+          padding:30px;
+        "
+      >
+        Chargement des commandes...
+      </div>
+
+      <div id="ordersList"></div>
     `
   );
 
-
   try{
 
-    const q =
+    const ordersQuery =
       query(
         collection(db,"orders"),
         where(
-          "uid",
+          "userId",
           "==",
           currentUser.uid
         )
       );
 
     const snapshot =
-      await getDocs(q);
+      await getDocs(
+        ordersQuery
+      );
 
-    const orders =
-      snapshot.docs
-        .map(order=>({
-          id:order.id,
-          ...order.data()
-        }))
-        .sort(
-          (a,b)=>{
-            const aTime =
-              a.createdAt?.seconds || 0;
+    const orders = [];
 
-            const bTime =
-              b.createdAt?.seconds || 0;
+    snapshot.forEach(item => {
 
-            return bTime - aTime;
-          }
-        );
+      orders.push({
+        id:item.id,
+        ...item.data()
+      });
 
+    });
+
+    orders.sort(
+      (a,b) => {
+
+        const dateA =
+          a.createdAt?.seconds || 0;
+
+        const dateB =
+          b.createdAt?.seconds || 0;
+
+        return dateB - dateA;
+
+      }
+    );
+
+    $("ordersLoading")?.remove();
+
+    const list =
+      $("ordersList");
+
+    if(!list){
+      return;
+    }
 
     if(!orders.length){
 
-      showModal(
-        "📦 Mes commandes",
-        `
-          <div class="empty-products">
-
-            <h3>
-              Aucune commande
-            </h3>
-
-            <p style="margin-top:8px">
-              Tes commandes apparaîtront ici.
-            </p>
-
-          </div>
-        `
-      );
-
-      return;
-    }
-
-
-    showModal(
-      "📦 Mes commandes",
-      `
-
+      list.innerHTML = `
         <div style="
-          display:grid;
-          gap:14px;
+          text-align:center;
+          padding:30px;
         ">
 
-          ${orders.map(order=>{
-
-            const status =
-              order.status ||
-              "Enregistrée";
-
-            const destination =
-              order.destination ||
-              order.city ||
-              "Non renseignée";
-
-            const tracking =
-              order.tracking ||
-              "En attente";
-
-            const items =
-              Array.isArray(order.items)
-                ? order.items
-                : [];
-
-            const total =
-              Number(order.total || 0);
-
-            return `
-
-              <div
-                class="order-card trust-card"
-                style="
-                  border:1px solid var(--line);
-                "
-              >
-
-                <div style="
-                  display:flex;
-                  justify-content:space-between;
-                  gap:10px;
-                  flex-wrap:wrap;
-                ">
-
-                  <strong>
-                    Commande #${escapeHTML(
-                      order.id.slice(0,8)
-                    )}
-                  </strong>
-
-                  <span
-                    style="
-                      color:var(--accent);
-                      font-weight:900;
-                    "
-                  >
-                    ${escapeHTML(status)}
-                  </span>
-
-                </div>
-
-                <p style="
-                  margin-top:10px;
-                  color:var(--muted);
-                ">
-                  Destination :
-                  ${escapeHTML(destination)}
-                </p>
-
-                <p style="
-                  margin-top:6px;
-                  color:var(--muted);
-                ">
-                  Suivi :
-                  ${escapeHTML(tracking)}
-                </p>
-
-                <p style="
-                  margin-top:6px;
-                  color:var(--muted);
-                ">
-                  ${items.length}
-                  article${items.length > 1 ? "s" : ""}
-                </p>
-
-                <strong
-                  style="
-                    display:block;
-                    margin-top:10px;
-                    font-size:20px;
-                  "
-                >
-                  ${money(total)}
-                </strong>
-
-                <button
-                  type="button"
-                  class="view-btn order-details-btn"
-                  data-order-id="${escapeAttr(order.id)}"
-                  style="
-                    width:100%;
-                    margin-top:12px;
-                  "
-                >
-                  📦 Voir le suivi
-                </button>
-
-              </div>
-
-            `;
-
-          }).join("")}
-
-        </div>
-
-      `
-    );
-
-
-    document
-      .querySelectorAll(".order-details-btn")
-      .forEach(button=>{
-
-        button.addEventListener(
-          "click",
-          ()=>{
-
-            const order =
-              orders.find(
-                item =>
-                  item.id ===
-                  button.dataset.orderId
-              );
-
-            if(order){
-              showOrderDetails(order);
-            }
-
-          }
-        );
-
-      });
-
-
-  }catch(error){
-
-    console.error(error);
-
-    showModal(
-      "📦 Mes commandes",
-      `
-        <div class="empty-products">
-          Impossible de charger les commandes.
-        </div>
-      `
-    );
-
-  }
-
-}
-
-
-// ============================================================
-// DÉTAILS COMMANDE
-// ============================================================
-
-function showOrderDetails(order){
-
-  const status =
-    order.status ||
-    "Enregistrée";
-
-  const destination =
-    order.destination ||
-    order.city ||
-    "Non renseignée";
-
-  const truckLocation =
-    order.truckLocation ||
-    "En attente";
-
-  const tracking =
-    order.tracking ||
-    "En attente";
-
-  const deliveryDate =
-    order.deliveryDate ||
-    "À définir";
-
-  const items =
-    Array.isArray(order.items)
-      ? order.items
-      : [];
-
-
-  const steps = [
-    "Commande enregistrée",
-    "Préparation",
-    "Expédiée",
-    "En livraison",
-    "Livrée"
-  ];
-
-
-  const statusIndex =
-    steps.findIndex(
-      step =>
-        step.toLowerCase() ===
-        String(status).toLowerCase()
-    );
-
-
-  showModal(
-    "📦 Suivi de commande",
-    `
-
-      <div style="
-        display:grid;
-        gap:18px;
-      ">
-
-        <div class="trust-card">
-
-          <strong>
-            Commande #${escapeHTML(
-              order.id.slice(0,8)
-            )}
-          </strong>
-
-          <p style="
-            margin-top:8px;
-            color:var(--muted)
-          ">
-            Statut :
-            <strong>
-              ${escapeHTML(status)}
-            </strong>
-          </p>
-
-        </div>
-
-
-        <div class="timeline">
-
-          ${steps.map(
-            (step,index)=>`
-
-              <div
-                class="timeline-step ${
-                  index <= statusIndex
-                    ? "active"
-                    : ""
-                }"
-              >
-
-                <span>
-                  ${
-                    index <= statusIndex
-                      ? "✅"
-                      : "⚪"
-                  }
-                </span>
-
-                <span>
-                  ${escapeHTML(step)}
-                </span>
-
-              </div>
-
-            `
-          ).join("")}
-
-        </div>
-
-
-        <div class="trust-card">
-
-          <strong>
-            📍 Livraison
-          </strong>
-
-          <p style="
-            margin-top:8px;
-            color:var(--muted)
-          ">
-            Destination :
-            ${escapeHTML(destination)}
-          </p>
-
-          <p style="
-            margin-top:6px;
-            color:var(--muted)
-          ">
-            Localisation du colis :
-            ${escapeHTML(truckLocation)}
-          </p>
-
-          <p style="
-            margin-top:6px;
-            color:var(--muted)
-          ">
-            Numéro de suivi :
-            ${escapeHTML(tracking)}
-          </p>
-
-          <p style="
-            margin-top:6px;
-            color:var(--muted)
-          ">
-            Livraison estimée :
-            ${escapeHTML(deliveryDate)}
-          </p>
-
-        </div>
-
-
-        <div class="trust-card">
-
-          <strong>
-            🛍️ Produits
-          </strong>
-
-          <div style="
-            display:grid;
-            gap:8px;
-            margin-top:10px;
-          ">
-
-            ${
-              items.map(item=>`
-
-                <div style="
-                  display:flex;
-                  justify-content:space-between;
-                  gap:10px;
-                ">
-
-                  <span>
-                    ${escapeHTML(
-                      item.name || "Produit"
-                    )}
-                    ×${Number(
-                      item.quantity || 1
-                    )}
-                  </span>
-
-                  <strong>
-                    ${money(
-                      Number(item.price || 0) *
-                      Number(item.quantity || 1)
-                    )}
-                  </strong>
-
-                </div>
-
-              `).join("")
-            }
-
+          <div style="font-size:50px;">
+            📦
           </div>
 
-        </div>
+          <h3>
+            Aucune commande
+          </h3>
 
-      </div>
-
-    `
-  );
-
-}
-
-
-// ============================================================
-// PARAMÈTRES
-// ============================================================
-
-function openSettings(){
-
-  const savedTheme =
-    localStorage.getItem(
-      "novaThemeChoice"
-    ) || "dark";
-
-
-  showModal(
-    "⚙️ Paramètres",
-    `
-
-      <div style="
-        display:grid;
-        gap:16px;
-      ">
-
-        <div class="trust-card">
-
-          <strong>
-            Apparence
-          </strong>
-
-          <select
-            id="themeChoice"
-            class="input"
-            style="margin-top:10px"
-          >
-
-            <option
-              value="dark"
-              ${savedTheme === "dark" ? "selected" : ""}
-            >
-              🌙 Sombre
-            </option>
-
-            <option
-              value="light"
-              ${savedTheme === "light" ? "selected" : ""}
-            >
-              ☀️ Claire
-            </option>
-
-            <option
-              value="auto"
-              ${savedTheme === "auto" ? "selected" : ""}
-            >
-              🖥️ Automatique
-            </option>
-
-          </select>
+          <p style="margin-top:8px;">
+            Tu n'as pas encore passé de commande.
+          </p>
 
         </div>
-
-
-        <button
-          type="button"
-          class="view-btn"
-          id="clearCartSettings"
-        >
-          🗑️ Vider le panier
-        </button>
-
-
-        <button
-          type="button"
-          class="view-btn"
-          id="closeSettings"
-        >
-          Fermer
-        </button>
-
-      </div>
-
-    `
-  );
-
-
-  document
-    .getElementById("themeChoice")
-    ?.addEventListener(
-      "change",
-      event=>{
-
-        localStorage.setItem(
-          "novaThemeChoice",
-          event.target.value
-        );
-
-        applyTheme();
-
-      }
-    );
-
-
-  document
-    .getElementById("clearCartSettings")
-    ?.addEventListener(
-      "click",
-      ()=>{
-
-        cart = [];
-
-        saveCart();
-        renderCart();
-
-        toast(
-          "Panier vidé.",
-          "success"
-        );
-
-      }
-    );
-
-
-  document
-    .getElementById("closeSettings")
-    ?.addEventListener(
-      "click",
-      closeModal
-    );
-
-}
-
-
-// ============================================================
-// THÈME
-// ============================================================
-
-function applyTheme(){
-
-  const choice =
-    localStorage.getItem(
-      "novaThemeChoice"
-    ) || "dark";
-
-
-  let theme = choice;
-
-
-  if(choice === "auto"){
-
-    theme =
-      window.matchMedia(
-        "(prefers-color-scheme: light)"
-      ).matches
-        ? "light"
-        : "dark";
-
-  }
-
-
-  document.documentElement
-    .setAttribute(
-      "data-theme",
-      theme
-    );
-
-}
-
-
-// ============================================================
-// CHECKOUT
-// ============================================================
-
-const TEST_CARD = {
-  number:"4242424242424242",
-  holder:"NOVA SHOP",
-  expiry:"12/30",
-  cvv:"123"
-};
-
-
-function getSavedTestCard(){
-
-  try{
-
-    const saved =
-      JSON.parse(
-        localStorage.getItem(
-          TEST_CARD_STORAGE_KEY
-        ) || "null"
-      );
-
-    if(saved){
-      return saved;
-    }
-
-  }catch{}
-
-  return TEST_CARD;
-
-}
-
-
-function normalizeCardNumber(value){
-
-  return String(value || "")
-    .replace(/\s+/g,"");
-
-}
-
-
-function validateAddress(
-  firstName,
-  lastName,
-  address,
-  city
-){
-
-  if(
-    !firstName ||
-    !lastName ||
-    !address ||
-    !city
-  ){
-
-    return false;
-  }
-
-  if(address.length < 5){
-    return false;
-  }
-
-  if(city.length < 2){
-    return false;
-  }
-
-  return true;
-
-}
-
-
-function openCheckout(){
-
-  if(!currentUser){
-
-    toast(
-      "Connecte-toi avant de passer commande.",
-      "error"
-    );
-
-    closeCart();
-    openAccount();
-
-    return;
-  }
-
-
-  if(!cart.length){
-
-    toast(
-      "Ton panier est vide.",
-      "error"
-    );
-
-    return;
-  }
-
-
-  const subtotal =
-    getCartSubtotal();
-
-
-  showModal(
-    "💳 Passer la commande",
-    `
-
-      <div style="
-        display:grid;
-        gap:14px;
-      ">
-
-        <div class="trust-card">
-
-          <strong>
-            Total de la commande
-          </strong>
-
-          <div
-            style="
-              margin-top:8px;
-              font-size:26px;
-              font-weight:950;
-            "
-          >
-            ${money(subtotal)}
-          </div>
-
-        </div>
-
-
-        <input
-          id="checkoutFirstName"
-          class="input"
-          placeholder="Prénom"
-        >
-
-        <input
-          id="checkoutLastName"
-          class="input"
-          placeholder="Nom"
-        >
-
-        <input
-          id="checkoutAddress"
-          class="input"
-          placeholder="Adresse"
-        >
-
-        <input
-          id="checkoutCity"
-          class="input"
-          placeholder="Ville"
-        >
-
-
-        <select
-          id="checkoutPayment"
-          class="input"
-        >
-
-          <option value="card">
-            💳 Carte bancaire de démonstration
-          </option>
-
-          <option value="paypal">
-            🅿️ PayPal
-          </option>
-
-        </select>
-
-
-        <div
-          id="cardFields"
-          style="
-            display:grid;
-            gap:10px;
-          "
-        >
-
-          <input
-            id="cardNumber"
-            class="input"
-            placeholder="Numéro de carte"
-            inputmode="numeric"
-          >
-
-          <input
-            id="cardHolder"
-            class="input"
-            placeholder="Nom sur la carte"
-          >
-
-          <div style="
-            display:grid;
-            grid-template-columns:1fr 1fr;
-            gap:10px;
-          ">
-
-            <input
-              id="cardExpiry"
-              class="input"
-              placeholder="MM/AA"
-            >
-
-            <input
-              id="cardCvv"
-              class="input"
-              placeholder="CVV"
-              inputmode="numeric"
-            >
-
-          </div>
-
-        </div>
-
-
-        <button
-          type="button"
-          class="add-btn"
-          id="confirmCheckout"
-        >
-          ✅ Confirmer la commande
-        </button>
-
-        <p style="
-          color:var(--muted);
-          font-size:12px;
-          line-height:1.5;
-        ">
-          Mode carte de démonstration uniquement.
-          Les informations utilisées ici ne servent pas
-          à effectuer un paiement bancaire réel.
-        </p>
-
-      </div>
-
-    `
-  );
-
-
-  const paymentSelect =
-    document.getElementById(
-      "checkoutPayment"
-    );
-
-  const cardFields =
-    document.getElementById(
-      "cardFields"
-    );
-
-
-  paymentSelect?.addEventListener(
-    "change",
-    ()=>{
-
-      cardFields.style.display =
-        paymentSelect.value === "card"
-          ? "grid"
-          : "none";
-
-    }
-  );
-
-
-  document
-    .getElementById("confirmCheckout")
-    ?.addEventListener(
-      "click",
-      confirmCheckout
-    );
-
-}
-
-
-checkoutBtn?.addEventListener(
-  "click",
-  openCheckout
-);
-
-
-// ============================================================
-// CONFIRMER CHECKOUT
-// ============================================================
-
-async function confirmCheckout(){
-
-  if(!currentUser){
-
-    toast(
-      "Connecte-toi avant de commander.",
-      "error"
-    );
-
-    return;
-  }
-
-
-  if(!cart.length){
-
-    toast(
-      "Panier vide.",
-      "error"
-    );
-
-    return;
-  }
-
-
-  const firstName =
-    document
-      .getElementById("checkoutFirstName")
-      ?.value
-      .trim();
-
-
-  const lastName =
-    document
-      .getElementById("checkoutLastName")
-      ?.value
-      .trim();
-
-
-  const address =
-    document
-      .getElementById("checkoutAddress")
-      ?.value
-      .trim();
-
-
-  const city =
-    document
-      .getElementById("checkoutCity")
-      ?.value
-      .trim();
-
-
-  if(
-    !validateAddress(
-      firstName,
-      lastName,
-      address,
-      city
-    )
-  ){
-
-    toast(
-      "Adresse invalide ou incomplète.",
-      "error"
-    );
-
-    return;
-  }
-
-
-  const payment =
-    document
-      .getElementById("checkoutPayment")
-      ?.value;
-
-
-  const total =
-    getCartSubtotal();
-
-
-  if(payment === "card"){
-
-    const savedCard =
-      getSavedTestCard();
-
-
-    const number =
-      normalizeCardNumber(
-        document
-          .getElementById("cardNumber")
-          ?.value
-      );
-
-
-    const holder =
-      document
-        .getElementById("cardHolder")
-        ?.value
-        .trim()
-        .toUpperCase();
-
-
-    const expiry =
-      document
-        .getElementById("cardExpiry")
-        ?.value
-        .trim();
-
-
-    const cvv =
-      document
-        .getElementById("cardCvv")
-        ?.value
-        .trim();
-
-
-    if(
-      number !==
-        normalizeCardNumber(
-          savedCard.number
-        ) ||
-      holder !==
-        String(
-          savedCard.holder
-        ).toUpperCase() ||
-      expiry !==
-        savedCard.expiry ||
-      cvv !==
-        savedCard.cvv
-    ){
-
-      toast(
-        "Carte de démonstration incorrecte.",
-        "error"
-      );
+      `;
 
       return;
-    }
-
-  }
-
-
-  const orderItems =
-    cart.map(item=>{
-
-      const product =
-        getProduct(
-          item.productId
-        );
-
-      return {
-        productId:item.productId,
-        name:getCartProductName(item),
-        price:Number(product?.price || 0),
-        quantity:Number(item.quantity || 1),
-        options:item.options || {}
-      };
-
-    });
-
-
-  const order = {
-    uid:currentUser.uid,
-    email:currentUser.email || "",
-    firstName,
-    lastName,
-    address,
-    city,
-    destination:city,
-    items:orderItems,
-    total,
-    status:"Commande enregistrée",
-    paymentMethod:
-      payment === "card"
-        ? "Carte bancaire"
-        : "PayPal",
-    paymentStatus:
-      payment === "card"
-        ? "Payé"
-        : "En attente",
-    truckLocation:"Centre de préparation",
-    tracking:"En attente",
-    deliveryDate:"À définir",
-    createdAt:serverTimestamp(),
-    updatedAt:serverTimestamp()
-  };
-
-
-  try{
-
-    const orderRef =
-      await addDoc(
-        collection(db,"orders"),
-        order
-      );
-
-
-    if(payment === "paypal"){
-
-      const paypalUrl =
-        `https://paypal.me/SH0PNOVA/${total}EUR`;
-
-      window.open(
-        paypalUrl,
-        "_blank"
-      );
 
     }
 
-
-    cart = [];
-
-    saveCart();
-    renderCart();
-
-    closeModal();
-    closeCart();
-
-
-    showInvoice({
-      ...order,
-      id:orderRef.id
-    });
-
-
-    toast(
-      "Commande enregistrée 📦",
-      "success"
-    );
-
-
-  }catch(error){
-
-    console.error(error);
-
-    toast(
-      "Impossible d'enregistrer la commande.",
-      "error"
-    );
-
-  }
-
-}
-
-
-// ============================================================
-// FACTURE
-// ============================================================
-
-function showInvoice(order){
-
-  const items =
-    Array.isArray(order.items)
-      ? order.items
-      : [];
-
-
-  showModal(
-    "🧾 Commande confirmée",
-    `
-
-      <div style="
-        display:grid;
-        gap:16px;
-      ">
-
-        <div class="trust-card">
-
-          <strong>
-            Merci pour ta commande 🎉
-          </strong>
-
-          <p style="
-            margin-top:8px;
-            color:var(--muted)
-          ">
-            Numéro :
-            #${escapeHTML(
-              order.id
-            )}
-          </p>
-
-          <p style="
-            margin-top:6px;
-            color:var(--muted)
-          ">
-            Statut :
-            ${escapeHTML(
-              order.status
-            )}
-          </p>
-
-        </div>
-
-
-        <div class="trust-card">
-
-          ${items.map(item=>`
-
-            <div style="
-              display:flex;
-              justify-content:space-between;
-              gap:12px;
-              padding:8px 0;
-              border-bottom:1px solid var(--line);
-            ">
-
-              <span>
-                ${escapeHTML(item.name)}
-                ×${Number(item.quantity || 1)}
-              </span>
-
-              <strong>
-                ${money(
-                  Number(item.price || 0) *
-                  Number(item.quantity || 1)
-                )}
-              </strong>
-
-            </div>
-
-          `).join("")}
-
-
-          <div style="
-            display:flex;
-            justify-content:space-between;
-            margin-top:14px;
-            font-size:22px;
-          ">
-
-            <strong>
-              Total
-            </strong>
-
-            <strong>
-              ${money(order.total)}
-            </strong>
-
-          </div>
-
-        </div>
-
-
-        <button
-          type="button"
-          class="add-btn"
-          id="invoiceOrdersBtn"
-        >
-          📦 Voir ma commande
-        </button>
-
-      </div>
-
-    `
-  );
-
-
-  document
-    .getElementById("invoiceOrdersBtn")
-    ?.addEventListener(
-      "click",
-      openOrders
-    );
-
-}// ============================================================
-// ADMIN
-// ============================================================
-
-function isAdmin(){
-
-  return currentUser &&
-    currentUser.email?.toLowerCase() ===
-      ADMIN_EMAIL.toLowerCase();
-
-}
-
-
-// ============================================================
-// OUVRIR ADMIN
-// ============================================================
-
-function openAdmin(){
-
-  if(!isAdmin()){
-
-    toast(
-      "Accès administrateur refusé.",
-      "error"
-    );
-
-    return;
-  }
-
-
-  const alreadyAuthorized =
-    localStorage.getItem(
-      ADMIN_ACCESS_KEY
-    ) === "true";
-
-
-  if(!alreadyAuthorized){
-
-    const code =
-      prompt(
-        "Code administrateur :"
-      );
-
-    if(code !== ADMIN_CODE){
-
-      toast(
-        "Code administrateur incorrect.",
-        "error"
-      );
-
-      return;
-    }
-
-    localStorage.setItem(
-      ADMIN_ACCESS_KEY,
-      "true"
-    );
-
-  }
-
-
-  loadAdminOrders();
-
-}
-
-
-// ============================================================
-// CHARGER COMMANDES ADMIN
-// ============================================================
-
-async function loadAdminOrders(){
-
-  showModal(
-    "🛡️ Administration NovaShop",
-    `
-      <p style="color:var(--muted)">
-        Chargement des commandes...
-      </p>
-    `
-  );
-
-
-  try{
-
-    const snapshot =
-      await getDocs(
-        collection(db,"orders")
-      );
-
-
-    const orders =
-      snapshot.docs
-        .map(item=>({
-          id:item.id,
-          ...item.data()
-        }))
-        .sort(
-          (a,b)=>{
-
-            const aTime =
-              a.createdAt?.seconds || 0;
-
-            const bTime =
-              b.createdAt?.seconds || 0;
-
-            return bTime - aTime;
-
-          }
-        );
-
-
-    showAdminOrders(orders);
-
-
-  }catch(error){
-
-    console.error(error);
-
-    showModal(
-      "🛡️ Administration",
-      `
-        <div class="empty-products">
-          Impossible de charger les commandes.
-        </div>
-      `
-    );
-
-  }
-
-}
-
-
-// ============================================================
-// AFFICHER ADMIN
-// ============================================================
-
-function showAdminOrders(orders){
-
-  showModal(
-    "🛡️ Administration NovaShop",
-    `
-
-      <div style="
-        display:grid;
-        gap:15px;
-      ">
-
-        <div class="trust-card">
-
-          <strong>
-            Administration
-          </strong>
-
-          <p style="
-            margin-top:8px;
-            color:var(--muted)
-          ">
-            ${orders.length}
-            commande${orders.length > 1 ? "s" : ""}
-          </p>
-
-        </div>
-
-
-        ${
-          orders.length
-          ?
-          orders.map(order=>`
-
+    list.innerHTML =
+      orders.map(
+        order => {
+
+          const total =
+            Number(
+              order.total || 0
+            );
+
+          const status =
+            order.status ||
+            "Enregistrée";
+
+          const customerName =
+            `${order.firstName || ""} ${order.lastName || ""}`
+              .trim();
+
+          return `
             <div
-              class="admin-order trust-card"
-              data-admin-order="${escapeAttr(order.id)}"
+              class="order-card"
+              style="
+                padding:16px;
+                margin-bottom:12px;
+                border:1px solid rgba(255,255,255,.08);
+                border-radius:16px;
+              "
             >
 
               <div style="
                 display:flex;
                 justify-content:space-between;
-                gap:12px;
-                flex-wrap:wrap;
+                gap:10px;
+                margin-bottom:8px;
               ">
 
                 <strong>
-                  #${escapeHTML(
+                  Commande #${escapeHTML(
                     order.id.slice(0,8)
                   )}
                 </strong>
 
-                <span style="
-                  color:var(--accent);
-                  font-weight:900;
-                ">
-                  ${escapeHTML(
-                    order.status ||
-                    "Commande enregistrée"
-                  )}
-                </span>
-
-              </div>
-
-
-              <p style="
-                margin-top:8px;
-                color:var(--muted)
-              ">
-                Client :
-                ${escapeHTML(
-                  order.email || "Inconnu"
-                )}
-              </p>
-
-
-              <p style="
-                margin-top:5px;
-                color:var(--muted)
-              ">
-                Total :
                 <strong>
-                  ${money(order.total)}
+                  ${money(total)}
                 </strong>
-              </p>
-
-
-              <label style="
-                display:block;
-                margin-top:14px;
-                font-weight:800;
-              ">
-                Statut
-
-                <select
-                  class="input admin-status"
-                  data-id="${escapeAttr(order.id)}"
-                  style="margin-top:6px"
-                >
-
-                  <option
-                    value="Commande enregistrée"
-                    ${
-                      order.status ===
-                      "Commande enregistrée"
-                      ? "selected"
-                      : ""
-                    }
-                  >
-                    Commande enregistrée
-                  </option>
-
-                  <option
-                    value="Préparation"
-                    ${
-                      order.status ===
-                      "Préparation"
-                      ? "selected"
-                      : ""
-                    }
-                  >
-                    Préparation
-                  </option>
-
-                  <option
-                    value="Expédiée"
-                    ${
-                      order.status ===
-                      "Expédiée"
-                      ? "selected"
-                      : ""
-                    }
-                  >
-                    Expédiée
-                  </option>
-
-                  <option
-                    value="En livraison"
-                    ${
-                      order.status ===
-                      "En livraison"
-                      ? "selected"
-                      : ""
-                    }
-                  >
-                    En livraison
-                  </option>
-
-                  <option
-                    value="Livrée"
-                    ${
-                      order.status ===
-                      "Livrée"
-                      ? "selected"
-                      : ""
-                    }
-                  >
-                    Livrée
-                  </option>
-
-                </select>
-
-              </label>
-
-
-              <label style="
-                display:block;
-                margin-top:12px;
-                font-weight:800;
-              ">
-                Ville de destination
-
-                <input
-                  class="input admin-destination"
-                  data-id="${escapeAttr(order.id)}"
-                  value="${escapeAttr(
-                    order.destination ||
-                    order.city ||
-                    ""
-                  )}"
-                  style="margin-top:6px"
-                  placeholder="Ville"
-                >
-
-              </label>
-
-
-              <label style="
-                display:block;
-                margin-top:12px;
-                font-weight:800;
-              ">
-                Localisation du colis
-
-                <input
-                  class="input admin-location"
-                  data-id="${escapeAttr(order.id)}"
-                  value="${escapeAttr(
-                    order.truckLocation ||
-                    ""
-                  )}"
-                  style="margin-top:6px"
-                  placeholder="Ex : Centre de Lille"
-                >
-
-              </label>
-
-
-              <label style="
-                display:block;
-                margin-top:12px;
-                font-weight:800;
-              ">
-                Numéro de suivi
-
-                <input
-                  class="input admin-tracking"
-                  data-id="${escapeAttr(order.id)}"
-                  value="${escapeAttr(
-                    order.tracking ||
-                    ""
-                  )}"
-                  style="margin-top:6px"
-                  placeholder="Numéro de suivi"
-                >
-
-              </label>
-
-
-              <label style="
-                display:block;
-                margin-top:12px;
-                font-weight:800;
-              ">
-                Livraison estimée
-
-                <input
-                  class="input admin-delivery"
-                  data-id="${escapeAttr(order.id)}"
-                  value="${escapeAttr(
-                    order.deliveryDate ||
-                    ""
-                  )}"
-                  style="margin-top:6px"
-                  placeholder="Ex : 25 septembre 2026"
-                >
-
-              </label>
-
-
-              <div style="
-                display:grid;
-                grid-template-columns:1fr 1fr;
-                gap:8px;
-                margin-top:15px;
-              ">
-
-                <button
-                  type="button"
-                  class="add-btn admin-save"
-                  data-id="${escapeAttr(order.id)}"
-                >
-                  💾 Enregistrer
-                </button>
-
-                <button
-                  type="button"
-                  class="view-btn admin-paid"
-                  data-id="${escapeAttr(order.id)}"
-                >
-                  💳 Marquer payé
-                </button>
 
               </div>
 
+              ${
+                customerName
+                  ? `
+                    <div style="
+                      margin-bottom:8px;
+                      opacity:.9;
+                    ">
+                      👤 ${escapeHTML(customerName)}
+                    </div>
+                  `
+                  : ""
+              }
 
-              <div style="
-                display:grid;
-                grid-template-columns:1fr 1fr;
-                gap:8px;
-                margin-top:8px;
-              ">
-
-                <button
-                  type="button"
-                  class="view-btn admin-invoice"
-                  data-id="${escapeAttr(order.id)}"
-                >
-                  🧾 Facture
-                </button>
-
-                <button
-                  type="button"
-                  class="view-btn admin-delete"
-                  data-id="${escapeAttr(order.id)}"
-                  style="color:var(--red)"
-                >
-                  🗑️ Supprimer
-                </button>
-
+              <div style="margin-bottom:12px;">
+                Statut :
+                <strong>
+                  ${escapeHTML(status)}
+                </strong>
               </div>
 
+              <button
+                type="button"
+                class="view-btn"
+                data-order-id="${escapeAttr(order.id)}"
+              >
+                Voir la commande
+              </button>
+
             </div>
-
-          `).join("")
-          :
-          `
-            <div class="empty-products">
-              Aucune commande.
-            </div>
-          `
-        }
-
-
-        <button
-          type="button"
-          class="view-btn"
-          id="adminLogout"
-        >
-          🔒 Verrouiller l'administration
-        </button>
-
-      </div>
-
-    `
-  );
-
-
-  document
-    .querySelectorAll(".admin-save")
-    .forEach(button=>{
-
-      button.addEventListener(
-        "click",
-        ()=>saveAdminOrder(
-          button.dataset.id
-        )
-      );
-
-    });
-
-
-  document
-    .querySelectorAll(".admin-paid")
-    .forEach(button=>{
-
-      button.addEventListener(
-        "click",
-        ()=>markOrderPaid(
-          button.dataset.id
-        )
-      );
-
-    });
-
-
-  document
-    .querySelectorAll(".admin-invoice")
-    .forEach(button=>{
-
-      button.addEventListener(
-        "click",
-        ()=>{
-
-          const order =
-            orders.find(
-              item =>
-                item.id ===
-                button.dataset.id
-            );
-
-          if(order){
-            showInvoice(order);
-          }
+          `;
 
         }
-      );
+      ).join("");
 
-    });
-
-
-  document
-    .querySelectorAll(".admin-delete")
-    .forEach(button=>{
-
-      button.addEventListener(
-        "click",
-        ()=>deleteAdminOrder(
-          button.dataset.id
-        )
-      );
-
-    });
-
-
-  document
-    .getElementById("adminLogout")
-    ?.addEventListener(
+    list.addEventListener(
       "click",
-      ()=>{
+      event => {
 
-        localStorage.removeItem(
-          ADMIN_ACCESS_KEY
-        );
+        const button =
+          event.target.closest(
+            "[data-order-id]"
+          );
 
-        closeModal();
+        if(!button){
+          return;
+        }
 
-        toast(
-          "Administration verrouillée.",
-          "success"
-        );
+        const order =
+          orders.find(
+            item =>
+              item.id ===
+              button.dataset.orderId
+          );
+
+        if(order){
+          openOrderDetails(order);
+        }
 
       }
-    );
-
-}
-
-
-// ============================================================
-// ENREGISTRER MODIFICATIONS ADMIN
-// ============================================================
-
-async function saveAdminOrder(orderId){
-
-  if(!isAdmin()){
-    return;
-  }
-
-
-  const status =
-    document
-      .querySelector(
-        `.admin-status[data-id="${CSS.escape(orderId)}"]`
-      )
-      ?.value ||
-      "Commande enregistrée";
-
-
-  const destination =
-    document
-      .querySelector(
-        `.admin-destination[data-id="${CSS.escape(orderId)}"]`
-      )
-      ?.value
-      .trim() ||
-      "";
-
-
-  const truckLocation =
-    document
-      .querySelector(
-        `.admin-location[data-id="${CSS.escape(orderId)}"]`
-      )
-      ?.value
-      .trim() ||
-      "";
-
-
-  const tracking =
-    document
-      .querySelector(
-        `.admin-tracking[data-id="${CSS.escape(orderId)}"]`
-      )
-      ?.value
-      .trim() ||
-      "";
-
-
-  const deliveryDate =
-    document
-      .querySelector(
-        `.admin-delivery[data-id="${CSS.escape(orderId)}"]`
-      )
-      ?.value
-      .trim() ||
-      "";
-
-
-  try{
-
-    await updateDoc(
-      doc(db,"orders",orderId),
-      {
-        status,
-        destination,
-        truckLocation,
-        tracking,
-        deliveryDate,
-        updatedAt:serverTimestamp()
-      }
-    );
-
-
-    toast(
-      "Commande mise à jour ✅",
-      "success"
-    );
-
-
-    setTimeout(
-      loadAdminOrders,
-      400
-    );
-
-
-  }catch(error){
-
-    console.error(error);
-
-    toast(
-      "Impossible de modifier la commande.",
-      "error"
-    );
-
-  }
-
-}
-
-
-// ============================================================
-// MARQUER PAYÉ
-// ============================================================
-
-async function markOrderPaid(orderId){
-
-  if(!isAdmin()){
-    return;
-  }
-
-
-  try{
-
-    await updateDoc(
-      doc(db,"orders",orderId),
-      {
-        paymentStatus:"Payé",
-        updatedAt:serverTimestamp()
-      }
-    );
-
-
-    toast(
-      "Commande marquée comme payée 💳",
-      "success"
-    );
-
-
-    setTimeout(
-      loadAdminOrders,
-      400
-    );
-
-
-  }catch(error){
-
-    console.error(error);
-
-    toast(
-      "Impossible de modifier le paiement.",
-      "error"
-    );
-
-  }
-
-}
-
-
-// ============================================================
-// SUPPRIMER COMMANDE
-// ============================================================
-
-async function deleteAdminOrder(orderId){
-
-  if(!isAdmin()){
-    return;
-  }
-
-
-  const confirmDelete =
-    confirm(
-      "Supprimer définitivement cette commande ?"
-    );
-
-
-  if(!confirmDelete){
-    return;
-  }
-
-
-  try{
-
-    await deleteDoc(
-      doc(db,"orders",orderId)
-    );
-
-
-    toast(
-      "Commande supprimée.",
-      "success"
-    );
-
-
-    setTimeout(
-      loadAdminOrders,
-      400
-    );
-
-
-  }catch(error){
-
-    console.error(error);
-
-    toast(
-      "Impossible de supprimer la commande.",
-      "error"
-    );
-
-  }
-
-}
-
-
-// ============================================================
-// BOUTONS
-// ============================================================
-
-settingsBtn?.addEventListener(
-  "click",
-  openSettings
-);
-
-accountBtn?.addEventListener(
-  "click",
-  openAccount
-);
-
-ordersBtn?.addEventListener(
-  "click",
-  openOrders
-);
-
-adminBtn?.addEventListener(
-  "click",
-  openAdmin
-);
-
-
-// ============================================================
-// AUTHENTIFICATION
-// ============================================================
-
-onAuthStateChanged(
-  auth,
-  user=>{
-
-    currentUser = user;
-
-
-    if(currentUser){
-
-      accountBtn.textContent =
-        "👤 Compte";
-
-      if(isAdmin()){
-
-        adminBtn.style.display =
-          "inline-flex";
-
-      }else{
-
-        adminBtn.style.display =
-          "none";
-
-      }
-
-    }else{
-
-      accountBtn.textContent =
-        "👤 Compte";
-
-      adminBtn.style.display =
-        "none";
-
-    }
-
-  }
-);
-
-
-// ============================================================
-// RACCOURCIS CLAVIER
-// ============================================================
-
-document.addEventListener(
-  "keydown",
-  event=>{
-
-    if(event.key === "Escape"){
-
-      closeModal();
-      closeCart();
-
-    }
-
-  }
-);
-
-
-// ============================================================
-// ERREURS NON GÉRÉES
-// ============================================================
-
-window.addEventListener(
-  "unhandledrejection",
-  event=>{
-
-    console.error(
-      "NovaShop erreur :",
-      event.reason
-    );
-
-  }
-);
-
-
-// ============================================================
-// INITIALISATION
-// ============================================================
-
-function initNovaShop(){
-
-  try{
-
-    applyTheme();
-
-    renderCategories();
-
-    renderProducts();
-
-    renderCart();
-
-    console.log(
-      "NovaShop chargé avec succès 🚀"
     );
 
   }catch(error){
 
     console.error(
-      "Erreur initialisation NovaShop :",
+      "Firestore Orders Error:",
       error
     );
 
-    if(productsGrid){
+    const loading =
+      $("ordersLoading");
 
-      productsGrid.innerHTML = `
-        <div class="empty-products">
-          <h3>
-            Erreur de chargement
-          </h3>
+    if(loading){
 
-          <p style="margin-top:8px">
-            Ouvre la console du navigateur
-            pour voir l'erreur.
-          </p>
+      loading.innerHTML = `
+        <div style="color:#ff7777;">
+          Impossible de charger les commandes.
+          <br><br>
+          ${escapeHTML(
+            error.message || ""
+          )}
         </div>
       `;
 
@@ -4834,11 +2831,2620 @@ function initNovaShop(){
 }
 
 
-initNovaShop();
+// ============================================================
+// DÉTAIL COMMANDE
+// ============================================================
+
+function openOrderDetails(order){
+
+  const items =
+    Array.isArray(order.items)
+      ? order.items
+      : [];
+
+  const status =
+    order.status ||
+    "Enregistrée";
+
+  const timeline = [
+    "Enregistrée",
+    "Acceptée",
+    "Préparation",
+    "En transit",
+    "Livraison proche",
+    "Livrée"
+  ];
+
+  const currentIndex =
+    timeline.indexOf(status);
+
+  const productsHTML =
+    items.map(
+      item => {
+
+        const product =
+          getProduct(item.id);
+
+        const name =
+          product?.name ||
+          item.name ||
+          "Produit";
+
+        const displayName =
+          item.option
+            ? `${name} (${item.option})`
+            : name;
+
+        const price =
+          Number(
+            product?.price ??
+            item.price ??
+            0
+          );
+
+        const quantity =
+          Number(
+            item.quantity || 1
+          );
+
+        return `
+          <div style="
+            display:flex;
+            justify-content:space-between;
+            gap:12px;
+            padding:10px 0;
+            border-bottom:1px solid rgba(255,255,255,.07);
+          ">
+
+            <span>
+              ${escapeHTML(displayName)}
+              × ${quantity}
+            </span>
+
+            <strong>
+              ${money(price * quantity)}
+            </strong>
+
+          </div>
+        `;
+
+      }
+    ).join("");
+
+  const customerName =
+    `${order.firstName || ""} ${order.lastName || ""}`
+      .trim();
+
+  const timelineHTML =
+    status === "Annulée"
+      ? `
+        <div style="
+          padding:12px;
+          border-radius:12px;
+          background:rgba(255,60,60,.12);
+          color:#ff7777;
+        ">
+          ❌ Commande annulée
+        </div>
+      `
+      : timeline.map(
+          (step,index) => {
+
+            const active =
+              currentIndex >= index;
+
+            return `
+              <div style="
+                display:flex;
+                align-items:center;
+                gap:10px;
+                margin:8px 0;
+                opacity:${active ? 1 : .4};
+              ">
+
+                <span>
+                  ${active ? "●" : "○"}
+                </span>
+
+                <span>
+                  ${step}
+                </span>
+
+              </div>
+            `;
+
+          }
+        ).join("");
+
+  showModal(
+    `Commande #${escapeHTML(
+      order.id.slice(0,8)
+    )}`,
+    `
+      <div>
+
+        <div style="
+          padding:16px;
+          border-radius:16px;
+          background:rgba(80,120,255,.08);
+          margin-bottom:18px;
+        ">
+
+          ${
+            customerName
+              ? `
+                <div style="
+                  margin-bottom:9px;
+                  font-weight:700;
+                ">
+                  👤 ${escapeHTML(customerName)}
+                </div>
+              `
+              : ""
+          }
+
+          ${
+            order.userEmail
+              ? `
+                <div style="
+                  margin-bottom:9px;
+                  opacity:.8;
+                ">
+                  📧 ${escapeHTML(order.userEmail)}
+                </div>
+              `
+              : ""
+          }
+
+          <strong>
+            Statut :
+            ${escapeHTML(status)}
+          </strong>
+
+          ${
+            order.tracking
+              ? `
+                <div style="margin-top:8px;">
+                  Suivi :
+                  ${escapeHTML(order.tracking)}
+                </div>
+              `
+              : ""
+          }
+
+          ${
+            order.estimatedDelivery
+              ? `
+                <div style="margin-top:8px;">
+                  Livraison estimée :
+                  ${escapeHTML(order.estimatedDelivery)}
+                </div>
+              `
+              : ""
+          }
+
+          ${
+            order.city
+              ? `
+                <div style="margin-top:8px;">
+                  📍 Destination :
+                  ${escapeHTML(order.city)}
+                </div>
+              `
+              : ""
+          }
+
+        </div>
+
+        <h3>
+          Suivi
+        </h3>
+
+        <div style="
+          margin:12px 0 20px;
+        ">
+          ${timelineHTML}
+        </div>
+
+        <h3>
+          Produits
+        </h3>
+
+        <div style="
+          margin:10px 0 20px;
+        ">
+          ${productsHTML}
+        </div>
+
+        ${
+          order.address
+            ? `
+              <h3>
+                Livraison
+              </h3>
+
+              <p style="
+                margin:8px 0 20px;
+              ">
+                ${escapeHTML(order.address)}
+              </p>
+            `
+            : ""
+        }
+
+        <div style="
+          display:flex;
+          justify-content:space-between;
+          font-size:20px;
+          padding-top:15px;
+          border-top:1px solid rgba(255,255,255,.1);
+        ">
+
+          <strong>
+            Total
+          </strong>
+
+          <strong>
+            ${money(order.total || 0)}
+          </strong>
+
+        </div>
+
+        <button
+          type="button"
+          class="add-btn"
+          id="invoiceBtn"
+          style="
+            width:100%;
+            margin-top:18px;
+          "
+        >
+          🧾 Voir la facture
+        </button>
+
+      </div>
+    `
+  );
+
+  $("invoiceBtn")
+    ?.addEventListener(
+      "click",
+      () => printInvoice(order)
+    );
+
+}
 
 
 // ============================================================
-// API NOVASHOP
+// CARTE TEST
+// ============================================================
+
+function getTestCard(){
+
+  try{
+
+    const raw =
+      localStorage.getItem(
+        TEST_CARD_STORAGE_KEY
+      );
+
+    if(!raw){
+      return null;
+    }
+
+    const parsed =
+      JSON.parse(raw);
+
+    if(
+      !parsed ||
+      typeof parsed.number !== "string" ||
+      typeof parsed.expiry !== "string" ||
+      typeof parsed.cvv !== "string" ||
+      typeof parsed.holder !== "string"
+    ){
+
+      return null;
+
+    }
+
+    return parsed;
+
+  }catch{
+
+    return null;
+
+  }
+
+}
+
+
+function generateTestCard(){
+
+  const digits =
+    Array.from(
+      {length:12},
+      () =>
+        Math.floor(
+          Math.random() * 10
+        )
+    ).join("");
+
+  const number =
+    `9999 ${digits.slice(0,4)} ${digits.slice(4,8)} ${digits.slice(8,12)}`;
+
+  const month =
+    String(
+      Math.floor(
+        Math.random() * 12
+      ) + 1
+    ).padStart(2,"0");
+
+  const year =
+    String(
+      new Date().getFullYear() +
+      Math.floor(
+        Math.random() * 5
+      ) + 1
+    ).slice(-2);
+
+  const cvv =
+    String(
+      Math.floor(
+        Math.random() * 900
+      ) + 100
+    );
+
+  const card = {
+    number,
+    holder:"NOVASHOP CARD",
+    expiry:`${month}/${year}`,
+    cvv
+  };
+
+  localStorage.setItem(
+    TEST_CARD_STORAGE_KEY,
+    JSON.stringify(card)
+  );
+
+  return card;
+
+}
+
+
+function renderTestCardHTML(){
+
+  const card =
+    getTestCard();
+
+  if(!card){
+
+    return `
+      <div style="
+        padding:16px;
+        border-radius:15px;
+        background:rgba(255,255,255,.04);
+        margin-top:15px;
+      ">
+
+        <strong>
+          💳 Carte
+        </strong>
+
+        <p style="
+          margin-top:7px;
+          opacity:.7;
+        ">
+          Aucune carte créée.
+        </p>
+
+        <button
+          type="button"
+          class="add-btn"
+          id="generateTestCard"
+          style="
+            width:100%;
+            margin-top:12px;
+          "
+        >
+          Générer une carte
+        </button>
+
+      </div>
+    `;
+
+  }
+
+  return `
+    <div style="margin-top:15px;">
+
+      <div style="
+        width:100%;
+        max-width:420px;
+        min-height:235px;
+        margin:12px auto 16px;
+        padding:24px;
+        border-radius:22px;
+        background:#050505;
+        color:#fff !important;
+        border:1px solid #252525;
+        box-shadow:0 18px 50px rgba(0,0,0,.45);
+        display:flex;
+        flex-direction:column;
+        justify-content:space-between;
+      ">
+
+        <div style="
+          font-size:24px;
+          font-weight:700;
+          letter-spacing:3px;
+          color:#fff !important;
+        ">
+          ${escapeHTML(card.number)}
+        </div>
+
+        <div style="
+          display:grid;
+          grid-template-columns:1fr auto auto;
+          gap:18px;
+          align-items:end;
+        ">
+
+          <div>
+
+            <div style="
+              font-size:10px;
+              letter-spacing:1.5px;
+              color:#fff !important;
+            ">
+              TITULAIRE
+            </div>
+
+            <div style="
+              font-size:15px;
+              font-weight:700;
+              color:#fff !important;
+              margin-top:4px;
+            ">
+              ${escapeHTML(card.holder)}
+            </div>
+
+          </div>
+
+          <div>
+
+            <div style="
+              font-size:10px;
+              letter-spacing:1.5px;
+              color:#fff !important;
+            ">
+              EXP
+            </div>
+
+            <div style="
+              font-size:15px;
+              font-weight:700;
+              color:#fff !important;
+              margin-top:4px;
+            ">
+              ${escapeHTML(card.expiry)}
+            </div>
+
+          </div>
+
+          <div>
+
+            <div style="
+              font-size:10px;
+              letter-spacing:1.5px;
+              color:#fff !important;
+            ">
+              CVV
+            </div>
+
+            <div style="
+              font-size:15px;
+              font-weight:700;
+              color:#fff !important;
+              margin-top:4px;
+            ">
+              ${escapeHTML(card.cvv)}
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <button
+        type="button"
+        class="add-btn"
+        id="generateTestCard"
+        style="width:100%;"
+      >
+        🔄 Générer une nouvelle carte
+      </button>
+
+    </div>
+  `;
+
+}
+
+
+// ============================================================
+// CHECKOUT
+// ============================================================
+
+checkoutBtn?.addEventListener(
+  "click",
+  openCheckout
+);
+
+
+function openCheckout(){
+
+  if(!cart.length){
+
+    toast(
+      "Ton panier est vide 🛒"
+    );
+
+    return;
+
+  }
+
+  if(!currentUser){
+
+    toast(
+      "Connecte-toi pour commander."
+    );
+
+    showLoginForm();
+
+    return;
+
+  }
+
+  const subtotal =
+    getCartSubtotal();
+
+  showModal(
+    "Finaliser la commande",
+    `
+      <form id="checkoutForm">
+
+        <div style="
+          display:grid;
+          grid-template-columns:1fr 1fr;
+          gap:10px;
+          margin-bottom:14px;
+        ">
+
+          <div>
+
+            <label for="checkoutFirstName">
+              Prénom
+            </label>
+
+            <input
+              id="checkoutFirstName"
+              type="text"
+              autocomplete="given-name"
+              placeholder="Ton prénom"
+              required
+            >
+
+          </div>
+
+          <div>
+
+            <label for="checkoutLastName">
+              Nom
+            </label>
+
+            <input
+              id="checkoutLastName"
+              type="text"
+              autocomplete="family-name"
+              placeholder="Ton nom"
+              required
+            >
+
+          </div>
+
+        </div>
+
+        <div style="
+          margin-bottom:14px;
+        ">
+
+          <label for="checkoutAddress">
+            Adresse de livraison
+          </label>
+
+          <textarea
+            id="checkoutAddress"
+            required
+            rows="4"
+            autocomplete="street-address"
+            placeholder="Adresse complète"
+          ></textarea>
+
+        </div>
+
+        <div style="
+          padding:15px;
+          border-radius:14px;
+          background:rgba(255,255,255,.05);
+          margin:15px 0;
+        ">
+
+          <div style="
+            display:flex;
+            justify-content:space-between;
+          ">
+
+            <span>
+              Sous-total
+            </span>
+
+            <strong>
+              ${money(subtotal)}
+            </strong>
+
+          </div>
+
+          <div style="
+            display:flex;
+            justify-content:space-between;
+            margin-top:12px;
+            font-size:22px;
+          ">
+
+            <span>
+              Total
+            </span>
+
+            <strong id="checkoutFinal">
+              ${money(subtotal)}
+            </strong>
+
+          </div>
+
+        </div>
+
+        <h3>
+          Mode de paiement
+        </h3>
+
+        <div style="
+          display:grid;
+          gap:10px;
+          margin:12px 0 18px;
+        ">
+
+          <button
+            type="button"
+            class="view-btn payment-choice"
+            data-payment="paypal"
+          >
+            🅿️ PayPal
+          </button>
+
+          <button
+            type="button"
+            class="view-btn payment-choice"
+            data-payment="card"
+          >
+            💳 Carte bancaire
+          </button>
+
+        </div>
+
+        <input
+          type="hidden"
+          id="paymentMethod"
+          value=""
+        >
+
+        <div
+          id="paymentInfo"
+          style="margin-bottom:14px;"
+        ></div>
+
+        <button
+          type="submit"
+          class="add-btn"
+          id="checkoutSubmit"
+          style="width:100%;"
+        >
+          Continuer
+        </button>
+
+        <div
+          id="checkoutError"
+          style="
+            display:none;
+            color:#ff7777;
+            margin-top:12px;
+          "
+        ></div>
+
+      </form>
+    `
+  );
+
+  let paymentMethod = "";
+
+  document
+    .querySelectorAll(
+      ".payment-choice"
+    )
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          paymentMethod =
+            button.dataset.payment || "";
+
+          const input =
+            $("paymentMethod");
+
+          if(input){
+            input.value =
+              paymentMethod;
+          }
+
+          document
+            .querySelectorAll(
+              ".payment-choice"
+            )
+            .forEach(item => {
+
+              item.classList.remove(
+                "selected"
+              );
+
+            });
+
+          button.classList.add(
+            "selected"
+          );
+
+          const info =
+            $("paymentInfo");
+
+          if(!info){
+            return;
+          }
+
+          if(
+            paymentMethod ===
+            "paypal"
+          ){
+
+            info.innerHTML = `
+              <div style="
+                padding:12px;
+                border-radius:12px;
+                background:rgba(60,130,255,.1);
+              ">
+                Tu seras redirigé vers PayPal
+                pour effectuer le paiement.
+              </div>
+            `;
+
+          }else{
+
+            info.innerHTML = `
+              <div style="
+                padding:15px;
+                border-radius:14px;
+                background:rgba(255,255,255,.05);
+              ">
+
+                <div style="
+                  font-weight:700;
+                  margin-bottom:12px;
+                ">
+                  💳 Informations de carte
+                </div>
+
+                <label for="cardNumber">
+                  Numéro de carte
+                </label>
+
+                <input
+                  id="cardNumber"
+                  type="text"
+                  inputmode="numeric"
+                  autocomplete="off"
+                  placeholder="Numéro de carte"
+                  required
+                >
+
+                <label
+                  for="cardHolder"
+                  style="
+                    display:block;
+                    margin-top:10px;
+                  "
+                >
+                  Nom sur la carte
+                </label>
+
+                <input
+                  id="cardHolder"
+                  type="text"
+                  autocomplete="off"
+                  placeholder="Nom sur la carte"
+                  required
+                >
+
+                <div style="
+                  display:grid;
+                  grid-template-columns:1fr 1fr;
+                  gap:10px;
+                  margin-top:10px;
+                ">
+
+                  <div>
+
+                    <label for="cardExpiry">
+                      Expiration
+                    </label>
+
+                    <input
+                      id="cardExpiry"
+                      type="text"
+                      autocomplete="off"
+                      placeholder="MM/AA"
+                      required
+                    >
+
+                  </div>
+
+                  <div>
+
+                    <label for="cardCvv">
+                      CVV
+                    </label>
+
+                    <input
+                      id="cardCvv"
+                      type="text"
+                      inputmode="numeric"
+                      autocomplete="off"
+                      placeholder="CVV"
+                      required
+                    >
+
+                  </div>
+
+                </div>
+
+                <p style="
+                  margin-top:12px;
+                  color:var(--muted);
+                  font-size:13px;
+                ">
+                  Entre les informations de la carte
+                  créée depuis l’administration.
+                </p>
+
+              </div>
+            `;
+
+          }
+
+        }
+      );
+
+    });
+
+
+  $("checkoutForm")
+    ?.addEventListener(
+      "submit",
+      async event => {
+
+        event.preventDefault();
+
+        const firstName =
+          $("checkoutFirstName")
+            ?.value.trim() || "";
+
+        const lastName =
+          $("checkoutLastName")
+            ?.value.trim() || "";
+
+        const address =
+          $("checkoutAddress")
+            ?.value.trim() || "";
+
+        const errorBox =
+          $("checkoutError");
+
+        if(!firstName){
+
+          if(errorBox){
+
+            errorBox.textContent =
+              "Indique ton prénom.";
+
+            errorBox.style.display =
+              "block";
+
+          }
+
+          return;
+
+        }
+
+        if(!lastName){
+
+          if(errorBox){
+
+            errorBox.textContent =
+              "Indique ton nom.";
+
+            errorBox.style.display =
+              "block";
+
+          }
+
+          return;
+
+        }
+
+        if(!address){
+
+          if(errorBox){
+
+            errorBox.textContent =
+              "Indique ton adresse de livraison.";
+
+            errorBox.style.display =
+              "block";
+
+          }
+
+          return;
+
+        }
+
+        if(!paymentMethod){
+
+          if(errorBox){
+
+            errorBox.textContent =
+              "Choisis un moyen de paiement.";
+
+            errorBox.style.display =
+              "block";
+
+          }
+
+          return;
+
+        }
+
+        const submit =
+          $("checkoutSubmit");
+
+        if(submit){
+
+          submit.disabled = true;
+          submit.textContent =
+            "Création...";
+
+        }
+
+        try{
+
+          const total =
+            getCartSubtotal();
+
+          let paymentStatus =
+            "En attente";
+
+          if(
+            paymentMethod ===
+            "card"
+          ){
+
+            const card =
+              getTestCard();
+
+            if(!card){
+
+              throw new Error(
+                "Aucune carte n'a été créée dans l'administration."
+              );
+
+            }
+
+            const enteredNumber =
+              (
+                $("cardNumber")
+                  ?.value || ""
+              )
+                .replace(/\s+/g,"")
+                .trim();
+
+            const storedNumber =
+              card.number
+                .replace(/\s+/g,"")
+                .trim();
+
+            const enteredHolder =
+              (
+                $("cardHolder")
+                  ?.value || ""
+              )
+                .trim()
+                .toLowerCase();
+
+            const storedHolder =
+              card.holder
+                .trim()
+                .toLowerCase();
+
+            const enteredExpiry =
+              (
+                $("cardExpiry")
+                  ?.value || ""
+              )
+                .trim();
+
+            const enteredCvv =
+              (
+                $("cardCvv")
+                  ?.value || ""
+              )
+                .trim();
+
+            if(
+              enteredNumber !== storedNumber ||
+              enteredHolder !== storedHolder ||
+              enteredExpiry !== card.expiry ||
+              enteredCvv !== card.cvv
+            ){
+
+              throw new Error(
+                "Les informations de carte sont incorrectes."
+              );
+
+            }
+
+            paymentStatus =
+              "Payé";
+
+          }
+
+          const orderItems =
+            cart.map(
+              item => {
+
+                const product =
+                  getProduct(item.id);
+
+                const baseName =
+                  product?.name ||
+                  "Produit";
+
+                const displayName =
+                  item.option
+                    ? `${baseName} (${item.option})`
+                    : baseName;
+
+                return {
+
+                  id:
+                    item.id,
+
+                  name:
+                    displayName,
+
+                  option:
+                    item.option || "",
+
+                  price:
+                    Number(
+                      product?.price || 0
+                    ),
+
+                  quantity:
+                    Number(
+                      item.quantity || 1
+                    )
+
+                };
+
+              }
+            );
+
+          const orderData = {
+
+            userId:
+              currentUser.uid,
+
+            userEmail:
+              currentUser.email || "",
+
+            firstName,
+            lastName,
+
+            items:
+              orderItems,
+
+            subtotal:
+              total,
+
+            total,
+
+            address,
+
+            city:"",
+
+            status:
+              "Enregistrée",
+
+            paymentMethod,
+
+            paymentStatus,
+
+            tracking:"",
+
+            estimatedDelivery:"",
+
+            createdAt:
+              serverTimestamp()
+
+          };
+
+          const orderRef =
+            await addDoc(
+              collection(
+                db,
+                "orders"
+              ),
+              orderData
+            );
+
+          cart = [];
+
+          saveCart();
+          renderCart();
+
+          closeModal();
+
+          toast(
+            `Commande #${orderRef.id.slice(0,8)} créée 🎉`,
+            "success"
+          );
+
+          if(
+            paymentMethod === "paypal" &&
+            total > 0
+          ){
+
+            const paypalUrl =
+              `https://paypal.me/SH0PNOVA/${encodeURIComponent(
+                total.toFixed(2)
+              )}EUR`;
+
+            setTimeout(
+              () => {
+
+                window.open(
+                  paypalUrl,
+                  "_blank",
+                  "noopener,noreferrer"
+                );
+
+              },
+              400
+            );
+
+          }
+
+        }catch(error){
+
+          console.error(
+            "Firestore Checkout Error:",
+            error
+          );
+
+          if(errorBox){
+
+            errorBox.textContent =
+              `Erreur : ${
+                error.message ||
+                error.code ||
+                "inconnue"
+              }`;
+
+            errorBox.style.display =
+              "block";
+
+          }
+
+        }finally{
+
+          if(submit){
+
+            submit.disabled = false;
+            submit.textContent =
+              "Continuer";
+
+          }
+
+        }
+
+      }
+    );
+
+}
+
+
+// ============================================================
+// FACTURE
+// ============================================================
+
+function printInvoice(order){
+
+  const items =
+    Array.isArray(order.items)
+      ? order.items
+      : [];
+
+  const rows =
+    items.map(
+      item => {
+
+        const product =
+          getProduct(item.id);
+
+        const baseName =
+          product?.name ||
+          item.name ||
+          "Produit";
+
+        const name =
+          item.option
+            ? `${baseName} (${item.option})`
+            : baseName;
+
+        const price =
+          Number(
+            product?.price ??
+            item.price ??
+            0
+          );
+
+        const quantity =
+          Number(
+            item.quantity || 1
+          );
+
+        return `
+          <tr>
+
+            <td>
+              ${escapeHTML(name)}
+            </td>
+
+            <td>
+              ${quantity}
+            </td>
+
+            <td>
+              ${money(price)}
+            </td>
+
+            <td>
+              ${money(price * quantity)}
+            </td>
+
+          </tr>
+        `;
+
+      }
+    ).join("");
+
+  const customerName =
+    `${order.firstName || ""} ${order.lastName || ""}`
+      .trim();
+
+  const invoiceWindow =
+    window.open(
+      "",
+      "_blank",
+      "width=900,height=700"
+    );
+
+  if(!invoiceWindow){
+
+    toast(
+      "La fenêtre de facture a été bloquée.",
+      "error"
+    );
+
+    return;
+
+  }
+
+  invoiceWindow.document.write(`
+    <!DOCTYPE html>
+
+    <html lang="fr">
+
+    <head>
+
+      <meta charset="UTF-8">
+
+      <title>
+        Facture NovaShop
+      </title>
+
+      <style>
+
+        body{
+          font-family:Arial,sans-serif;
+          padding:40px;
+          color:#111827;
+        }
+
+        h1{
+          margin-bottom:5px;
+        }
+
+        .top{
+          display:flex;
+          justify-content:space-between;
+          margin-bottom:40px;
+        }
+
+        table{
+          width:100%;
+          border-collapse:collapse;
+          margin-top:30px;
+        }
+
+        th,
+        td{
+          border-bottom:1px solid #ddd;
+          padding:12px;
+          text-align:left;
+        }
+
+        .total{
+          margin-top:30px;
+          text-align:right;
+          font-size:24px;
+          font-weight:bold;
+        }
+
+        .small{
+          color:#666;
+          margin-top:30px;
+        }
+
+      </style>
+
+    </head>
+
+    <body>
+
+      <div class="top">
+
+        <div>
+
+          <h1>
+            NovaShop
+          </h1>
+
+          <p>
+            Boutique gaming
+          </p>
+
+        </div>
+
+        <div>
+
+          <strong>
+            Facture
+          </strong>
+
+          <p>
+            Commande #${escapeHTML(order.id)}
+          </p>
+
+        </div>
+
+      </div>
+
+      <h3>
+        Client
+      </h3>
+
+      ${
+        customerName
+          ? `
+            <p>
+              <strong>
+                ${escapeHTML(customerName)}
+              </strong>
+            </p>
+          `
+          : ""
+      }
+
+      <p>
+        ${escapeHTML(
+          order.userEmail || ""
+        )}
+      </p>
+
+      <p>
+        ${escapeHTML(
+          order.address || ""
+        )}
+      </p>
+
+      ${
+        order.city
+          ? `
+            <p>
+              ${escapeHTML(order.city)}
+            </p>
+          `
+          : ""
+      }
+
+      <h3>
+        Produits
+      </h3>
+
+      <table>
+
+        <thead>
+
+          <tr>
+            <th>Produit</th>
+            <th>Qté</th>
+            <th>Prix</th>
+            <th>Total</th>
+          </tr>
+
+        </thead>
+
+        <tbody>
+          ${rows}
+        </tbody>
+
+      </table>
+
+      <div class="total">
+        Total :
+        ${money(order.total || 0)}
+      </div>
+
+      <p class="small">
+        Statut :
+        ${escapeHTML(
+          order.status ||
+          "Enregistrée"
+        )}
+      </p>
+
+      <script>
+        window.onload = function(){
+          window.print();
+        };
+      <\/script>
+
+    </body>
+
+    </html>
+  `);
+
+  invoiceWindow.document.close();
+
+}
+
+
+// ============================================================
+// ADMIN
+// ============================================================
+
+adminBtn?.addEventListener(
+  "click",
+  openAdmin
+);
+
+
+function isAdminUser(){
+
+  return (
+    currentUser &&
+    (
+      currentUser.email || ""
+    ).toLowerCase() ===
+    ADMIN_EMAIL.toLowerCase()
+  );
+
+}
+
+
+function openAdmin(){
+
+  if(!isAdminUser()){
+
+    toast(
+      "Accès administrateur refusé.",
+      "error"
+    );
+
+    return;
+
+  }
+
+  const authorized =
+    localStorage.getItem(
+      ADMIN_ACCESS_KEY
+    ) === "true";
+
+  if(!authorized){
+
+    const code =
+      prompt(
+        "Code administrateur NovaShop :"
+      );
+
+    if(code !== ADMIN_CODE){
+
+      toast(
+        "Code administrateur incorrect.",
+        "error"
+      );
+
+      return;
+
+    }
+
+    localStorage.setItem(
+      ADMIN_ACCESS_KEY,
+      "true"
+    );
+
+  }
+
+  loadAdmin();
+
+}
+
+
+async function loadAdmin(){
+
+  if(!isAdminUser()){
+
+    toast(
+      "Accès administrateur refusé.",
+      "error"
+    );
+
+    return;
+
+  }
+
+  showModal(
+    "Administration NovaShop",
+    `
+      <div
+        id="adminLoading"
+        style="
+          text-align:center;
+          padding:30px;
+        "
+      >
+        Chargement...
+      </div>
+
+      <div id="adminContent"></div>
+    `
+  );
+
+  try{
+
+    const snapshot =
+      await getDocs(
+        collection(db,"orders")
+      );
+
+    const orders = [];
+
+    snapshot.forEach(item => {
+
+      orders.push({
+        id:item.id,
+        ...item.data()
+      });
+
+    });
+
+    orders.sort(
+      (a,b) => {
+
+        const aTime =
+          a.createdAt?.seconds || 0;
+
+        const bTime =
+          b.createdAt?.seconds || 0;
+
+        return bTime - aTime;
+
+      }
+    );
+
+    renderAdmin(
+      orders
+    );
+
+  }catch(error){
+
+    console.error(
+      "Admin Firestore Error:",
+      error
+    );
+
+    const loading =
+      $("adminLoading");
+
+    if(loading){
+
+      loading.innerHTML = `
+        <div style="color:#ff7777;">
+          Erreur Firestore :
+          ${escapeHTML(
+            error.message || ""
+          )}
+        </div>
+      `;
+
+    }
+
+  }
+
+}
+
+
+function renderAdmin(orders){
+
+  $("adminLoading")?.remove();
+
+  const content =
+    $("adminContent");
+
+  if(!content){
+    return;
+  }
+
+  const statuses = [
+    "Enregistrée",
+    "Acceptée",
+    "Préparation",
+    "En transit",
+    "Livraison proche",
+    "Livrée",
+    "Annulée",
+    "Remboursement en cours"
+  ];
+
+  content.innerHTML = `
+
+    <div style="
+      padding:15px;
+      margin-bottom:18px;
+      border-radius:16px;
+      background:rgba(80,120,255,.08);
+    ">
+
+      <strong>
+        🛡️ Administration
+      </strong>
+
+      <p style="margin-top:6px;">
+        ${orders.length}
+        commande${orders.length > 1 ? "s" : ""}
+      </p>
+
+    </div>
+
+    <div style="
+      padding:16px;
+      margin-bottom:18px;
+      border-radius:16px;
+      background:rgba(255,255,255,.04);
+    ">
+
+      <strong>
+        💳 Carte
+      </strong>
+
+      <p style="
+        margin-top:6px;
+        opacity:.7;
+      ">
+        Carte utilisable uniquement sur NovaShop.
+      </p>
+
+      <div id="testCardContainer">
+        ${renderTestCardHTML()}
+      </div>
+
+    </div>
+
+    <div style="
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-bottom:20px;
+    ">
+
+      <button
+        type="button"
+        class="view-btn"
+        id="adminRefresh"
+      >
+        🔄 Actualiser
+      </button>
+
+      <button
+        type="button"
+        class="view-btn"
+        id="adminLogout"
+      >
+        🔐 Quitter admin
+      </button>
+
+    </div>
+
+    <div id="adminOrders">
+
+      ${
+        orders.length
+          ? orders.map(
+              order => {
+
+                const items =
+                  Array.isArray(order.items)
+                    ? order.items
+                    : [];
+
+                const productsText =
+                  items.map(
+                    item => {
+
+                      const baseName =
+                        item.name ||
+                        item.id;
+
+                      return `${
+                        baseName
+                      }${
+                        item.option
+                          ? ` (${item.option})`
+                          : ""
+                      } ×${
+                        item.quantity || 1
+                      }`;
+
+                    }
+                  ).join(", ");
+
+                const customerName =
+                  `${order.firstName || ""} ${order.lastName || ""}`
+                    .trim();
+
+                return `
+
+                  <div
+                    class="admin-order"
+                    style="
+                      padding:16px;
+                      margin-bottom:15px;
+                      border:1px solid rgba(255,255,255,.1);
+                      border-radius:16px;
+                    "
+                  >
+
+                    <div style="
+                      display:flex;
+                      justify-content:space-between;
+                      gap:10px;
+                      flex-wrap:wrap;
+                    ">
+
+                      <strong>
+                        #${escapeHTML(
+                          order.id.slice(0,8)
+                        )}
+                      </strong>
+
+                      <strong>
+                        ${money(
+                          order.total || 0
+                        )}
+                      </strong>
+
+                    </div>
+
+                    ${
+                      customerName
+                        ? `
+                          <p style="
+                            margin:8px 0;
+                          ">
+                            👤 <strong>
+                              ${escapeHTML(customerName)}
+                            </strong>
+                          </p>
+                        `
+                        : `
+                          <p style="
+                            margin:8px 0;
+                          ">
+                            👤 Nom non renseigné
+                          </p>
+                        `
+                    }
+
+                    <p style="
+                      margin:8px 0;
+                      opacity:.85;
+                    ">
+                      📧 ${
+                        escapeHTML(
+                          order.userEmail ||
+                          "Inconnu"
+                        )
+                      }
+                    </p>
+
+                    <p style="
+                      margin:8px 0;
+                    ">
+                      💳 ${
+                        escapeHTML(
+                          order.paymentMethod ||
+                          "N/A"
+                        )
+                      }
+                      |
+                      ${
+                        escapeHTML(
+                          order.paymentStatus ||
+                          "En attente"
+                        )
+                      }
+                    </p>
+
+                    <p style="
+                      margin:8px 0;
+                      opacity:.8;
+                    ">
+                      ${escapeHTML(
+                        productsText
+                      )}
+                    </p>
+
+                    <label>
+                      Statut
+                    </label>
+
+                    <select
+                      class="admin-status"
+                      data-id="${escapeAttr(order.id)}"
+                      style="
+                        width:100%;
+                        margin:6px 0 10px;
+                      "
+                    >
+
+                      ${
+                        statuses.map(
+                          status => `
+                            <option
+                              value="${escapeAttr(status)}"
+                              ${
+                                order.status ===
+                                status
+                                  ? "selected"
+                                  : ""
+                              }
+                            >
+                              ${escapeHTML(status)}
+                            </option>
+                          `
+                        ).join("")
+                      }
+
+                    </select>
+
+                    <input
+                      class="admin-city"
+                      data-id="${escapeAttr(order.id)}"
+                      value="${escapeAttr(order.city || "")}"
+                      placeholder="Ville de destination"
+                      style="
+                        width:100%;
+                        margin-bottom:8px;
+                      "
+                    >
+
+                    <input
+                      class="admin-tracking"
+                      data-id="${escapeAttr(order.id)}"
+                      value="${escapeAttr(order.tracking || "")}"
+                      placeholder="Numéro de suivi"
+                      style="
+                        width:100%;
+                        margin-bottom:8px;
+                      "
+                    >
+
+                    <input
+                      class="admin-delivery"
+                      data-id="${escapeAttr(order.id)}"
+                      value="${escapeAttr(order.estimatedDelivery || "")}"
+                      placeholder="Livraison estimée"
+                      style="
+                        width:100%;
+                        margin-bottom:10px;
+                      "
+                    >
+
+                    <div style="
+                      display:flex;
+                      gap:8px;
+                      flex-wrap:wrap;
+                    ">
+
+                      <button
+                        type="button"
+                        class="add-btn admin-save"
+                        data-id="${escapeAttr(order.id)}"
+                      >
+                        💾 Enregistrer
+                      </button>
+
+                      <button
+                        type="button"
+                        class="view-btn admin-paid"
+                        data-id="${escapeAttr(order.id)}"
+                      >
+                        💰 Marquer payé
+                      </button>
+
+                      <button
+                        type="button"
+                        class="view-btn admin-invoice"
+                        data-id="${escapeAttr(order.id)}"
+                      >
+                        🧾 Facture
+                      </button>
+
+                      <button
+                        type="button"
+                        class="view-btn admin-delete"
+                        data-id="${escapeAttr(order.id)}"
+                        style="color:#ff7777;"
+                      >
+                        🗑️ Supprimer
+                      </button>
+
+                    </div>
+
+                  </div>
+
+                `;
+
+              }
+            ).join("")
+          : `
+            <div style="
+              text-align:center;
+              padding:30px;
+            ">
+
+              <div style="font-size:50px;">
+                📦
+              </div>
+
+              <h3>
+                Aucune commande
+              </h3>
+
+            </div>
+          `
+      }
+
+    </div>
+  `;
+
+
+  $("adminRefresh")
+    ?.addEventListener(
+      "click",
+      loadAdmin
+    );
+
+
+  $("adminLogout")
+    ?.addEventListener(
+      "click",
+      () => {
+
+        localStorage.removeItem(
+          ADMIN_ACCESS_KEY
+        );
+
+        closeModal();
+
+        toast(
+          "Mode admin fermé."
+        );
+
+      }
+    );
+
+
+  attachTestCardButton();
+
+
+  document
+    .querySelectorAll(
+      ".admin-save"
+    )
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        async () => {
+
+          await saveAdminOrder(
+            button.dataset.id
+          );
+
+        }
+      );
+
+    });
+
+
+  document
+    .querySelectorAll(
+      ".admin-paid"
+    )
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        async () => {
+
+          await markOrderPaid(
+            button.dataset.id
+          );
+
+        }
+      );
+
+    });
+
+
+  document
+    .querySelectorAll(
+      ".admin-invoice"
+    )
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          const order =
+            orders.find(
+              item =>
+                item.id ===
+                button.dataset.id
+            );
+
+          if(order){
+            printInvoice(order);
+          }
+
+        }
+      );
+
+    });
+
+
+  document
+    .querySelectorAll(
+      ".admin-delete"
+    )
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        async () => {
+
+          await deleteAdminOrder(
+            button.dataset.id
+          );
+
+        }
+      );
+
+    });
+
+}
+
+
+function attachTestCardButton(){
+
+  const button =
+    $("generateTestCard");
+
+  if(!button){
+    return;
+  }
+
+  button.addEventListener(
+    "click",
+    () => {
+
+      generateTestCard();
+
+      const container =
+        $("testCardContainer");
+
+      if(container){
+
+        container.innerHTML =
+          renderTestCardHTML();
+
+        attachTestCardButton();
+
+      }
+
+    }
+  );
+
+}
+
+
+async function saveAdminOrder(id){
+
+  try{
+
+    const safeId =
+      typeof CSS !== "undefined" &&
+      typeof CSS.escape === "function"
+        ? CSS.escape(id)
+        : id.replace(
+            /["\\]/g,
+            "\\$&"
+          );
+
+    const status =
+      document.querySelector(
+        `.admin-status[data-id="${safeId}"]`
+      )?.value ||
+      "Enregistrée";
+
+    const city =
+      document.querySelector(
+        `.admin-city[data-id="${safeId}"]`
+      )?.value ||
+      "";
+
+    const tracking =
+      document.querySelector(
+        `.admin-tracking[data-id="${safeId}"]`
+      )?.value ||
+      "";
+
+    const estimatedDelivery =
+      document.querySelector(
+        `.admin-delivery[data-id="${safeId}"]`
+      )?.value ||
+      "";
+
+    await updateDoc(
+      doc(
+        db,
+        "orders",
+        id
+      ),
+      {
+        status,
+        city,
+        tracking,
+        estimatedDelivery,
+        updatedAt:
+          serverTimestamp()
+      }
+    );
+
+    toast(
+      "Commande mise à jour ✅",
+      "success"
+    );
+
+  }catch(error){
+
+    console.error(error);
+
+    toast(
+      `Erreur : ${
+        error.message ||
+        error.code ||
+        "inconnue"
+      }`,
+      "error"
+    );
+
+  }
+
+}
+
+
+async function markOrderPaid(id){
+
+  try{
+
+    await updateDoc(
+      doc(
+        db,
+        "orders",
+        id
+      ),
+      {
+        paymentStatus:"Payé",
+        updatedAt:
+          serverTimestamp()
+      }
+    );
+
+    toast(
+      "Paiement marqué comme payé 💰",
+      "success"
+    );
+
+    loadAdmin();
+
+  }catch(error){
+
+    console.error(error);
+
+    toast(
+      `Erreur : ${
+        error.message ||
+        error.code ||
+        "inconnue"
+      }`,
+      "error"
+    );
+
+  }
+
+}
+
+
+async function deleteAdminOrder(id){
+
+  const confirmed =
+    confirm(
+      "Supprimer définitivement cette commande ?"
+    );
+
+  if(!confirmed){
+    return;
+  }
+
+  try{
+
+    await deleteDoc(
+      doc(
+        db,
+        "orders",
+        id
+      )
+    );
+
+    toast(
+      "Commande supprimée 🗑️",
+      "success"
+    );
+
+    loadAdmin();
+
+  }catch(error){
+
+    console.error(error);
+
+    toast(
+      `Erreur : ${
+        error.message ||
+        error.code ||
+        "inconnue"
+      }`,
+      "error"
+    );
+
+  }
+
+}
+
+
+// ============================================================
+// SETTINGS
+// ============================================================
+
+settingsBtn?.addEventListener(
+  "click",
+  openSettings
+);
+
+
+function getTheme(){
+
+  return (
+    localStorage.getItem(
+      "novaThemeChoice"
+    ) || "dark"
+  );
+
+}
+
+
+function applyTheme(){
+
+  const theme =
+    getTheme();
+
+  if(theme === "light"){
+
+    document.documentElement.dataset.theme =
+      "light";
+
+  }else if(theme === "dark"){
+
+    document.documentElement.dataset.theme =
+      "dark";
+
+  }else{
+
+    const prefersDark =
+      window.matchMedia &&
+      window.matchMedia(
+        "(prefers-color-scheme: dark)"
+      ).matches;
+
+    document.documentElement.dataset.theme =
+      prefersDark
+        ? "dark"
+        : "light";
+
+  }
+
+}
+
+
+function openSettings(){
+
+  const current =
+    getTheme();
+
+  showModal(
+    "Paramètres",
+    `
+      <div>
+
+        <h3>
+          Apparence
+        </h3>
+
+        <div style="
+          display:grid;
+          gap:10px;
+          margin-top:12px;
+        ">
+
+          <button
+            type="button"
+            class="view-btn theme-choice"
+            data-theme="dark"
+          >
+            🌙 Mode sombre
+          </button>
+
+          <button
+            type="button"
+            class="view-btn theme-choice"
+            data-theme="light"
+          >
+            ☀️ Mode clair
+          </button>
+
+          <button
+            type="button"
+            class="view-btn theme-choice"
+            data-theme="auto"
+          >
+            🖥️ Automatique
+          </button>
+
+        </div>
+
+        <p style="
+          margin-top:20px;
+          opacity:.7;
+        ">
+          Thème actuel :
+          ${escapeHTML(current)}
+        </p>
+
+      </div>
+    `
+  );
+
+  document
+    .querySelectorAll(
+      ".theme-choice"
+    )
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          localStorage.setItem(
+            "novaThemeChoice",
+            button.dataset.theme
+          );
+
+          applyTheme();
+
+          toast(
+            "Thème mis à jour ✨",
+            "success"
+          );
+
+          closeModal();
+
+        }
+      );
+
+    });
+
+}
+
+
+// ============================================================
+// AUTH STATE
+// ============================================================
+
+onAuthStateChanged(
+  auth,
+  user => {
+
+    currentUser =
+      user || null;
+
+    if(adminBtn){
+
+      adminBtn.style.display =
+        isAdminUser()
+          ? "inline-flex"
+          : "none";
+
+    }
+
+  }
+);
+
+
+// ============================================================
+// ESC
+// ============================================================
+
+document.addEventListener(
+  "keydown",
+  event => {
+
+    if(event.key !== "Escape"){
+      return;
+    }
+
+    closeModal();
+    closeCart();
+
+  }
+);
+
+
+// ============================================================
+// CLIC DEHORS MODAL
+// ============================================================
+
+modal?.addEventListener(
+  "click",
+  event => {
+
+    if(event.target === modal){
+
+      closeModal();
+
+    }
+
+  }
+);
+
+
+// ============================================================
+// ERREURS FIREBASE
+// ============================================================
+
+window.addEventListener(
+  "unhandledrejection",
+  event => {
+
+    const error =
+      event.reason;
+
+    console.error(
+      "Unhandled Promise Rejection:",
+      error
+    );
+
+    if(
+      error?.code?.startsWith(
+        "auth/"
+      )
+    ){
+
+      toast(
+        authError(error),
+        "error"
+      );
+
+    }
+
+  }
+);
+
+
+// ============================================================
+// INITIALISATION
+// ============================================================
+
+applyTheme();
+
+renderCategories();
+
+renderProducts();
+
+renderCart();
+
+
+// ============================================================
+// API PUBLIQUE
 // ============================================================
 
 window.NovaShop = {
@@ -4850,31 +5456,30 @@ window.NovaShop = {
   },
 
   addToCart,
-
   removeFromCart,
-
   changeCartQuantity,
 
   openCart,
-
   closeCart,
 
   openProduct,
 
   openAccount,
-
   openOrders,
 
   openSettings,
 
   renderProducts,
-
   renderCart,
 
   getCartCount,
-
   getCartSubtotal,
 
   money
 
 };
+
+
+console.log(
+  "NovaShop chargé avec succès 🚀"
+);
