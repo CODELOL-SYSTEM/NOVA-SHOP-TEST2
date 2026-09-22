@@ -2071,9 +2071,9 @@ function renderProducts() {
                 color:var(--accent,#2d8cff);
               ">
                 ${
-                  Number(product.price || 0) > 0
-                    ? money(product.price)
-                    : "Prix à définir"
+         <div class="price">
+  ${money(product.price)}
+</div>
                 }
               </strong>
 
