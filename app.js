@@ -589,7 +589,7 @@ const products = [
     name:"Cables USB Accsup CABLE USB-C VERS USB-A 1M NOIR",
     category:"Adaptateurs / câbles / chargeurs",
     price:1,
-    image:""
+    image:"https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcRTbZBP9B2ZFpEsUD0AvNVwSq0_B-6_0GsDu3IetIMN8RMZJ2lyTDuYx7bb9GPIQjXhISHbaR4aEk-SzagBrynePs6wAuNpNgtJ3t4ZQj0FS9_oBKzFpPBG7Q"
   },
 
   {
@@ -717,7 +717,7 @@ const products = [
     name:"Xbox Manette sans fil",
     category:"Manettes & consoles",
     price:59.99,
-    image:"https://m.media-amazon.com/images/I/71fQ5g9X8PL._AC_SL1500_.jpg",
+    image:"https://encrypted-tbn2.gstatic.com/shopping?q=tbn:ANd9GcQ6wIhtxNP2QaG-jop_9zEc3ocgOoyylR8yGQtaOLB03vo8XmDPnxXQ28G-mPSoQrkAa8KKzGM2epP28dnD111Wswi0WwK5SzwB6lXHJD3HehOVs4qWa_hJ",
     options:{
       "Couleur":[
         "Rose",
@@ -749,7 +749,7 @@ const products = [
     name:"Xbox Series X - 1TB Digital Edition avec 1 manette sans fil",
     category:"Manettes & consoles",
     price:599.99,
-    image:"https://m.media-amazon.com/images/I/51OVjV4-GqL._AC_SL1500_.jpg"
+    image:"https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcTcusD9yD4CjvQ0KMaGfy7gks_86ZGPuTzO_g1WC408gKBPciVCGw0ZWdXs1XwR0ShylmqAB0NldAlBiHbyg-vFex0zI51YOExZsztGXboUXrL31Z5qHNHDew"
   },
 
   {
