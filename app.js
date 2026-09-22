@@ -56,7 +56,7 @@ const ADMIN_ACCESS_KEY = "novaAdminAuthorized";
 const TEST_CARD_STORAGE_KEY = "novaTestCard";
 
 const FALLBACK_IMAGE =
-  "https://placehold.co/400x300/111827/ffffff?text=NovaShop";
+  "";
 
 
 // ============================================================
