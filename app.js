@@ -758,6 +758,174 @@ const products = [
     category:"Manettes & consoles",
     price:500,
     image:"https://m.media-amazon.com/images/I/61PI59RfWvL._AC_SX425_.jpg"
+  },
+
+  {
+    id:"p85",
+    name:"AMD Ryzen 7 7800X3D Processeur avec La Technologie 3D V-Cache",
+    category:"Composants PC",
+    price:210,
+    image:"https://m.media-amazon.com/images/I/51HqC0rU9HL._AC_SL1500_.jpg"
+  },
+
+  {
+    id:"p86",
+    name:"Gigabyte GeForce RTX 5060 Gaming OC 8 GB GDDR7 Carte Graphique",
+    category:"Composants PC",
+    price:370,
+    image:"https://owp.klarna.com/product/3255091236/Gigabyte-GeForce-RTX-5060-Gaming-OC-8-GB-GDDR7-Carte-Graphique.jpg"
+  },
+
+  {
+    id:"p87",
+    name:"Kingston Fury Beast 16 Go (kit de 2 x 8 Go) DDR4 3200 MHz CL16",
+    category:"Composants PC",
+    price:130,
+    image:"https://media.carrefour.fr/medias/200b40feb62d42f6a4c771cda396d77b/p_1500x1500/243be29db1e34fc180ed7c680853713a_image.jpg"
+  },
+
+  {
+    id:"p88",
+    name:"Kingston Fury Beast RGB - 2 x 8 Go (16 Go) - DDR5 5600 MHz - CL40",
+    category:"Composants PC",
+    price:224.99,
+    image:"https://media.materiel.net/r1600/products/MN0005959138_0005959149_0005959155.jpg"
+  },
+
+  {
+    id:"p89",
+    name:"PC de bureau gaming NitroPC Avancé - AMD Ryzen 5 3400G, Radeon Graphics, 16 GB RAM, 480 GB SSD, Windows 11 Pro",
+    category:"PC Gamer préconstruits",
+    price:400,
+    image:"https://media.cdn.kaufland.de/product-images/1024x1024/57311bd00475df1753bd85ef932af8d2.webp"
+  },
+
+  {
+    id:"p90",
+    name:"PC Gamer FIREFLY",
+    category:"PC Gamer préconstruits",
+    price:500,
+    image:"https://powerlab.fr/24081-large_default/pc-gamer-firefly-rtx-5060-ti.jpg"
+  },
+
+  {
+    id:"p91",
+    name:"PC - CSL Sprint 5700 (Ryzen 7)",
+    category:"PC Gamer préconstruits",
+    price:700,
+    image:"https://www.csl-computer.com/fr/media/catalog/product/cache/5/image/3000x3000/9df78eab33525d08d6e5fb8d27136e95/c/s/csl_aerovision-haupt_c40_nvidia_rot_3000px_3.webp"
+  },
+
+  {
+    id:"p92",
+    name:"STGsivir PC Gamer Fixe, Ryzen 5 3400G, Vega 11, 16G DDR4, 512G SSD",
+    category:"PC Gamer préconstruits",
+    price:499.99,
+    image:"https://m.media-amazon.com/images/I/71klP2vcMEL._AC_SL1500_.jpg"
+  },
+
+  {
+    id:"p93",
+    name:"Unité centrale Gamer MSI EDM0009-R5/RTX 5060/16Go/480Go",
+    category:"PC Gamer préconstruits",
+    price:565.99,
+    image:"https://www.electrodepot.fr/media/catalog/product/cache/207e23213cf636ccdef205098cf3c8a3/P10019951.jpg"
+  },
+
+  {
+    id:"p94",
+    name:"ROG Strix G16 (2025) G615",
+    category:"PC portables Gaming & Travail",
+    price:1200,
+    image:"https://dlcdnwebimgs.asus.com/gain/E20134EE-F6B3-4AB7-A1B5-73795E91011D/w717/h525/fwebp"
+  },
+
+  {
+    id:"p95",
+    name:"PC Portable HP OmniBook 3 17-dk0006nf",
+    category:"PC portables Gaming & Travail",
+    price:600,
+    image:"https://www.hp.com/fr-fr/shop/media/catalog/product/c/o/costa_17_dfplus_ob3_cs_glaciersilver_t_nt_fhd_ir_non-backlit_freedos_catalog_front_5964372_cus_1.png?store=fr-fr&image-type=image&auto=avif&quality=100&format=jpg&bg-color=ffffff&type=image-product&width=100p&fit=bounds"
+  },
+
+  {
+    id:"p96",
+    name:"PC portable HP Victus by HP Laptop 16-d1148nf",
+    category:"PC portables Gaming & Travail",
+    price:500,
+    image:"https://image.darty.com/darty?type=image&source=photos/2022/10/26/7081693A_163303179.jpg&height=457"
+  },
+
+  {
+    id:"p97",
+    name:"Razer BlackWidow V4 Pro (Switches Jaune) - Clavier Gamer Mécanique Snap Tap, 8 Touches Macro, Repose-Poignet, AZERTY FR",
+    category:"Claviers",
+    price:76.99,
+    image:"https://m.media-amazon.com/images/I/81az+Oft-qL._AC_SL1500_.jpg"
+  },
+
+  {
+    id:"p98",
+    name:"SteelSeries Apex Pro TKL Gen 3 – Commutateurs magnétiques analogiques OmniPoint 3.0, OLED, RGB, USB-C, FR AZERTY",
+    category:"Claviers",
+    price:44.90,
+    image:"https://m.media-amazon.com/images/I/719h65mTOEL._AC_SL1500_.jpg"
+  },
+
+  {
+    id:"p99",
+    name:"ROG Strix Scope II 96 WL - Clavier gaming 96%, switches mécaniques, AZERTY",
+    category:"Claviers",
+    price:40,
+    image:"https://m.media-amazon.com/images/I/71zmZbiUeAL._AC_SL1500_.jpg"
+  },
+
+  {
+    id:"p100",
+    name:"CORSAIR K70 PRO TKL - Clavier gaming programmable à effet Hall hautes performances avec déclenchement rapide (FR)",
+    category:"Claviers",
+    price:56,
+    image:"https://assets.corsair.com/image/upload/c_pad,q_85,h_1100,w_1100/products/Gaming-Keyboards/K70-PRO-TKL-APAC/Gallery/CH-911911G-JP/K70_PRO_TKL_BLACK_03.webp"
+  },
+
+  {
+    id:"p101",
+    name:"Razer Viper V3 Pro",
+    category:"Souris",
+    price:42,
+    image:"https://assets3.razerzone.com/02qK-glNv1jIlWfqTGAu7tkinI8=/1500x1000/https%3A%2F%2Fmedias-p1.phoenix.razer.com%2Fsys-master-phoenix-images-container%2Fhf0%2Fhba%2F9926492422174%2F250630-viper-v3-pro-faker-1500x1000-1.jpg"
+  },
+
+  {
+    id:"p102",
+    name:"SteelSeries Aerox 5 Wireless",
+    category:"Souris",
+    price:50,
+    image:"https://images.ctfassets.net/hmm5mo4qf4mf/Y5b4NuEOsLlGhzxCjj9Vf/697e03b1c784f66cb82b3a529964666f/aerox_5_wl_black_img_buy_01.png__1920x1080_crop-fit_optimize_subsampling-2-900.png?fm=webp&q=90&fit=scale&w=1200"
+  },
+
+  {
+    id:"p103",
+    name:"Razer Gigantus V2 XXL - Tapis de souris gaming souple 940 x 410 x 4mm",
+    category:"Tapis de souris",
+    price:15,
+    image:"https://m.media-amazon.com/images/I/61HtU7NkHQL._AC_SL1500_.jpg"
+  },
+
+  {
+    id:"p104",
+    name:"Logitech G840 Tapis de Souris de Jeu Extra Large - 900 x 400 x 3 mm",
+    category:"Tapis de souris",
+    price:30,
+    image:"https://m.media-amazon.com/images/I/51jlC3sL0BL._AC_SL1500_.jpg"
+  },
+
+  {
+    id:"p105",
+    name:"SteelSeries QcK Heavy XXL - Tapis de souris gaming en tissu - Base antidérapante 6mm",
+    category:"Tapis de souris",
+    price:15,
+    image:"https://m.media-amazon.com/images/I/41HRqeeyZ0L._AC_SL1500_.jpg"
   }
 
 ];
@@ -1258,6 +1426,7 @@ function renderProducts(){
         <p style="margin-top:8px;">
           Essaie une autre recherche ou catégorie.
         </p>
+
       </div>
     `;
 
@@ -2162,1589 +2331,6 @@ modalClose?.addEventListener(
   "click",
   closeModal
 );
-
-
-// ============================================================
-// RECHERCHE / TRI
-// ============================================================
-
-searchInput?.addEventListener(
-  "input",
-  event => {
-
-    state.search =
-      event.target.value || "";
-
-    renderProducts();
-
-  }
-);
-
-
-sortSelect?.addEventListener(
-  "change",
-  event => {
-
-    state.sort =
-      event.target.value || "default";
-
-    renderProducts();
-
-  }
-);
-
-
-// ============================================================
-// LOGIN
-// ============================================================
-
-function showLoginForm(){
-
-  showModal(
-    "Connexion",
-    `
-      <form id="loginForm">
-
-        <label for="loginEmail">
-          Email
-        </label>
-
-        <input
-          id="loginEmail"
-          type="email"
-          autocomplete="email"
-          placeholder="ton@email.com"
-          required
-        >
-
-        <label
-          for="loginPassword"
-          style="display:block;margin-top:12px;"
-        >
-          Mot de passe
-        </label>
-
-        <input
-          id="loginPassword"
-          type="password"
-          autocomplete="current-password"
-          placeholder="Mot de passe"
-          required
-        >
-
-        <button
-          type="submit"
-          class="add-btn"
-          style="
-            width:100%;
-            margin-top:16px;
-          "
-        >
-          Se connecter
-        </button>
-
-        <button
-          type="button"
-          class="view-btn"
-          id="openRegister"
-          style="
-            width:100%;
-            margin-top:8px;
-          "
-        >
-          Créer un compte
-        </button>
-
-        <div
-          id="loginError"
-          style="
-            display:none;
-            color:#ff7777;
-            margin-top:12px;
-          "
-        ></div>
-
-      </form>
-    `
-  );
-
-  $("openRegister")
-    ?.addEventListener(
-      "click",
-      showRegisterForm
-    );
-
-  $("loginForm")
-    ?.addEventListener(
-      "submit",
-      login
-    );
-
-}
-
-
-function showRegisterForm(){
-
-  showModal(
-    "Créer un compte",
-    `
-      <form id="registerForm">
-
-        <label for="registerEmail">
-          Email
-        </label>
-
-        <input
-          id="registerEmail"
-          type="email"
-          autocomplete="email"
-          placeholder="ton@email.com"
-          required
-        >
-
-        <label
-          for="registerPassword"
-          style="display:block;margin-top:12px;"
-        >
-          Mot de passe
-        </label>
-
-        <input
-          id="registerPassword"
-          type="password"
-          autocomplete="new-password"
-          placeholder="Mot de passe"
-          minlength="6"
-          required
-        >
-
-        <button
-          type="submit"
-          class="add-btn"
-          style="
-            width:100%;
-            margin-top:16px;
-          "
-        >
-          Créer mon compte
-        </button>
-
-        <button
-          type="button"
-          class="view-btn"
-          id="backToLogin"
-          style="
-            width:100%;
-            margin-top:8px;
-          "
-        >
-          Retour à la connexion
-        </button>
-
-        <div
-          id="registerError"
-          style="
-            display:none;
-            color:#ff7777;
-            margin-top:12px;
-          "
-        ></div>
-
-      </form>
-    `
-  );
-
-  $("backToLogin")
-    ?.addEventListener(
-      "click",
-      showLoginForm
-    );
-
-  $("registerForm")
-    ?.addEventListener(
-      "submit",
-      register
-    );
-
-}
-
-
-async function login(event){
-
-  event.preventDefault();
-
-  const email =
-    $("loginEmail")
-      ?.value.trim() || "";
-
-  const password =
-    $("loginPassword")
-      ?.value || "";
-
-  const errorBox =
-    $("loginError");
-
-  try{
-
-    await signInWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
-
-    closeModal();
-
-    toast(
-      "Connexion réussie 👋",
-      "success"
-    );
-
-  }catch(error){
-
-    console.error(error);
-
-    if(errorBox){
-
-      errorBox.textContent =
-        authError(error);
-
-      errorBox.style.display =
-        "block";
-
-    }
-
-  }
-
-}
-
-
-async function register(event){
-
-  event.preventDefault();
-
-  const email =
-    $("registerEmail")
-      ?.value.trim() || "";
-
-  const password =
-    $("registerPassword")
-      ?.value || "";
-
-  const errorBox =
-    $("registerError");
-
-  try{
-
-    await createUserWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
-
-    closeModal();
-
-    toast(
-      "Compte créé avec succès 🎉",
-      "success"
-    );
-
-  }catch(error){
-
-    console.error(error);
-
-    if(errorBox){
-
-      errorBox.textContent =
-        authError(error);
-
-      errorBox.style.display =
-        "block";
-
-    }
-
-  }
-
-}
-
-
-async function logout(){
-
-  try{
-
-    await signOut(auth);
-
-    closeModal();
-
-    toast(
-      "Déconnexion réussie.",
-      "success"
-    );
-
-  }catch(error){
-
-    toast(
-      authError(error),
-      "error"
-    );
-
-  }
-
-}
-
-
-// ============================================================
-// COMPTE
-// ============================================================
-
-accountBtn?.addEventListener(
-  "click",
-  openAccount
-);
-
-
-function openAccount(){
-
-  if(!currentUser){
-
-    showLoginForm();
-
-    return;
-
-  }
-
-  showModal(
-    "Mon compte",
-    `
-      <div>
-
-        <div style="
-          padding:16px;
-          border-radius:15px;
-          background:rgba(80,120,255,.08);
-          margin-bottom:15px;
-        ">
-
-          <strong>
-            👤 Compte connecté
-          </strong>
-
-          <p style="
-            margin-top:7px;
-            opacity:.8;
-          ">
-            ${escapeHTML(
-              currentUser.email || ""
-            )}
-          </p>
-
-        </div>
-
-        <button
-          type="button"
-          class="add-btn"
-          id="accountOrders"
-          style="
-            width:100%;
-            margin-bottom:8px;
-          "
-        >
-          📦 Mes commandes
-        </button>
-
-        <button
-          type="button"
-          class="view-btn"
-          id="accountLogout"
-          style="width:100%;"
-        >
-          🚪 Se déconnecter
-        </button>
-
-      </div>
-    `
-  );
-
-  $("accountOrders")
-    ?.addEventListener(
-      "click",
-      openOrders
-    );
-
-  $("accountLogout")
-    ?.addEventListener(
-      "click",
-      logout
-    );
-
-}
-
-
-// ============================================================
-// COMMANDES
-// ============================================================
-
-ordersBtn?.addEventListener(
-  "click",
-  openOrders
-);
-
-
-async function openOrders(){
-
-  if(!currentUser){
-
-    showLoginForm();
-
-    return;
-
-  }
-
-  showModal(
-    "Mes commandes",
-    `
-      <div
-        id="ordersLoading"
-        style="
-          text-align:center;
-          padding:30px;
-        "
-      >
-        Chargement des commandes...
-      </div>
-
-      <div id="ordersList"></div>
-    `
-  );
-
-  try{
-
-    const ordersQuery =
-      query(
-        collection(db,"orders"),
-        where(
-          "userId",
-          "==",
-          currentUser.uid
-        )
-      );
-
-    const snapshot =
-      await getDocs(
-        ordersQuery
-      );
-
-    const orders = [];
-
-    snapshot.forEach(item => {
-
-      orders.push({
-        id:item.id,
-        ...item.data()
-      });
-
-    });
-
-    orders.sort(
-      (a,b) => {
-
-        const dateA =
-          a.createdAt?.seconds || 0;
-
-        const dateB =
-          b.createdAt?.seconds || 0;
-
-        return dateB - dateA;
-
-      }
-    );
-
-    $("ordersLoading")?.remove();
-
-    const list =
-      $("ordersList");
-
-    if(!list){
-      return;
-    }
-
-    if(!orders.length){
-
-      list.innerHTML = `
-        <div style="
-          text-align:center;
-          padding:30px;
-        ">
-
-          <div style="font-size:50px;">
-            📦
-          </div>
-
-          <h3>
-            Aucune commande
-          </h3>
-
-          <p style="margin-top:8px;">
-            Tu n'as pas encore passé de commande.
-          </p>
-
-        </div>
-      `;
-
-      return;
-
-    }
-
-    list.innerHTML =
-      orders.map(
-        order => {
-
-          const total =
-            Number(
-              order.total || 0
-            );
-
-          const status =
-            order.status ||
-            "Enregistrée";
-
-          const customerName =
-            `${order.firstName || ""} ${order.lastName || ""}`
-              .trim();
-
-          return `
-            <div
-              class="order-card"
-              style="
-                padding:16px;
-                margin-bottom:12px;
-                border:1px solid rgba(255,255,255,.08);
-                border-radius:16px;
-              "
-            >
-
-              <div style="
-                display:flex;
-                justify-content:space-between;
-                gap:10px;
-                margin-bottom:8px;
-              ">
-
-                <strong>
-                  Commande #${escapeHTML(
-                    order.id.slice(0,8)
-                  )}
-                </strong>
-
-                <strong>
-                  ${money(total)}
-                </strong>
-
-              </div>
-
-              ${
-                customerName
-                  ? `
-                    <div style="
-                      margin-bottom:8px;
-                      opacity:.9;
-                    ">
-                      👤 ${escapeHTML(customerName)}
-                    </div>
-                  `
-                  : ""
-              }
-
-              <div style="margin-bottom:12px;">
-                Statut :
-                <strong>
-                  ${escapeHTML(status)}
-                </strong>
-              </div>
-
-              <button
-                type="button"
-                class="view-btn"
-                data-order-id="${escapeAttr(order.id)}"
-              >
-                Voir la commande
-              </button>
-
-            </div>
-          `;
-
-        }
-      ).join("");
-
-    list.addEventListener(
-      "click",
-      event => {
-
-        const button =
-          event.target.closest(
-            "[data-order-id]"
-          );
-
-        if(!button){
-          return;
-        }
-
-        const order =
-          orders.find(
-            item =>
-              item.id ===
-              button.dataset.orderId
-          );
-
-        if(order){
-          openOrderDetails(order);
-        }
-
-      }
-    );
-
-  }catch(error){
-
-    console.error(
-      "Firestore Orders Error:",
-      error
-    );
-
-    const loading =
-      $("ordersLoading");
-
-    if(loading){
-
-      loading.innerHTML = `
-        <div style="color:#ff7777;">
-          Impossible de charger les commandes.
-          <br><br>
-          ${escapeHTML(
-            error.message || ""
-          )}
-        </div>
-      `;
-
-    }
-
-  }
-
-}
-
-
-// ============================================================
-// DÉTAIL COMMANDE
-// ============================================================
-
-function openOrderDetails(order){
-
-  const items =
-    Array.isArray(order.items)
-      ? order.items
-      : [];
-
-  const status =
-    order.status ||
-    "Enregistrée";
-
-  const timeline = [
-    "Enregistrée",
-    "Acceptée",
-    "Préparation",
-    "En transit",
-    "Livraison proche",
-    "Livrée"
-  ];
-
-  const currentIndex =
-    timeline.indexOf(status);
-
-  const productsHTML =
-    items.map(
-      item => {
-
-        const product =
-          getProduct(item.id);
-
-        const name =
-          product?.name ||
-          item.name ||
-          "Produit";
-
-        const displayName =
-          item.option
-            ? `${name} (${item.option})`
-            : name;
-
-        const price =
-          Number(
-            product?.price ??
-            item.price ??
-            0
-          );
-
-        const quantity =
-          Number(
-            item.quantity || 1
-          );
-
-        return `
-          <div style="
-            display:flex;
-            justify-content:space-between;
-            gap:12px;
-            padding:10px 0;
-            border-bottom:1px solid rgba(255,255,255,.07);
-          ">
-
-            <span>
-              ${escapeHTML(displayName)}
-              × ${quantity}
-            </span>
-
-            <strong>
-              ${money(price * quantity)}
-            </strong>
-
-          </div>
-        `;
-
-      }
-    ).join("");
-
-  const customerName =
-    `${order.firstName || ""} ${order.lastName || ""}`
-      .trim();
-
-  const timelineHTML =
-    status === "Annulée"
-      ? `
-        <div style="
-          padding:12px;
-          border-radius:12px;
-          background:rgba(255,60,60,.12);
-          color:#ff7777;
-        ">
-          ❌ Commande annulée
-        </div>
-      `
-      : timeline.map(
-          (step,index) => {
-
-            const active =
-              currentIndex >= index;
-
-            return `
-              <div style="
-                display:flex;
-                align-items:center;
-                gap:10px;
-                margin:8px 0;
-                opacity:${active ? 1 : .4};
-              ">
-
-                <span>
-                  ${active ? "●" : "○"}
-                </span>
-
-                <span>
-                  ${step}
-                </span>
-
-              </div>
-            `;
-
-          }
-        ).join("");
-
-  showModal(
-    `Commande #${escapeHTML(
-      order.id.slice(0,8)
-    )}`,
-    `
-      <div>
-
-        <div style="
-          padding:16px;
-          border-radius:16px;
-          background:rgba(80,120,255,.08);
-          margin-bottom:18px;
-        ">
-
-          ${
-            customerName
-              ? `
-                <div style="
-                  margin-bottom:9px;
-                  font-weight:700;
-                ">
-                  👤 ${escapeHTML(customerName)}
-                </div>
-              `
-              : ""
-          }
-
-          ${
-            order.userEmail
-              ? `
-                <div style="
-                  margin-bottom:9px;
-                  opacity:.8;
-                ">
-                  📧 ${escapeHTML(order.userEmail)}
-                </div>
-              `
-              : ""
-          }
-
-          <strong>
-            Statut :
-            ${escapeHTML(status)}
-          </strong>
-
-          ${
-            order.tracking
-              ? `
-                <div style="margin-top:8px;">
-                  Suivi :
-                  ${escapeHTML(order.tracking)}
-                </div>
-              `
-              : ""
-          }
-
-          ${
-            order.estimatedDelivery
-              ? `
-                <div style="margin-top:8px;">
-                  Livraison estimée :
-                  ${escapeHTML(order.estimatedDelivery)}
-                </div>
-              `
-              : ""
-          }
-
-          ${
-            order.city
-              ? `
-                <div style="margin-top:8px;">
-                  📍 Destination :
-                  ${escapeHTML(order.city)}
-                </div>
-              `
-              : ""
-          }
-
-        </div>
-
-        <h3>
-          Suivi
-        </h3>
-
-        <div style="
-          margin:12px 0 20px;
-        ">
-          ${timelineHTML}
-        </div>
-
-        <h3>
-          Produits
-        </h3>
-
-        <div style="
-          margin:10px 0 20px;
-        ">
-          ${productsHTML}
-        </div>
-
-        ${
-          order.address
-            ? `
-              <h3>
-                Livraison
-              </h3>
-
-              <p style="
-                margin:8px 0 20px;
-              ">
-                ${escapeHTML(order.address)}
-              </p>
-            `
-            : ""
-        }
-
-        <div style="
-          display:flex;
-          justify-content:space-between;
-          font-size:20px;
-          padding-top:15px;
-          border-top:1px solid rgba(255,255,255,.1);
-        ">
-
-          <strong>
-            Total
-          </strong>
-
-          <strong>
-            ${money(order.total || 0)}
-          </strong>
-
-        </div>
-
-        <button
-          type="button"
-          class="add-btn"
-          id="invoiceBtn"
-          style="
-            width:100%;
-            margin-top:18px;
-          "
-        >
-          🧾 Voir la facture
-        </button>
-
-      </div>
-    `
-  );
-
-  $("invoiceBtn")
-    ?.addEventListener(
-      "click",
-      () => printInvoice(order)
-    );
-
-}
-
-
-// ============================================================
-// CARTE TEST
-// ============================================================
-
-function getTestCard(){
-
-  try{
-
-    const raw =
-      localStorage.getItem(
-        TEST_CARD_STORAGE_KEY
-      );
-
-    if(!raw){
-      return null;
-    }
-
-    const parsed =
-      JSON.parse(raw);
-
-    if(
-      !parsed ||
-      typeof parsed.number !== "string" ||
-      typeof parsed.expiry !== "string" ||
-      typeof parsed.cvv !== "string" ||
-      typeof parsed.holder !== "string"
-    ){
-
-      return null;
-
-    }
-
-    return parsed;
-
-  }catch{
-
-    return null;
-
-  }
-
-}
-
-
-function generateTestCard(){
-
-  const digits =
-    Array.from(
-      {length:12},
-      () =>
-        Math.floor(
-          Math.random() * 10
-        )
-    ).join("");
-
-  const number =
-    `9999 ${digits.slice(0,4)} ${digits.slice(4,8)} ${digits.slice(8,12)}`;
-
-  const month =
-    String(
-      Math.floor(
-        Math.random() * 12
-      ) + 1
-    ).padStart(2,"0");
-
-  const year =
-    String(
-      new Date().getFullYear() +
-      Math.floor(
-        Math.random() * 5
-      ) + 1
-    ).slice(-2);
-
-  const cvv =
-    String(
-      Math.floor(
-        Math.random() * 900
-      ) + 100
-    );
-
-  const card = {
-    number,
-    holder:"NOVASHOP CARD",
-    expiry:`${month}/${year}`,
-    cvv
-  };
-
-  localStorage.setItem(
-    TEST_CARD_STORAGE_KEY,
-    JSON.stringify(card)
-  );
-
-  return card;
-
-}
-
-
-function renderTestCardHTML(){
-
-  const card =
-    getTestCard();
-
-  if(!card){
-
-    return `
-      <div style="
-        padding:16px;
-        border-radius:15px;
-        background:rgba(255,255,255,.04);
-        margin-top:15px;
-      ">
-
-        <strong>
-          💳 Carte
-        </strong>
-
-        <p style="
-          margin-top:7px;
-          opacity:.7;
-        ">
-          Aucune carte créée.
-        </p>
-
-        <button
-          type="button"
-          class="add-btn"
-          id="generateTestCard"
-          style="
-            width:100%;
-            margin-top:12px;
-          "
-        >
-          Générer une carte
-        </button>
-
-      </div>
-    `;
-
-  }
-
-  return `
-    <div style="margin-top:15px;">
-
-      <div style="
-        width:100%;
-        max-width:420px;
-        min-height:235px;
-        margin:12px auto 16px;
-        padding:24px;
-        border-radius:22px;
-        background:#050505;
-        color:#fff !important;
-        border:1px solid #252525;
-        box-shadow:0 18px 50px rgba(0,0,0,.45);
-        display:flex;
-        flex-direction:column;
-        justify-content:space-between;
-      ">
-
-        <div style="
-          font-size:24px;
-          font-weight:700;
-          letter-spacing:3px;
-          color:#fff !important;
-        ">
-          ${escapeHTML(card.number)}
-        </div>
-
-        <div style="
-          display:grid;
-          grid-template-columns:1fr auto auto;
-          gap:18px;
-          align-items:end;
-        ">
-
-          <div>
-
-            <div style="
-              font-size:10px;
-              letter-spacing:1.5px;
-              color:#fff !important;
-            ">
-              TITULAIRE
-            </div>
-
-            <div style="
-              font-size:15px;
-              font-weight:700;
-              color:#fff !important;
-              margin-top:4px;
-            ">
-              ${escapeHTML(card.holder)}
-            </div>
-
-          </div>
-
-          <div>
-
-            <div style="
-              font-size:10px;
-              letter-spacing:1.5px;
-              color:#fff !important;
-            ">
-              EXP
-            </div>
-
-            <div style="
-              font-size:15px;
-              font-weight:700;
-              color:#fff !important;
-              margin-top:4px;
-            ">
-              ${escapeHTML(card.expiry)}
-            </div>
-
-          </div>
-
-          <div>
-
-            <div style="
-              font-size:10px;
-              letter-spacing:1.5px;
-              color:#fff !important;
-            ">
-              CVV
-            </div>
-
-            <div style="
-              font-size:15px;
-              font-weight:700;
-              color:#fff !important;
-              margin-top:4px;
-            ">
-              ${escapeHTML(card.cvv)}
-            </div>
-
-          </div>
-
-        </div>
-
-      </div>
-
-      <button
-        type="button"
-        class="add-btn"
-        id="generateTestCard"
-        style="width:100%;"
-      >
-        🔄 Générer une nouvelle carte
-      </button>
-
-    </div>
-  `;
-
-}
-
-
-// ============================================================
-// CHECKOUT
-// ============================================================
-
-checkoutBtn?.addEventListener(
-  "click",
-  openCheckout
-);
-
-
-function openCheckout(){
-
-  if(!cart.length){
-
-    toast(
-      "Ton panier est vide 🛒"
-    );
-
-    return;
-
-  }
-
-  if(!currentUser){
-
-    toast(
-      "Connecte-toi pour commander."
-    );
-
-    showLoginForm();
-
-    return;
-
-  }
-
-  const subtotal =
-    getCartSubtotal();
-
-  showModal(
-    "Finaliser la commande",
-    `
-      <form id="checkoutForm">
-
-        <div style="
-          display:grid;
-          grid-template-columns:1fr 1fr;
-          gap:10px;
-          margin-bottom:14px;
-        ">
-
-          <div>
-
-            <label for="checkoutFirstName">
-              Prénom
-            </label>
-
-            <input
-              id="checkoutFirstName"
-              type="text"
-              autocomplete="given-name"
-              placeholder="Ton prénom"
-              required
-            >
-
-          </div>
-
-          <div>
-
-            <label for="checkoutLastName">
-              Nom
-            </label>
-
-            <input
-              id="checkoutLastName"
-              type="text"
-              autocomplete="family-name"
-              placeholder="Ton nom"
-              required
-            >
-
-          </div>
-
-        </div>
-
-        <div style="
-          margin-bottom:14px;
-        ">
-
-          <label for="checkoutAddress">
-            Adresse de livraison
-          </label>
-
-          <textarea
-            id="checkoutAddress"
-            required
-            rows="4"
-            autocomplete="street-address"
-            placeholder="Adresse complète"
-          ></textarea>
-
-        </div>
-
-        <div style="
-          padding:15px;
-          border-radius:14px;
-          background:rgba(255,255,255,.05);
-          margin:15px 0;
-        ">
-
-          <div style="
-            display:flex;
-            justify-content:space-between;
-          ">
-
-            <span>
-              Sous-total
-            </span>
-
-            <strong>
-              ${money(subtotal)}
-            </strong>
-
-          </div>
-
-          <div style="
-            display:flex;
-            justify-content:space-between;
-            margin-top:12px;
-            font-size:22px;
-          ">
-
-            <span>
-              Total
-            </span>
-
-            <strong id="checkoutFinal">
-              ${money(subtotal)}
-            </strong>
-
-          </div>
-
-        </div>
-
-        <h3>
-          Mode de paiement
-        </h3>
-
-        <div style="
-          display:grid;
-          gap:10px;
-          margin:12px 0 18px;
-        ">
-
-          <button
-            type="button"
-            class="view-btn payment-choice"
-            data-payment="paypal"
-          >
-            🅿️ PayPal
-          </button>
-
-          <button
-            type="button"
-            class="view-btn payment-choice"
-            data-payment="card"
-          >
-            💳 Carte bancaire
-          </button>
-
-        </div>
-
-        <input
-          type="hidden"
-          id="paymentMethod"
-          value=""
-        >
-
-        <div
-          id="paymentInfo"
-          style="margin-bottom:14px;"
-        ></div>
-
-        <button
-          type="submit"
-          class="add-btn"
-          id="checkoutSubmit"
-          style="width:100%;"
-        >
-          Continuer
-        </button>
-
-        <div
-          id="checkoutError"
-          style="
-            display:none;
-            color:#ff7777;
-            margin-top:12px;
-          "
-        ></div>
-
-      </form>
-    `
-  );
-
-  let paymentMethod = "";
-
-  document
-    .querySelectorAll(
-      ".payment-choice"
-    )
-    .forEach(button => {
-
-      button.addEventListener(
-        "click",
-        () => {
-
-          paymentMethod =
-            button.dataset.payment || "";
-
-          const input =
-            $("paymentMethod");
-
-          if(input){
-            input.value =
-              paymentMethod;
-          }
-
-          document
-            .querySelectorAll(
-              ".payment-choice"
-            )
-            .forEach(item => {
-
-              item.classList.remove(
-                "selected"
-              );
-
-            });
-
-          button.classList.add(
-            "selected"
-          );
-
-          const info =
-            $("paymentInfo");
-
-          if(!info){
-            return;
-          }
-
-          if(
-            paymentMethod ===
-            "paypal"
-          ){
-
-            info.innerHTML = `
-              <div style="
-                padding:12px;
-                border-radius:12px;
-                background:rgba(60,130,255,.1);
-              ">
-                Tu seras redirigé vers PayPal
-                pour effectuer le paiement.
-              </div>
-            `;
-
-          }else{
-
-            info.innerHTML = `
-              <div style="
-                padding:15px;
-                border-radius:14px;
-                background:rgba(255,255,255,.05);
-              ">
-
-                <div style="
-                  font-weight:700;
-                  margin-bottom:12px;
-                ">
-                  💳 Informations de carte
-                </div>
-
-                <label for="cardNumber">
-                  Numéro de carte
-                </label>
-
-                <input
-                  id="cardNumber"
-                  type="text"
-                  inputmode="numeric"
-                  autocomplete="off"
-                  placeholder="Numéro de carte"
-                  required
-                >
-
-                <label
-                  for="cardHolder"
-                  style="
-                    display:block;
-                    margin-top:10px;
-                  "
-                >
-                  Nom sur la carte
-                </label>
-
-                <input
-                  id="cardHolder"
-                  type="text"
-                  autocomplete="off"
-                  placeholder="Nom sur la carte"
-                  required
-                >
-
-                <div style="
-                  display:grid;
-                  grid-template-columns:1fr 1fr;
-                  gap:10px;
-                  margin-top:10px;
-                ">
-
-                  <div>
-
-                    <label for="cardExpiry">
-                      Expiration
-                    </label>
-
-                    <input
-                      id="cardExpiry"
-                      type="text"
-                      autocomplete="off"
-                      placeholder="MM/AA"
-                      required
-                    >
-
-                  </div>
-
-                  <div>
-
-                    <label for="cardCvv">
-                      CVV
-                    </label>
-
-                    <input
-                      id="cardCvv"
-                      type="text"
-                      inputmode="numeric"
-                      autocomplete="off"
-                      placeholder="CVV"
-                      required
-                    >
-
-                  </div>
-
-                </div>
-
-                <p style="
-                  margin-top:12px;
-                  color:var(--muted);
-                  font-size:13px;
-                ">
-                  Entre les informations de la carte
-                  créée depuis l’administration.
-                </p>
-
-              </div>
-            `;
-
-          }
-
-        }
-      );
-
-    });
-
-
   $("checkoutForm")
     ?.addEventListener(
       "submit",
@@ -3837,6 +2423,7 @@ function openCheckout(){
         if(submit){
 
           submit.disabled = true;
+
           submit.textContent =
             "Création...";
 
@@ -3975,6 +2562,7 @@ function openCheckout(){
               currentUser.email || "",
 
             firstName,
+
             lastName,
 
             items:
@@ -4017,6 +2605,7 @@ function openCheckout(){
           cart = [];
 
           saveCart();
+
           renderCart();
 
           closeModal();
@@ -4077,6 +2666,7 @@ function openCheckout(){
           if(submit){
 
             submit.disabled = false;
+
             submit.textContent =
               "Continuer";
 
@@ -4462,7 +3052,10 @@ async function loadAdmin(){
 
     const snapshot =
       await getDocs(
-        collection(db,"orders")
+        collection(
+          db,
+          "orders"
+        )
       );
 
     const orders = [];
@@ -4876,13 +3469,11 @@ function renderAdmin(orders){
     </div>
   `;
 
-
   $("adminRefresh")
     ?.addEventListener(
       "click",
       loadAdmin
     );
-
 
   $("adminLogout")
     ?.addEventListener(
@@ -4902,9 +3493,7 @@ function renderAdmin(orders){
       }
     );
 
-
   attachTestCardButton();
-
 
   document
     .querySelectorAll(
@@ -4925,7 +3514,6 @@ function renderAdmin(orders){
 
     });
 
-
   document
     .querySelectorAll(
       ".admin-paid"
@@ -4945,7 +3533,6 @@ function renderAdmin(orders){
 
     });
 
-
   document
     .querySelectorAll(
       ".admin-invoice"
@@ -4964,14 +3551,17 @@ function renderAdmin(orders){
             );
 
           if(order){
-            printInvoice(order);
+
+            printInvoice(
+              order
+            );
+
           }
 
         }
       );
 
     });
-
 
   document
     .querySelectorAll(
@@ -4993,7 +3583,9 @@ function renderAdmin(orders){
     });
 
 }
-
+// ============================================================
+// CARTE TEST
+// ============================================================
 
 function attachTestCardButton(){
 
@@ -5027,6 +3619,10 @@ function attachTestCardButton(){
 
 }
 
+
+// ============================================================
+// ADMIN : SAUVEGARDE COMMANDE
+// ============================================================
 
 async function saveAdminOrder(id){
 
@@ -5104,6 +3700,10 @@ async function saveAdminOrder(id){
 }
 
 
+// ============================================================
+// ADMIN : MARQUER PAYÉ
+// ============================================================
+
 async function markOrderPaid(id){
 
   try{
@@ -5145,6 +3745,10 @@ async function markOrderPaid(id){
 
 }
 
+
+// ============================================================
+// ADMIN : SUPPRESSION COMMANDE
+// ============================================================
 
 async function deleteAdminOrder(id){
 
@@ -5452,27 +4056,35 @@ window.NovaShop = {
   products,
 
   get currentUser(){
+
     return currentUser;
+
   },
 
   addToCart,
+
   removeFromCart,
+
   changeCartQuantity,
 
   openCart,
+
   closeCart,
 
   openProduct,
 
   openAccount,
+
   openOrders,
 
   openSettings,
 
   renderProducts,
+
   renderCart,
 
   getCartCount,
+
   getCartSubtotal,
 
   money
