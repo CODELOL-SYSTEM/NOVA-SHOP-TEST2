@@ -1,3 +1,4 @@
+```js
 // ============================================================
 // NOVASHOP - APP.JS COMPLET
 // Firebase Auth + Firestore
@@ -41,20 +42,31 @@ const firebaseConfig = {
   measurementId: "G-XNY5X2VMY9"
 };
 
-const firebaseApp = initializeApp(firebaseConfig);
+const firebaseApp =
+  initializeApp(firebaseConfig);
 
-const auth = getAuth(firebaseApp);
-const db = getFirestore(firebaseApp);
+const auth =
+  getAuth(firebaseApp);
+
+const db =
+  getFirestore(firebaseApp);
 
 
 // ============================================================
 // CONFIGURATION
 // ============================================================
 
-const ADMIN_EMAIL = "pc2alex.les@gmail.com";
-const ADMIN_CODE = "NOVA-ADMIN-2026";
-const ADMIN_ACCESS_KEY = "novaAdminAuthorized";
-const TEST_CARD_STORAGE_KEY = "novaTestCard";
+const ADMIN_EMAIL =
+  "pc2alex.les@gmail.com";
+
+const ADMIN_CODE =
+  "NOVA-ADMIN-2026";
+
+const ADMIN_ACCESS_KEY =
+  "novaAdminAuthorized";
+
+const TEST_CARD_STORAGE_KEY =
+  "novaTestCard";
 
 
 // ============================================================
@@ -937,15 +949,17 @@ const products = [
 
 let currentUser = null;
 
-let cart = loadStorage(
-  "nova_cart",
-  []
-);
+let cart =
+  loadStorage(
+    "nova_cart",
+    []
+  );
 
-let favorites = loadStorage(
-  "nova_favorites",
-  []
-);
+let favorites =
+  loadStorage(
+    "nova_favorites",
+    []
+  );
 
 let state = {
   search:"",
@@ -1035,7 +1049,7 @@ const toastContainer =
 // UTILITAIRES
 // ============================================================
 
-function loadStorage(key, fallback){
+function loadStorage(key,fallback){
 
   try{
 
@@ -1415,6 +1429,7 @@ function renderProducts(){
 
     productGrid.innerHTML = `
       <div class="empty-products">
+
         <div style="font-size:48px;">
           🔎
         </div>
@@ -1949,6 +1964,7 @@ function addToCart(id,option=""){
   }
 
   saveCart();
+
   renderCart();
 
   toast(
@@ -1971,6 +1987,7 @@ function removeFromCart(index){
   cart.splice(index,1);
 
   saveCart();
+
   renderCart();
 
 }
@@ -1996,6 +2013,7 @@ function changeCartQuantity(index,delta){
   }
 
   saveCart();
+
   renderCart();
 
 }
@@ -2331,1258 +2349,6 @@ modalClose?.addEventListener(
   "click",
   closeModal
 );
-  $("checkoutForm")
-    ?.addEventListener(
-      "submit",
-      async event => {
-
-        event.preventDefault();
-
-        const firstName =
-          $("checkoutFirstName")
-            ?.value.trim() || "";
-
-        const lastName =
-          $("checkoutLastName")
-            ?.value.trim() || "";
-
-        const address =
-          $("checkoutAddress")
-            ?.value.trim() || "";
-
-        const errorBox =
-          $("checkoutError");
-
-        if(!firstName){
-
-          if(errorBox){
-
-            errorBox.textContent =
-              "Indique ton prénom.";
-
-            errorBox.style.display =
-              "block";
-
-          }
-
-          return;
-
-        }
-
-        if(!lastName){
-
-          if(errorBox){
-
-            errorBox.textContent =
-              "Indique ton nom.";
-
-            errorBox.style.display =
-              "block";
-
-          }
-
-          return;
-
-        }
-
-        if(!address){
-
-          if(errorBox){
-
-            errorBox.textContent =
-              "Indique ton adresse de livraison.";
-
-            errorBox.style.display =
-              "block";
-
-          }
-
-          return;
-
-        }
-
-        if(!paymentMethod){
-
-          if(errorBox){
-
-            errorBox.textContent =
-              "Choisis un moyen de paiement.";
-
-            errorBox.style.display =
-              "block";
-
-          }
-
-          return;
-
-        }
-
-        const submit =
-          $("checkoutSubmit");
-
-        if(submit){
-
-          submit.disabled = true;
-
-          submit.textContent =
-            "Création...";
-
-        }
-
-        try{
-
-          const total =
-            getCartSubtotal();
-
-          let paymentStatus =
-            "En attente";
-
-          if(
-            paymentMethod ===
-            "card"
-          ){
-
-            const card =
-              getTestCard();
-
-            if(!card){
-
-              throw new Error(
-                "Aucune carte n'a été créée dans l'administration."
-              );
-
-            }
-
-            const enteredNumber =
-              (
-                $("cardNumber")
-                  ?.value || ""
-              )
-                .replace(/\s+/g,"")
-                .trim();
-
-            const storedNumber =
-              card.number
-                .replace(/\s+/g,"")
-                .trim();
-
-            const enteredHolder =
-              (
-                $("cardHolder")
-                  ?.value || ""
-              )
-                .trim()
-                .toLowerCase();
-
-            const storedHolder =
-              card.holder
-                .trim()
-                .toLowerCase();
-
-            const enteredExpiry =
-              (
-                $("cardExpiry")
-                  ?.value || ""
-              )
-                .trim();
-
-            const enteredCvv =
-              (
-                $("cardCvv")
-                  ?.value || ""
-              )
-                .trim();
-
-            if(
-              enteredNumber !== storedNumber ||
-              enteredHolder !== storedHolder ||
-              enteredExpiry !== card.expiry ||
-              enteredCvv !== card.cvv
-            ){
-
-              throw new Error(
-                "Les informations de carte sont incorrectes."
-              );
-
-            }
-
-            paymentStatus =
-              "Payé";
-
-          }
-
-          const orderItems =
-            cart.map(
-              item => {
-
-                const product =
-                  getProduct(item.id);
-
-                const baseName =
-                  product?.name ||
-                  "Produit";
-
-                const displayName =
-                  item.option
-                    ? `${baseName} (${item.option})`
-                    : baseName;
-
-                return {
-
-                  id:
-                    item.id,
-
-                  name:
-                    displayName,
-
-                  option:
-                    item.option || "",
-
-                  price:
-                    Number(
-                      product?.price || 0
-                    ),
-
-                  quantity:
-                    Number(
-                      item.quantity || 1
-                    )
-
-                };
-
-              }
-            );
-
-          const orderData = {
-
-            userId:
-              currentUser.uid,
-
-            userEmail:
-              currentUser.email || "",
-
-            firstName,
-
-            lastName,
-
-            items:
-              orderItems,
-
-            subtotal:
-              total,
-
-            total,
-
-            address,
-
-            city:"",
-
-            status:
-              "Enregistrée",
-
-            paymentMethod,
-
-            paymentStatus,
-
-            tracking:"",
-
-            estimatedDelivery:"",
-
-            createdAt:
-              serverTimestamp()
-
-          };
-
-          const orderRef =
-            await addDoc(
-              collection(
-                db,
-                "orders"
-              ),
-              orderData
-            );
-
-          cart = [];
-
-          saveCart();
-
-          renderCart();
-
-          closeModal();
-
-          toast(
-            `Commande #${orderRef.id.slice(0,8)} créée 🎉`,
-            "success"
-          );
-
-          if(
-            paymentMethod === "paypal" &&
-            total > 0
-          ){
-
-            const paypalUrl =
-              `https://paypal.me/SH0PNOVA/${encodeURIComponent(
-                total.toFixed(2)
-              )}EUR`;
-
-            setTimeout(
-              () => {
-
-                window.open(
-                  paypalUrl,
-                  "_blank",
-                  "noopener,noreferrer"
-                );
-
-              },
-              400
-            );
-
-          }
-
-        }catch(error){
-
-          console.error(
-            "Firestore Checkout Error:",
-            error
-          );
-
-          if(errorBox){
-
-            errorBox.textContent =
-              `Erreur : ${
-                error.message ||
-                error.code ||
-                "inconnue"
-              }`;
-
-            errorBox.style.display =
-              "block";
-
-          }
-
-        }finally{
-
-          if(submit){
-
-            submit.disabled = false;
-
-            submit.textContent =
-              "Continuer";
-
-          }
-
-        }
-
-      }
-    );
-
-}
-
-
-// ============================================================
-// FACTURE
-// ============================================================
-
-function printInvoice(order){
-
-  const items =
-    Array.isArray(order.items)
-      ? order.items
-      : [];
-
-  const rows =
-    items.map(
-      item => {
-
-        const product =
-          getProduct(item.id);
-
-        const baseName =
-          product?.name ||
-          item.name ||
-          "Produit";
-
-        const name =
-          item.option
-            ? `${baseName} (${item.option})`
-            : baseName;
-
-        const price =
-          Number(
-            product?.price ??
-            item.price ??
-            0
-          );
-
-        const quantity =
-          Number(
-            item.quantity || 1
-          );
-
-        return `
-          <tr>
-
-            <td>
-              ${escapeHTML(name)}
-            </td>
-
-            <td>
-              ${quantity}
-            </td>
-
-            <td>
-              ${money(price)}
-            </td>
-
-            <td>
-              ${money(price * quantity)}
-            </td>
-
-          </tr>
-        `;
-
-      }
-    ).join("");
-
-  const customerName =
-    `${order.firstName || ""} ${order.lastName || ""}`
-      .trim();
-
-  const invoiceWindow =
-    window.open(
-      "",
-      "_blank",
-      "width=900,height=700"
-    );
-
-  if(!invoiceWindow){
-
-    toast(
-      "La fenêtre de facture a été bloquée.",
-      "error"
-    );
-
-    return;
-
-  }
-
-  invoiceWindow.document.write(`
-    <!DOCTYPE html>
-
-    <html lang="fr">
-
-    <head>
-
-      <meta charset="UTF-8">
-
-      <title>
-        Facture NovaShop
-      </title>
-
-      <style>
-
-        body{
-          font-family:Arial,sans-serif;
-          padding:40px;
-          color:#111827;
-        }
-
-        h1{
-          margin-bottom:5px;
-        }
-
-        .top{
-          display:flex;
-          justify-content:space-between;
-          margin-bottom:40px;
-        }
-
-        table{
-          width:100%;
-          border-collapse:collapse;
-          margin-top:30px;
-        }
-
-        th,
-        td{
-          border-bottom:1px solid #ddd;
-          padding:12px;
-          text-align:left;
-        }
-
-        .total{
-          margin-top:30px;
-          text-align:right;
-          font-size:24px;
-          font-weight:bold;
-        }
-
-        .small{
-          color:#666;
-          margin-top:30px;
-        }
-
-      </style>
-
-    </head>
-
-    <body>
-
-      <div class="top">
-
-        <div>
-
-          <h1>
-            NovaShop
-          </h1>
-
-          <p>
-            Boutique gaming
-          </p>
-
-        </div>
-
-        <div>
-
-          <strong>
-            Facture
-          </strong>
-
-          <p>
-            Commande #${escapeHTML(order.id)}
-          </p>
-
-        </div>
-
-      </div>
-
-      <h3>
-        Client
-      </h3>
-
-      ${
-        customerName
-          ? `
-            <p>
-              <strong>
-                ${escapeHTML(customerName)}
-              </strong>
-            </p>
-          `
-          : ""
-      }
-
-      <p>
-        ${escapeHTML(
-          order.userEmail || ""
-        )}
-      </p>
-
-      <p>
-        ${escapeHTML(
-          order.address || ""
-        )}
-      </p>
-
-      ${
-        order.city
-          ? `
-            <p>
-              ${escapeHTML(order.city)}
-            </p>
-          `
-          : ""
-      }
-
-      <h3>
-        Produits
-      </h3>
-
-      <table>
-
-        <thead>
-
-          <tr>
-            <th>Produit</th>
-            <th>Qté</th>
-            <th>Prix</th>
-            <th>Total</th>
-          </tr>
-
-        </thead>
-
-        <tbody>
-          ${rows}
-        </tbody>
-
-      </table>
-
-      <div class="total">
-        Total :
-        ${money(order.total || 0)}
-      </div>
-
-      <p class="small">
-        Statut :
-        ${escapeHTML(
-          order.status ||
-          "Enregistrée"
-        )}
-      </p>
-
-      <script>
-        window.onload = function(){
-          window.print();
-        };
-      <\/script>
-
-    </body>
-
-    </html>
-  `);
-
-  invoiceWindow.document.close();
-
-}
-
-
-// ============================================================
-// ADMIN
-// ============================================================
-
-adminBtn?.addEventListener(
-  "click",
-  openAdmin
-);
-
-
-function isAdminUser(){
-
-  return (
-    currentUser &&
-    (
-      currentUser.email || ""
-    ).toLowerCase() ===
-    ADMIN_EMAIL.toLowerCase()
-  );
-
-}
-
-
-function openAdmin(){
-
-  if(!isAdminUser()){
-
-    toast(
-      "Accès administrateur refusé.",
-      "error"
-    );
-
-    return;
-
-  }
-
-  const authorized =
-    localStorage.getItem(
-      ADMIN_ACCESS_KEY
-    ) === "true";
-
-  if(!authorized){
-
-    const code =
-      prompt(
-        "Code administrateur NovaShop :"
-      );
-
-    if(code !== ADMIN_CODE){
-
-      toast(
-        "Code administrateur incorrect.",
-        "error"
-      );
-
-      return;
-
-    }
-
-    localStorage.setItem(
-      ADMIN_ACCESS_KEY,
-      "true"
-    );
-
-  }
-
-  loadAdmin();
-
-}
-
-
-async function loadAdmin(){
-
-  if(!isAdminUser()){
-
-    toast(
-      "Accès administrateur refusé.",
-      "error"
-    );
-
-    return;
-
-  }
-
-  showModal(
-    "Administration NovaShop",
-    `
-      <div
-        id="adminLoading"
-        style="
-          text-align:center;
-          padding:30px;
-        "
-      >
-        Chargement...
-      </div>
-
-      <div id="adminContent"></div>
-    `
-  );
-
-  try{
-
-    const snapshot =
-      await getDocs(
-        collection(
-          db,
-          "orders"
-        )
-      );
-
-    const orders = [];
-
-    snapshot.forEach(item => {
-
-      orders.push({
-        id:item.id,
-        ...item.data()
-      });
-
-    });
-
-    orders.sort(
-      (a,b) => {
-
-        const aTime =
-          a.createdAt?.seconds || 0;
-
-        const bTime =
-          b.createdAt?.seconds || 0;
-
-        return bTime - aTime;
-
-      }
-    );
-
-    renderAdmin(
-      orders
-    );
-
-  }catch(error){
-
-    console.error(
-      "Admin Firestore Error:",
-      error
-    );
-
-    const loading =
-      $("adminLoading");
-
-    if(loading){
-
-      loading.innerHTML = `
-        <div style="color:#ff7777;">
-          Erreur Firestore :
-          ${escapeHTML(
-            error.message || ""
-          )}
-        </div>
-      `;
-
-    }
-
-  }
-
-}
-
-
-function renderAdmin(orders){
-
-  $("adminLoading")?.remove();
-
-  const content =
-    $("adminContent");
-
-  if(!content){
-    return;
-  }
-
-  const statuses = [
-    "Enregistrée",
-    "Acceptée",
-    "Préparation",
-    "En transit",
-    "Livraison proche",
-    "Livrée",
-    "Annulée",
-    "Remboursement en cours"
-  ];
-
-  content.innerHTML = `
-
-    <div style="
-      padding:15px;
-      margin-bottom:18px;
-      border-radius:16px;
-      background:rgba(80,120,255,.08);
-    ">
-
-      <strong>
-        🛡️ Administration
-      </strong>
-
-      <p style="margin-top:6px;">
-        ${orders.length}
-        commande${orders.length > 1 ? "s" : ""}
-      </p>
-
-    </div>
-
-    <div style="
-      padding:16px;
-      margin-bottom:18px;
-      border-radius:16px;
-      background:rgba(255,255,255,.04);
-    ">
-
-      <strong>
-        💳 Carte
-      </strong>
-
-      <p style="
-        margin-top:6px;
-        opacity:.7;
-      ">
-        Carte utilisable uniquement sur NovaShop.
-      </p>
-
-      <div id="testCardContainer">
-        ${renderTestCardHTML()}
-      </div>
-
-    </div>
-
-    <div style="
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-bottom:20px;
-    ">
-
-      <button
-        type="button"
-        class="view-btn"
-        id="adminRefresh"
-      >
-        🔄 Actualiser
-      </button>
-
-      <button
-        type="button"
-        class="view-btn"
-        id="adminLogout"
-      >
-        🔐 Quitter admin
-      </button>
-
-    </div>
-
-    <div id="adminOrders">
-
-      ${
-        orders.length
-          ? orders.map(
-              order => {
-
-                const items =
-                  Array.isArray(order.items)
-                    ? order.items
-                    : [];
-
-                const productsText =
-                  items.map(
-                    item => {
-
-                      const baseName =
-                        item.name ||
-                        item.id;
-
-                      return `${
-                        baseName
-                      }${
-                        item.option
-                          ? ` (${item.option})`
-                          : ""
-                      } ×${
-                        item.quantity || 1
-                      }`;
-
-                    }
-                  ).join(", ");
-
-                const customerName =
-                  `${order.firstName || ""} ${order.lastName || ""}`
-                    .trim();
-
-                return `
-
-                  <div
-                    class="admin-order"
-                    style="
-                      padding:16px;
-                      margin-bottom:15px;
-                      border:1px solid rgba(255,255,255,.1);
-                      border-radius:16px;
-                    "
-                  >
-
-                    <div style="
-                      display:flex;
-                      justify-content:space-between;
-                      gap:10px;
-                      flex-wrap:wrap;
-                    ">
-
-                      <strong>
-                        #${escapeHTML(
-                          order.id.slice(0,8)
-                        )}
-                      </strong>
-
-                      <strong>
-                        ${money(
-                          order.total || 0
-                        )}
-                      </strong>
-
-                    </div>
-
-                    ${
-                      customerName
-                        ? `
-                          <p style="
-                            margin:8px 0;
-                          ">
-                            👤 <strong>
-                              ${escapeHTML(customerName)}
-                            </strong>
-                          </p>
-                        `
-                        : `
-                          <p style="
-                            margin:8px 0;
-                          ">
-                            👤 Nom non renseigné
-                          </p>
-                        `
-                    }
-
-                    <p style="
-                      margin:8px 0;
-                      opacity:.85;
-                    ">
-                      📧 ${
-                        escapeHTML(
-                          order.userEmail ||
-                          "Inconnu"
-                        )
-                      }
-                    </p>
-
-                    <p style="
-                      margin:8px 0;
-                    ">
-                      💳 ${
-                        escapeHTML(
-                          order.paymentMethod ||
-                          "N/A"
-                        )
-                      }
-                      |
-                      ${
-                        escapeHTML(
-                          order.paymentStatus ||
-                          "En attente"
-                        )
-                      }
-                    </p>
-
-                    <p style="
-                      margin:8px 0;
-                      opacity:.8;
-                    ">
-                      ${escapeHTML(
-                        productsText
-                      )}
-                    </p>
-
-                    <label>
-                      Statut
-                    </label>
-
-                    <select
-                      class="admin-status"
-                      data-id="${escapeAttr(order.id)}"
-                      style="
-                        width:100%;
-                        margin:6px 0 10px;
-                      "
-                    >
-
-                      ${
-                        statuses.map(
-                          status => `
-                            <option
-                              value="${escapeAttr(status)}"
-                              ${
-                                order.status ===
-                                status
-                                  ? "selected"
-                                  : ""
-                              }
-                            >
-                              ${escapeHTML(status)}
-                            </option>
-                          `
-                        ).join("")
-                      }
-
-                    </select>
-
-                    <input
-                      class="admin-city"
-                      data-id="${escapeAttr(order.id)}"
-                      value="${escapeAttr(order.city || "")}"
-                      placeholder="Ville de destination"
-                      style="
-                        width:100%;
-                        margin-bottom:8px;
-                      "
-                    >
-
-                    <input
-                      class="admin-tracking"
-                      data-id="${escapeAttr(order.id)}"
-                      value="${escapeAttr(order.tracking || "")}"
-                      placeholder="Numéro de suivi"
-                      style="
-                        width:100%;
-                        margin-bottom:8px;
-                      "
-                    >
-
-                    <input
-                      class="admin-delivery"
-                      data-id="${escapeAttr(order.id)}"
-                      value="${escapeAttr(order.estimatedDelivery || "")}"
-                      placeholder="Livraison estimée"
-                      style="
-                        width:100%;
-                        margin-bottom:10px;
-                      "
-                    >
-
-                    <div style="
-                      display:flex;
-                      gap:8px;
-                      flex-wrap:wrap;
-                    ">
-
-                      <button
-                        type="button"
-                        class="add-btn admin-save"
-                        data-id="${escapeAttr(order.id)}"
-                      >
-                        💾 Enregistrer
-                      </button>
-
-                      <button
-                        type="button"
-                        class="view-btn admin-paid"
-                        data-id="${escapeAttr(order.id)}"
-                      >
-                        💰 Marquer payé
-                      </button>
-
-                      <button
-                        type="button"
-                        class="view-btn admin-invoice"
-                        data-id="${escapeAttr(order.id)}"
-                      >
-                        🧾 Facture
-                      </button>
-
-                      <button
-                        type="button"
-                        class="view-btn admin-delete"
-                        data-id="${escapeAttr(order.id)}"
-                        style="color:#ff7777;"
-                      >
-                        🗑️ Supprimer
-                      </button>
-
-                    </div>
-
-                  </div>
-
-                `;
-
-              }
-            ).join("")
-          : `
-            <div style="
-              text-align:center;
-              padding:30px;
-            ">
-
-              <div style="font-size:50px;">
-                📦
-              </div>
-
-              <h3>
-                Aucune commande
-              </h3>
-
-            </div>
-          `
-      }
-
-    </div>
-  `;
-
-  $("adminRefresh")
-    ?.addEventListener(
-      "click",
-      loadAdmin
-    );
-
-  $("adminLogout")
-    ?.addEventListener(
-      "click",
-      () => {
-
-        localStorage.removeItem(
-          ADMIN_ACCESS_KEY
-        );
-
-        closeModal();
-
-        toast(
-          "Mode admin fermé."
-        );
-
-      }
-    );
-
-  attachTestCardButton();
-
-  document
-    .querySelectorAll(
-      ".admin-save"
-    )
-    .forEach(button => {
-
-      button.addEventListener(
-        "click",
-        async () => {
-
-          await saveAdminOrder(
-            button.dataset.id
-          );
-
-        }
-      );
-
-    });
-
-  document
-    .querySelectorAll(
-      ".admin-paid"
-    )
-    .forEach(button => {
-
-      button.addEventListener(
-        "click",
-        async () => {
-
-          await markOrderPaid(
-            button.dataset.id
-          );
-
-        }
-      );
-
-    });
-
-  document
-    .querySelectorAll(
-      ".admin-invoice"
-    )
-    .forEach(button => {
-
-      button.addEventListener(
-        "click",
-        () => {
-
-          const order =
-            orders.find(
-              item =>
-                item.id ===
-                button.dataset.id
-            );
-
-          if(order){
-
-            printInvoice(
-              order
-            );
-
-          }
-
-        }
-      );
-
-    });
-
-  document
-    .querySelectorAll(
-      ".admin-delete"
-    )
-    .forEach(button => {
-
-      button.addEventListener(
-        "click",
-        async () => {
-
-          await deleteAdminOrder(
-            button.dataset.id
-          );
-
-        }
-      );
-
-    });
-
-}
 // ============================================================
 // CARTE TEST
 // ============================================================
@@ -3684,7 +2450,10 @@ async function saveAdminOrder(id){
 
   }catch(error){
 
-    console.error(error);
+    console.error(
+      "Erreur sauvegarde commande :",
+      error
+    );
 
     toast(
       `Erreur : ${
@@ -3715,7 +2484,9 @@ async function markOrderPaid(id){
         id
       ),
       {
-        paymentStatus:"Payé",
+        paymentStatus:
+          "Payé",
+
         updatedAt:
           serverTimestamp()
       }
@@ -3726,11 +2497,14 @@ async function markOrderPaid(id){
       "success"
     );
 
-    loadAdmin();
+    await loadAdmin();
 
   }catch(error){
 
-    console.error(error);
+    console.error(
+      "Erreur paiement admin :",
+      error
+    );
 
     toast(
       `Erreur : ${
@@ -3776,11 +2550,14 @@ async function deleteAdminOrder(id){
       "success"
     );
 
-    loadAdmin();
+    await loadAdmin();
 
   }catch(error){
 
-    console.error(error);
+    console.error(
+      "Erreur suppression commande :",
+      error
+    );
 
     toast(
       `Erreur : ${
