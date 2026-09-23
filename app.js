@@ -3817,5 +3817,1627 @@ function openCheckout(){
                   item.option
                     ? `${baseName} (${item.option})`
                     : baseName;
+                return {
 
+                  id:
+                    item.id,
+
+                  name:
+                    displayName,
+
+                  option:
+                    item.option || "",
+
+                  price:
+                    Number(
+                      product?.price || 0
+                    ),
+
+                  quantity:
+                    Number(
+                      item.quantity || 1
+                    )
+
+                };
+
+              }
+            );
+
+          const orderData = {
+
+            userId:
+              currentUser.uid,
+
+            userEmail:
+              currentUser.email || "",
+
+            firstName,
+            lastName,
+
+            items:
+              orderItems,
+
+            subtotal:
+              total,
+
+            total,
+
+            address,
+
+            city:
+              "",
+
+            status:
+              "Enregistrée",
+
+            paymentMethod,
+
+            paymentStatus,
+
+            tracking:
+              "",
+
+            estimatedDelivery:
+              "",
+
+            createdAt:
+              serverTimestamp()
+
+          };
+
+          const orderRef =
+            await addDoc(
+              collection(
+                db,
+                "orders"
+              ),
+              orderData
+            );
+
+          cart = [];
+
+          saveCart();
+          renderCart();
+
+          closeModal();
+
+          toast(
+            `Commande #${orderRef.id.slice(0,8)} créée 🎉`,
+            "success"
+          );
+
+          if(
+            paymentMethod === "paypal" &&
+            total > 0
+          ){
+
+            const paypalUrl =
+              `https://paypal.me/SH0PNOVA/${encodeURIComponent(
+                total.toFixed(2)
+              )}EUR`;
+
+            setTimeout(
+              () => {
+
+                window.open(
+                  paypalUrl,
+                  "_blank",
+                  "noopener,noreferrer"
+                );
+
+              },
+              400
+            );
+
+          }
+
+        }catch(error){
+
+          console.error(
+            "Firestore Checkout Error:",
+            error
+          );
+
+          if(errorBox){
+
+            errorBox.textContent =
+              `Erreur : ${
+                error.message ||
+                error.code ||
+                "inconnue"
+              }`;
+
+            errorBox.style.display =
+              "block";
+
+          }
+
+        }finally{
+
+          if(submit){
+
+            submit.disabled = false;
+
+            submit.textContent =
+              "Continuer";
+
+          }
+
+        }
+
+      }
+    );
+
+}
+
+
+// ============================================================
+// FACTURE
+// ============================================================
+
+function printInvoice(order){
+
+  const items =
+    Array.isArray(order.items)
+      ? order.items
+      : [];
+
+  const rows =
+    items.map(
+      item => {
+
+        const product =
+          getProduct(item.id);
+
+        const baseName =
+          product?.name ||
+          item.name ||
+          "Produit";
+
+        const name =
+          item.option
+            ? `${baseName} (${item.option})`
+            : baseName;
+
+        const price =
+          Number(
+            product?.price ??
+            item.price ??
+            0
+          );
+
+        const quantity =
+          Number(
+            item.quantity || 1
+          );
+
+        return `
+          <tr>
+
+            <td>
+              ${escapeHTML(name)}
+            </td>
+
+            <td>
+              ${quantity}
+            </td>
+
+            <td>
+              ${money(price)}
+            </td>
+
+            <td>
+              ${money(
+                price * quantity
+              )}
+            </td>
+
+          </tr>
+        `;
+
+      }
+    ).join("");
+
+  const customerName =
+    `${order.firstName || ""} ${order.lastName || ""}`
+      .trim();
+
+  const invoiceWindow =
+    window.open(
+      "",
+      "_blank",
+      "width=900,height=700"
+    );
+
+  if(!invoiceWindow){
+
+    toast(
+      "La fenêtre de facture a été bloquée.",
+      "error"
+    );
+
+    return;
+
+  }
+
+  invoiceWindow.document.write(`
+    <!DOCTYPE html>
+
+    <html lang="fr">
+
+    <head>
+
+      <meta charset="UTF-8">
+
+      <title>
+        Facture NovaShop
+      </title>
+
+      <style>
+
+        body{
+          font-family:Arial,sans-serif;
+          padding:40px;
+          color:#111827;
+        }
+
+        h1{
+          margin-bottom:5px;
+        }
+
+        .top{
+          display:flex;
+          justify-content:space-between;
+          margin-bottom:40px;
+        }
+
+        table{
+          width:100%;
+          border-collapse:collapse;
+          margin-top:30px;
+        }
+
+        th,
+        td{
+          border-bottom:1px solid #ddd;
+          padding:12px;
+          text-align:left;
+        }
+
+        .total{
+          margin-top:30px;
+          text-align:right;
+          font-size:24px;
+          font-weight:bold;
+        }
+
+        .small{
+          color:#666;
+          margin-top:30px;
+        }
+
+      </style>
+
+    </head>
+
+    <body>
+
+      <div class="top">
+
+        <div>
+
+          <h1>
+            NovaShop
+          </h1>
+
+          <p>
+            Boutique gaming
+          </p>
+
+        </div>
+
+        <div>
+
+          <strong>
+            Facture
+          </strong>
+
+          <p>
+            Commande #${escapeHTML(
+              order.id
+            )}
+          </p>
+
+        </div>
+
+      </div>
+
+      <h3>
+        Client
+      </h3>
+
+      ${
+        customerName
+          ? `
+            <p>
+              <strong>
+                ${escapeHTML(
+                  customerName
+                )}
+              </strong>
+            </p>
+          `
+          : ""
+      }
+
+      <p>
+        ${escapeHTML(
+          order.userEmail || ""
+        )}
+      </p>
+
+      <p>
+        ${escapeHTML(
+          order.address || ""
+        )}
+      </p>
+
+      ${
+        order.city
+          ? `
+            <p>
+              ${escapeHTML(
+                order.city
+              )}
+            </p>
+          `
+          : ""
+      }
+
+      <h3>
+        Produits
+      </h3>
+
+      <table>
+
+        <thead>
+
+          <tr>
+            <th>Produit</th>
+            <th>Qté</th>
+            <th>Prix</th>
+            <th>Total</th>
+          </tr>
+
+        </thead>
+
+        <tbody>
+          ${rows}
+        </tbody>
+
+      </table>
+
+      <div class="total">
+        Total :
+        ${money(
+          order.total || 0
+        )}
+      </div>
+
+      <p class="small">
+        Statut :
+        ${escapeHTML(
+          order.status ||
+          "Enregistrée"
+        )}
+      </p>
+
+      <script>
+        window.onload = function(){
+          window.print();
+        };
+      <\/script>
+
+    </body>
+
+    </html>
+  `);
+
+  invoiceWindow.document.close();
+
+}
+
+
+// ============================================================
+// ADMIN
+// ============================================================
+
+adminBtn?.addEventListener(
+  "click",
+  openAdmin
+);
+
+
+function isAdminUser(){
+
+  return (
+    currentUser &&
+    (
+      currentUser.email || ""
+    ).toLowerCase() ===
+    ADMIN_EMAIL.toLowerCase()
+  );
+
+}
+
+
+function openAdmin(){
+
+  if(!isAdminUser()){
+
+    toast(
+      "Accès administrateur refusé.",
+      "error"
+    );
+
+    return;
+
+  }
+
+  const authorized =
+    localStorage.getItem(
+      ADMIN_ACCESS_KEY
+    ) === "true";
+
+  if(!authorized){
+
+    const code =
+      prompt(
+        "Code administrateur NovaShop :"
+      );
+
+    if(code !== ADMIN_CODE){
+
+      toast(
+        "Code administrateur incorrect.",
+        "error"
+      );
+
+      return;
+
+    }
+
+    localStorage.setItem(
+      ADMIN_ACCESS_KEY,
+      "true"
+    );
+
+  }
+
+  loadAdmin();
+
+}
+
+
+async function loadAdmin(){
+
+  if(!isAdminUser()){
+
+    toast(
+      "Accès administrateur refusé.",
+      "error"
+    );
+
+    return;
+
+  }
+
+  showModal(
+    "Administration NovaShop",
+    `
+      <div
+        id="adminLoading"
+        style="
+          text-align:center;
+          padding:30px;
+        "
+      >
+        Chargement...
+      </div>
+
+      <div id="adminContent"></div>
+    `
+  );
+
+  try{
+
+    const snapshot =
+      await getDocs(
+        collection(
+          db,
+          "orders"
+        )
+      );
+
+    const orders = [];
+
+    snapshot.forEach(
+      item => {
+
+        orders.push({
+          id:item.id,
+          ...item.data()
+        });
+
+      }
+    );
+
+    orders.sort(
+      (a,b) => {
+
+        const aTime =
+          a.createdAt?.seconds || 0;
+
+        const bTime =
+          b.createdAt?.seconds || 0;
+
+        return bTime - aTime;
+
+      }
+    );
+
+    renderAdmin(
+      orders
+    );
+
+  }catch(error){
+
+    console.error(
+      "Admin Firestore Error:",
+      error
+    );
+
+    const loading =
+      $("adminLoading");
+
+    if(loading){
+
+      loading.innerHTML = `
+        <div style="
+          color:#ff7777;
+        ">
+          Erreur Firestore :
+          ${escapeHTML(
+            error.message || ""
+          )}
+        </div>
+      `;
+
+    }
+
+  }
+
+}
+
+
+function renderAdmin(orders){
+
+  $("adminLoading")?.remove();
+
+  const content =
+    $("adminContent");
+
+  if(!content){
+    return;
+  }
+
+  const statuses = [
+
+    "Enregistrée",
+    "Acceptée",
+    "Préparation",
+    "En transit",
+    "Livraison proche",
+    "Livrée",
+    "Annulée",
+    "Remboursement en cours"
+
+  ];
+
+  content.innerHTML = `
+
+    <div style="
+      padding:15px;
+      margin-bottom:18px;
+      border-radius:16px;
+      background:rgba(80,120,255,.08);
+    ">
+
+      <strong>
+        🛡️ Administration
+      </strong>
+
+      <p style="
+        margin-top:6px;
+      ">
+        ${orders.length}
+        commande${orders.length > 1 ? "s" : ""}
+      </p>
+
+    </div>
+
+    <div style="
+      padding:16px;
+      margin-bottom:18px;
+      border-radius:16px;
+      background:rgba(255,255,255,.04);
+    ">
+
+      <strong>
+        💳 Carte
+      </strong>
+
+      <p style="
+        margin-top:6px;
+        opacity:.7;
+      ">
+        Carte utilisable uniquement sur NovaShop.
+      </p>
+
+      <div id="testCardContainer">
+        ${renderTestCardHTML()}
+      </div>
+
+    </div>
+
+    <div style="
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-bottom:20px;
+    ">
+
+      <button
+        type="button"
+        class="view-btn"
+        id="adminRefresh"
+      >
+        🔄 Actualiser
+      </button>
+
+      <button
+        type="button"
+        class="view-btn"
+        id="adminLogout"
+      >
+        🔐 Quitter admin
+      </button>
+
+    </div>
+
+    <div id="adminOrders">
+
+      ${
+        orders.length
+          ? orders.map(
+              order => {
+
+                const items =
+                  Array.isArray(
+                    order.items
+                  )
+                    ? order.items
+                    : [];
+
+                const productsText =
+                  items.map(
+                    item => {
+
+                      const baseName =
+                        item.name ||
+                        item.id;
+
+                      return `${
+                        baseName
+                      }${
+                        item.option
+                          ? ` (${item.option})`
+                          : ""
+                      } ×${
+                        item.quantity || 1
+                      }`;
+
+                    }
+                  ).join(", ");
+
+                const customerName =
+                  `${order.firstName || ""} ${order.lastName || ""}`
+                    .trim();
+
+                return `
+
+                  <div
+                    class="admin-order"
+                    style="
+                      padding:16px;
+                      margin-bottom:15px;
+                      border:1px solid rgba(255,255,255,.1);
+                      border-radius:16px;
+                    "
+                  >
+
+                    <div style="
+                      display:flex;
+                      justify-content:space-between;
+                      gap:10px;
+                      flex-wrap:wrap;
+                    ">
+
+                      <strong>
+                        #${escapeHTML(
+                          order.id.slice(0,8)
+                        )}
+                      </strong>
+
+                      <strong>
+                        ${money(
+                          order.total || 0
+                        )}
+                      </strong>
+
+                    </div>
+
+                    ${
+                      customerName
+                        ? `
+                          <p style="
+                            margin:8px 0;
+                          ">
+                            👤
+                            <strong>
+                              ${escapeHTML(
+                                customerName
+                              )}
+                            </strong>
+                          </p>
+                        `
+                        : `
+                          <p style="
+                            margin:8px 0;
+                          ">
+                            👤 Nom non renseigné
+                          </p>
+                        `
+                    }
+
+                    <p style="
+                      margin:8px 0;
+                      opacity:.85;
+                    ">
+                      📧 ${
+                        escapeHTML(
+                          order.userEmail ||
+                          "Inconnu"
+                        )
+                      }
+                    </p>
+
+                    <p style="
+                      margin:8px 0;
+                    ">
+                      💳 ${
+                        escapeHTML(
+                          order.paymentMethod ||
+                          "N/A"
+                        )
+                      }
+                      |
+                      ${
+                        escapeHTML(
+                          order.paymentStatus ||
+                          "En attente"
+                        )
+                      }
+                    </p>
+
+                    <p style="
+                      margin:8px 0;
+                      opacity:.8;
+                    ">
+                      ${escapeHTML(
+                        productsText
+                      )}
+                    </p>
+
+                    <label>
+                      Statut
+                    </label>
+
+                    <select
+                      class="admin-status"
+                      data-id="${escapeAttr(
+                        order.id
+                      )}"
+                      style="
+                        width:100%;
+                        margin:6px 0 10px;
+                      "
+                    >
+
+                      ${
+                        statuses.map(
+                          status => `
+                            <option
+                              value="${escapeAttr(
+                                status
+                              )}"
+                              ${
+                                order.status ===
+                                status
+                                  ? "selected"
+                                  : ""
+                              }
+                            >
+                              ${escapeHTML(
+                                status
+                              )}
+                            </option>
+                          `
+                        ).join("")
+                      }
+
+                    </select>
+
+                    <input
+                      class="admin-city"
+                      data-id="${escapeAttr(
+                        order.id
+                      )}"
+                      value="${escapeAttr(
+                        order.city || ""
+                      )}"
+                      placeholder="Ville de destination"
+                      style="
+                        width:100%;
+                        margin-bottom:8px;
+                      "
+                    >
+
+                    <input
+                      class="admin-tracking"
+                      data-id="${escapeAttr(
+                        order.id
+                      )}"
+                      value="${escapeAttr(
+                        order.tracking || ""
+                      )}"
+                      placeholder="Numéro de suivi"
+                      style="
+                        width:100%;
+                        margin-bottom:8px;
+                      "
+                    >
+
+                    <input
+                      class="admin-delivery"
+                      data-id="${escapeAttr(
+                        order.id
+                      )}"
+                      value="${escapeAttr(
+                        order.estimatedDelivery || ""
+                      )}"
+                      placeholder="Livraison estimée"
+                      style="
+                        width:100%;
+                        margin-bottom:10px;
+                      "
+                    >
+
+                    <div style="
+                      display:flex;
+                      gap:8px;
+                      flex-wrap:wrap;
+                    ">
+
+                      <button
+                        type="button"
+                        class="add-btn admin-save"
+                        data-id="${escapeAttr(
+                          order.id
+                        )}"
+                      >
+                        💾 Enregistrer
+                      </button>
+
+                      <button
+                        type="button"
+                        class="view-btn admin-paid"
+                        data-id="${escapeAttr(
+                          order.id
+                        )}"
+                      >
+                        💰 Marquer payé
+                      </button>
+
+                      <button
+                        type="button"
+                        class="view-btn admin-invoice"
+                        data-id="${escapeAttr(
+                          order.id
+                        )}"
+                      >
+                        🧾 Facture
+                      </button>
+
+                      <button
+                        type="button"
+                        class="view-btn admin-delete"
+                        data-id="${escapeAttr(
+                          order.id
+                        )}"
+                        style="
+                          color:#ff7777;
+                        "
+                      >
+                        🗑️ Supprimer
+                      </button>
+
+                    </div>
+
+                  </div>
+
+                `;
+
+              }
+            ).join("")
+          : `
+            <div style="
+              text-align:center;
+              padding:30px;
+            ">
+
+              <div style="
+                font-size:50px;
+              ">
+                📦
+              </div>
+
+              <h3>
+                Aucune commande
+              </h3>
+
+            </div>
+          `
+      }
+
+    </div>
+  `;
+
+
+  $("adminRefresh")
+    ?.addEventListener(
+      "click",
+      loadAdmin
+    );
+
+
+  $("adminLogout")
+    ?.addEventListener(
+      "click",
+      () => {
+
+        localStorage.removeItem(
+          ADMIN_ACCESS_KEY
+        );
+
+        closeModal();
+
+        toast(
+          "Mode admin fermé."
+        );
+
+      }
+    );
+
+
+  attachTestCardButton();
+
+
+  document
+    .querySelectorAll(
+      ".admin-save"
+    )
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        async () => {
+
+          await saveAdminOrder(
+            button.dataset.id
+          );
+
+        }
+      );
+
+    });
+
+
+  document
+    .querySelectorAll(
+      ".admin-paid"
+    )
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        async () => {
+
+          await markOrderPaid(
+            button.dataset.id
+          );
+
+        }
+      );
+
+    });
+
+
+  document
+    .querySelectorAll(
+      ".admin-invoice"
+    )
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          const order =
+            orders.find(
+              item =>
+                item.id ===
+                button.dataset.id
+            );
+
+          if(order){
+
+            printInvoice(
+              order
+            );
+
+          }
+
+        }
+      );
+
+    });
+
+
+  document
+    .querySelectorAll(
+      ".admin-delete"
+    )
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        async () => {
+
+          await deleteAdminOrder(
+            button.dataset.id
+          );
+
+        }
+      );
+
+    });
+
+}
+
+
+function attachTestCardButton(){
+
+  const button =
+    $("generateTestCard");
+
+  if(!button){
+    return;
+  }
+
+  button.addEventListener(
+    "click",
+    () => {
+
+      generateTestCard();
+
+      const container =
+        $("testCardContainer");
+
+      if(container){
+
+        container.innerHTML =
+          renderTestCardHTML();
+
+        attachTestCardButton();
+
+      }
+
+    }
+  );
+
+}
+
+
+async function saveAdminOrder(id){
+
+  try{
+
+    const safeId =
+      typeof CSS !== "undefined" &&
+      typeof CSS.escape === "function"
+        ? CSS.escape(id)
+        : id.replace(
+            /["\\]/g,
+            "\\$&"
+          );
+
+    const status =
+      document.querySelector(
+        `.admin-status[data-id="${safeId}"]`
+      )?.value ||
+      "Enregistrée";
+
+    const city =
+      document.querySelector(
+        `.admin-city[data-id="${safeId}"]`
+      )?.value ||
+      "";
+
+    const tracking =
+      document.querySelector(
+        `.admin-tracking[data-id="${safeId}"]`
+      )?.value ||
+      "";
+
+    const estimatedDelivery =
+      document.querySelector(
+        `.admin-delivery[data-id="${safeId}"]`
+      )?.value ||
+      "";
+
+    await updateDoc(
+      doc(
+        db,
+        "orders",
+        id
+      ),
+      {
+        status,
+        city,
+        tracking,
+        estimatedDelivery,
+        updatedAt:
+          serverTimestamp()
+      }
+    );
+
+    toast(
+      "Commande mise à jour ✅",
+      "success"
+    );
+
+  }catch(error){
+
+    console.error(error);
+
+    toast(
+      `Erreur : ${
+        error.message ||
+        error.code ||
+        "inconnue"
+      }`,
+      "error"
+    );
+
+  }
+
+}
+
+
+async function markOrderPaid(id){
+
+  try{
+
+    await updateDoc(
+      doc(
+        db,
+        "orders",
+        id
+      ),
+      {
+        paymentStatus:
+          "Payé",
+
+        updatedAt:
+          serverTimestamp()
+
+      }
+    );
+
+    toast(
+      "Paiement marqué comme payé 💰",
+      "success"
+    );
+
+    loadAdmin();
+
+  }catch(error){
+
+    console.error(error);
+
+    toast(
+      `Erreur : ${
+        error.message ||
+        error.code ||
+        "inconnue"
+      }`,
+      "error"
+    );
+
+  }
+
+}
+
+
+async function deleteAdminOrder(id){
+
+  const confirmed =
+    confirm(
+      "Supprimer définitivement cette commande ?"
+    );
+
+  if(!confirmed){
+    return;
+  }
+
+  try{
+
+    await deleteDoc(
+      doc(
+        db,
+        "orders",
+        id
+      )
+    );
+
+    toast(
+      "Commande supprimée 🗑️",
+      "success"
+    );
+
+    loadAdmin();
+
+  }catch(error){
+
+    console.error(error);
+
+    toast(
+      `Erreur : ${
+        error.message ||
+        error.code ||
+        "inconnue"
+      }`,
+      "error"
+    );
+
+  }
+
+}
+
+
+// ============================================================
+// SETTINGS
+// ============================================================
+
+settingsBtn?.addEventListener(
+  "click",
+  openSettings
+);
+
+
+function getTheme(){
+
+  return (
+    localStorage.getItem(
+      "novaThemeChoice"
+    ) || "dark"
+  );
+
+}
+
+
+function applyTheme(){
+
+  const theme =
+    getTheme();
+
+  if(theme === "light"){
+
+    document.documentElement.dataset.theme =
+      "light";
+
+  }else if(theme === "dark"){
+
+    document.documentElement.dataset.theme =
+      "dark";
+
+  }else{
+
+    const prefersDark =
+      window.matchMedia &&
+      window.matchMedia(
+        "(prefers-color-scheme: dark)"
+      ).matches;
+
+    document.documentElement.dataset.theme =
+      prefersDark
+        ? "dark"
+        : "light";
+
+  }
+
+}
+
+
+function openSettings(){
+
+  const current =
+    getTheme();
+
+  showModal(
+    "Paramètres",
+    `
+      <div>
+
+        <h3>
+          Apparence
+        </h3>
+
+        <div style="
+          display:grid;
+          gap:10px;
+          margin-top:12px;
+        ">
+
+          <button
+            type="button"
+            class="view-btn theme-choice"
+            data-theme="dark"
+          >
+            🌙 Mode sombre
+          </button>
+
+          <button
+            type="button"
+            class="view-btn theme-choice"
+            data-theme="light"
+          >
+            ☀️ Mode clair
+          </button>
+
+          <button
+            type="button"
+            class="view-btn theme-choice"
+            data-theme="auto"
+          >
+            🖥️ Automatique
+          </button>
+
+        </div>
+
+        <p style="
+          margin-top:20px;
+          opacity:.7;
+        ">
+          Thème actuel :
+          ${escapeHTML(
+            current
+          )}
+        </p>
+
+      </div>
+    `
+  );
+
+  document
+    .querySelectorAll(
+      ".theme-choice"
+    )
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          localStorage.setItem(
+            "novaThemeChoice",
+            button.dataset.theme
+          );
+
+          applyTheme();
+
+          toast(
+            "Thème mis à jour ✨",
+            "success"
+          );
+
+          closeModal();
+
+        }
+      );
+
+    });
+
+}
+
+
+// ============================================================
+// AUTH STATE
+// ============================================================
+
+onAuthStateChanged(
+  auth,
+  user => {
+
+    currentUser =
+      user || null;
+
+    if(adminBtn){
+
+      adminBtn.style.display =
+        isAdminUser()
+          ? "inline-flex"
+          : "none";
+
+    }
+
+  }
+);
+
+
+// ============================================================
+// ESC
+// ============================================================
+
+document.addEventListener(
+  "keydown",
+  event => {
+
+    if(event.key !== "Escape"){
+      return;
+    }
+
+    closeModal();
+    closeCart();
+
+  }
+);
+
+
+// ============================================================
+// CLIC DEHORS MODAL
+// ============================================================
+
+modal?.addEventListener(
+  "click",
+  event => {
+
+    if(
+      event.target ===
+      modal
+    ){
+
+      closeModal();
+
+    }
+
+  }
+);
+
+
+// ============================================================
+// ERREURS FIREBASE
+// ============================================================
+
+window.addEventListener(
+  "unhandledrejection",
+  event => {
+
+    const error =
+      event.reason;
+
+    console.error(
+      "Unhandled Promise Rejection:",
+      error
+    );
+
+    if(
+      error?.code?.startsWith(
+        "auth/"
+      )
+    ){
+
+      toast(
+        authError(error),
+        "error"
+      );
+
+    }
+
+  }
+);
+
+
+// ============================================================
+// INITIALISATION
+// ============================================================
+
+applyTheme();
+
+renderCategories();
+
+renderProducts();
+
+renderCart();
+
+
+// ============================================================
+// API PUBLIQUE
+// ============================================================
+
+window.NovaShop = {
+
+  products,
+
+  get currentUser(){
+
+    return currentUser;
+
+  },
+
+  addToCart,
+
+  removeFromCart,
+
+  changeCartQuantity,
+
+  openCart,
+
+  closeCart,
+
+  openProduct,
+
+  openAccount,
+
+  openOrders,
+
+  openSettings,
+
+  renderProducts,
+
+  renderCart,
+
+  getCartCount,
+
+  getCartSubtotal,
+
+  money
+
+};
+
+
+console.log(
+  "NovaShop chargé avec succès 🚀"
+);
                
