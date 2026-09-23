@@ -1,6 +1,8 @@
 // ============================================================
 // NOVASHOP - APP.JS COMPLET
+// PARTIE 1 / 2
 // Firebase Auth + Firestore
+// 104 PRODUITS
 // ============================================================
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
@@ -32,13 +34,13 @@ import {
 // ============================================================
 
 const firebaseConfig = {
-  apiKey:"AIzaSyAZ5vAkAEfIBpfLyhxgO7uvNdJ67KYKWD0",
-  authDomain:"novashop-4ee63.firebaseapp.com",
-  projectId:"novashop-4ee63",
-  storageBucket:"novashop-4ee63.firebasestorage.app",
-  messagingSenderId:"1044964015809",
-  appId:"1:1044964015809:web:4eafe0b1aede48f8539e40",
-  measurementId:"G-XNY5X2VMY9"
+  apiKey: "AIzaSyAZ5vAkAEfIBpfLyhxgO7uvNdJ67KYKWD0",
+  authDomain: "novashop-4ee63.firebaseapp.com",
+  projectId: "novashop-4ee63",
+  storageBucket: "novashop-4ee63.firebasestorage.app",
+  messagingSenderId: "1044964015809",
+  appId: "1:1044964015809:web:4eafe0b1aede48f8539e40",
+  measurementId: "G-XNY5X2VMY9"
 };
 
 const firebaseApp = initializeApp(firebaseConfig);
@@ -61,6 +63,7 @@ const ADMIN_ACCESS_KEY = "novaAdminAuthorized";
 
 const CART_KEY = "nova_cart";
 const FAVORITES_KEY = "nova_favorites";
+const THEME_KEY = "novaThemeChoice";
 const TEST_CARD_STORAGE_KEY = "novaTestCard";
 
 
@@ -227,7 +230,7 @@ const products = [
 
   {
     id:"p20",
-    name:"iiyama 23.8\" LED - G-Master GB2471HS-B1 Red Eagle",
+    name:"iiyama 23.8 LED - G-Master GB2471HS-B1 Red Eagle",
     category:"Écrans",
     price:65.99,
     image:"https://media.ldlc.com/r1600/ld/products/00/06/34/20/LD0006342033.jpg"
@@ -504,14 +507,6 @@ const products = [
     category:"Smartphones",
     price:400,
     image:"https://static.fnac-static.com/multimedia/Images/FR/MDMFR/MDM/f6/00/6d/23920886/1540-1/tsp20260914084700/Smartphone-Google-Pixel-9-6-3-5G-Double-nano-SIM-128-Go-Noir-Obsidienne.jpg"
-  },
-
-  {
-    id:"p55",
-    name:"Google Pixel 10 6,3\" 5G Double SIM 256 Go Noir Volcanique",
-    category:"Smartphones",
-    price:600,
-    image:"https://static.fnac-static.com/multimedia/Images/FR/MDM/4a/5f/b3/28532554/1540-1/Google-Pixel-10-6-3-5G-Double-SIM-256-Go-Noir-Volcanique.jpg"
   },
 
   {
@@ -924,7 +919,7 @@ const products = [
 
 
 // ============================================================
-// ÉTAT
+// ETAT
 // ============================================================
 
 let currentUser = null;
@@ -939,7 +934,7 @@ let favorites = loadStorage(
   []
 );
 
-const state = {
+let state = {
   search:"",
   category:"Toutes",
   sort:"default"
@@ -968,11 +963,11 @@ const adminBtn =
 const cartBtn =
   $("cartBtn");
 
-const cartBadge =
-  $("cartBadge");
-
 const heroCartBtn =
   $("heroCartBtn");
+
+const cartBadge =
+  $("cartBadge");
 
 const searchInput =
   $("searchInput");
@@ -980,7 +975,7 @@ const searchInput =
 const sortSelect =
   $("sortSelect");
 
-const categoriesEl =
+const categories =
   $("categories");
 
 const productCount =
@@ -998,10 +993,10 @@ const cartDrawer =
 const closeCartBtn =
   $("closeCart");
 
-const cartItemsEl =
+const cartItems =
   $("cartItems");
 
-const cartTotalEl =
+const cartTotal =
   $("cartTotal");
 
 const checkoutBtn =
@@ -1019,40 +1014,31 @@ const modalClose =
 const modalContent =
   $("modalContent");
 
-const toastEl =
+const toastElement =
   $("toast");
 
 
 // ============================================================
-// STORAGE
+// UTILITAIRES
 // ============================================================
 
-function loadStorage(
-  key,
-  fallback
-){
+function loadStorage(key, fallback){
 
   try{
 
-    const value =
+    const raw =
       localStorage.getItem(key);
 
-    if(!value){
+    if(!raw){
       return fallback;
     }
 
     const parsed =
-      JSON.parse(value);
+      JSON.parse(raw);
 
-    return parsed;
+    return parsed ?? fallback;
 
-  }catch(error){
-
-    console.warn(
-      "Storage error:",
-      key,
-      error
-    );
+  }catch{
 
     return fallback;
 
@@ -1061,10 +1047,7 @@ function loadStorage(
 }
 
 
-function saveStorage(
-  key,
-  value
-){
+function saveStorage(key,value){
 
   try{
 
@@ -1075,9 +1058,8 @@ function saveStorage(
 
   }catch(error){
 
-    console.warn(
-      "Impossible de sauvegarder:",
-      key,
+    console.error(
+      "Storage error:",
       error
     );
 
@@ -1105,10 +1087,6 @@ function saveFavorites(){
 
 }
 
-
-// ============================================================
-// UTILITAIRES
-// ============================================================
 
 function money(value){
 
@@ -1152,61 +1130,61 @@ function getProduct(id){
   return products.find(
     product =>
       product.id === id
-  );
+  ) || null;
 
 }
 
 
-// ============================================================
-// TOAST
-// ============================================================
+function toast(message,type="info"){
 
-function toast(
-  message,
-  type = "info"
-){
+  if(!toastElement){
 
-  if(!toastEl){
-
-    alert(message);
+    console.log(
+      message
+    );
 
     return;
 
   }
 
-  toastEl.textContent =
+  toastElement.textContent =
     message;
 
-  toastEl.className =
-    `toast show ${type}`;
+  toastElement.dataset.type =
+    type;
 
-  clearTimeout(
-    toastEl._timer
+  toastElement.classList.add(
+    "show"
   );
 
-  toastEl._timer =
+  clearTimeout(
+    toastElement._timer
+  );
+
+  toastElement._timer =
     setTimeout(
       () => {
 
-        toastEl.className =
-          "toast";
+        toastElement.classList.remove(
+          "show"
+        );
 
       },
-      3000
+      2800
     );
 
 }
 
 
 // ============================================================
-// STYLE DES BOUTONS
+// STYLE SUPPLEMENTAIRE POUR LES BOUTONS
 // ============================================================
 
-function injectNovaStyles(){
+function installNovaStyles(){
 
   if(
     document.getElementById(
-      "novaInjectedStyles"
+      "novaAppStyles"
     )
   ){
 
@@ -1220,150 +1198,174 @@ function injectNovaStyles(){
     );
 
   style.id =
-    "novaInjectedStyles";
+    "novaAppStyles";
 
   style.textContent = `
 
+    .add-btn,
+    .view-btn,
+    .favorite-btn,
+    .category-btn,
+    .payment-choice,
+    .admin-save,
+    .admin-paid,
+    .admin-invoice,
+    .admin-delete,
+    .theme-choice{
+
+      border:none;
+      cursor:pointer;
+      transition:
+        transform .18s ease,
+        box-shadow .18s ease,
+        background .18s ease,
+        opacity .18s ease;
+
+    }
+
+    .add-btn:hover,
+    .view-btn:hover,
+    .favorite-btn:hover,
+    .category-btn:hover,
+    .payment-choice:hover,
+    .admin-save:hover,
+    .admin-paid:hover,
+    .admin-invoice:hover,
+    .admin-delete:hover,
+    .theme-choice:hover{
+
+      transform:translateY(-2px);
+
+    }
+
+    .add-btn:active,
+    .view-btn:active,
+    .favorite-btn:active,
+    .category-btn:active{
+
+      transform:scale(.97);
+
+    }
+
+    .payment-choice.selected{
+
+      outline:2px solid #2d8cff;
+      box-shadow:
+        0 0 0 4px rgba(45,140,255,.13);
+
+    }
+
+    .product-img{
+
+      min-height:165px !important;
+      height:165px !important;
+      padding:12px !important;
+      overflow:hidden !important;
+
+    }
+
+    .product-img img{
+
+      width:100% !important;
+      height:100% !important;
+      max-width:100% !important;
+      max-height:100% !important;
+      object-fit:contain !important;
+      display:block;
+
+    }
+
     .product-actions{
+
       display:flex;
       gap:8px;
       align-items:center;
-      margin-top:12px;
-    }
+      flex-wrap:wrap;
 
-    .product-actions button{
-      border:0;
-      cursor:pointer;
-      transition:.2s ease;
-      font-family:inherit;
     }
 
     .product-actions .add-btn{
+
       flex:1;
+      min-width:0;
+
     }
 
     .favorite-btn{
-      width:42px;
+
+      min-width:42px;
       height:42px;
       border-radius:12px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      background:rgba(255,255,255,.07);
-      border:1px solid rgba(255,255,255,.10)!important;
-      color:#fff;
-      font-size:18px;
+
     }
 
-    .favorite-btn:hover{
-      transform:translateY(-2px);
-      background:rgba(45,140,255,.16);
-    }
+    .top-action-btn{
 
-    .favorite-btn.active{
-      color:#ff4f81;
-      border-color:rgba(255,79,129,.35)!important;
-      background:rgba(255,79,129,.10);
-    }
-
-    .add-btn,
-    .view-btn{
-      border:0;
-      cursor:pointer;
+      min-height:40px;
       border-radius:12px;
-      padding:11px 15px;
-      font-weight:700;
-      transition:.2s ease;
-      font-family:inherit;
+      padding:8px 13px;
+
     }
 
-    .add-btn{
-      background:#2d8cff;
-      color:#fff;
-      box-shadow:0 8px 20px rgba(45,140,255,.20);
+    #heroCartBtn{
+
+      cursor:pointer;
+      transition:.2s;
+
     }
 
-    .add-btn:hover{
+    #heroCartBtn:hover{
+
       transform:translateY(-2px);
-      box-shadow:0 12px 26px rgba(45,140,255,.30);
+
     }
 
-    .view-btn{
-      background:rgba(255,255,255,.07);
-      color:inherit;
-      border:1px solid rgba(255,255,255,.10);
-    }
+    .cart-qty{
 
-    .view-btn:hover{
-      transform:translateY(-2px);
-      background:rgba(45,140,255,.12);
-      border-color:rgba(45,140,255,.35);
-    }
-
-    .payment-choice.selected,
-    .theme-choice.selected{
-      border-color:#2d8cff;
-      background:rgba(45,140,255,.15);
-      box-shadow:0 0 0 2px rgba(45,140,255,.10);
-    }
-
-    .cart-quantity{
       display:flex;
       align-items:center;
-      gap:7px;
+      gap:8px;
+
     }
 
-    .cart-quantity button{
+    .cart-qty button{
+
       width:30px;
       height:30px;
       border-radius:9px;
-      border:1px solid rgba(255,255,255,.10);
-      background:rgba(255,255,255,.06);
-      color:inherit;
+      border:1px solid var(--line);
       cursor:pointer;
-      font-weight:800;
+
     }
 
-    .cart-quantity button:hover{
-      background:#2d8cff;
-      color:#fff;
-    }
+    button:disabled{
 
-    .admin-order button{
-      min-height:40px;
+      opacity:.55;
+      cursor:not-allowed !important;
+      transform:none !important;
+
     }
 
     input,
     textarea,
     select{
-      border-radius:11px!important;
+
+      border-radius:11px !important;
+
     }
 
     .nova-empty{
-      grid-column:1/-1;
+
       text-align:center;
-      padding:50px 20px;
-      border:1px solid rgba(255,255,255,.08);
-      border-radius:18px;
-      background:rgba(255,255,255,.03);
+      padding:45px 20px;
+
     }
 
-    .nova-product-image{
-      width:100%;
-      height:100%;
-      object-fit:contain;
-      display:block;
-    }
+    .nova-empty-icon{
 
-    .nova-image-box{
-      width:100%;
-      height:165px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      overflow:hidden;
-      background:#fff;
-      border-radius:14px;
+      font-size:48px;
+      margin-bottom:10px;
+
     }
 
   `;
@@ -1376,45 +1378,50 @@ function injectNovaStyles(){
 
 
 // ============================================================
-// CATÉGORIES
+// CATEGORIES
 // ============================================================
 
 function renderCategories(){
 
-  if(!categoriesEl){
+  if(!categories){
     return;
   }
 
-  const categories = [
-    "Toutes",
-    ...new Set(
-      products.map(
-        product =>
-          product.category
+  const unique =
+    [
+      "Toutes",
+      ...new Set(
+        products.map(
+          product =>
+            product.category
+        )
       )
-    )
-  ];
+    ];
 
-  categoriesEl.innerHTML =
-    categories.map(
+  categories.innerHTML =
+    unique.map(
       category => `
+
         <button
           type="button"
-          class="${
+          class="category-btn ${
             state.category === category
               ? "active"
               : ""
           }"
-          data-category="${escapeAttr(category)}"
+          data-category="${escapeAttr(
+            category
+          )}"
         >
           ${escapeHTML(category)}
         </button>
+
       `
     ).join("");
 
-  categoriesEl
+  categories
     .querySelectorAll(
-      "button"
+      ".category-btn"
     )
     .forEach(button => {
 
@@ -1438,12 +1445,12 @@ function renderCategories(){
 
 
 // ============================================================
-// FILTRES
+// PRODUITS FILTRES
 // ============================================================
 
 function getFilteredProducts(){
 
-  let result =
+  let list =
     [...products];
 
   const search =
@@ -1453,12 +1460,13 @@ function getFilteredProducts(){
 
   if(search){
 
-    result =
-      result.filter(
+    list =
+      list.filter(
         product =>
           product.name
             .toLowerCase()
             .includes(search) ||
+
           product.category
             .toLowerCase()
             .includes(search)
@@ -1471,8 +1479,8 @@ function getFilteredProducts(){
     "Toutes"
   ){
 
-    result =
-      result.filter(
+    list =
+      list.filter(
         product =>
           product.category ===
           state.category
@@ -1486,7 +1494,7 @@ function getFilteredProducts(){
 
     case "price-low":
 
-      result.sort(
+      list.sort(
         (a,b) =>
           Number(a.price) -
           Number(b.price)
@@ -1496,7 +1504,7 @@ function getFilteredProducts(){
 
     case "price-high":
 
-      result.sort(
+      list.sort(
         (a,b) =>
           Number(b.price) -
           Number(a.price)
@@ -1506,7 +1514,7 @@ function getFilteredProducts(){
 
     case "name":
 
-      result.sort(
+      list.sort(
         (a,b) =>
           a.name.localeCompare(
             b.name,
@@ -1518,93 +1526,195 @@ function getFilteredProducts(){
 
     case "new":
 
-      result.sort(
+      list.sort(
         (a,b) =>
-          Number(Boolean(b.new)) -
-          Number(Boolean(a.new))
+          Number(!!b.new) -
+          Number(!!a.new)
       );
 
       break;
 
   }
 
-  return result;
+  return list;
 
 }
 
 
 // ============================================================
-// IMAGE PRODUIT
+// CARTE PRODUIT
 // ============================================================
 
-function productImageHTML(
+function productCardHTML(
   product
 ){
 
-  if(!product.image){
-
-    return `
-      <div
-        class="nova-image-box"
-        aria-hidden="true"
-      ></div>
-    `;
-
-  }
+  const favorite =
+    favorites.includes(
+      product.id
+    );
 
   return `
-    <div class="nova-image-box">
-      <img
-        class="nova-product-image"
-        src="${escapeAttr(product.image)}"
-        alt="${escapeAttr(product.name)}"
-        loading="lazy"
-        onerror="
-          this.style.display='none';
-        "
-      >
-    </div>
+
+    <article
+      class="product"
+      data-product-id="${escapeAttr(
+        product.id
+      )}"
+    >
+
+      <div class="product-img">
+
+        ${
+          product.image
+            ? `
+              <img
+                src="${escapeAttr(
+                  product.image
+                )}"
+                alt="${escapeAttr(
+                  product.name
+                )}"
+                loading="lazy"
+                onerror="
+                  this.onerror=null;
+                  this.style.display='none';
+                "
+              >
+            `
+            : ""
+        }
+
+        ${
+          product.new
+            ? `
+              <span style="
+                position:absolute;
+                top:10px;
+                left:10px;
+                padding:6px 9px;
+                border-radius:9px;
+                background:#2d8cff;
+                color:#fff;
+                font-size:11px;
+                font-weight:800;
+              ">
+                NOUVEAU
+              </span>
+            `
+            : ""
+        }
+
+      </div>
+
+      <div class="product-body">
+
+        <h3>
+          ${escapeHTML(
+            product.name
+          )}
+        </h3>
+
+        <p style="
+          margin-top:5px;
+          opacity:.6;
+          font-size:12px;
+        ">
+          ${escapeHTML(
+            product.category
+          )}
+        </p>
+
+        <div class="price">
+          ${money(
+            product.price
+          )}
+        </div>
+
+        <div class="product-actions">
+
+          <button
+            type="button"
+            class="add-btn"
+            data-add="${escapeAttr(
+              product.id
+            )}"
+          >
+            Ajouter
+          </button>
+
+          <button
+            type="button"
+            class="view-btn"
+            data-view="${escapeAttr(
+              product.id
+            )}"
+          >
+            Voir
+          </button>
+
+          <button
+            type="button"
+            class="favorite-btn"
+            data-favorite="${escapeAttr(
+              product.id
+            )}"
+            title="Favoris"
+          >
+            ${
+              favorite
+                ? "❤️"
+                : "♡"
+            }
+          </button>
+
+        </div>
+
+      </div>
+
+    </article>
+
   `;
 
 }
 
 
 // ============================================================
-// RENDU PRODUITS
+// RENDER PRODUITS
 // ============================================================
 
 function renderProducts(){
 
   if(!productGrid){
-    console.error(
-      "NovaShop: productGrid introuvable."
-    );
     return;
   }
 
-  const result =
+  const list =
     getFilteredProducts();
 
   if(productCount){
 
     productCount.textContent =
-      `${result.length} produit${
-        result.length > 1
+      `${list.length} produit${
+        list.length > 1
           ? "s"
           : ""
       }`;
 
   }
 
-  if(!result.length){
+  if(!list.length){
 
     productGrid.innerHTML = `
-      <div class="nova-empty">
 
-        <div style="
-          font-size:42px;
-          margin-bottom:10px;
-        ">
+      <div
+        class="nova-empty"
+        style="
+          grid-column:1/-1;
+        "
+      >
+
+        <div class="nova-empty-icon">
           🔎
         </div>
 
@@ -1613,13 +1723,14 @@ function renderProducts(){
         </h3>
 
         <p style="
-          opacity:.7;
           margin-top:8px;
+          opacity:.65;
         ">
-          Essaie une autre recherche ou catégorie.
+          Modifie ta recherche ou ta catégorie.
         </p>
 
       </div>
+
     `;
 
     return;
@@ -1627,120 +1738,16 @@ function renderProducts(){
   }
 
   productGrid.innerHTML =
-    result.map(
-      product => {
-
-        const favorite =
-          favorites.includes(
-            product.id
-          );
-
-        return `
-          <article
-            class="product"
-            data-id="${escapeAttr(product.id)}"
-          >
-
-            <div class="product-img">
-              ${productImageHTML(product)}
-            </div>
-
-            <div class="product-body">
-
-              ${
-                product.new
-                  ? `
-                    <span style="
-                      display:inline-block;
-                      padding:5px 8px;
-                      border-radius:8px;
-                      background:rgba(37,214,149,.12);
-                      color:#25d695;
-                      font-size:11px;
-                      font-weight:800;
-                      margin-bottom:8px;
-                    ">
-                      NOUVEAU
-                    </span>
-                  `
-                  : ""
-              }
-
-              <div style="
-                font-size:11px;
-                opacity:.6;
-                margin-bottom:5px;
-              ">
-                ${escapeHTML(
-                  product.category
-                )}
-              </div>
-
-              <h3>
-                ${escapeHTML(
-                  product.name
-                )}
-              </h3>
-
-              <div class="price">
-                ${money(product.price)}
-              </div>
-
-              <div class="product-actions">
-
-                <button
-                  type="button"
-                  class="add-btn"
-                  data-action="add"
-                  data-id="${escapeAttr(product.id)}"
-                >
-                  Ajouter
-                </button>
-
-                <button
-                  type="button"
-                  class="favorite-btn ${
-                    favorite
-                      ? "active"
-                      : ""
-                  }"
-                  data-action="favorite"
-                  data-id="${escapeAttr(product.id)}"
-                  aria-label="Favori"
-                >
-                  ${
-                    favorite
-                      ? "♥"
-                      : "♡"
-                  }
-                </button>
-
-              </div>
-
-              <button
-                type="button"
-                class="view-btn"
-                data-action="view"
-                data-id="${escapeAttr(product.id)}"
-                style="
-                  width:100%;
-                  margin-top:8px;
-                "
-              >
-                Voir le produit
-              </button>
-
-            </div>
-
-          </article>
-        `;
-
-      }
+    list.map(
+      product =>
+        productCardHTML(
+          product
+        )
     ).join("");
 
   productGrid
     .querySelectorAll(
-      "[data-action]"
+      "[data-add]"
     )
     .forEach(button => {
 
@@ -1748,29 +1755,47 @@ function renderProducts(){
         "click",
         () => {
 
-          const id =
-            button.dataset.id;
+          addToCart(
+            button.dataset.add
+          );
 
-          const action =
-            button.dataset.action;
+        }
+      );
 
-          if(action === "add"){
+    });
 
-            addToCart(id);
+  productGrid
+    .querySelectorAll(
+      "[data-view]"
+    )
+    .forEach(button => {
 
-          }else if(
-            action === "favorite"
-          ){
+      button.addEventListener(
+        "click",
+        () => {
 
-            toggleFavorite(id);
+          openProduct(
+            button.dataset.view
+          );
 
-          }else if(
-            action === "view"
-          ){
+        }
+      );
 
-            openProduct(id);
+    });
 
-          }
+  productGrid
+    .querySelectorAll(
+      "[data-favorite]"
+    )
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          toggleFavorite(
+            button.dataset.favorite
+          );
 
         }
       );
@@ -1792,8 +1817,7 @@ function toggleFavorite(id){
 
     favorites =
       favorites.filter(
-        item =>
-          item !== id
+        item => item !== id
       );
 
     toast(
@@ -1821,127 +1845,77 @@ function toggleFavorite(id){
 // OPTIONS PRODUIT
 // ============================================================
 
-function buildProductOptions(
+function productOptionsHTML(
   product
 ){
 
   if(
-    !product.options ||
-    !Object.keys(product.options).length
+    !product.options
   ){
 
     return "";
 
   }
 
-  return `
-    <div style="
-      display:grid;
-      gap:12px;
-      margin:18px 0;
-    ">
+  return Object.entries(
+    product.options
+  ).map(
+    ([label,values]) => `
 
-      ${
-        Object.entries(
-          product.options
-        ).map(
-          ([name,values]) => `
-            <div>
+      <div style="
+        margin-top:14px;
+      ">
 
-              <label
-                for="option_${escapeAttr(name)}"
+        <label
+          for="option-${escapeAttr(
+            label
+          )}"
+        >
+          ${escapeHTML(label)}
+        </label>
+
+        <select
+          id="option-${escapeAttr(
+            label
+          )}"
+          class="product-option"
+          data-option-label="${escapeAttr(
+            label
+          )}"
+          style="
+            width:100%;
+            margin-top:6px;
+          "
+        >
+
+          ${values.map(
+            value => `
+
+              <option
+                value="${escapeAttr(
+                  value
+                )}"
               >
-                ${escapeHTML(name)}
-              </label>
+                ${escapeHTML(
+                  value
+                )}
+              </option>
 
-              <select
-                id="option_${escapeAttr(name)}"
-                class="product-option"
-                data-option-name="${escapeAttr(name)}"
-              >
+            `
+          ).join("")}
 
-                <option value="">
-                  Choisir
-                </option>
+        </select>
 
-                ${
-                  values.map(
-                    value => `
-                      <option
-                        value="${escapeAttr(value)}"
-                      >
-                        ${escapeHTML(value)}
-                      </option>
-                    `
-                  ).join("")
-                }
+      </div>
 
-              </select>
-
-            </div>
-          `
-        ).join("")
-      }
-
-    </div>
-  `;
+    `
+  ).join("");
 
 }
 
 
 // ============================================================
-// MODAL
-// ============================================================
-
-function showModal(
-  title,
-  content
-){
-
-  if(!modal){
-    return;
-  }
-
-  if(modalTitle){
-    modalTitle.textContent =
-      title;
-  }
-
-  if(modalContent){
-    modalContent.innerHTML =
-      content;
-  }
-
-  modal.classList.add(
-    "show"
-  );
-
-  document.body.classList.add(
-    "modal-open"
-  );
-
-}
-
-
-function closeModal(){
-
-  if(!modal){
-    return;
-  }
-
-  modal.classList.remove(
-    "show"
-  );
-
-  document.body.classList.remove(
-    "modal-open"
-  );
-
-}
-
-
-// ============================================================
-// PRODUIT
+// PRODUIT MODAL
 // ============================================================
 
 function openProduct(id){
@@ -1950,7 +1924,14 @@ function openProduct(id){
     getProduct(id);
 
   if(!product){
+
+    toast(
+      "Produit introuvable.",
+      "error"
+    );
+
     return;
+
   }
 
   showModal(
@@ -1959,51 +1940,75 @@ function openProduct(id){
 
       <div>
 
-        ${productImageHTML(product)}
+        ${
+          product.image
+            ? `
+              <div style="
+                height:230px;
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                background:#fff;
+                border-radius:16px;
+                overflow:hidden;
+                margin-bottom:18px;
+              ">
+
+                <img
+                  src="${escapeAttr(
+                    product.image
+                  )}"
+                  alt="${escapeAttr(
+                    product.name
+                  )}"
+                  style="
+                    width:100%;
+                    height:100%;
+                    object-fit:contain;
+                  "
+                  onerror="
+                    this.onerror=null;
+                    this.style.display='none';
+                  "
+                >
+
+              </div>
+            `
+            : ""
+        }
+
+        <p style="
+          opacity:.65;
+        ">
+          ${escapeHTML(
+            product.category
+          )}
+        </p>
 
         <div style="
-          margin-top:18px;
+          font-size:25px;
+          font-weight:900;
+          margin-top:10px;
         ">
-
-          <div style="
-            opacity:.6;
-            font-size:13px;
-          ">
-            ${escapeHTML(
-              product.category
-            )}
-          </div>
-
-          <h2 style="
-            margin-top:5px;
-          ">
-            ${escapeHTML(
-              product.name
-            )}
-          </h2>
-
-          <div style="
-            font-size:25px;
-            font-weight:900;
-            margin-top:12px;
-          ">
-            ${money(product.price)}
-          </div>
-
+          ${money(
+            product.price
+          )}
         </div>
 
-        ${buildProductOptions(product)}
+        ${productOptionsHTML(
+          product
+        )}
 
         <div style="
           display:flex;
           gap:10px;
-          margin-top:15px;
+          margin-top:20px;
         ">
 
           <button
             type="button"
             class="add-btn"
-            id="modalAddToCart"
+            id="modalAddProduct"
             style="flex:1;"
           >
             🛒 Ajouter au panier
@@ -2011,16 +2016,12 @@ function openProduct(id){
 
           <button
             type="button"
-            class="favorite-btn ${
-              favorites.includes(product.id)
-                ? "active"
-                : ""
-            }"
-            id="modalFavorite"
+            class="view-btn"
+            id="modalFavoriteProduct"
           >
             ${
-              favorites.includes(product.id)
-                ? "♥"
+              favorites.includes(id)
+                ? "❤️"
                 : "♡"
             }
           </button>
@@ -2032,54 +2033,28 @@ function openProduct(id){
     `
   );
 
-  $("modalAddToCart")
+  $("modalAddProduct")
     ?.addEventListener(
       "click",
       () => {
 
-        const optionElements =
-          document.querySelectorAll(
+        let option = "";
+
+        document
+          .querySelectorAll(
             ".product-option"
-          );
+          )
+          .forEach(select => {
 
-        const selectedOptions = [];
+            const label =
+              select.dataset.optionLabel;
 
-        optionElements.forEach(
-          select => {
+            option +=
+              option
+                ? `, ${label}: ${select.value}`
+                : `${label}: ${select.value}`;
 
-            const value =
-              select.value;
-
-            if(value){
-
-              selectedOptions.push(
-                `${select.dataset.optionName}: ${value}`
-              );
-
-            }
-
-          }
-        );
-
-        if(
-          optionElements.length &&
-          selectedOptions.length !==
-          optionElements.length
-        ){
-
-          toast(
-            "Choisis toutes les options.",
-            "error"
-          );
-
-          return;
-
-        }
-
-        const option =
-          selectedOptions.join(
-            " | "
-          );
+          });
 
         addToCart(
           product.id,
@@ -2091,7 +2066,7 @@ function openProduct(id){
       }
     );
 
-  $("modalFavorite")
+  $("modalFavoriteProduct")
     ?.addEventListener(
       "click",
       () => {
@@ -2117,7 +2092,9 @@ function getCartCount(){
   return cart.reduce(
     (total,item) =>
       total +
-      Number(item.quantity || 1),
+      Number(
+        item.quantity || 0
+      ),
     0
   );
 
@@ -2130,15 +2107,19 @@ function getCartSubtotal(){
     (total,item) => {
 
       const product =
-        getProduct(item.id);
-
-      if(!product){
-        return total;
-      }
+        getProduct(
+          item.id
+        );
 
       return total +
-        Number(product.price || 0) *
-        Number(item.quantity || 1);
+        (
+          Number(
+            product?.price || 0
+          ) *
+          Number(
+            item.quantity || 1
+          )
+        );
 
     },
     0
@@ -2149,14 +2130,21 @@ function getCartSubtotal(){
 
 function addToCart(
   id,
-  option = ""
+  option=""
 ){
 
   const product =
     getProduct(id);
 
   if(!product){
+
+    toast(
+      "Produit introuvable.",
+      "error"
+    );
+
     return;
+
   }
 
   const existing =
@@ -2169,8 +2157,9 @@ function addToCart(
   if(existing){
 
     existing.quantity =
-      Number(existing.quantity || 1) +
-      1;
+      Number(
+        existing.quantity || 0
+      ) + 1;
 
   }else{
 
@@ -2194,18 +2183,22 @@ function addToCart(
 
 
 function removeFromCart(
-  id,
-  option = ""
+  index
 ){
 
-  cart =
-    cart.filter(
-      item =>
-        !(
-          item.id === id &&
-          item.option === option
-        )
-    );
+  if(
+    index < 0 ||
+    index >= cart.length
+  ){
+
+    return;
+
+  }
+
+  cart.splice(
+    index,
+    1
+  );
 
   saveCart();
   renderCart();
@@ -2214,34 +2207,31 @@ function removeFromCart(
 
 
 function changeCartQuantity(
-  id,
-  option,
-  change
+  index,
+  delta
 ){
 
-  const item =
-    cart.find(
-      item =>
-        item.id === id &&
-        item.option === option
-    );
+  if(
+    !cart[index]
+  ){
 
-  if(!item){
     return;
+
   }
 
-  item.quantity =
-    Number(item.quantity || 1) +
-    Number(change);
+  cart[index].quantity =
+    Number(
+      cart[index].quantity || 1
+    ) + delta;
 
-  if(item.quantity <= 0){
+  if(
+    cart[index].quantity <= 0
+  ){
 
-    removeFromCart(
-      id,
-      option
+    cart.splice(
+      index,
+      1
     );
-
-    return;
 
   }
 
@@ -2250,6 +2240,10 @@ function changeCartQuantity(
 
 }
 
+
+// ============================================================
+// RENDER PANIER
+// ============================================================
 
 function renderCart(){
 
@@ -2259,169 +2253,200 @@ function renderCart(){
   if(cartBadge){
 
     cartBadge.textContent =
-      count;
+      String(count);
 
     cartBadge.style.display =
-      count
-        ? "inline-flex"
+      count > 0
+        ? ""
         : "none";
 
   }
 
-  if(cartTotalEl){
+  if(cartTotal){
 
-    cartTotalEl.textContent =
+    cartTotal.textContent =
       money(
         getCartSubtotal()
       );
 
   }
 
-  if(!cartItemsEl){
+  if(!cartItems){
     return;
   }
 
   if(!cart.length){
 
-    cartItemsEl.innerHTML = `
-      <div style="
-        text-align:center;
-        padding:35px 15px;
-        opacity:.7;
-      ">
+    cartItems.innerHTML = `
 
-        <div style="
-          font-size:45px;
-          margin-bottom:10px;
-        ">
+      <div class="nova-empty">
+
+        <div class="nova-empty-icon">
           🛒
         </div>
 
-        <strong>
+        <h3>
           Ton panier est vide
-        </strong>
+        </h3>
+
+        <p style="
+          margin-top:8px;
+          opacity:.65;
+        ">
+          Ajoute des produits pour commencer.
+        </p>
 
       </div>
+
     `;
 
     return;
 
   }
 
-  cartItemsEl.innerHTML =
+  cartItems.innerHTML =
     cart.map(
-      item => {
+      (item,index) => {
 
         const product =
-          getProduct(item.id);
+          getProduct(
+            item.id
+          );
 
         if(!product){
           return "";
         }
 
         return `
+
           <div style="
-            padding:13px 0;
-            border-bottom:1px solid rgba(255,255,255,.08);
+            display:grid;
+            grid-template-columns:65px 1fr;
+            gap:12px;
+            padding:12px 0;
+            border-bottom:1px solid var(--line);
           ">
 
             <div style="
+              width:65px;
+              height:65px;
+              border-radius:12px;
+              background:#fff;
+              overflow:hidden;
               display:flex;
-              justify-content:space-between;
-              gap:10px;
+              align-items:center;
+              justify-content:center;
             ">
 
-              <strong style="
-                font-size:14px;
-              ">
+              ${
+                product.image
+                  ? `
+                    <img
+                      src="${escapeAttr(
+                        product.image
+                      )}"
+                      alt=""
+                      style="
+                        width:100%;
+                        height:100%;
+                        object-fit:contain;
+                      "
+                      onerror="
+                        this.onerror=null;
+                        this.style.display='none';
+                      "
+                    >
+                  `
+                  : ""
+              }
+
+            </div>
+
+            <div>
+
+              <strong>
                 ${escapeHTML(
                   product.name
                 )}
               </strong>
 
-              <strong>
+              ${
+                item.option
+                  ? `
+                    <div style="
+                      margin-top:4px;
+                      font-size:12px;
+                      opacity:.65;
+                    ">
+                      ${escapeHTML(
+                        item.option
+                      )}
+                    </div>
+                  `
+                  : ""
+              }
+
+              <div style="
+                margin-top:5px;
+                font-weight:800;
+              ">
                 ${money(
-                  product.price *
-                  Number(item.quantity || 1)
+                  product.price
                 )}
-              </strong>
+              </div>
 
-            </div>
-
-            ${
-              item.option
-                ? `
-                  <div style="
-                    opacity:.65;
-                    font-size:12px;
-                    margin-top:5px;
-                  ">
-                    ${escapeHTML(
-                      item.option
-                    )}
-                  </div>
-                `
-                : ""
-            }
-
-            <div style="
-              display:flex;
-              justify-content:space-between;
-              align-items:center;
-              margin-top:10px;
-            ">
-
-              <div class="cart-quantity">
+              <div
+                class="cart-qty"
+                style="
+                  margin-top:8px;
+                "
+              >
 
                 <button
                   type="button"
-                  data-cart-action="minus"
-                  data-id="${escapeAttr(item.id)}"
-                  data-option="${escapeAttr(item.option || "")}"
+                  data-cart-minus="${index}"
                 >
                   −
                 </button>
 
                 <strong>
-                  ${Number(item.quantity || 1)}
+                  ${Number(
+                    item.quantity || 1
+                  )}
                 </strong>
 
                 <button
                   type="button"
-                  data-cart-action="plus"
-                  data-id="${escapeAttr(item.id)}"
-                  data-option="${escapeAttr(item.option || "")}"
+                  data-cart-plus="${index}"
                 >
                   +
                 </button>
 
-              </div>
+                <button
+                  type="button"
+                  data-cart-remove="${index}"
+                  style="
+                    margin-left:auto;
+                    color:#ff7777;
+                  "
+                >
+                  🗑️
+                </button>
 
-              <button
-                type="button"
-                class="view-btn"
-                data-cart-action="remove"
-                data-id="${escapeAttr(item.id)}"
-                data-option="${escapeAttr(item.option || "")}"
-                style="
-                  color:#ff7777;
-                  padding:7px 10px;
-                "
-              >
-                Supprimer
-              </button>
+              </div>
 
             </div>
 
           </div>
+
         `;
 
       }
     ).join("");
 
-  cartItemsEl
+  cartItems
     .querySelectorAll(
-      "[data-cart-action]"
+      "[data-cart-minus]"
     )
     .forEach(button => {
 
@@ -2429,43 +2454,55 @@ function renderCart(){
         "click",
         () => {
 
-          const id =
-            button.dataset.id;
+          changeCartQuantity(
+            Number(
+              button.dataset.cartMinus
+            ),
+            -1
+          );
 
-          const option =
-            button.dataset.option || "";
+        }
+      );
 
-          const action =
-            button.dataset.cartAction;
+    });
 
-          if(action === "minus"){
+  cartItems
+    .querySelectorAll(
+      "[data-cart-plus]"
+    )
+    .forEach(button => {
 
-            changeCartQuantity(
-              id,
-              option,
-              -1
-            );
+      button.addEventListener(
+        "click",
+        () => {
 
-          }else if(
-            action === "plus"
-          ){
+          changeCartQuantity(
+            Number(
+              button.dataset.cartPlus
+            ),
+            1
+          );
 
-            changeCartQuantity(
-              id,
-              option,
-              1
-            );
+        }
+      );
 
-          }else if(
-            action === "remove"
-          ){
+    });
 
-            removeFromCart(
-              id,
-              option
-            );
+  cartItems
+    .querySelectorAll(
+      "[data-cart-remove]"
+    )
+    .forEach(button => {
 
-          }
+      button.addEventListener(
+        "click",
+        () => {
+
+          removeFromCart(
+            Number(
+              button.dataset.cartRemove
+            )
+          );
 
         }
       );
@@ -2475,9 +2512,17 @@ function renderCart(){
 }
 
 
+// ============================================================
+// OUVERTURE PANIER
+// ============================================================
+
 function openCart(){
 
-  cartDrawer?.classList.add(
+  if(!cartDrawer){
+    return;
+  }
+
+  cartDrawer.classList.add(
     "open"
   );
 
@@ -2502,41 +2547,129 @@ function closeCart(){
 
 
 // ============================================================
-// AUTH
+// MODAL
 // ============================================================
 
-function authError(error){
+function showModal(
+  title,
+  content
+){
 
-  const code =
-    error?.code || "";
+  if(!modal){
+    return;
+  }
 
-  const messages = {
+  if(modalTitle){
 
-    "auth/invalid-credential":
-      "Email ou mot de passe incorrect.",
+    modalTitle.textContent =
+      title;
 
-    "auth/invalid-email":
-      "Adresse email invalide.",
+  }
 
-    "auth/email-already-in-use":
-      "Cette adresse email est déjà utilisée.",
+  if(modalContent){
 
-    "auth/weak-password":
-      "Le mot de passe est trop faible.",
+    modalContent.innerHTML =
+      content;
 
-    "auth/user-not-found":
-      "Compte introuvable.",
+  }
 
-    "auth/wrong-password":
-      "Mot de passe incorrect."
-
-  };
-
-  return (
-    messages[code] ||
-    error?.message ||
-    "Une erreur est survenue."
+  modal.classList.add(
+    "show"
   );
+
+}
+
+
+function closeModal(){
+
+  modal?.classList.remove(
+    "show"
+  );
+
+}
+
+
+// ============================================================
+// RECHERCHE + TRI
+// ============================================================
+
+searchInput?.addEventListener(
+  "input",
+  () => {
+
+    state.search =
+      searchInput.value || "";
+
+    renderProducts();
+
+  }
+);
+
+
+sortSelect?.addEventListener(
+  "change",
+  () => {
+
+    state.sort =
+      sortSelect.value || "default";
+
+    renderProducts();
+
+  }
+);
+
+
+// ============================================================
+// BOUTONS DU HAUT
+// ============================================================
+
+cartBtn?.addEventListener(
+  "click",
+  openCart
+);
+
+heroCartBtn?.addEventListener(
+  "click",
+  openCart
+);
+
+closeCartBtn?.addEventListener(
+  "click",
+  closeCart
+);
+
+overlay?.addEventListener(
+  "click",
+  closeCart
+);
+
+modalClose?.addEventListener(
+  "click",
+  closeModal
+);
+
+
+// ============================================================
+// COMPTE
+// ============================================================
+
+accountBtn?.addEventListener(
+  "click",
+  openAccount
+);
+
+
+function openAccount(){
+
+  if(currentUser){
+
+    showAccountConnected();
+
+  }else{
+
+    showLoginForm();
+
+  }
 
 }
 
@@ -2550,15 +2683,15 @@ function showLoginForm(){
       <form id="loginForm">
 
         <label for="loginEmail">
-          Email
+          Adresse e-mail
         </label>
 
         <input
           id="loginEmail"
           type="email"
           autocomplete="email"
-          required
           placeholder="ton@email.com"
+          required
         >
 
         <label
@@ -2575,8 +2708,8 @@ function showLoginForm(){
           id="loginPassword"
           type="password"
           autocomplete="current-password"
-          required
           placeholder="Mot de passe"
+          required
         >
 
         <button
@@ -2584,30 +2717,30 @@ function showLoginForm(){
           class="add-btn"
           style="
             width:100%;
-            margin-top:15px;
+            margin-top:16px;
           "
         >
-          Se connecter
+          🔐 Se connecter
         </button>
 
         <button
           type="button"
           class="view-btn"
-          id="registerSwitch"
+          id="showRegister"
           style="
             width:100%;
-            margin-top:8px;
+            margin-top:9px;
           "
         >
           Créer un compte
         </button>
 
         <div
-          id="authError"
+          id="loginError"
           style="
             display:none;
-            color:#ff7777;
             margin-top:12px;
+            color:#ff7777;
           "
         ></div>
 
@@ -2625,14 +2758,14 @@ function showLoginForm(){
 
         const email =
           $("loginEmail")
-            ?.value.trim();
+            ?.value.trim() || "";
 
         const password =
           $("loginPassword")
             ?.value || "";
 
-        const errorBox =
-          $("authError");
+        const error =
+          $("loginError");
 
         try{
 
@@ -2649,16 +2782,14 @@ function showLoginForm(){
             "success"
           );
 
-        }catch(error){
+        }catch(err){
 
-          console.error(error);
+          if(error){
 
-          if(errorBox){
+            error.textContent =
+              authError(err);
 
-            errorBox.textContent =
-              authError(error);
-
-            errorBox.style.display =
+            error.style.display =
               "block";
 
           }
@@ -2668,7 +2799,7 @@ function showLoginForm(){
       }
     );
 
-  $("registerSwitch")
+  $("showRegister")
     ?.addEventListener(
       "click",
       showRegisterForm
@@ -2686,15 +2817,15 @@ function showRegisterForm(){
       <form id="registerForm">
 
         <label for="registerEmail">
-          Email
+          Adresse e-mail
         </label>
 
         <input
           id="registerEmail"
           type="email"
           autocomplete="email"
-          required
           placeholder="ton@email.com"
+          required
         >
 
         <label
@@ -2711,9 +2842,9 @@ function showRegisterForm(){
           id="registerPassword"
           type="password"
           autocomplete="new-password"
-          required
-          minlength="6"
           placeholder="Minimum 6 caractères"
+          minlength="6"
+          required
         >
 
         <button
@@ -2721,30 +2852,30 @@ function showRegisterForm(){
           class="add-btn"
           style="
             width:100%;
-            margin-top:15px;
+            margin-top:16px;
           "
         >
-          Créer mon compte
+          ✨ Créer mon compte
         </button>
 
         <button
           type="button"
           class="view-btn"
-          id="loginSwitch"
+          id="backLogin"
           style="
             width:100%;
-            margin-top:8px;
+            margin-top:9px;
           "
         >
-          J'ai déjà un compte
+          Retour à la connexion
         </button>
 
         <div
-          id="authError"
+          id="registerError"
           style="
             display:none;
-            color:#ff7777;
             margin-top:12px;
+            color:#ff7777;
           "
         ></div>
 
@@ -2762,14 +2893,14 @@ function showRegisterForm(){
 
         const email =
           $("registerEmail")
-            ?.value.trim();
+            ?.value.trim() || "";
 
         const password =
           $("registerPassword")
             ?.value || "";
 
-        const errorBox =
-          $("authError");
+        const error =
+          $("registerError");
 
         try{
 
@@ -2782,20 +2913,18 @@ function showRegisterForm(){
           closeModal();
 
           toast(
-            "Compte créé 🎉",
+            "Compte créé avec succès 🎉",
             "success"
           );
 
-        }catch(error){
+        }catch(err){
 
-          console.error(error);
+          if(error){
 
-          if(errorBox){
+            error.textContent =
+              authError(err);
 
-            errorBox.textContent =
-              authError(error);
-
-            errorBox.style.display =
+            error.style.display =
               "block";
 
           }
@@ -2805,7 +2934,7 @@ function showRegisterForm(){
       }
     );
 
-  $("loginSwitch")
+  $("backLogin")
     ?.addEventListener(
       "click",
       showLoginForm
@@ -2814,47 +2943,7 @@ function showRegisterForm(){
 }
 
 
-async function logout(){
-
-  try{
-
-    await signOut(auth);
-
-    toast(
-      "Déconnexion réussie."
-    );
-
-  }catch(error){
-
-    toast(
-      authError(error),
-      "error"
-    );
-
-  }
-
-}
-
-
-// ============================================================
-// COMPTE
-// ============================================================
-
-accountBtn?.addEventListener(
-  "click",
-  openAccount
-);
-
-
-function openAccount(){
-
-  if(!currentUser){
-
-    showLoginForm();
-
-    return;
-
-  }
+function showAccountConnected(){
 
   showModal(
     "Mon compte",
@@ -2865,28 +2954,32 @@ function openAccount(){
         <div style="
           padding:16px;
           border-radius:16px;
-          background:rgba(45,140,255,.08);
+          background:rgba(45,140,255,.09);
         ">
 
-          <strong>
-            👤 Compte connecté
-          </strong>
+          <div style="
+            font-size:13px;
+            opacity:.65;
+          ">
+            Connecté avec
+          </div>
 
-          <p style="
-            margin-top:8px;
-            opacity:.75;
+          <strong style="
+            display:block;
+            margin-top:5px;
+            word-break:break-word;
           ">
             ${escapeHTML(
               currentUser.email || ""
             )}
-          </p>
+          </strong>
 
         </div>
 
         <button
           type="button"
           class="add-btn"
-          id="accountOrders"
+          id="accountOrdersBtn"
           style="
             width:100%;
             margin-top:14px;
@@ -2898,13 +2991,13 @@ function openAccount(){
         <button
           type="button"
           class="view-btn"
-          id="accountLogout"
+          id="logoutBtn"
           style="
             width:100%;
-            margin-top:8px;
+            margin-top:9px;
           "
         >
-          Se déconnecter
+          🚪 Se déconnecter
         </button>
 
       </div>
@@ -2912,22 +3005,88 @@ function openAccount(){
     `
   );
 
-  $("accountOrders")
+  $("accountOrdersBtn")
     ?.addEventListener(
       "click",
       openOrders
     );
 
-  $("accountLogout")
+  $("logoutBtn")
     ?.addEventListener(
       "click",
-      () => {
+      async () => {
 
-        closeModal();
-        logout();
+        try{
+
+          await signOut(
+            auth
+          );
+
+          closeModal();
+
+          toast(
+            "Déconnexion réussie."
+          );
+
+        }catch(error){
+
+          toast(
+            authError(error),
+            "error"
+          );
+
+        }
 
       }
     );
+
+}
+
+
+// ============================================================
+// ERREURS AUTH
+// ============================================================
+
+function authError(
+  error
+){
+
+  const code =
+    error?.code || "";
+
+  const messages = {
+
+    "auth/invalid-email":
+      "Adresse e-mail invalide.",
+
+    "auth/user-not-found":
+      "Aucun compte ne correspond à cette adresse.",
+
+    "auth/wrong-password":
+      "Mot de passe incorrect.",
+
+    "auth/invalid-credential":
+      "E-mail ou mot de passe incorrect.",
+
+    "auth/email-already-in-use":
+      "Cette adresse e-mail est déjà utilisée.",
+
+    "auth/weak-password":
+      "Le mot de passe est trop faible.",
+
+    "auth/too-many-requests":
+      "Trop de tentatives. Réessaie plus tard.",
+
+    "auth/network-request-failed":
+      "Erreur réseau. Vérifie ta connexion."
+
+  };
+
+  return (
+    messages[code] ||
+    error?.message ||
+    "Une erreur est survenue."
+  );
 
 }
 
@@ -2946,6 +3105,10 @@ async function openOrders(){
 
   if(!currentUser){
 
+    toast(
+      "Connecte-toi pour voir tes commandes."
+    );
+
     showLoginForm();
 
     return;
@@ -2955,6 +3118,7 @@ async function openOrders(){
   showModal(
     "Mes commandes",
     `
+
       <div
         id="ordersLoading"
         style="
@@ -2962,16 +3126,17 @@ async function openOrders(){
           padding:30px;
         "
       >
-        Chargement...
+        Chargement des commandes...
       </div>
 
       <div id="ordersContent"></div>
+
     `
   );
 
   try{
 
-    const q =
+    const ordersQuery =
       query(
         collection(
           db,
@@ -2985,7 +3150,9 @@ async function openOrders(){
       );
 
     const snapshot =
-      await getDocs(q);
+      await getDocs(
+        ordersQuery
+      );
 
     const orders = [];
 
@@ -3021,7 +3188,7 @@ async function openOrders(){
   }catch(error){
 
     console.error(
-      "Orders Error:",
+      "Orders error:",
       error
     );
 
@@ -3034,9 +3201,10 @@ async function openOrders(){
         <div style="
           color:#ff7777;
         ">
+          Impossible de charger les commandes.
+          <br><br>
           ${escapeHTML(
-            error.message ||
-            "Erreur lors du chargement."
+            error.message || ""
           )}
         </div>
       `;
@@ -3064,14 +3232,10 @@ function renderOrders(
   if(!orders.length){
 
     content.innerHTML = `
-      <div style="
-        text-align:center;
-        padding:35px;
-      ">
 
-        <div style="
-          font-size:50px;
-        ">
+      <div class="nova-empty">
+
+        <div class="nova-empty-icon">
           📦
         </div>
 
@@ -3080,13 +3244,14 @@ function renderOrders(
         </h3>
 
         <p style="
-          opacity:.7;
-          margin-top:7px;
+          margin-top:8px;
+          opacity:.65;
         ">
           Tes commandes apparaîtront ici.
         </p>
 
       </div>
+
     `;
 
     return;
@@ -3095,131 +3260,121 @@ function renderOrders(
 
   content.innerHTML =
     orders.map(
-      order => {
+      order => `
 
-        const status =
-          order.status ||
-          "Enregistrée";
+        <div style="
+          padding:16px;
+          border:1px solid var(--line);
+          border-radius:16px;
+          margin-bottom:12px;
+        ">
 
-        const items =
-          Array.isArray(order.items)
-            ? order.items
-            : [];
-
-        const productsText =
-          items.map(
-            item =>
-              `${item.name || item.id} ×${
-                item.quantity || 1
-              }`
-          ).join(", ");
-
-        return `
           <div style="
-            padding:16px;
-            margin-bottom:13px;
-            border:1px solid rgba(255,255,255,.08);
-            border-radius:16px;
+            display:flex;
+            justify-content:space-between;
+            gap:10px;
+            flex-wrap:wrap;
           ">
 
-            <div style="
-              display:flex;
-              justify-content:space-between;
-              gap:10px;
-              flex-wrap:wrap;
-            ">
+            <strong>
+              Commande #${escapeHTML(
+                order.id.slice(0,8)
+              )}
+            </strong>
 
-              <strong>
-                #${escapeHTML(
-                  order.id.slice(0,8)
-                )}
-              </strong>
-
-              <strong>
-                ${money(
-                  order.total || 0
-                )}
-              </strong>
-
-            </div>
-
-            <p style="
-              margin-top:9px;
-            ">
-              📦 ${escapeHTML(status)}
-            </p>
-
-            <p style="
-              opacity:.7;
-              margin-top:7px;
-              font-size:13px;
-            ">
-              ${escapeHTML(productsText)}
-            </p>
-
-            ${
-              order.city
-                ? `
-                  <p style="
-                    margin-top:7px;
-                    opacity:.75;
-                  ">
-                    📍 ${escapeHTML(order.city)}
-                  </p>
-                `
-                : ""
-            }
-
-            ${
-              order.tracking
-                ? `
-                  <p style="
-                    margin-top:7px;
-                    opacity:.75;
-                  ">
-                    🚚 Suivi :
-                    ${escapeHTML(order.tracking)}
-                  </p>
-                `
-                : ""
-            }
-
-            ${
-              order.estimatedDelivery
-                ? `
-                  <p style="
-                    margin-top:7px;
-                    opacity:.75;
-                  ">
-                    🗓️ Livraison :
-                    ${escapeHTML(
-                      order.estimatedDelivery
-                    )}
-                  </p>
-                `
-                : ""
-            }
-
-            <button
-              type="button"
-              class="view-btn order-invoice"
-              data-id="${escapeAttr(order.id)}"
-              style="
-                margin-top:12px;
-              "
-            >
-              🧾 Facture
-            </button>
+            <strong>
+              ${money(
+                order.total || 0
+              )}
+            </strong>
 
           </div>
-        `;
 
-      }
+          <div style="
+            margin-top:9px;
+            font-size:14px;
+          ">
+
+            Statut :
+            <strong>
+              ${escapeHTML(
+                order.status ||
+                "Enregistrée"
+              )}
+            </strong>
+
+          </div>
+
+          ${
+            order.city
+              ? `
+                <div style="
+                  margin-top:7px;
+                  opacity:.8;
+                ">
+                  📍 ${escapeHTML(
+                    order.city
+                  )}
+                </div>
+              `
+              : ""
+          }
+
+          ${
+            order.estimatedDelivery
+              ? `
+                <div style="
+                  margin-top:7px;
+                  opacity:.8;
+                ">
+                  🚚 Livraison :
+                  ${escapeHTML(
+                    order.estimatedDelivery
+                  )}
+                </div>
+              `
+              : ""
+          }
+
+          ${
+            order.tracking
+              ? `
+                <div style="
+                  margin-top:7px;
+                  opacity:.8;
+                ">
+                  🔎 Suivi :
+                  ${escapeHTML(
+                    order.tracking
+                  )}
+                </div>
+              `
+              : ""
+          }
+
+          <button
+            type="button"
+            class="view-btn order-detail"
+            data-id="${escapeAttr(
+              order              order.id
+            )}"
+            style="
+              margin-top:14px;
+              width:100%;
+            "
+          >
+            📦 Voir le détail
+          </button>
+
+        </div>
+
+      `
     ).join("");
 
-  content
+
+  document
     .querySelectorAll(
-      ".order-invoice"
+      ".order-detail"
     )
     .forEach(button => {
 
@@ -3235,13 +3390,424 @@ function renderOrders(
             );
 
           if(order){
-            printInvoice(order);
+
+            showOrderDetail(
+              order
+            );
+
           }
 
         }
       );
 
     });
+
+}
+
+
+// ============================================================
+// DÉTAIL D'UNE COMMANDE
+// ============================================================
+
+function showOrderDetail(order){
+
+  const status =
+    order.status ||
+    "Enregistrée";
+
+  const statuses = [
+    "Enregistrée",
+    "Acceptée",
+    "Préparation",
+    "En transit",
+    "Livraison proche",
+    "Livrée",
+    "Annulée",
+    "Remboursement en cours"
+  ];
+
+  const currentIndex =
+    statuses.indexOf(status);
+
+  const items =
+    Array.isArray(order.items)
+      ? order.items
+      : [];
+
+  const itemsHTML =
+    items.map(
+      item => {
+
+        const product =
+          getProduct(item.id);
+
+        const name =
+          item.name ||
+          product?.name ||
+          "Produit";
+
+        const price =
+          Number(
+            product?.price ??
+            item.price ??
+            0
+          );
+
+        const quantity =
+          Number(
+            item.quantity || 1
+          );
+
+        return `
+          <div style="
+            display:flex;
+            justify-content:space-between;
+            gap:12px;
+            padding:12px 0;
+            border-bottom:1px solid var(--line);
+          ">
+
+            <div>
+
+              <strong>
+                ${escapeHTML(name)}
+              </strong>
+
+              ${
+                item.option
+                  ? `
+                    <div style="
+                      margin-top:4px;
+                      opacity:.65;
+                      font-size:13px;
+                    ">
+                      ${escapeHTML(
+                        item.option
+                      )}
+                    </div>
+                  `
+                  : ""
+              }
+
+              <div style="
+                margin-top:4px;
+                opacity:.7;
+                font-size:13px;
+              ">
+                ×${quantity}
+              </div>
+
+            </div>
+
+            <strong>
+              ${money(
+                price * quantity
+              )}
+            </strong>
+
+          </div>
+        `;
+
+      }
+    ).join("");
+
+
+  const timelineHTML =
+    statuses.map(
+      (item,index) => {
+
+        const active =
+          currentIndex >= index;
+
+        return `
+          <div style="
+            display:flex;
+            gap:12px;
+            align-items:flex-start;
+            margin-bottom:14px;
+          ">
+
+            <div style="
+              width:24px;
+              height:24px;
+              min-width:24px;
+              border-radius:50%;
+              display:flex;
+              align-items:center;
+              justify-content:center;
+              background:${
+                active
+                  ? "#2d8cff"
+                  : "rgba(255,255,255,.08)"
+              };
+              color:${
+                active
+                  ? "#fff"
+                  : "var(--muted)"
+              };
+              font-size:12px;
+              font-weight:800;
+            ">
+              ${
+                active
+                  ? "✓"
+                  : index + 1
+              }
+            </div>
+
+            <div>
+
+              <strong style="
+                color:${
+                  active
+                    ? "var(--text)"
+                    : "var(--muted)"
+                };
+              ">
+                ${escapeHTML(item)}
+              </strong>
+
+            </div>
+
+          </div>
+        `;
+
+      }
+    ).join("");
+
+
+  showModal(
+    `Commande #${order.id.slice(0,8)}`,
+    `
+
+      <div style="
+        display:grid;
+        gap:16px;
+      ">
+
+        <div style="
+          padding:16px;
+          border-radius:16px;
+          background:rgba(45,140,255,.08);
+          border:1px solid rgba(45,140,255,.18);
+        ">
+
+          <div style="
+            font-size:13px;
+            opacity:.65;
+          ">
+            Statut actuel
+          </div>
+
+          <div style="
+            font-size:20px;
+            font-weight:800;
+            margin-top:5px;
+          ">
+            ${escapeHTML(status)}
+          </div>
+
+          ${
+            order.city
+              ? `
+                <div style="
+                  margin-top:10px;
+                ">
+                  📍 Destination :
+                  <strong>
+                    ${escapeHTML(
+                      order.city
+                    )}
+                  </strong>
+                </div>
+              `
+              : ""
+          }
+
+          ${
+            order.estimatedDelivery
+              ? `
+                <div style="
+                  margin-top:7px;
+                ">
+                  🚚 Livraison estimée :
+                  <strong>
+                    ${escapeHTML(
+                      order.estimatedDelivery
+                    )}
+                  </strong>
+                </div>
+              `
+              : ""
+          }
+
+          ${
+            order.tracking
+              ? `
+                <div style="
+                  margin-top:7px;
+                ">
+                  🔎 Suivi :
+                  <strong>
+                    ${escapeHTML(
+                      order.tracking
+                    )}
+                  </strong>
+                </div>
+              `
+              : ""
+          }
+
+        </div>
+
+
+        <div style="
+          padding:16px;
+          border-radius:16px;
+          background:rgba(255,255,255,.04);
+        ">
+
+          <h3>
+            Suivi de la commande
+          </h3>
+
+          <div style="
+            margin-top:16px;
+          ">
+            ${timelineHTML}
+          </div>
+
+        </div>
+
+
+        <div style="
+          padding:16px;
+          border-radius:16px;
+          background:rgba(255,255,255,.04);
+        ">
+
+          <h3>
+            Produits
+          </h3>
+
+          <div style="
+            margin-top:10px;
+          ">
+            ${itemsHTML}
+          </div>
+
+          <div style="
+            display:flex;
+            justify-content:space-between;
+            margin-top:16px;
+            font-size:20px;
+          ">
+
+            <span>
+              Total
+            </span>
+
+            <strong>
+              ${money(
+                order.total || 0
+              )}
+            </strong>
+
+          </div>
+
+        </div>
+
+
+        <div style="
+          padding:16px;
+          border-radius:16px;
+          background:rgba(255,255,255,.04);
+        ">
+
+          <h3>
+            Livraison
+          </h3>
+
+          <p style="
+            margin-top:10px;
+            opacity:.8;
+          ">
+            ${escapeHTML(
+              order.address ||
+              "Adresse non renseignée"
+            )}
+          </p>
+
+        </div>
+
+
+        <div style="
+          display:flex;
+          gap:10px;
+          flex-wrap:wrap;
+        ">
+
+          <button
+            type="button"
+            class="add-btn"
+            id="orderInvoiceBtn"
+            style="
+              flex:1;
+              min-width:180px;
+            "
+          >
+            🧾 Voir la facture
+          </button>
+
+          <button
+            type="button"
+            class="view-btn"
+            id="orderBackBtn"
+            style="
+              flex:1;
+              min-width:180px;
+            "
+          >
+            ← Retour aux commandes
+          </button>
+
+        </div>
+
+      </div>
+
+    `
+  );
+
+
+  $("orderInvoiceBtn")
+    ?.addEventListener(
+      "click",
+      () => {
+
+        printInvoice(order);
+
+      }
+    );
+
+
+  $("orderBackBtn")
+    ?.addEventListener(
+      "click",
+      () => {
+
+        closeModal();
+
+        setTimeout(
+          () => {
+
+            openOrders();
+
+          },
+          100
+        );
+
+      }
+    );
 
 }
 
@@ -3471,8 +4037,10 @@ function openCheckout(){
             $("paymentMethod");
 
           if(input){
+
             input.value =
               paymentMethod;
+
           }
 
           document
@@ -3714,7 +4282,9 @@ function openCheckout(){
 
         if(submit){
 
-          submit.disabled = true;
+          submit.disabled =
+            true;
+
           submit.textContent =
             "Création...";
 
@@ -3749,12 +4319,20 @@ function openCheckout(){
                 $("cardNumber")
                   ?.value || ""
               )
-                .replace(/\s+/g,"")
+                .replace(
+                  /\s+/g,
+                  ""
+                )
                 .trim();
 
             const storedNumber =
-              String(card.number)
-                .replace(/\s+/g,"")
+              String(
+                card.number
+              )
+                .replace(
+                  /\s+/g,
+                  ""
+                )
                 .trim();
 
             const enteredHolder =
@@ -3766,7 +4344,9 @@ function openCheckout(){
                 .toLowerCase();
 
             const storedHolder =
-              String(card.holder)
+              String(
+                card.holder
+              )
                 .trim()
                 .toLowerCase();
 
@@ -3785,10 +4365,14 @@ function openCheckout(){
                 .trim();
 
             if(
-              enteredNumber !== storedNumber ||
-              enteredHolder !== storedHolder ||
-              enteredExpiry !== card.expiry ||
-              enteredCvv !== card.cvv
+              enteredNumber !==
+                storedNumber ||
+              enteredHolder !==
+                storedHolder ||
+              enteredExpiry !==
+                card.expiry ||
+              enteredCvv !==
+                card.cvv
             ){
 
               throw new Error(
@@ -3807,7 +4391,9 @@ function openCheckout(){
               item => {
 
                 const product =
-                  getProduct(item.id);
+                  getProduct(
+                    item.id
+                  );
 
                 const baseName =
                   product?.name ||
@@ -3817,6 +4403,7 @@ function openCheckout(){
                   item.option
                     ? `${baseName} (${item.option})`
                     : baseName;
+
                 return {
 
                   id:
@@ -3826,16 +4413,19 @@ function openCheckout(){
                     displayName,
 
                   option:
-                    item.option || "",
+                    item.option ||
+                    "",
 
                   price:
                     Number(
-                      product?.price || 0
+                      product?.price ||
+                      0
                     ),
 
                   quantity:
                     Number(
-                      item.quantity || 1
+                      item.quantity ||
+                      1
                     )
 
                 };
@@ -3849,7 +4439,8 @@ function openCheckout(){
               currentUser.uid,
 
             userEmail:
-              currentUser.email || "",
+              currentUser.email ||
+              "",
 
             firstName,
             lastName,
@@ -3897,6 +4488,7 @@ function openCheckout(){
           cart = [];
 
           saveCart();
+
           renderCart();
 
           closeModal();
@@ -3907,7 +4499,8 @@ function openCheckout(){
           );
 
           if(
-            paymentMethod === "paypal" &&
+            paymentMethod ===
+              "paypal" &&
             total > 0
           ){
 
@@ -3956,7 +4549,8 @@ function openCheckout(){
 
           if(submit){
 
-            submit.disabled = false;
+            submit.disabled =
+              false;
 
             submit.textContent =
               "Continuer";
@@ -3987,7 +4581,9 @@ function printInvoice(order){
       item => {
 
         const product =
-          getProduct(item.id);
+          getProduct(
+            item.id
+          );
 
         const baseName =
           product?.name ||
@@ -4008,7 +4604,8 @@ function printInvoice(order){
 
         const quantity =
           Number(
-            item.quantity || 1
+            item.quantity ||
+            1
           );
 
         return `
@@ -4028,7 +4625,8 @@ function printInvoice(order){
 
             <td>
               ${money(
-                price * quantity
+                price *
+                quantity
               )}
             </td>
 
@@ -4172,13 +4770,15 @@ function printInvoice(order){
 
       <p>
         ${escapeHTML(
-          order.userEmail || ""
+          order.userEmail ||
+          ""
         )}
       </p>
 
       <p>
         ${escapeHTML(
-          order.address || ""
+          order.address ||
+          ""
         )}
       </p>
 
@@ -4220,7 +4820,8 @@ function printInvoice(order){
       <div class="total">
         Total :
         ${money(
-          order.total || 0
+          order.total ||
+          0
         )}
       </div>
 
@@ -4263,7 +4864,8 @@ function isAdminUser(){
   return (
     currentUser &&
     (
-      currentUser.email || ""
+      currentUser.email ||
+      ""
     ).toLowerCase() ===
     ADMIN_EMAIL.toLowerCase()
   );
@@ -4376,10 +4978,12 @@ async function loadAdmin(){
       (a,b) => {
 
         const aTime =
-          a.createdAt?.seconds || 0;
+          a.createdAt?.seconds ||
+          0;
 
         const bTime =
-          b.createdAt?.seconds || 0;
+          b.createdAt?.seconds ||
+          0;
 
         return bTime - aTime;
 
@@ -4408,7 +5012,8 @@ async function loadAdmin(){
         ">
           Erreur Firestore :
           ${escapeHTML(
-            error.message || ""
+            error.message ||
+            ""
           )}
         </div>
       `;
@@ -4544,7 +5149,8 @@ function renderAdmin(orders){
                           ? ` (${item.option})`
                           : ""
                       } ×${
-                        item.quantity || 1
+                        item.quantity ||
+                        1
                       }`;
 
                     }
@@ -4581,7 +5187,8 @@ function renderAdmin(orders){
 
                       <strong>
                         ${money(
-                          order.total || 0
+                          order.total ||
+                          0
                         )}
                       </strong>
 
@@ -4694,7 +5301,8 @@ function renderAdmin(orders){
                         order.id
                       )}"
                       value="${escapeAttr(
-                        order.city || ""
+                        order.city ||
+                        ""
                       )}"
                       placeholder="Ville de destination"
                       style="
@@ -4709,7 +5317,8 @@ function renderAdmin(orders){
                         order.id
                       )}"
                       value="${escapeAttr(
-                        order.tracking || ""
+                        order.tracking ||
+                        ""
                       )}"
                       placeholder="Numéro de suivi"
                       style="
@@ -4724,7 +5333,8 @@ function renderAdmin(orders){
                         order.id
                       )}"
                       value="${escapeAttr(
-                        order.estimatedDelivery || ""
+                        order.estimatedDelivery ||
+                        ""
                       )}"
                       placeholder="Livraison estimée"
                       style="
@@ -5151,7 +5761,8 @@ function getTheme(){
   return (
     localStorage.getItem(
       "novaThemeChoice"
-    ) || "dark"
+    ) ||
+    "dark"
   );
 
 }
@@ -5291,7 +5902,8 @@ onAuthStateChanged(
   user => {
 
     currentUser =
-      user || null;
+      user ||
+      null;
 
     if(adminBtn){
 
@@ -5319,6 +5931,7 @@ document.addEventListener(
     }
 
     closeModal();
+
     closeCart();
 
   }
@@ -5440,4 +6053,3 @@ window.NovaShop = {
 console.log(
   "NovaShop chargé avec succès 🚀"
 );
-               
