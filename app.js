@@ -1,30 +1,9 @@
 // ============================================================
-// NOVASHOP - APP.JS COMPLET RECONSTRUIT
-// Produits + catalogue + panier + favoris + fiches produit
-// Recherche + catégories + tri + avis + checkout démo
-// Commandes + suivi livraison + administration locale
+// NOVASHOP - APP.JS
+// PRODUITS UNIQUEMENT
 // ============================================================
 
 "use strict";
-
-
-// ============================================================
-// CONFIGURATION
-// ============================================================
-
-const ADMIN_EMAIL = "pc2alex.les@gmail.com";
-const ADMIN_CODE = "NOVA-ADMIN-2026";
-
-const STORAGE = {
-  cart: "novaCart",
-  favorites: "novaFavorites",
-  orders: "novaOrders",
-  reviews: "novaReviews",
-  admin: "novaAdminUnlocked",
-  dark: "novaDark",
-  sound: "novaSound",
-  profiles: "novaProfiles"
-};
 
 
 // ============================================================
@@ -33,555 +12,728 @@ const STORAGE = {
 
 const products = [
 
-  // ----------------------------------------------------------
+  // ==========================================================
   // COMPOSANTS
-  // ----------------------------------------------------------
+  // ==========================================================
 
   {
-    id: "p1",
-    name: "Gigabyte B650 AORUS Elite AX",
-    category: "Composants",
-    price: 189.99,
-    image: "https://m.media-amazon.com/images/I/81JFKzNyl+L._AC_SL1500_.jpg"
+    id:"p1",
+    name:"Gigabyte B650 AORUS Elite AX",
+    category:"Composants",
+    price:189.99,
+    image:"https://m.media-amazon.com/images/I/81JFKzNyl+L._AC_SL1500_.jpg"
   },
 
   {
-    id: "p2",
-    name: "ASUS TUF Gaming B650-PLUS",
-    category: "Composants",
-    price: 179.90,
-    image: ""
+    id:"p2",
+    name:"ASUS TUF Gaming B650-PLUS",
+    category:"Composants",
+    price:179.90,
+    image:""
   },
 
   {
-    id: "p3",
-    name: "MSI MAG B650 Tomahawk",
-    category: "Composants",
-    price: 189.90,
-    image: ""
+    id:"p3",
+    name:"MSI MAG B650 Tomahawk",
+    category:"Composants",
+    price:189.90,
+    image:""
   },
 
   {
-    id: "p4",
-    name: "AMD Ryzen 7 7800X3D",
-    category: "Composants",
-    price: 0,
-    image: ""
+    id:"p4",
+    name:"AMD Ryzen 7 7800X3D",
+    category:"Composants",
+    price:0,
+    image:""
   },
 
   {
-    id: "p5",
-    name: "AMD Ryzen 7 9800X3D",
-    category: "Composants",
-    price: 0,
-    image: ""
+    id:"p5",
+    name:"AMD Ryzen 7 9800X3D",
+    category:"Composants",
+    price:0,
+    image:""
   },
 
   {
-    id: "p6",
-    name: "AMD Ryzen 9 9950X3D",
-    category: "Composants",
-    price: 0,
-    image: ""
+    id:"p6",
+    name:"AMD Ryzen 9 9950X3D",
+    category:"Composants",
+    price:0,
+    image:""
   },
 
 
-  // ----------------------------------------------------------
+  // ==========================================================
   // PC GAMER
-  // ----------------------------------------------------------
+  // ==========================================================
 
   {
-    id: "p7",
-    name: "PC Gamer Ryzen 7 7800X3D / RX 9070 XT / 32 Go DDR5",
-    category: "PC Gamer",
-    price: 2237.65,
-    image: ""
+    id:"p7",
+    name:"PC Gamer Ryzen 7 7800X3D / RX 9070 XT / 32 Go DDR5",
+    category:"PC Gamer",
+    price:2237.65,
+    image:""
   },
 
 
-  // ----------------------------------------------------------
+  // ==========================================================
   // CASQUES
-  // ----------------------------------------------------------
+  // ==========================================================
 
   {
-    id: "p8",
-    name: "HyperX Cloud II",
-    category: "Casques",
-    price: 49.99,
-    image: ""
+    id:"p8",
+    name:"HyperX Cloud II",
+    category:"Casques",
+    price:49.99,
+    image:""
   },
 
 
-  // ----------------------------------------------------------
+  // ==========================================================
   // CLAVIERS
-  // ----------------------------------------------------------
+  // ==========================================================
 
   {
-    id: "p9",
-    name: "TECORS 60% AZERTY",
-    category: "Claviers",
-    price: 30,
-    image: ""
+    id:"p9",
+    name:"TECORS 60% AZERTY",
+    category:"Claviers",
+    price:30,
+    image:""
   },
 
   {
-    id: "p10",
-    name: "Celshading 65%",
-    category: "Claviers",
-    price: 120.90,
-    image: ""
+    id:"p10",
+    name:"Celshading 65%",
+    category:"Claviers",
+    price:120.90,
+    image:""
   },
 
 
-  // ----------------------------------------------------------
+  // ==========================================================
   // SOURIS
-  // ----------------------------------------------------------
+  // ==========================================================
 
   {
-    id: "p11",
-    name: "Ajazz AJ199 MAX",
-    category: "Souris",
-    price: 49.99,
-    image: ""
+    id:"p11",
+    name:"Ajazz AJ199 MAX",
+    category:"Souris",
+    price:49.99,
+    image:""
   },
 
   {
-    id: "p12",
-    name: "Logitech G PRO X2 Superstrike",
-    category: "Souris",
-    price: 150.99,
-    image: ""
+    id:"p12",
+    name:"Logitech G PRO X2 Superstrike",
+    category:"Souris",
+    price:150.99,
+    image:""
   },
 
 
-  // ----------------------------------------------------------
+  // ==========================================================
   // STOCKAGE
-  // ----------------------------------------------------------
+  // ==========================================================
 
   {
-    id: "p13",
-    name: "Samsung 990 PRO 1TB",
-    category: "Stockage",
-    price: 249.99,
-    image: ""
+    id:"p13",
+    name:"Samsung 990 PRO 1TB",
+    category:"Stockage",
+    price:249.99,
+    image:""
   },
 
   {
-    id: "p14",
-    name: "Samsung 990 PRO 2TB",
-    category: "Stockage",
-    price: 199.93,
-    image: ""
+    id:"p14",
+    name:"Samsung 990 PRO 2TB",
+    category:"Stockage",
+    price:199.93,
+    image:""
   },
 
 
-  // ----------------------------------------------------------
+  // ==========================================================
   // ALIMENTATIONS
-  // ----------------------------------------------------------
+  // ==========================================================
 
   {
-    id: "p15",
-    name: "Corsair RM1000x",
-    category: "Alimentations",
-    price: 159.90,
-    image: ""
+    id:"p15",
+    name:"Corsair RM1000x",
+    category:"Alimentations",
+    price:159.90,
+    image:""
   },
 
   {
-    id: "p16",
-    name: "Corsair RM850x",
-    category: "Alimentations",
-    price: 134.90,
-    image: ""
+    id:"p16",
+    name:"Corsair RM850x",
+    category:"Alimentations",
+    price:134.90,
+    image:""
   },
 
 
-  // ----------------------------------------------------------
+  // ==========================================================
   // BOÎTIERS
-  // ----------------------------------------------------------
+  // ==========================================================
 
   {
-    id: "p17",
-    name: "Corsair Frame 5000D",
-    category: "Boîtiers",
-    price: 159.90,
-    image: ""
+    id:"p17",
+    name:"Corsair Frame 5000D",
+    category:"Boîtiers",
+    price:159.90,
+    image:""
   },
 
 
-  // ----------------------------------------------------------
+  // ==========================================================
   // REFROIDISSEMENT
-  // ----------------------------------------------------------
+  // ==========================================================
 
   {
-    id: "p18",
-    name: "Arctic Liquid Freezer III Pro 360",
-    category: "Refroidissement",
-    price: 129.90,
-    image: ""
+    id:"p18",
+    name:"Arctic Liquid Freezer III Pro 360",
+    category:"Refroidissement",
+    price:129.90,
+    image:""
   },
 
 
-  // ----------------------------------------------------------
+  // ==========================================================
   // ÉCRANS
-  // ----------------------------------------------------------
+  // ==========================================================
 
   {
-    id: "p19",
-    name: "Samsung 27 QD-OLED Odyssey G6",
-    category: "Écrans",
-    price: 399.95,
-    image: ""
+    id:"p19",
+    name:"Samsung 27 QD-OLED Odyssey G6",
+    category:"Écrans",
+    price:399.95,
+    image:""
   },
 
 
-  // ----------------------------------------------------------
+  // ==========================================================
   // STREAMING
-  // ----------------------------------------------------------
+  // ==========================================================
 
   {
-    id: "p20",
-    name: "Elgato Wave Mic Arm Pro",
-    category: "Streaming",
-    price: 229.90,
-    image: ""
+    id:"p20",
+    name:"Elgato Wave Mic Arm Pro",
+    category:"Streaming",
+    price:229.90,
+    image:""
   },
 
 
-  // ----------------------------------------------------------
+  // ==========================================================
   // MANETTES
-  // ----------------------------------------------------------
+  // ==========================================================
 
   {
-    id: "p21",
-    name: "DualSense Cosmic Red",
-    category: "Manettes",
-    price: 74.90,
-    image: ""
+    id:"p21",
+    name:"DualSense Cosmic Red",
+    category:"Manettes",
+    price:74.90,
+    image:""
   },
 
 
-  // ----------------------------------------------------------
+  // ==========================================================
   // TAPIS DE SOURIS
-  // ----------------------------------------------------------
+  // ==========================================================
 
   {
-    id: "p22",
-    name: "Razer Gigantus V2 XXL",
-    category: "Tapis de souris",
-    price: 21,
-    image: ""
+    id:"p22",
+    name:"Razer Gigantus V2 XXL",
+    category:"Tapis de souris",
+    price:21,
+    image:""
   },
 
   {
-    id: "p23",
-    name: "Logitech G840",
-    category: "Tapis de souris",
-    price: 15,
-    image: ""
+    id:"p23",
+    name:"Logitech G840",
+    category:"Tapis de souris",
+    price:15,
+    image:""
   },
 
 
-  // ----------------------------------------------------------
+  // ==========================================================
   // CHAISES GAMING
-  // ----------------------------------------------------------
+  // ==========================================================
 
   {
-    id: "p24",
-    name: "Chaise Gaming",
-    category: "Chaises gaming",
-    price: 0,
-    image: ""
+    id:"p24",
+    name:"Chaise Gaming",
+    category:"Chaises gaming",
+    price:0,
+    image:""
   },
 
 
-  // ----------------------------------------------------------
+  // ==========================================================
   // BUREAUX GAMING
-  // ----------------------------------------------------------
+  // ==========================================================
 
   {
-    id: "p25",
-    name: "Bureau Gaming",
-    category: "Bureaux gaming",
-    price: 0,
-    image: ""
+    id:"p25",
+    name:"Bureau Gaming",
+    category:"Bureaux gaming",
+    price:0,
+    image:""
   },
 
 
-  // ----------------------------------------------------------
+  // ==========================================================
   // MICROPHONES
-  // ----------------------------------------------------------
+  // ==========================================================
 
   {
-    id: "p26",
-    name: "Microphone Gaming USB",
-    category: "Microphones",
-    price: 0,
-    image: ""
+    id:"p26",
+    name:"Microphone Gaming USB",
+    category:"Microphones",
+    price:0,
+    image:""
   },
 
 
-  // ----------------------------------------------------------
+  // ==========================================================
   // ÉCLAIRAGE RGB
-  // ----------------------------------------------------------
+  // ==========================================================
 
   {
-    id: "p27",
-    name: "Éclairage RGB Gaming",
-    category: "Éclairage RGB",
-    price: 0,
-    image: ""
+    id:"p27",
+    name:"Éclairage RGB Gaming",
+    category:"Éclairage RGB",
+    price:0,
+    image:""
   },
 
 
-  // ----------------------------------------------------------
+  // ==========================================================
   // CARTES GRAPHIQUES
-  // ----------------------------------------------------------
+  // ==========================================================
 
   {
-    id: "p28",
-    name: "GeForce RTX 5090",
-    category: "Cartes graphiques",
-    price: 0,
-    image: ""
+    id:"p28",
+    name:"GeForce RTX 5090",
+    category:"Cartes graphiques",
+    price:0,
+    image:""
   },
 
   {
-    id: "p29",
-    name: "Radeon RX 9070 XT",
-    category: "Cartes graphiques",
-    price: 0,
-    image: ""
+    id:"p29",
+    name:"Radeon RX 9070 XT",
+    category:"Cartes graphiques",
+    price:0,
+    image:""
   },
 
 
-  // ----------------------------------------------------------
+  // ==========================================================
   // SMARTPHONES
-  // ----------------------------------------------------------
+  // ==========================================================
 
   {
-    id: "p30",
-    name: "Smartphone Gaming",
-    category: "Smartphones",
-    price: 0,
-    image: ""
+    id:"p30",
+    name:"Smartphone Gaming",
+    category:"Smartphones",
+    price:0,
+    image:""
   },
 
 
-  // ----------------------------------------------------------
+  // ==========================================================
   // IMPRIMANTES 3D
-  // ----------------------------------------------------------
+  // ==========================================================
 
   {
-    id: "p31",
-    name: "Imprimante 3D",
-    category: "Imprimantes 3D",
-    price: 0,
-    image: ""
+    id:"p31",
+    name:"Imprimante 3D",
+    category:"Imprimantes 3D",
+    price:0,
+    image:""
   },
 
 
-  // ----------------------------------------------------------
+  // ==========================================================
   // LOGICIELS & LICENCES
-  // ----------------------------------------------------------
+  // ==========================================================
 
   {
-    id: "p32",
-    name: "Licence Windows",
-    category: "Logiciels & licences",
-    price: 0,
-    image: ""
+    id:"p32",
+    name:"Licence Windows",
+    category:"Logiciels & licences",
+    price:0,
+    image:""
   },
 
   {
-    id: "p33",
-    name: "Clé de jeu vidéo",
-    category: "Logiciels & licences",
-    price: 0,
-    image: ""
+    id:"p33",
+    name:"Clé de jeu vidéo",
+    category:"Logiciels & licences",
+    price:0,
+    image:""
   },
 
 
-  // ----------------------------------------------------------
+  // ==========================================================
   // ACCESSOIRES COMPOSANTS PC
-  // ----------------------------------------------------------
+  // ==========================================================
 
   {
-    id: "p34",
-    name: "Accessoire composant PC",
-    category: "Accessoires composants PC",
-    price: 0,
-    image: ""
+    id:"p34",
+    name:"Accessoire composant PC",
+    category:"Accessoires composants PC",
+    price:0,
+    image:""
   },
 
 
-  // ----------------------------------------------------------
+  // ==========================================================
   // ADAPTATEURS / CÂBLES / CHARGEURS
-  // ----------------------------------------------------------
+  // ==========================================================
 
   {
-    id: "p35",
-    name: "Câble HDMI",
-    category: "Adaptateurs / câbles / chargeurs",
-    price: 0,
-    image: ""
+    id:"p35",
+    name:"Câble HDMI",
+    category:"Adaptateurs / câbles / chargeurs",
+    price:0,
+    image:""
   },
 
   {
-    id: "p36",
-    name: "Câble USB-C",
-    category: "Adaptateurs / câbles / chargeurs",
-    price: 0,
-    image: ""
+    id:"p36",
+    name:"Câble USB-C",
+    category:"Adaptateurs / câbles / chargeurs",
+    price:0,
+    image:""
   },
 
   {
-    id: "p37",
-    name: "Câble Lightning",
-    category: "Adaptateurs / câbles / chargeurs",
-    price: 0,
-    image: ""
+    id:"p37",
+    name:"Câble Lightning",
+    category:"Adaptateurs / câbles / chargeurs",
+    price:0,
+    image:""
   },
 
   {
-    id: "p38",
-    name: "Câble Apple Watch",
-    category: "Adaptateurs / câbles / chargeurs",
-    price: 0,
-    image: ""
+    id:"p38",
+    name:"Câble Apple Watch",
+    category:"Adaptateurs / câbles / chargeurs",
+    price:0,
+    image:""
   },
 
 
-  // ----------------------------------------------------------
+  // ==========================================================
   // CAMÉRAS & WEBCAMS
-  // ----------------------------------------------------------
+  // ==========================================================
 
   {
-    id: "p39",
-    name: "Webcam Gaming",
-    category: "Caméras & webcams",
-    price: 0,
-    image: ""
+    id:"p39",
+    name:"Webcam Gaming",
+    category:"Caméras & webcams",
+    price:0,
+    image:""
   },
 
 
-  // ----------------------------------------------------------
+  // ==========================================================
   // BARRES LUMINEUSES
-  // ----------------------------------------------------------
+  // ==========================================================
 
   {
-    id: "p40",
-    name: "Barre lumineuse pour écran",
-    category: "Barres lumineuses pour écran",
-    price: 0,
-    image: ""
+    id:"p40",
+    name:"Barre lumineuse pour écran",
+    category:"Barres lumineuses pour écran",
+    price:0,
+    image:""
   },
 
 
-  // ----------------------------------------------------------
-  // SUPPORTS / ÉCRANS / TV
-  // ----------------------------------------------------------
+  // ==========================================================
+  // SUPPORTS ÉCRANS / ÉCRANS / TV
+  // ==========================================================
 
   {
-    id: "p41",
-    name: "Support écran",
-    category: "Supports écrans / écrans / TV",
-    price: 0,
-    image: ""
+    id:"p41",
+    name:"Support écran",
+    category:"Supports écrans / écrans / TV",
+    price:0,
+    image:""
   },
 
   {
-    id: "p42",
-    name: "Écran Gaming",
-    category: "Supports écrans / écrans / TV",
-    price: 0,
-    image: ""
+    id:"p42",
+    name:"Écran Gaming",
+    category:"Supports écrans / écrans / TV",
+    price:0,
+    image:""
   },
 
   {
-    id: "p43",
-    name: "TV Gaming",
-    category: "Supports écrans / écrans / TV",
-    price: 0,
-    image: ""
+    id:"p43",
+    name:"TV Gaming",
+    category:"Supports écrans / écrans / TV",
+    price:0,
+    image:""
   },
 
 
-  // ----------------------------------------------------------
+  // ==========================================================
   // MANETTES & CONSOLES
-  // ----------------------------------------------------------
+  // ==========================================================
 
   {
-    id: "p44",
-    name: "Console Gaming",
-    category: "Manettes & consoles",
-    price: 0,
-    image: ""
+    id:"p44",
+    name:"Console Gaming",
+    category:"Manettes & consoles",
+    price:0,
+    image:""
   },
 
   {
-    id: "p45",
-    name: "Manette Gaming",
-    category: "Manettes & consoles",
-    price: 0,
-    image: ""
+    id:"p45",
+    name:"Manette Gaming",
+    category:"Manettes & consoles",
+    price:0,
+    image:""
   },
 
 
-  // ----------------------------------------------------------
+  // ==========================================================
   // COMPOSANTS PC
-  // ----------------------------------------------------------
+  // ==========================================================
 
   {
-    id: "p46",
-    name: "Composant PC Gaming",
-    category: "Composants PC",
-    price: 0,
-    image: ""
+    id:"p46",
+    name:"Composant PC Gaming",
+    category:"Composants PC",
+    price:0,
+    image:""
   },
 
 
-  // ----------------------------------------------------------
+  // ==========================================================
   // PC GAMER PRÉCONSTRUITS
-  // ----------------------------------------------------------
+  // ==========================================================
 
   {
-    id: "p47",
-    name: "PC Gamer préconstruit",
-    category: "PC Gamer préconstruits",
-    price: 0,
-    image: ""
+    id:"p47",
+    name:"PC Gamer préconstruit",
+    category:"PC Gamer préconstruits",
+    price:0,
+    image:""
   },
 
 
-  // ----------------------------------------------------------
+  // ==========================================================
   // PC PORTABLES
-  // ----------------------------------------------------------
+  // ==========================================================
 
   {
-    id: "p48",
-    name: "PC portable Gaming",
-    category: "PC portables Gaming & Travail",
-    price: 0,
-    image: ""
+    id:"p48",
+    name:"PC portable Gaming",
+    category:"PC portables Gaming & Travail",
+    price:0,
+    image:""
   },
 
   {
-    id: "p49",
-    name: "PC portable Travail",
-    category: "PC portables Gaming & Travail",
-    price: 0,
-    image: ""
+    id:"p49",
+    name:"PC portable Travail",
+    category:"PC portables Gaming & Travail",
+    price:0,
+    image:""
+  },
+
+
+  // ==========================================================
+  // PRODUITS 85 À 105
+  // ==========================================================
+
+  {
+    id:"p85",
+    name:"AMD Ryzen 7 7800X3D Processeur avec La Technologie 3D V-Cache",
+    category:"Composants PC",
+    price:210,
+    image:"https://m.media-amazon.com/images/I/51HqC0rU9HL._AC_SL1500_.jpg"
+  },
+
+  {
+    id:"p86",
+    name:"Gigabyte GeForce RTX 5060 Gaming OC 8 GB GDDR7 Carte Graphique",
+    category:"Composants PC",
+    price:370,
+    image:"https://owp.klarna.com/product/3255091236/Gigabyte-GeForce-RTX-5060-Gaming-OC-8-GB-GDDR7-Carte-Graphique.jpg"
+  },
+
+  {
+    id:"p87",
+    name:"Kingston Fury Beast 16 Go (kit de 2 x 8 Go) DDR4 3200 MHz CL16",
+    category:"Composants PC",
+    price:130,
+    image:"https://media.carrefour.fr/medias/200b40feb62d42f6a4c771cda396d77b/p_1500x1500/243be29db1e34fc180ed7c680853713a_image.jpg"
+  },
+
+  {
+    id:"p88",
+    name:"Kingston Fury Beast RGB - 2 x 8 Go (16 Go) - DDR5 5600 MHz - CL40",
+    category:"Composants PC",
+    price:224.99,
+    image:"https://media.materiel.net/r1600/products/MN0005959138_0005959149_0005959155.jpg"
+  },
+
+  {
+    id:"p89",
+    name:"PC de bureau gaming NitroPC Avancé - AMD Ryzen 5 3400G, Radeon Graphics, 16 GB RAM, 480 GB SSD, Windows 11 Pro",
+    category:"PC Gamer préconstruits",
+    price:400,
+    image:"https://media.cdn.kaufland.de/product-images/1024x1024/57311bd00475df1753bd85ef932af8d2.webp"
+  },
+
+  {
+    id:"p90",
+    name:"PC Gamer FIREFLY",
+    category:"PC Gamer préconstruits",
+    price:500,
+    image:"https://powerlab.fr/24081-large_default/pc-gamer-firefly-rtx-5060-ti.jpg"
+  },
+
+  {
+    id:"p91",
+    name:"PC - CSL Sprint 5700 (Ryzen 7)",
+    category:"PC Gamer préconstruits",
+    price:700,
+    image:"https://www.csl-computer.com/fr/media/catalog/product/cache/5/image/3000x3000/9df78eab33525d08d6e5fb8d27136e95/c/s/csl_aerovision-haupt_c40_nvidia_rot_3000px_3.webp"
+  },
+
+  {
+    id:"p92",
+    name:"STGsivir PC Gamer Fixe, Ryzen 5 3400G, Vega 11, 16G DDR4, 512G SSD",
+    category:"PC Gamer préconstruits",
+    price:499.99,
+    image:"https://m.media-amazon.com/images/I/71klP2vcMEL._AC_SL1500_.jpg"
+  },
+
+  {
+    id:"p93",
+    name:"Unité centrale Gamer MSI EDM0009-R5/RTX 5060/16Go/480Go",
+    category:"PC Gamer préconstruits",
+    price:565.99,
+    image:"https://www.electrodepot.fr/media/catalog/product/cache/207e23213cf636ccdef205098cf3c8a3/P10019951.jpg"
+  },
+
+  {
+    id:"p94",
+    name:"ROG Strix G16 (2025) G615",
+    category:"PC portables Gaming & Travail",
+    price:1200,
+    image:"https://dlcdnwebimgs.asus.com/gain/E20134EE-F6B3-4AB7-A1B5-73795E91011D/w717/h525/fwebp"
+  },
+
+  {
+    id:"p95",
+    name:"PC Portable HP OmniBook 3 17-dk0006nf",
+    category:"PC portables Gaming & Travail",
+    price:600,
+    image:"https://www.hp.com/fr-fr/shop/media/catalog/product/c/o/costa_17_dfplus_ob3_cs_glaciersilver_t_nt_fhd_ir_non-backlit_freedos_catalog_front_5964372_cus_1.png?store=fr-fr&image-type=image&auto=avif&quality=100&format=jpg&bg-color=ffffff&type=image-product&width=100p&fit=bounds"
+  },
+
+  {
+    id:"p96",
+    name:"PC portable HP Victus by HP Laptop 16-d1148nf",
+    category:"PC portables Gaming & Travail",
+    price:500,
+    image:"https://image.darty.com/darty?type=image&source=photos/2022/10/26/7081693A_163303179.jpg&height=457"
+  },
+
+  {
+    id:"p97",
+    name:"Razer BlackWidow V4 Pro (Switches Jaune) - Clavier Gamer Mécanique Snap Tap, 8 Touches Macro, Repose-Poignet, AZERTY FR",
+    category:"Claviers",
+    price:76.99,
+    image:"https://m.media-amazon.com/images/I/81az+Oft-qL._AC_SL1500_.jpg"
+  },
+
+  {
+    id:"p98",
+    name:"SteelSeries Apex Pro TKL Gen 3 – Commutateurs magnétiques analogiques OmniPoint 3.0, OLED, RGB, USB-C, FR AZERTY",
+    category:"Claviers",
+    price:44.90,
+    image:"https://m.media-amazon.com/images/I/719h65mTOEL._AC_SL1500_.jpg"
+  },
+
+  {
+    id:"p99",
+    name:"ROG Strix Scope II 96 WL - Clavier gaming 96%, switches mécaniques, AZERTY",
+    category:"Claviers",
+    price:40,
+    image:"https://m.media-amazon.com/images/I/71zmZbiUeAL._AC_SL1500_.jpg"
+  },
+
+  {
+    id:"p100",
+    name:"CORSAIR K70 PRO TKL - Clavier gaming programmable à effet Hall hautes performances avec déclenchement rapide (FR)",
+    category:"Claviers",
+    price:56,
+    image:"https://assets.corsair.com/image/upload/c_pad,q_85,h_1100,w_1100/products/Gaming-Keyboards/K70-PRO-TKL-APAC/Gallery/CH-911911G-JP/K70_PRO_TKL_BLACK_03.webp"
+  },
+
+  {
+    id:"p101",
+    name:"Razer Viper V3 Pro",
+    category:"Souris",
+    price:42,
+    image:"https://assets3.razerzone.com/02qK-glNv1jIlWfqTGAu7tkinI8=/1500x1000/https%3A%2F%2Fmedias-p1.phoenix.razer.com%2Fsys-master-phoenix-images-container%2Fhf0%2Fhba%2F9926492422174%2F250630-viper-v3-pro-faker-1500x1000-1.jpg"
+  },
+
+  {
+    id:"p102",
+    name:"SteelSeries Aerox 5 Wireless",
+    category:"Souris",
+    price:50,
+    image:"https://images.ctfassets.net/hmm5mo4qf4mf/Y5b4NuEOsLlGhzxCjj9Vf/697e03b1c784f66cb82b3a529964666f/aerox_5_wl_black_img_buy_01.png__1920x1080_crop-fit_optimize_subsampling-2-900.png?fm=webp&q=90&fit=scale&w=1200"
+  },
+
+  {
+    id:"p103",
+    name:"Razer Gigantus V2 XXL - Tapis de souris gaming souple 940 x 410 x 4mm",
+    category:"Tapis de souris",
+    price:15,
+    image:"https://m.media-amazon.com/images/I/61HtU7NkHQL._AC_SL1500_.jpg"
+  },
+
+  {
+    id:"p104",
+    name:"Logitech G840 Tapis de Souris de Jeu Extra Large - 900 x 400 x 3 mm",
+    category:"Tapis de souris",
+    price:30,
+    image:"https://m.media-amazon.com/images/I/51jlC3sL0BL._AC_SL1500_.jpg"
+  },
+
+  {
+    id:"p105",
+    name:"SteelSeries QcK Heavy XXL - Tapis de souris gaming en tissu - Base antidérapante 6mm",
+    category:"Tapis de souris",
+    price:15,
+    image:"https://m.media-amazon.com/images/I/41HRqeeyZ0L._AC_SL1500_.jpg"
   }
 
 ];
 
 
 // ============================================================
-// NOTES AUTOMATIQUES
+// NOTES
 // ============================================================
 
-products.forEach((product, index) => {
+products.forEach((product,index) => {
 
   product.rating =
     Number(
@@ -596,6 +748,50 @@ products.forEach((product, index) => {
     ((index * 137) % 2028);
 
 });
+
+
+// ============================================================
+// ÉTAT
+// ============================================================
+
+let selectedCategory = "Tous";
+let searchValue = "";
+let sortValue = "default";
+
+let cart = [];
+let favorites = [];
+
+
+// ============================================================
+// LOCAL STORAGE
+// ============================================================
+
+try {
+
+  cart =
+    JSON.parse(
+      localStorage.getItem("novaCart")
+    ) || [];
+
+} catch {
+
+  cart = [];
+
+}
+
+
+try {
+
+  favorites =
+    JSON.parse(
+      localStorage.getItem("novaFavorites")
+    ) || [];
+
+} catch {
+
+  favorites = [];
+
+}
 
 
 // ============================================================
@@ -642,7 +838,6 @@ const checkoutBtn =
   document.getElementById("checkoutBtn");
 
 const modal =
-  document.getElementById("productModal") ||
   document.getElementById("modal");
 
 const modalContent =
@@ -657,136 +852,86 @@ const modalTitle =
 const toastContainer =
   document.getElementById("toastContainer");
 
-const settingsBtn =
-  document.getElementById("settingsBtn");
-
-const accountBtn =
-  document.getElementById("accountBtn");
-
-const ordersBtn =
-  document.getElementById("ordersBtn");
-
-const adminBtn =
-  document.getElementById("adminBtn");
-
-const heroCartBtn =
-  document.getElementById("heroCartBtn");
-
-
-// ============================================================
-// ÉTAT
-// ============================================================
-
-let selectedCategory = "Tous";
-let searchValue = "";
-let sortValue = "default";
-
-let cart = [];
-let favorites = [];
-
-let currentProduct = null;
-
-
-// ============================================================
-// LOCAL STORAGE
-// ============================================================
-
-try {
-  cart =
-    JSON.parse(
-      localStorage.getItem(STORAGE.cart)
-    ) || [];
-} catch {
-  cart = [];
-}
-
-try {
-  favorites =
-    JSON.parse(
-      localStorage.getItem(STORAGE.favorites)
-    ) || [];
-} catch {
-  favorites = [];
-}
-
 
 // ============================================================
 // UTILITAIRES
 // ============================================================
 
-function money(value) {
+function money(value){
 
-  const number =
-    Number.isFinite(Number(value))
-      ? Number(value)
-      : 0;
+  return Number(value || 0)
+    .toLocaleString(
+      "fr-FR",
+      {
+        minimumFractionDigits:2,
+        maximumFractionDigits:2
+      }
+    ) + " €";
 
-  return number.toLocaleString(
-    "fr-FR",
-    {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    }
-  ) + " €";
 }
 
 
-function escapeHTML(value) {
+function escapeHTML(value){
 
   return String(value ?? "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+
 }
 
 
-function getProduct(id) {
+function getProduct(id){
 
   return products.find(
     product => product.id === id
   );
+
 }
 
 
-function saveCart() {
+function saveCart(){
 
   localStorage.setItem(
-    STORAGE.cart,
+    "novaCart",
     JSON.stringify(cart)
   );
+
 }
 
 
-function saveFavorites() {
+function saveFavorites(){
 
   localStorage.setItem(
-    STORAGE.favorites,
+    "novaFavorites",
     JSON.stringify(favorites)
   );
+
 }
 
 
-function getCartCount() {
+function getCartCount(){
 
   return cart.reduce(
-    (total, item) =>
+    (total,item) =>
       total + Number(item.quantity || 0),
     0
   );
+
 }
 
 
-function getCartSubtotal() {
+function getCartSubtotal(){
 
   return cart.reduce(
-    (total, item) => {
+    (total,item) => {
 
       const product =
         getProduct(item.id);
 
-      if (!product) {
+      if(!product){
         return total;
       }
 
@@ -797,33 +942,33 @@ function getCartSubtotal() {
     },
     0
   );
+
 }
 
 
 // ============================================================
-// TOAST
+// IMAGE
 // ============================================================
 
-function toast(message) {
+function imageHTML(product){
 
-  if (!toastContainer) {
-    return;
+  if(!product.image){
+    return "";
   }
 
-  const element =
-    document.createElement("div");
+  return `
+    <img
+      class="product-image"
+      src="${escapeHTML(product.image)}"
+      alt="${escapeHTML(product.name)}"
+      loading="lazy"
+      onerror="
+        this.onerror=null;
+        this.style.display='none';
+      "
+    >
+  `;
 
-  element.className = "toast";
-
-  element.textContent = message;
-
-  toastContainer.appendChild(element);
-
-  setTimeout(() => {
-
-    element.remove();
-
-  }, 2600);
 }
 
 
@@ -831,51 +976,42 @@ function toast(message) {
 // CATÉGORIES
 // ============================================================
 
-function getCategories() {
+function renderCategories(){
 
-  const categories =
-    [
-      "Tous",
-      ...new Set(
-        products.map(
-          product => product.category
-        )
-      )
-    ];
-
-  return categories;
-}
-
-
-function renderCategories() {
-
-  if (!categoriesEl) {
+  if(!categoriesEl){
     return;
   }
 
+  const categories = [
+    "Tous",
+    ...new Set(
+      products.map(
+        product => product.category
+      )
+    )
+  ];
+
   categoriesEl.innerHTML =
-    getCategories()
-      .map(category => {
+    categories.map(category => {
 
-        const active =
-          selectedCategory === category
-            ? "active"
-            : "";
+      return `
+        <button
+          class="category-btn ${
+            selectedCategory === category
+              ? "active"
+              : ""
+          }"
+          data-category="${escapeHTML(category)}"
+        >
+          ${escapeHTML(category)}
+        </button>
+      `;
 
-        return `
-          <button
-            class="category-btn ${active}"
-            data-category="${escapeHTML(category)}"
-          >
-            ${escapeHTML(category)}
-          </button>
-        `;
+    }).join("");
 
-      })
-      .join("");
 
   categoriesEl
-    .querySelectorAll(".category-btn")
+    .querySelectorAll("[data-category]")
     .forEach(button => {
 
       button.addEventListener(
@@ -897,17 +1033,18 @@ function renderCategories() {
 
 
 // ============================================================
-// FILTRAGE
+// FILTRE
 // ============================================================
 
-function getFilteredProducts() {
+function getFilteredProducts(){
 
   let result =
     [...products];
 
-  if (
+
+  if(
     selectedCategory !== "Tous"
-  ) {
+  ){
 
     result =
       result.filter(
@@ -918,62 +1055,61 @@ function getFilteredProducts() {
 
   }
 
+
   const search =
     searchValue
       .trim()
       .toLowerCase();
 
-  if (search) {
+
+  if(search){
 
     result =
-      result.filter(product => {
-
-        return (
-          product.name
-            .toLowerCase()
-            .includes(search)
-          ||
-          product.category
-            .toLowerCase()
-            .includes(search)
-        );
-
-      });
+      result.filter(product =>
+        product.name
+          .toLowerCase()
+          .includes(search)
+        ||
+        product.category
+          .toLowerCase()
+          .includes(search)
+      );
 
   }
 
-  if (
+
+  if(
     sortValue === "priceAsc" ||
     sortValue === "price-low"
-  ) {
+  ){
 
     result.sort(
-      (a, b) =>
+      (a,b) =>
         Number(a.price) -
         Number(b.price)
     );
 
   }
 
-  else if (
+  else if(
     sortValue === "priceDesc" ||
     sortValue === "price-high"
-  ) {
+  ){
 
     result.sort(
-      (a, b) =>
+      (a,b) =>
         Number(b.price) -
         Number(a.price)
     );
 
   }
 
-  else if (
+  else if(
     sortValue === "name"
-  ) {
+  ){
 
     result.sort(
-      (a, b) =>
+      (a,b) =>
         a.name.localeCompare(
           b.name,
           "fr"
@@ -982,15 +1118,17 @@ function getFilteredProducts() {
 
   }
 
-  else if (
+  else if(
     sortValue === "new"
-  ) {
+  ){
 
     result.reverse();
 
   }
 
+
   return result;
+
 }
 
 
@@ -998,61 +1136,42 @@ function getFilteredProducts() {
 // ÉTOILES
 // ============================================================
 
-function getRatingStars(rating) {
+function ratingStars(rating){
 
   const rounded =
-    Math.round(Number(rating));
+    Math.round(
+      Number(rating)
+    );
 
-  return Array.from(
-    { length: 5 },
-    (_, index) =>
-      index < rounded
-        ? "★"
-        : "☆"
-  ).join("");
+  return Array
+    .from(
+      {length:5},
+      (_,index) =>
+        index < rounded
+          ? "★"
+          : "☆"
+    )
+    .join("");
 
 }
 
 
 // ============================================================
-// IMAGE PRODUIT
+// PRODUITS
 // ============================================================
 
-function productImageHTML(product) {
+function renderProducts(){
 
-  if (!product.image) {
-    return "";
-  }
-
-  return `
-    <img
-      class="product-image"
-      src="${escapeHTML(product.image)}"
-      alt="${escapeHTML(product.name)}"
-      loading="lazy"
-      onerror="
-        this.onerror=null;
-        this.style.display='none';
-      "
-    >
-  `;
-}
-
-
-// ============================================================
-// RENDU DES PRODUITS
-// ============================================================
-
-function renderProducts() {
-
-  if (!productsGrid) {
+  if(!productsGrid){
     return;
   }
+
 
   const filtered =
     getFilteredProducts();
 
-  if (productCount) {
+
+  if(productCount){
 
     productCount.textContent =
       `${filtered.length} produit${
@@ -1063,7 +1182,8 @@ function renderProducts() {
 
   }
 
-  if (!filtered.length) {
+
+  if(!filtered.length){
 
     productsGrid.innerHTML = `
       <div class="empty-products">
@@ -1072,87 +1192,104 @@ function renderProducts() {
     `;
 
     return;
+
   }
 
+
   productsGrid.innerHTML =
-    filtered
-      .map(product => {
+    filtered.map(product => {
 
-        const favorite =
-          favorites.includes(product.id);
+      const isFavorite =
+        favorites.includes(
+          product.id
+        );
 
-        return `
-          <article
-            class="product-card"
-            data-product-id="${escapeHTML(product.id)}"
+
+      return `
+        <article
+          class="product-card"
+          data-product-id="${escapeHTML(product.id)}"
+        >
+
+          <button
+            class="favorite-btn ${
+              isFavorite
+                ? "active"
+                : ""
+            }"
+            data-favorite="${escapeHTML(product.id)}"
           >
+            ${
+              isFavorite
+                ? "♥"
+                : "♡"
+            }
+          </button>
 
-            <button
-              class="favorite-btn ${
-                favorite ? "active" : ""
-              }"
-              data-favorite="${escapeHTML(product.id)}"
-              aria-label="Ajouter aux favoris"
-            >
-              ${favorite ? "♥" : "♡"}
-            </button>
 
-            <div
-              class="product-image-wrap"
-              data-open-product="${escapeHTML(product.id)}"
-            >
-              ${productImageHTML(product)}
+          <div
+            class="product-image-wrap"
+            data-open-product="${escapeHTML(product.id)}"
+          >
+            ${imageHTML(product)}
+          </div>
+
+
+          <div class="product-info">
+
+            <div class="product-category">
+              ${escapeHTML(product.category)}
             </div>
 
-            <div class="product-info">
+            <h3>
+              ${escapeHTML(product.name)}
+            </h3>
 
-              <div class="product-category">
-                ${escapeHTML(product.category)}
-              </div>
 
-              <h3>
-                ${escapeHTML(product.name)}
-              </h3>
+            <div class="product-rating">
 
-              <div class="product-rating">
-                <span>
-                  ${getRatingStars(product.rating)}
-                </span>
+              <span>
+                ${ratingStars(product.rating)}
+              </span>
 
-                <span>
-                  ${product.rating}
-                </span>
+              <span>
+                ${product.rating}
+              </span>
 
-                <span>
-                  (${product.reviewCount})
-                </span>
-              </div>
-
-              <div class="product-bottom">
-
-                <strong>
-                  ${money(product.price)}
-                </strong>
-
-                <button
-                  class="add-product-btn"
-                  data-add-product="${escapeHTML(product.id)}"
-                >
-                  Ajouter
-                </button>
-
-              </div>
+              <span>
+                (${product.reviewCount})
+              </span>
 
             </div>
 
-          </article>
-        `;
 
-      })
-      .join("");
+            <div class="product-bottom">
+
+              <strong>
+                ${money(product.price)}
+              </strong>
+
+              <button
+                class="add-product-btn"
+                data-add-product="${escapeHTML(product.id)}"
+              >
+                Ajouter
+              </button>
+
+            </div>
+
+          </div>
+
+        </article>
+      `;
+
+    }).join("");
+
 
   productsGrid
-    .querySelectorAll("[data-add-product]")
+    .querySelectorAll(
+      "[data-add-product]"
+    )
     .forEach(button => {
 
       button.addEventListener(
@@ -1172,7 +1309,9 @@ function renderProducts() {
 
 
   productsGrid
-    .querySelectorAll("[data-favorite]")
+    .querySelectorAll(
+      "[data-favorite]"
+    )
     .forEach(button => {
 
       button.addEventListener(
@@ -1192,7 +1331,9 @@ function renderProducts() {
 
 
   productsGrid
-    .querySelectorAll("[data-open-product]")
+    .querySelectorAll(
+      "[data-open-product]"
+    )
     .forEach(element => {
 
       element.addEventListener(
@@ -1208,33 +1349,6 @@ function renderProducts() {
 
     });
 
-
-  productsGrid
-    .querySelectorAll(".product-info h3")
-    .forEach(element => {
-
-      element.addEventListener(
-        "click",
-        () => {
-
-          const card =
-            element.closest(
-              ".product-card"
-            );
-
-          if (card) {
-
-            openProduct(
-              card.dataset.productId
-            );
-
-          }
-
-        }
-      );
-
-    });
-
 }
 
 
@@ -1242,26 +1356,22 @@ function renderProducts() {
 // FAVORIS
 // ============================================================
 
-function toggleFavorite(id) {
+function toggleFavorite(id){
 
-  if (
+  if(
     favorites.includes(id)
-  ) {
+  ){
 
     favorites =
       favorites.filter(
         item => item !== id
       );
 
-    toast("Retiré des favoris");
-
   }
 
-  else {
+  else{
 
     favorites.push(id);
-
-    toast("Ajouté aux favoris ❤️");
 
   }
 
@@ -1276,44 +1386,38 @@ function toggleFavorite(id) {
 // PANIER
 // ============================================================
 
-function findCartItem(id) {
-
-  return cart.find(
-    item => item.id === id
-  );
-
-}
-
-
-function addToCart(id, quantity = 1) {
+function addToCart(id){
 
   const product =
     getProduct(id);
 
-  if (!product) {
+  if(!product){
     return;
   }
 
-  const existing =
-    findCartItem(id);
 
-  if (existing) {
+  const existing =
+    cart.find(
+      item => item.id === id
+    );
+
+
+  if(existing){
 
     existing.quantity =
-      Number(existing.quantity || 0) +
-      Number(quantity || 1);
+      Number(existing.quantity || 0) + 1;
 
   }
 
-  else {
+  else{
 
     cart.push({
-      id,
-      quantity:
-        Number(quantity || 1)
+      id:id,
+      quantity:1
     });
 
   }
+
 
   saveCart();
 
@@ -1326,7 +1430,7 @@ function addToCart(id, quantity = 1) {
 }
 
 
-function removeFromCart(id) {
+function removeFromCart(id){
 
   cart =
     cart.filter(
@@ -1340,25 +1444,22 @@ function removeFromCart(id) {
 }
 
 
-function changeCartQuantity(
+function changeQuantity(
   id,
   quantity
-) {
+){
 
   const item =
-    findCartItem(id);
+    cart.find(
+      entry => entry.id === id
+    );
 
-  if (!item) {
+  if(!item){
     return;
   }
 
-  const newQuantity =
-    Number(quantity);
 
-  if (
-    !Number.isFinite(newQuantity) ||
-    newQuantity <= 0
-  ) {
+  if(quantity <= 0){
 
     removeFromCart(id);
 
@@ -1366,8 +1467,9 @@ function changeCartQuantity(
 
   }
 
+
   item.quantity =
-    Math.floor(newQuantity);
+    Math.floor(quantity);
 
   saveCart();
 
@@ -1376,42 +1478,35 @@ function changeCartQuantity(
 }
 
 
-function renderCart() {
+// ============================================================
+// RENDU PANIER
+// ============================================================
 
-  if (cartBadge) {
+function renderCart(){
+
+  const count =
+    getCartCount();
+
+
+  if(cartBadge){
 
     cartBadge.textContent =
-      getCartCount();
+      count;
 
     cartBadge.style.display =
-      getCartCount() > 0
+      count > 0
         ? ""
         : "none";
 
   }
 
-  if (!cartItems) {
+
+  if(!cartItems){
     return;
   }
 
-  const validCart =
-    cart.filter(
-      item =>
-        getProduct(item.id)
-    );
 
-  if (
-    validCart.length !==
-    cart.length
-  ) {
-
-    cart = validCart;
-
-    saveCart();
-
-  }
-
-  if (!cart.length) {
+  if(!cart.length){
 
     cartItems.innerHTML = `
       <div class="empty-cart">
@@ -1421,101 +1516,106 @@ function renderCart() {
 
   }
 
-  else {
+  else{
 
     cartItems.innerHTML =
-      cart
-        .map(item => {
+      cart.map(item => {
 
-          const product =
-            getProduct(item.id);
+        const product =
+          getProduct(item.id);
 
-          if (!product) {
-            return "";
-          }
+        if(!product){
+          return "";
+        }
 
-          return `
-            <div
-              class="cart-item"
-              data-cart-item="${escapeHTML(product.id)}"
-            >
 
-              <div class="cart-item-image">
-                ${productImageHTML(product)}
-              </div>
+        return `
+          <div class="cart-item">
 
-              <div class="cart-item-info">
+            <div class="cart-item-image">
+              ${imageHTML(product)}
+            </div>
 
-                <strong>
-                  ${escapeHTML(product.name)}
-                </strong>
+            <div class="cart-item-info">
 
-                <span>
-                  ${money(product.price)}
-                </span>
+              <strong>
+                ${escapeHTML(product.name)}
+              </strong>
 
-                <div class="cart-quantity">
+              <span>
+                ${money(product.price)}
+              </span>
 
-                  <button
-                    data-minus="${escapeHTML(product.id)}"
-                  >
-                    −
-                  </button>
-
-                  <span>
-                    ${item.quantity}
-                  </span>
-
-                  <button
-                    data-plus="${escapeHTML(product.id)}"
-                  >
-                    +
-                  </button>
-
-                </div>
+              <div class="cart-quantity">
 
                 <button
-                  class="remove-cart"
-                  data-remove="${escapeHTML(product.id)}"
+                  data-minus="${escapeHTML(product.id)}"
                 >
-                  Supprimer
+                  −
+                </button>
+
+                <span>
+                  ${item.quantity}
+                </span>
+
+                <button
+                  data-plus="${escapeHTML(product.id)}"
+                >
+                  +
                 </button>
 
               </div>
 
-            </div>
-          `;
+              <button
+                data-remove="${escapeHTML(product.id)}"
+                class="remove-cart"
+              >
+                Supprimer
+              </button>
 
-        })
-        .join("");
+            </div>
+
+          </div>
+        `;
+
+      }).join("");
 
   }
 
-  if (cartTotal) {
+
+  if(cartTotal){
 
     cartTotal.textContent =
-      money(getCartSubtotal());
+      money(
+        getCartSubtotal()
+      );
 
   }
 
 
   cartItems
-    ?.querySelectorAll("[data-minus]")
+    .querySelectorAll(
+      "[data-minus]"
+    )
     .forEach(button => {
 
       button.addEventListener(
         "click",
         () => {
 
+          const id =
+            button.dataset.minus;
+
           const item =
-            findCartItem(
-              button.dataset.minus
+            cart.find(
+              entry =>
+                entry.id === id
             );
 
-          if (item) {
+          if(item){
 
-            changeCartQuantity(
-              item.id,
+            changeQuantity(
+              id,
               item.quantity - 1
             );
 
@@ -1528,22 +1628,28 @@ function renderCart() {
 
 
   cartItems
-    ?.querySelectorAll("[data-plus]")
+    .querySelectorAll(
+      "[data-plus]"
+    )
     .forEach(button => {
 
       button.addEventListener(
         "click",
         () => {
 
+          const id =
+            button.dataset.plus;
+
           const item =
-            findCartItem(
-              button.dataset.plus
+            cart.find(
+              entry =>
+                entry.id === id
             );
 
-          if (item) {
+          if(item){
 
-            changeCartQuantity(
-              item.id,
+            changeQuantity(
+              id,
               item.quantity + 1
             );
 
@@ -1556,7 +1662,9 @@ function renderCart() {
 
 
   cartItems
-    ?.querySelectorAll("[data-remove]")
+    .querySelectorAll(
+      "[data-remove]"
+    )
     .forEach(button => {
 
       button.addEventListener(
@@ -1576,59 +1684,38 @@ function renderCart() {
 
 
 // ============================================================
-// OUVERTURE PANIER
+// OUVRIR / FERMER PANIER
 // ============================================================
 
-function openCart() {
+function openCart(){
 
-  if (cartOverlay) {
+  cartOverlay?.classList.add(
+    "active"
+  );
 
-    cartOverlay.classList.add(
-      "active"
-    );
-
-  }
-
-  if (cartDrawer) {
-
-    cartDrawer.classList.add(
-      "active"
-    );
-
-  }
+  cartDrawer?.classList.add(
+    "active"
+  );
 
   renderCart();
 
 }
 
 
-function closeCart() {
+function closeCart(){
 
-  if (cartOverlay) {
+  cartOverlay?.classList.remove(
+    "active"
+  );
 
-    cartOverlay.classList.remove(
-      "active"
-    );
-
-  }
-
-  if (cartDrawer) {
-
-    cartDrawer.classList.remove(
-      "active"
-    );
-
-  }
+  cartDrawer?.classList.remove(
+    "active"
+  );
 
 }
 
 
 cartBtn?.addEventListener(
-  "click",
-  openCart
-);
-
-heroCartBtn?.addEventListener(
   "click",
   openCart
 );
@@ -1651,25 +1738,28 @@ cartOverlay?.addEventListener(
 function showModal(
   title,
   content
-) {
+){
 
-  if (!modal) {
+  if(!modal){
     return;
   }
 
-  if (modalTitle) {
+
+  if(modalTitle){
 
     modalTitle.textContent =
       title;
 
   }
 
-  if (modalContent) {
+
+  if(modalContent){
 
     modalContent.innerHTML =
       content;
 
   }
+
 
   modal.classList.add(
     "active"
@@ -1678,7 +1768,7 @@ function showModal(
 }
 
 
-function closeModal() {
+function closeModal(){
 
   modal?.classList.remove(
     "active"
@@ -1697,17 +1787,15 @@ modalClose?.addEventListener(
 // FICHE PRODUIT
 // ============================================================
 
-function openProduct(id) {
+function openProduct(id){
 
   const product =
     getProduct(id);
 
-  if (!product) {
+  if(!product){
     return;
   }
 
-  currentProduct =
-    product;
 
   showModal(
     product.name,
@@ -1715,7 +1803,7 @@ function openProduct(id) {
       <div class="product-modal">
 
         <div class="product-modal-image">
-          ${productImageHTML(product)}
+          ${imageHTML(product)}
         </div>
 
         <div class="product-modal-info">
@@ -1729,9 +1817,8 @@ function openProduct(id) {
           </h2>
 
           <div class="product-rating">
-            ${getRatingStars(product.rating)}
+            ${ratingStars(product.rating)}
             ${product.rating}/5
-            (${product.reviewCount} avis)
           </div>
 
           <div class="product-modal-price">
@@ -1739,14 +1826,12 @@ function openProduct(id) {
           </div>
 
           <button
-            class="modal-add-btn"
             id="modalAddProduct"
           >
             Ajouter au panier
           </button>
 
           <button
-            class="modal-favorite-btn"
             id="modalFavoriteProduct"
           >
             ${
@@ -1754,13 +1839,6 @@ function openProduct(id) {
                 ? "♥ Retirer des favoris"
                 : "♡ Ajouter aux favoris"
             }
-          </button>
-
-          <button
-            class="modal-reviews-btn"
-            id="modalReviewsProduct"
-          >
-            Voir les avis
           </button>
 
         </div>
@@ -1771,19 +1849,25 @@ function openProduct(id) {
 
 
   document
-    .getElementById("modalAddProduct")
+    .getElementById(
+      "modalAddProduct"
+    )
     ?.addEventListener(
       "click",
       () => {
 
-        addToCart(product.id);
+        addToCart(
+          product.id
+        );
 
       }
     );
 
 
   document
-    .getElementById("modalFavoriteProduct")
+    .getElementById(
+      "modalFavoriteProduct"
+    )
     ?.addEventListener(
       "click",
       () => {
@@ -1798,131 +1882,6 @@ function openProduct(id) {
 
       }
     );
-
-
-  document
-    .getElementById("modalReviewsProduct")
-    ?.addEventListener(
-      "click",
-      () => {
-
-        openProductReviews(
-          product.id
-        );
-
-      }
-    );
-
-}
-
-
-// ============================================================
-// AVIS
-// ============================================================
-
-function getReviews() {
-
-  try {
-
-    return JSON.parse(
-      localStorage.getItem(
-        STORAGE.reviews
-      )
-    ) || {};
-
-  }
-
-  catch {
-
-    return {};
-
-  }
-
-}
-
-
-function saveReviews(reviews) {
-
-  localStorage.setItem(
-    STORAGE.reviews,
-    JSON.stringify(reviews)
-  );
-
-}
-
-
-function openProductReviews(id) {
-
-  const product =
-    getProduct(id);
-
-  if (!product) {
-    return;
-  }
-
-  const allReviews =
-    getReviews();
-
-  const reviews =
-    allReviews[id] || [];
-
-  showModal(
-    `Avis - ${product.name}`,
-    `
-      <div class="reviews-modal">
-
-        <div class="reviews-summary">
-
-          <strong>
-            ${product.rating}/5
-          </strong>
-
-          <span>
-            ${getRatingStars(product.rating)}
-          </span>
-
-          <small>
-            ${product.reviewCount} avis
-          </small>
-
-        </div>
-
-        ${
-          reviews.length
-            ? reviews.map(review => `
-                <div class="review-item">
-
-                  <strong>
-                    ${escapeHTML(
-                      review.name ||
-                      "Client"
-                    )}
-                  </strong>
-
-                  <div>
-                    ${getRatingStars(
-                      review.rating || 5
-                    )}
-                  </div>
-
-                  <p>
-                    ${escapeHTML(
-                      review.text || ""
-                    )}
-                  </p>
-
-                </div>
-              `).join("")
-            : `
-              <div class="empty-reviews">
-                Aucun nouvel avis local.
-              </div>
-            `
-        }
-
-      </div>
-    `
-  );
 
 }
 
@@ -1962,984 +1921,49 @@ sortSelect?.addEventListener(
 
 
 // ============================================================
-// CHECKOUT DÉMO
+// TOAST
 // ============================================================
 
-function openCheckout() {
+function toast(message){
 
-  if (!cart.length) {
-
-    toast(
-      "Votre panier est vide."
-    );
-
-    return;
-
-  }
-
-  showModal(
-    "Finaliser la commande",
-    `
-      <div class="checkout-demo">
-
-        <h3>
-          Récapitulatif
-        </h3>
-
-        <div class="checkout-summary">
-
-          <span>
-            Sous-total
-          </span>
-
-          <strong>
-            ${money(
-              getCartSubtotal()
-            )}
-          </strong>
-
-        </div>
-
-        <p>
-          Paiement de démonstration.
-          Aucun paiement réel ne sera effectué.
-        </p>
-
-        <button
-          id="demoOrderBtn"
-          class="free-order"
-        >
-          Commander gratuitement
-        </button>
-
-      </div>
-    `
-  );
-
-
-  document
-    .getElementById("demoOrderBtn")
-    ?.addEventListener(
-      "click",
-      createDemoOrder
-    );
-
-}
-
-
-checkoutBtn?.addEventListener(
-  "click",
-  openCheckout
-);
-
-
-// ============================================================
-// COMMANDES
-// ============================================================
-
-function getOrders() {
-
-  try {
-
-    return JSON.parse(
-      localStorage.getItem(
-        STORAGE.orders
-      )
-    ) || [];
-
-  }
-
-  catch {
-
-    return [];
-
-  }
-
-}
-
-
-function saveOrders(orders) {
-
-  localStorage.setItem(
-    STORAGE.orders,
-    JSON.stringify(orders)
-  );
-
-}
-
-
-function createDemoOrder() {
-
-  const orders =
-    getOrders();
-
-  const order = {
-
-    id:
-      "NOVA-" +
-      Date.now()
-        .toString()
-        .slice(-8),
-
-    createdAt:
-      new Date().toISOString(),
-
-    status:
-      "Commande confirmée",
-
-    truckLocation:
-      "Entrepôt NovaShop",
-
-    destination:
-      "",
-
-    tracking:
-      "En préparation",
-
-    durationSeconds:
-      0,
-
-    deliveryDate:
-      "",
-
-    total:
-      getCartSubtotal(),
-
-    items:
-      cart.map(item => {
-
-        const product =
-          getProduct(item.id);
-
-        return {
-
-          id: item.id,
-
-          name:
-            product?.name || "",
-
-          price:
-            product?.price || 0,
-
-          quantity:
-            item.quantity
-
-        };
-
-      })
-
-  };
-
-
-  orders.unshift(
-    order
-  );
-
-  saveOrders(
-    orders
-  );
-
-
-  cart = [];
-
-  saveCart();
-
-  renderCart();
-
-  closeModal();
-
-  toast(
-    `Commande ${order.id} créée`
-  );
-
-}
-
-
-// ============================================================
-// AFFICHAGE DES COMMANDES
-// ============================================================
-
-function openOrders() {
-
-  const orders =
-    getOrders();
-
-  if (!orders.length) {
-
-    showModal(
-      "Mes commandes",
-      `
-        <div class="empty-orders">
-          Vous n'avez aucune commande.
-        </div>
-      `
-    );
-
-    return;
-
-  }
-
-
-  showModal(
-    "Mes commandes",
-    `
-      <div class="orders-list">
-
-        ${orders.map(order => `
-
-          <div
-            class="order-card"
-            data-order="${escapeHTML(order.id)}"
-          >
-
-            <strong>
-              ${escapeHTML(order.id)}
-            </strong>
-
-            <span>
-              ${money(order.total)}
-            </span>
-
-            <span>
-              ${escapeHTML(
-                order.status ||
-                "Commande"
-              )}
-            </span>
-
-            <button
-              data-track-order="${escapeHTML(
-                order.id
-              )}"
-            >
-              Suivre la commande
-            </button>
-
-          </div>
-
-        `).join("")}
-
-      </div>
-    `
-  );
-
-
-  document
-    .querySelectorAll(
-      "[data-track-order]"
-    )
-    .forEach(button => {
-
-      button.addEventListener(
-        "click",
-        () => {
-
-          openOrderTracking(
-            button.dataset.trackOrder
-          );
-
-        }
-      );
-
-    });
-
-}
-
-
-ordersBtn?.addEventListener(
-  "click",
-  openOrders
-);
-
-
-// ============================================================
-// SUIVI LIVRAISON
-// ============================================================
-
-function openOrderTracking(
-  orderId
-) {
-
-  const orders =
-    getOrders();
-
-  const order =
-    orders.find(
-      item =>
-        item.id === orderId
-    );
-
-  if (!order) {
+  if(!toastContainer){
     return;
   }
 
-  showModal(
-    `Suivi ${order.id}`,
-    `
-      <div class="tracking-modal">
 
-        <h3>
-          ${escapeHTML(
-            order.status ||
-            "Commande"
-          )}
-        </h3>
-
-        <div class="tracking-location">
-          <strong>
-            Localisation du colis
-          </strong>
-
-          <span>
-            ${escapeHTML(
-              order.truckLocation ||
-              "Non renseignée"
-            )}
-          </span>
-        </div>
-
-        <div class="tracking-destination">
-          <strong>
-            Destination
-          </strong>
-
-          <span>
-            ${escapeHTML(
-              order.destination ||
-              "Non renseignée"
-            )}
-          </span>
-        </div>
-
-        <div class="tracking-number">
-          <strong>
-            Suivi
-          </strong>
-
-          <span>
-            ${escapeHTML(
-              order.tracking ||
-              "Non renseigné"
-            )}
-          </span>
-        </div>
-
-        <div class="tracking-date">
-          <strong>
-            Livraison
-          </strong>
-
-          <span>
-            ${escapeHTML(
-              order.deliveryDate ||
-              "À définir"
-            )}
-          </span>
-        </div>
-
-      </div>
-    `
-  );
-
-}
-
-
-// ============================================================
-// COMPTE
-// ============================================================
-
-function openAccount() {
-
-  showModal(
-    "Mon compte",
-    `
-      <div class="account-panel">
-
-        <h3>
-          Compte NovaShop
-        </h3>
-
-        <p>
-          Gestion locale du compte.
-        </p>
-
-        <button
-          id="accountOrdersBtn"
-        >
-          Mes commandes
-        </button>
-
-      </div>
-    `
-  );
-
-
-  document
-    .getElementById(
-      "accountOrdersBtn"
-    )
-    ?.addEventListener(
-      "click",
-      openOrders
+  const element =
+    document.createElement(
+      "div"
     );
 
-}
+  element.className =
+    "toast";
 
+  element.textContent =
+    message;
 
-accountBtn?.addEventListener(
-  "click",
-  openAccount
-);
-
-
-// ============================================================
-// PARAMÈTRES
-// ============================================================
-
-function openSettings() {
-
-  const dark =
-    localStorage.getItem(
-      STORAGE.dark
-    ) !== "false";
-
-  showModal(
-    "Paramètres",
-    `
-      <div class="settings-panel">
-
-        <label>
-          <input
-            type="checkbox"
-            id="darkModeSetting"
-            ${dark ? "checked" : ""}
-          >
-          Mode sombre
-        </label>
-
-        <button
-          id="saveSettingsBtn"
-        >
-          Enregistrer
-        </button>
-
-      </div>
-    `
+  toastContainer.appendChild(
+    element
   );
 
 
-  document
-    .getElementById(
-      "saveSettingsBtn"
-    )
-    ?.addEventListener(
-      "click",
-      () => {
-
-        const checkbox =
-          document.getElementById(
-            "darkModeSetting"
-          );
-
-        const enabled =
-          checkbox?.checked ?? true;
-
-        localStorage.setItem(
-          STORAGE.dark,
-          String(enabled)
-        );
-
-        document.body.classList.toggle(
-          "light-mode",
-          !enabled
-        );
-
-        closeModal();
-
-        toast(
-          "Paramètres enregistrés"
-        );
-
-      }
-    );
-
-}
-
-
-settingsBtn?.addEventListener(
-  "click",
-  openSettings
-);
-
-
-// ============================================================
-// ADMIN
-// ============================================================
-
-function isAdminUnlocked() {
-
-  return (
-    localStorage.getItem(
-      STORAGE.admin
-    ) === "true"
+  setTimeout(
+    () => element.remove(),
+    2500
   );
 
 }
-
-
-function openAdmin() {
-
-  if (!isAdminUnlocked()) {
-
-    showModal(
-      "Administration",
-      `
-        <form id="adminLoginForm">
-
-          <label>
-            E-mail administrateur
-          </label>
-
-          <input
-            id="adminEmail"
-            type="email"
-            required
-            placeholder="E-mail"
-          >
-
-          <label>
-            Code administrateur
-          </label>
-
-          <input
-            id="adminCode"
-            type="password"
-            required
-            placeholder="Code"
-          >
-
-          <button
-            type="submit"
-          >
-            Connexion admin
-          </button>
-
-        </form>
-      `
-    );
-
-
-    document
-      .getElementById(
-        "adminLoginForm"
-      )
-      ?.addEventListener(
-        "submit",
-        event => {
-
-          event.preventDefault();
-
-          const email =
-            document.getElementById(
-              "adminEmail"
-            )?.value.trim();
-
-          const code =
-            document.getElementById(
-              "adminCode"
-            )?.value.trim();
-
-          if (
-            email === ADMIN_EMAIL &&
-            code === ADMIN_CODE
-          ) {
-
-            localStorage.setItem(
-              STORAGE.admin,
-              "true"
-            );
-
-            toast(
-              "Administration activée"
-            );
-
-            openAdmin();
-
-          }
-
-          else {
-
-            toast(
-              "Identifiants administrateur incorrects"
-            );
-
-          }
-
-        }
-      );
-
-    return;
-
-  }
-
-
-  renderAdminDashboard();
-
-}
-
-
-function renderAdminDashboard() {
-
-  const orders =
-    getOrders();
-
-  showModal(
-    "Dashboard NovaShop",
-    `
-      <div class="admin-dashboard">
-
-        <h3>
-          Administration
-        </h3>
-
-        <p>
-          ${orders.length}
-          commande${
-            orders.length > 1
-              ? "s"
-              : ""
-          }
-        </p>
-
-        ${
-          orders.length
-            ? orders.map(order => `
-
-                <div
-                  class="admin-order"
-                  data-admin-order="${escapeHTML(
-                    order.id
-                  )}"
-                >
-
-                  <strong>
-                    ${escapeHTML(order.id)}
-                  </strong>
-
-                  <input
-                    class="admin-status"
-                    value="${escapeHTML(
-                      order.status || ""
-                    )}"
-                    placeholder="Statut"
-                  >
-
-                  <input
-                    class="admin-location"
-                    value="${escapeHTML(
-                      order.truckLocation || ""
-                    )}"
-                    placeholder="Localisation"
-                  >
-
-                  <input
-                    class="admin-destination"
-                    value="${escapeHTML(
-                      order.destination || ""
-                    )}"
-                    placeholder="Destination"
-                  >
-
-                  <input
-                    class="admin-tracking"
-                    value="${escapeHTML(
-                      order.tracking || ""
-                    )}"
-                    placeholder="Suivi"
-                  >
-
-                  <input
-                    class="admin-date"
-                    value="${escapeHTML(
-                      order.deliveryDate || ""
-                    )}"
-                    placeholder="Date de livraison"
-                  >
-
-                  <button
-                    data-save-order="${escapeHTML(
-                      order.id
-                    )}"
-                  >
-                    Enregistrer
-                  </button>
-
-                  <button
-                    data-delete-order="${escapeHTML(
-                      order.id
-                    )}"
-                  >
-                    Supprimer
-                  </button>
-
-                </div>
-
-              `).join("")
-            : `
-              <p>
-                Aucune commande.
-              </p>
-            `
-        }
-
-        <button
-          id="adminLogoutBtn"
-        >
-          Déconnexion admin
-        </button>
-
-      </div>
-    `
-  );
-
-
-  document
-    .querySelectorAll(
-      "[data-save-order]"
-    )
-    .forEach(button => {
-
-      button.addEventListener(
-        "click",
-        () => {
-
-          saveAdminOrder(
-            button.dataset.saveOrder
-          );
-
-        }
-      );
-
-    });
-
-
-  document
-    .querySelectorAll(
-      "[data-delete-order]"
-    )
-    .forEach(button => {
-
-      button.addEventListener(
-        "click",
-        () => {
-
-          deleteAdminOrder(
-            button.dataset.deleteOrder
-          );
-
-        }
-      );
-
-    });
-
-
-  document
-    .getElementById(
-      "adminLogoutBtn"
-    )
-    ?.addEventListener(
-      "click",
-      () => {
-
-        localStorage.removeItem(
-          STORAGE.admin
-        );
-
-        closeModal();
-
-        toast(
-          "Déconnexion admin"
-        );
-
-      }
-    );
-
-}
-
-
-// ============================================================
-// SAUVEGARDE COMMANDE ADMIN
-// ============================================================
-
-function saveAdminOrder(id) {
-
-  const orders =
-    getOrders();
-
-  const order =
-    orders.find(
-      item => item.id === id
-    );
-
-  const container =
-    document.querySelector(
-      `[data-admin-order="${CSS.escape(id)}"]`
-    );
-
-  if (!order || !container) {
-    return;
-  }
-
-  order.status =
-    container.querySelector(
-      ".admin-status"
-    )?.value || "";
-
-  order.truckLocation =
-    container.querySelector(
-      ".admin-location"
-    )?.value || "";
-
-  order.destination =
-    container.querySelector(
-      ".admin-destination"
-    )?.value || "";
-
-  order.tracking =
-    container.querySelector(
-      ".admin-tracking"
-    )?.value || "";
-
-  order.deliveryDate =
-    container.querySelector(
-      ".admin-date"
-    )?.value || "";
-
-  saveOrders(
-    orders
-  );
-
-  toast(
-    "Commande mise à jour"
-  );
-
-}
-
-
-// ============================================================
-// SUPPRESSION COMMANDE ADMIN
-// ============================================================
-
-function deleteAdminOrder(id) {
-
-  const orders =
-    getOrders();
-
-  const filtered =
-    orders.filter(
-      order =>
-        order.id !== id
-    );
-
-  saveOrders(
-    filtered
-  );
-
-  renderAdminDashboard();
-
-  toast(
-    "Commande supprimée"
-  );
-
-}
-
-
-// ============================================================
-// BOUTON ADMIN
-// ============================================================
-
-adminBtn?.addEventListener(
-  "click",
-  openAdmin
-);
-
-
-// ============================================================
-// FERMETURE MODAL AVEC OVERLAY
-// ============================================================
-
-modal?.addEventListener(
-  "click",
-  event => {
-
-    if (
-      event.target === modal
-    ) {
-
-      closeModal();
-
-    }
-
-  }
-);
-
-
-// ============================================================
-// ESCAPE
-// ============================================================
-
-document.addEventListener(
-  "keydown",
-  event => {
-
-    if (
-      event.key === "Escape"
-    ) {
-
-      closeModal();
-      closeCart();
-
-    }
-
-  }
-);
-
-
-// ============================================================
-// MODE SOMBRE
-// ============================================================
-
-(function loadTheme() {
-
-  const dark =
-    localStorage.getItem(
-      STORAGE.dark
-    ) !== "false";
-
-  document.body.classList.toggle(
-    "light-mode",
-    !dark
-  );
-
-})();
 
 
 // ============================================================
 // INITIALISATION
 // ============================================================
 
-function initNovaShop() {
+renderCategories();
 
-  renderCategories();
+renderProducts();
 
-  renderProducts();
-
-  renderCart();
-
-}
-
-
-initNovaShop();
+renderCart();
 
 
 // ============================================================
@@ -2947,5 +1971,7 @@ initNovaShop();
 // ============================================================
 
 console.log(
-  `NovaShop chargé : ${products.length} produits`
+  "NovaShop :",
+  products.length,
+  "produits chargés."
 );
