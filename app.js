@@ -1,9 +1,8 @@
 // ============================================================
 // NOVASHOP - APP.JS
-// PRODUITS UNIQUEMENT
+// Produits + recherche + catégories + panier + favoris
+// compte + commandes + admin + paramètres
 // ============================================================
-
-"use strict";
 
 
 // ============================================================
@@ -12,91 +11,32 @@
 
 const products = [
 
-  // ==========================================================
-  // COMPOSANTS
-  // ==========================================================
-
   {
     id:"p1",
     name:"Gigabyte B650 AORUS Elite AX",
-    category:"Composants",
+    category:"Composants PC",
     price:189.99,
     image:"https://m.media-amazon.com/images/I/81JFKzNyl+L._AC_SL1500_.jpg"
   },
 
   {
     id:"p2",
-    name:"ASUS TUF Gaming B650-PLUS",
-    category:"Composants",
-    price:179.90,
-    image:""
-  },
-
-  {
-    id:"p3",
-    name:"MSI MAG B650 Tomahawk",
-    category:"Composants",
-    price:189.90,
-    image:""
-  },
-
-  {
-    id:"p4",
-    name:"AMD Ryzen 7 7800X3D",
-    category:"Composants",
-    price:0,
-    image:""
-  },
-
-  {
-    id:"p5",
-    name:"AMD Ryzen 7 9800X3D",
-    category:"Composants",
-    price:0,
-    image:""
-  },
-
-  {
-    id:"p6",
-    name:"AMD Ryzen 9 9950X3D",
-    category:"Composants",
-    price:0,
-    image:""
-  },
-
-
-  // ==========================================================
-  // PC GAMER
-  // ==========================================================
-
-  {
-    id:"p7",
     name:"PC Gamer Ryzen 7 7800X3D / RX 9070 XT / 32 Go DDR5",
     category:"PC Gamer",
     price:2237.65,
     image:""
   },
 
-
-  // ==========================================================
-  // CASQUES
-  // ==========================================================
-
   {
-    id:"p8",
+    id:"p3",
     name:"HyperX Cloud II",
     category:"Casques",
     price:49.99,
     image:""
   },
 
-
-  // ==========================================================
-  // CLAVIERS
-  // ==========================================================
-
   {
-    id:"p9",
+    id:"p4",
     name:"TECORS 60% AZERTY",
     category:"Claviers",
     price:30,
@@ -104,20 +44,15 @@ const products = [
   },
 
   {
-    id:"p10",
-    name:"Celshading 65%",
+    id:"p5",
+    name:"Celshading 65% Keyboard",
     category:"Claviers",
     price:120.90,
     image:""
   },
 
-
-  // ==========================================================
-  // SOURIS
-  // ==========================================================
-
   {
-    id:"p11",
+    id:"p6",
     name:"Ajazz AJ199 MAX",
     category:"Souris",
     price:49.99,
@@ -125,20 +60,15 @@ const products = [
   },
 
   {
-    id:"p12",
+    id:"p7",
     name:"Logitech G PRO X2 Superstrike",
     category:"Souris",
     price:150.99,
     image:""
   },
 
-
-  // ==========================================================
-  // STOCKAGE
-  // ==========================================================
-
   {
-    id:"p13",
+    id:"p8",
     name:"Samsung 990 PRO 1TB",
     category:"Stockage",
     price:249.99,
@@ -146,20 +76,15 @@ const products = [
   },
 
   {
-    id:"p14",
+    id:"p9",
     name:"Samsung 990 PRO 2TB",
     category:"Stockage",
     price:199.93,
     image:""
   },
 
-
-  // ==========================================================
-  // ALIMENTATIONS
-  // ==========================================================
-
   {
-    id:"p15",
+    id:"p10",
     name:"Corsair RM1000x",
     category:"Alimentations",
     price:159.90,
@@ -167,395 +92,72 @@ const products = [
   },
 
   {
-    id:"p16",
+    id:"p11",
     name:"Corsair RM850x",
     category:"Alimentations",
     price:134.90,
     image:""
   },
 
-
-  // ==========================================================
-  // BOÎTIERS
-  // ==========================================================
-
   {
-    id:"p17",
+    id:"p12",
     name:"Corsair Frame 5000D",
     category:"Boîtiers",
     price:159.90,
     image:""
   },
 
-
-  // ==========================================================
-  // REFROIDISSEMENT
-  // ==========================================================
-
   {
-    id:"p18",
+    id:"p13",
     name:"Arctic Liquid Freezer III Pro 360",
     category:"Refroidissement",
     price:129.90,
     image:""
   },
 
-
-  // ==========================================================
-  // ÉCRANS
-  // ==========================================================
-
   {
-    id:"p19",
+    id:"p14",
     name:"Samsung 27 QD-OLED Odyssey G6",
     category:"Écrans",
     price:399.95,
     image:""
   },
 
-
-  // ==========================================================
-  // STREAMING
-  // ==========================================================
-
   {
-    id:"p20",
+    id:"p15",
     name:"Elgato Wave Mic Arm Pro",
     category:"Streaming",
     price:229.90,
     image:""
   },
 
-
-  // ==========================================================
-  // MANETTES
-  // ==========================================================
-
   {
-    id:"p21",
+    id:"p16",
     name:"DualSense Cosmic Red",
     category:"Manettes",
     price:74.90,
     image:""
   },
 
-
-  // ==========================================================
-  // TAPIS DE SOURIS
-  // ==========================================================
-
   {
-    id:"p22",
-    name:"Razer Gigantus V2 XXL",
-    category:"Tapis de souris",
-    price:21,
-    image:""
-  },
-
-  {
-    id:"p23",
-    name:"Logitech G840",
-    category:"Tapis de souris",
-    price:15,
-    image:""
-  },
-
-
-  // ==========================================================
-  // CHAISES GAMING
-  // ==========================================================
-
-  {
-    id:"p24",
-    name:"Chaise Gaming",
-    category:"Chaises gaming",
-    price:0,
-    image:""
-  },
-
-
-  // ==========================================================
-  // BUREAUX GAMING
-  // ==========================================================
-
-  {
-    id:"p25",
-    name:"Bureau Gaming",
-    category:"Bureaux gaming",
-    price:0,
-    image:""
-  },
-
-
-  // ==========================================================
-  // MICROPHONES
-  // ==========================================================
-
-  {
-    id:"p26",
-    name:"Microphone Gaming USB",
-    category:"Microphones",
-    price:0,
-    image:""
-  },
-
-
-  // ==========================================================
-  // ÉCLAIRAGE RGB
-  // ==========================================================
-
-  {
-    id:"p27",
-    name:"Éclairage RGB Gaming",
-    category:"Éclairage RGB",
-    price:0,
-    image:""
-  },
-
-
-  // ==========================================================
-  // CARTES GRAPHIQUES
-  // ==========================================================
-
-  {
-    id:"p28",
-    name:"GeForce RTX 5090",
-    category:"Cartes graphiques",
-    price:0,
-    image:""
-  },
-
-  {
-    id:"p29",
-    name:"Radeon RX 9070 XT",
-    category:"Cartes graphiques",
-    price:0,
-    image:""
-  },
-
-
-  // ==========================================================
-  // SMARTPHONES
-  // ==========================================================
-
-  {
-    id:"p30",
-    name:"Smartphone Gaming",
-    category:"Smartphones",
-    price:0,
-    image:""
-  },
-
-
-  // ==========================================================
-  // IMPRIMANTES 3D
-  // ==========================================================
-
-  {
-    id:"p31",
-    name:"Imprimante 3D",
-    category:"Imprimantes 3D",
-    price:0,
-    image:""
-  },
-
-
-  // ==========================================================
-  // LOGICIELS & LICENCES
-  // ==========================================================
-
-  {
-    id:"p32",
-    name:"Licence Windows",
-    category:"Logiciels & licences",
-    price:0,
-    image:""
-  },
-
-  {
-    id:"p33",
-    name:"Clé de jeu vidéo",
-    category:"Logiciels & licences",
-    price:0,
-    image:""
-  },
-
-
-  // ==========================================================
-  // ACCESSOIRES COMPOSANTS PC
-  // ==========================================================
-
-  {
-    id:"p34",
-    name:"Accessoire composant PC",
-    category:"Accessoires composants PC",
-    price:0,
-    image:""
-  },
-
-
-  // ==========================================================
-  // ADAPTATEURS / CÂBLES / CHARGEURS
-  // ==========================================================
-
-  {
-    id:"p35",
-    name:"Câble HDMI",
-    category:"Adaptateurs / câbles / chargeurs",
-    price:0,
-    image:""
-  },
-
-  {
-    id:"p36",
-    name:"Câble USB-C",
-    category:"Adaptateurs / câbles / chargeurs",
-    price:0,
-    image:""
-  },
-
-  {
-    id:"p37",
-    name:"Câble Lightning",
-    category:"Adaptateurs / câbles / chargeurs",
-    price:0,
-    image:""
-  },
-
-  {
-    id:"p38",
-    name:"Câble Apple Watch",
-    category:"Adaptateurs / câbles / chargeurs",
-    price:0,
-    image:""
-  },
-
-
-  // ==========================================================
-  // CAMÉRAS & WEBCAMS
-  // ==========================================================
-
-  {
-    id:"p39",
-    name:"Webcam Gaming",
-    category:"Caméras & webcams",
-    price:0,
-    image:""
-  },
-
-
-  // ==========================================================
-  // BARRES LUMINEUSES
-  // ==========================================================
-
-  {
-    id:"p40",
-    name:"Barre lumineuse pour écran",
-    category:"Barres lumineuses pour écran",
-    price:0,
-    image:""
-  },
-
-
-  // ==========================================================
-  // SUPPORTS ÉCRANS / ÉCRANS / TV
-  // ==========================================================
-
-  {
-    id:"p41",
-    name:"Support écran",
-    category:"Supports écrans / écrans / TV",
-    price:0,
-    image:""
-  },
-
-  {
-    id:"p42",
-    name:"Écran Gaming",
-    category:"Supports écrans / écrans / TV",
-    price:0,
-    image:""
-  },
-
-  {
-    id:"p43",
-    name:"TV Gaming",
-    category:"Supports écrans / écrans / TV",
-    price:0,
-    image:""
-  },
-
-
-  // ==========================================================
-  // MANETTES & CONSOLES
-  // ==========================================================
-
-  {
-    id:"p44",
-    name:"Console Gaming",
-    category:"Manettes & consoles",
-    price:0,
-    image:""
-  },
-
-  {
-    id:"p45",
-    name:"Manette Gaming",
-    category:"Manettes & consoles",
-    price:0,
-    image:""
-  },
-
-
-  // ==========================================================
-  // COMPOSANTS PC
-  // ==========================================================
-
-  {
-    id:"p46",
-    name:"Composant PC Gaming",
+    id:"p17",
+    name:"ASUS TUF B650-PLUS",
     category:"Composants PC",
-    price:0,
-    image:""
-  },
-
-
-  // ==========================================================
-  // PC GAMER PRÉCONSTRUITS
-  // ==========================================================
-
-  {
-    id:"p47",
-    name:"PC Gamer préconstruit",
-    category:"PC Gamer préconstruits",
-    price:0,
-    image:""
-  },
-
-
-  // ==========================================================
-  // PC PORTABLES
-  // ==========================================================
-
-  {
-    id:"p48",
-    name:"PC portable Gaming",
-    category:"PC portables Gaming & Travail",
-    price:0,
+    price:179.90,
     image:""
   },
 
   {
-    id:"p49",
-    name:"PC portable Travail",
-    category:"PC portables Gaming & Travail",
-    price:0,
+    id:"p18",
+    name:"MSI MAG B650 Tomahawk",
+    category:"Composants PC",
+    price:189.90,
     image:""
   },
 
 
   // ==========================================================
-  // PRODUITS 85 À 105
+  // P85 À P105
   // ==========================================================
 
   {
@@ -730,144 +332,96 @@ const products = [
 
 
 // ============================================================
-// NOTES
+// STOCKAGE
 // ============================================================
 
-products.forEach((product,index) => {
-
-  product.rating =
-    Number(
-      (
-        4.2 +
-        ((index * 17) % 81) / 100
-      ).toFixed(1)
-    );
-
-  product.reviewCount =
-    1248 +
-    ((index * 137) % 2028);
-
-});
+const STORAGE = {
+  cart:"nova_cart",
+  favorites:"nova_favorites",
+  orders:"nova_orders",
+  reviews:"nova_reviews",
+  dark:"nova_dark",
+  sound:"nova_sound",
+  profiles:"nova_profiles",
+  admin:"nova_admin_unlocked"
+};
 
 
 // ============================================================
-// ÉTAT
+// ETAT
 // ============================================================
 
-let selectedCategory = "Tous";
-let searchValue = "";
-let sortValue = "default";
-
-let cart = [];
-let favorites = [];
-
-
-// ============================================================
-// LOCAL STORAGE
-// ============================================================
-
-try {
-
-  cart =
-    JSON.parse(
-      localStorage.getItem("novaCart")
-    ) || [];
-
-} catch {
-
-  cart = [];
-
-}
-
-
-try {
-
-  favorites =
-    JSON.parse(
-      localStorage.getItem("novaFavorites")
-    ) || [];
-
-} catch {
-
-  favorites = [];
-
-}
+const state = {
+  category:"Toutes",
+  search:"",
+  sort:"default",
+  cart:loadJSON(STORAGE.cart,[]),
+  favorites:loadJSON(STORAGE.favorites,[])
+};
 
 
 // ============================================================
 // DOM
 // ============================================================
 
-const searchInput =
-  document.getElementById("searchInput");
+const searchInput = document.getElementById("searchInput");
+const categoriesEl = document.getElementById("categories");
+const productGrid = document.getElementById("productGrid");
+const productCount = document.getElementById("productCount");
+const sortSelect = document.getElementById("sortSelect");
 
-const categoriesEl =
-  document.getElementById("categories");
+const cartBtn = document.getElementById("cartBtn");
+const cartBadge = document.getElementById("cartBadge");
+const cartOverlay = document.getElementById("overlay");
+const cartDrawer = document.getElementById("cartDrawer");
+const cartClose = document.getElementById("closeCart");
+const cartItems = document.getElementById("cartItems");
+const cartTotal = document.getElementById("cartTotal");
+const checkoutBtn = document.getElementById("checkoutBtn");
 
-const productsGrid =
-  document.getElementById("productGrid");
+const settingsBtn = document.getElementById("settingsBtn");
+const accountBtn = document.getElementById("accountBtn");
+const ordersBtn = document.getElementById("ordersBtn");
+const adminBtn = document.getElementById("adminBtn");
+const heroCartBtn = document.getElementById("heroCartBtn");
 
-const productCount =
-  document.getElementById("productCount");
+const modalLayer = document.getElementById("modalLayer");
+const modalContent = document.getElementById("modalContent");
+const modalTitle = document.getElementById("modalTitle");
+const modalClose = document.getElementById("modalClose");
 
-const sortSelect =
-  document.getElementById("sortSelect");
-
-const cartBtn =
-  document.getElementById("cartBtn");
-
-const cartBadge =
-  document.getElementById("cartBadge");
-
-const cartOverlay =
-  document.getElementById("cartOverlay");
-
-const cartDrawer =
-  document.getElementById("cartDrawer");
-
-const cartClose =
-  document.getElementById("cartClose");
-
-const cartItems =
-  document.getElementById("cartItems");
-
-const cartTotal =
-  document.getElementById("cartTotal");
-
-const checkoutBtn =
-  document.getElementById("checkoutBtn");
-
-const modal =
-  document.getElementById("modal");
-
-const modalContent =
-  document.getElementById("modalContent");
-
-const modalClose =
-  document.getElementById("modalClose");
-
-const modalTitle =
-  document.getElementById("modalTitle");
-
-const toastContainer =
-  document.getElementById("toastContainer");
+const toast = document.getElementById("toast");
 
 
 // ============================================================
 // UTILITAIRES
 // ============================================================
 
-function money(value){
+function loadJSON(key,fallback){
 
-  return Number(value || 0)
-    .toLocaleString(
-      "fr-FR",
-      {
-        minimumFractionDigits:2,
-        maximumFractionDigits:2
-      }
-    ) + " €";
+  try{
+    const value = localStorage.getItem(key);
 
+    if(!value){
+      return fallback;
+    }
+
+    return JSON.parse(value);
+
+  }catch{
+    return fallback;
+  }
+}
+
+
+function saveJSON(key,value){
+
+  try{
+    localStorage.setItem(
+      key,
+      JSON.stringify(value)
+    );
+  }catch{}
 }
 
 
@@ -879,7 +433,18 @@ function escapeHTML(value){
     .replaceAll(">","&gt;")
     .replaceAll('"',"&quot;")
     .replaceAll("'","&#039;");
+}
 
+
+function money(value){
+
+  return Number(value || 0).toLocaleString(
+    "fr-FR",
+    {
+      minimumFractionDigits:2,
+      maximumFractionDigits:2
+    }
+  ) + " €";
 }
 
 
@@ -888,48 +453,24 @@ function getProduct(id){
   return products.find(
     product => product.id === id
   );
-
 }
 
 
-function saveCart(){
+function cartQuantity(){
 
-  localStorage.setItem(
-    "novaCart",
-    JSON.stringify(cart)
-  );
-
-}
-
-
-function saveFavorites(){
-
-  localStorage.setItem(
-    "novaFavorites",
-    JSON.stringify(favorites)
-  );
-
-}
-
-
-function getCartCount(){
-
-  return cart.reduce(
-    (total,item) =>
-      total + Number(item.quantity || 0),
+  return state.cart.reduce(
+    (total,item) => total + Number(item.qty || 0),
     0
   );
-
 }
 
 
-function getCartSubtotal(){
+function cartAmount(){
 
-  return cart.reduce(
+  return state.cart.reduce(
     (total,item) => {
 
-      const product =
-        getProduct(item.id);
+      const product = getProduct(item.id);
 
       if(!product){
         return total;
@@ -937,20 +478,101 @@ function getCartSubtotal(){
 
       return total +
         Number(product.price || 0) *
-        Number(item.quantity || 0);
+        Number(item.qty || 0);
 
     },
     0
   );
-
 }
 
 
 // ============================================================
-// IMAGE
+// TOAST
 // ============================================================
 
-function imageHTML(product){
+function showToast(message,type="success"){
+
+  const item = document.createElement("div");
+
+  item.className =
+    "toast-item " +
+    (type === "error" ? "error" : "success");
+
+  item.innerHTML = `
+    <span>${escapeHTML(message)}</span>
+
+    <button type="button">
+      ×
+    </button>
+  `;
+
+  item.querySelector("button").onclick = () => {
+    item.remove();
+  };
+
+  toast.appendChild(item);
+
+  setTimeout(() => {
+
+    if(item.isConnected){
+      item.remove();
+    }
+
+  },3500);
+}
+
+
+// ============================================================
+// CATEGORIES
+// ============================================================
+
+function renderCategories(){
+
+  const categories = [
+    "Toutes",
+    ...new Set(
+      products
+        .map(product => product.category)
+        .filter(Boolean)
+    )
+  ];
+
+  categoriesEl.innerHTML = categories.map(category => `
+
+    <button
+      type="button"
+      class="category-btn ${state.category === category ? "active" : ""}"
+      data-category="${escapeHTML(category)}">
+
+      ${escapeHTML(category)}
+
+    </button>
+
+  `).join("");
+
+  categoriesEl
+    .querySelectorAll(".category-btn")
+    .forEach(button => {
+
+      button.addEventListener("click",() => {
+
+        state.category =
+          button.dataset.category;
+
+        renderCategories();
+        renderProducts();
+
+      });
+
+    });
+}
+
+
+// ============================================================
+// IMAGE PRODUIT
+// ============================================================
+
+function productImageHTML(product){
 
   if(!product.image){
     return "";
@@ -958,7 +580,6 @@ function imageHTML(product){
 
   return `
     <img
-      class="product-image"
       src="${escapeHTML(product.image)}"
       alt="${escapeHTML(product.name)}"
       loading="lazy"
@@ -968,387 +589,91 @@ function imageHTML(product){
       "
     >
   `;
-
 }
 
 
 // ============================================================
-// CATÉGORIES
-// ============================================================
-
-function renderCategories(){
-
-  if(!categoriesEl){
-    return;
-  }
-
-  const categories = [
-    "Tous",
-    ...new Set(
-      products.map(
-        product => product.category
-      )
-    )
-  ];
-
-  categoriesEl.innerHTML =
-    categories.map(category => {
-
-      return `
-        <button
-          class="category-btn ${
-            selectedCategory === category
-              ? "active"
-              : ""
-          }"
-          data-category="${escapeHTML(category)}"
-        >
-          ${escapeHTML(category)}
-        </button>
-      `;
-
-    }).join("");
-
-
-  categoriesEl
-    .querySelectorAll("[data-category]")
-    .forEach(button => {
-
-      button.addEventListener(
-        "click",
-        () => {
-
-          selectedCategory =
-            button.dataset.category;
-
-          renderCategories();
-          renderProducts();
-
-        }
-      );
-
-    });
-
-}
-
-
-// ============================================================
-// FILTRE
+// PRODUITS FILTRES
 // ============================================================
 
 function getFilteredProducts(){
 
-  let result =
-    [...products];
+  let result = [...products];
 
+  if(state.category !== "Toutes"){
 
-  if(
-    selectedCategory !== "Tous"
-  ){
-
-    result =
-      result.filter(
-        product =>
-          product.category ===
-          selectedCategory
-      );
+    result = result.filter(
+      product =>
+        product.category === state.category
+    );
 
   }
 
-
   const search =
-    searchValue
-      .trim()
-      .toLowerCase();
-
+    state.search.trim().toLowerCase();
 
   if(search){
 
-    result =
-      result.filter(product =>
-        product.name
-          .toLowerCase()
-          .includes(search)
-        ||
-        product.category
-          .toLowerCase()
-          .includes(search)
+    result = result.filter(product => {
+
+      const name =
+        String(product.name || "").toLowerCase();
+
+      const category =
+        String(product.category || "").toLowerCase();
+
+      return (
+        name.includes(search) ||
+        category.includes(search)
       );
 
-  }
-
-
-  if(
-    sortValue === "priceAsc" ||
-    sortValue === "price-low"
-  ){
-
-    result.sort(
-      (a,b) =>
-        Number(a.price) -
-        Number(b.price)
-    );
+    });
 
   }
 
-  else if(
-    sortValue === "priceDesc" ||
-    sortValue === "price-high"
-  ){
+  switch(state.sort){
 
-    result.sort(
-      (a,b) =>
-        Number(b.price) -
-        Number(a.price)
-    );
+    case "price-low":
+
+      result.sort(
+        (a,b) =>
+          Number(a.price || 0) -
+          Number(b.price || 0)
+      );
+
+      break;
+
+    case "price-high":
+
+      result.sort(
+        (a,b) =>
+          Number(b.price || 0) -
+          Number(a.price || 0)
+      );
+
+      break;
+
+    case "name":
+
+      result.sort(
+        (a,b) =>
+          a.name.localeCompare(
+            b.name,
+            "fr"
+          )
+      );
+
+      break;
+
+    case "new":
+
+      result.reverse();
+
+      break;
 
   }
-
-  else if(
-    sortValue === "name"
-  ){
-
-    result.sort(
-      (a,b) =>
-        a.name.localeCompare(
-          b.name,
-          "fr"
-        )
-    );
-
-  }
-
-  else if(
-    sortValue === "new"
-  ){
-
-    result.reverse();
-
-  }
-
 
   return result;
-
-}
-
-
-// ============================================================
-// ÉTOILES
-// ============================================================
-
-function ratingStars(rating){
-
-  const rounded =
-    Math.round(
-      Number(rating)
-    );
-
-  return Array
-    .from(
-      {length:5},
-      (_,index) =>
-        index < rounded
-          ? "★"
-          : "☆"
-    )
-    .join("");
-
-}
-
-
-// ============================================================
-// PRODUITS
-// ============================================================
-
-function renderProducts(){
-
-  if(!productsGrid){
-    return;
-  }
-
-
-  const filtered =
-    getFilteredProducts();
-
-
-  if(productCount){
-
-    productCount.textContent =
-      `${filtered.length} produit${
-        filtered.length > 1
-          ? "s"
-          : ""
-      }`;
-
-  }
-
-
-  if(!filtered.length){
-
-    productsGrid.innerHTML = `
-      <div class="empty-products">
-        Aucun produit trouvé.
-      </div>
-    `;
-
-    return;
-
-  }
-
-
-  productsGrid.innerHTML =
-    filtered.map(product => {
-
-      const isFavorite =
-        favorites.includes(
-          product.id
-        );
-
-
-      return `
-        <article
-          class="product-card"
-          data-product-id="${escapeHTML(product.id)}"
-        >
-
-          <button
-            class="favorite-btn ${
-              isFavorite
-                ? "active"
-                : ""
-            }"
-            data-favorite="${escapeHTML(product.id)}"
-          >
-            ${
-              isFavorite
-                ? "♥"
-                : "♡"
-            }
-          </button>
-
-
-          <div
-            class="product-image-wrap"
-            data-open-product="${escapeHTML(product.id)}"
-          >
-            ${imageHTML(product)}
-          </div>
-
-
-          <div class="product-info">
-
-            <div class="product-category">
-              ${escapeHTML(product.category)}
-            </div>
-
-            <h3>
-              ${escapeHTML(product.name)}
-            </h3>
-
-
-            <div class="product-rating">
-
-              <span>
-                ${ratingStars(product.rating)}
-              </span>
-
-              <span>
-                ${product.rating}
-              </span>
-
-              <span>
-                (${product.reviewCount})
-              </span>
-
-            </div>
-
-
-            <div class="product-bottom">
-
-              <strong>
-                ${money(product.price)}
-              </strong>
-
-              <button
-                class="add-product-btn"
-                data-add-product="${escapeHTML(product.id)}"
-              >
-                Ajouter
-              </button>
-
-            </div>
-
-          </div>
-
-        </article>
-      `;
-
-    }).join("");
-
-
-  productsGrid
-    .querySelectorAll(
-      "[data-add-product]"
-    )
-    .forEach(button => {
-
-      button.addEventListener(
-        "click",
-        event => {
-
-          event.stopPropagation();
-
-          addToCart(
-            button.dataset.addProduct
-          );
-
-        }
-      );
-
-    });
-
-
-  productsGrid
-    .querySelectorAll(
-      "[data-favorite]"
-    )
-    .forEach(button => {
-
-      button.addEventListener(
-        "click",
-        event => {
-
-          event.stopPropagation();
-
-          toggleFavorite(
-            button.dataset.favorite
-          );
-
-        }
-      );
-
-    });
-
-
-  productsGrid
-    .querySelectorAll(
-      "[data-open-product]"
-    )
-    .forEach(element => {
-
-      element.addEventListener(
-        "click",
-        () => {
-
-          openProduct(
-            element.dataset.openProduct
-          );
-
-        }
-      );
-
-    });
-
 }
 
 
@@ -1356,29 +681,337 @@ function renderProducts(){
 // FAVORIS
 // ============================================================
 
+function isFavorite(id){
+
+  return state.favorites.includes(id);
+}
+
+
 function toggleFavorite(id){
 
-  if(
-    favorites.includes(id)
-  ){
+  if(isFavorite(id)){
 
-    favorites =
-      favorites.filter(
-        item => item !== id
+    state.favorites =
+      state.favorites.filter(
+        favoriteId => favoriteId !== id
       );
 
+    showToast(
+      "Produit retiré des favoris"
+    );
+
+  }else{
+
+    state.favorites.push(id);
+
+    showToast(
+      "Produit ajouté aux favoris"
+    );
+
   }
 
-  else{
-
-    favorites.push(id);
-
-  }
-
-  saveFavorites();
+  saveJSON(
+    STORAGE.favorites,
+    state.favorites
+  );
 
   renderProducts();
+}
 
+
+// ============================================================
+// RENDU PRODUITS
+// ============================================================
+
+function renderProducts(){
+
+  const result =
+    getFilteredProducts();
+
+  productCount.textContent =
+    `${result.length} produit${result.length > 1 ? "s" : ""}`;
+
+  if(!result.length){
+
+    productGrid.innerHTML = `
+      <div class="empty-products">
+        Aucun produit trouvé.
+      </div>
+    `;
+
+    return;
+  }
+
+  productGrid.innerHTML =
+    result.map((product,index) => {
+
+      const favorite =
+        isFavorite(product.id);
+
+      return `
+
+        <article
+          class="product"
+          data-id="${escapeHTML(product.id)}">
+
+          <div class="product-img">
+
+            ${
+              index < 10
+                ? `<span class="new-badge">NOUVEAU</span>`
+                : ""
+            }
+
+            <button
+              type="button"
+              class="favorite-btn ${favorite ? "active" : ""}"
+              data-favorite="${escapeHTML(product.id)}"
+              aria-label="Favori">
+
+              ${favorite ? "♥" : "♡"}
+
+            </button>
+
+            ${productImageHTML(product)}
+
+          </div>
+
+          <div class="product-body">
+
+            <div class="product-cat">
+              ${escapeHTML(product.category)}
+            </div>
+
+            <h3>
+              ${escapeHTML(product.name)}
+            </h3>
+
+            <div class="rating">
+
+              <span class="stars">
+                ★★★★★
+              </span>
+
+              <span>
+                4.8
+              </span>
+
+            </div>
+
+            <div class="price">
+              ${money(product.price)}
+            </div>
+
+            <div class="product-actions">
+
+              <button
+                type="button"
+                class="view-btn"
+                data-view="${escapeHTML(product.id)}">
+
+                Voir
+
+              </button>
+
+              <button
+                type="button"
+                class="add-btn"
+                data-add="${escapeHTML(product.id)}">
+
+                Ajouter
+
+              </button>
+
+            </div>
+
+          </div>
+
+        </article>
+
+      `;
+
+    }).join("");
+
+  productGrid
+    .querySelectorAll("[data-add]")
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        () => addToCart(
+          button.dataset.add
+        )
+      );
+
+    });
+
+  productGrid
+    .querySelectorAll("[data-view]")
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        () => openProduct(
+          button.dataset.view
+        )
+      );
+
+    });
+
+  productGrid
+    .querySelectorAll("[data-favorite]")
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        () => toggleFavorite(
+          button.dataset.favorite
+        )
+      );
+
+    });
+}
+
+
+// ============================================================
+// MODAL
+// ============================================================
+
+function openModal(title,html){
+
+  modalTitle.textContent = title;
+  modalContent.innerHTML = html;
+
+  modalLayer.classList.add("open");
+
+  document.body.classList.add(
+    "modal-open"
+  );
+}
+
+
+function closeModal(){
+
+  modalLayer.classList.remove("open");
+
+  document.body.classList.remove(
+    "modal-open"
+  );
+}
+
+
+function openProduct(id){
+
+  const product = getProduct(id);
+
+  if(!product){
+    return;
+  }
+
+  openModal(
+    product.name,
+    `
+
+      <div style="
+        display:grid;
+        gap:20px;
+      ">
+
+        <div style="
+          background:#fff;
+          border-radius:16px;
+          min-height:260px;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          padding:20px;
+        ">
+
+          ${
+            product.image
+              ? `
+                <img
+                  src="${escapeHTML(product.image)}"
+                  alt="${escapeHTML(product.name)}"
+                  style="
+                    max-width:100%;
+                    max-height:260px;
+                    object-fit:contain;
+                  "
+                  onerror="
+                    this.onerror=null;
+                    this.style.display='none';
+                  "
+                >
+              `
+              : ""
+          }
+
+        </div>
+
+        <div>
+
+          <div style="
+            color:var(--accent);
+            font-size:12px;
+            font-weight:900;
+            text-transform:uppercase;
+          ">
+            ${escapeHTML(product.category)}
+          </div>
+
+          <h3 style="
+            margin-top:8px;
+            font-size:24px;
+            line-height:1.35;
+          ">
+            ${escapeHTML(product.name)}
+          </h3>
+
+          <div style="
+            margin-top:15px;
+            font-size:28px;
+            font-weight:950;
+          ">
+            ${money(product.price)}
+          </div>
+
+          <button
+            type="button"
+            class="add-btn"
+            id="modalAddButton"
+            style="
+              margin-top:18px;
+              width:100%;
+            ">
+
+            🛒 Ajouter au panier
+
+          </button>
+
+        </div>
+
+      </div>
+
+    `
+  );
+
+  const addButton =
+    document.getElementById(
+      "modalAddButton"
+    );
+
+  if(addButton){
+
+    addButton.onclick = () => {
+
+      addToCart(product.id);
+
+      closeModal();
+
+    };
+
+  }
 }
 
 
@@ -1388,69 +1021,64 @@ function toggleFavorite(id){
 
 function addToCart(id){
 
-  const product =
-    getProduct(id);
+  const product = getProduct(id);
 
   if(!product){
     return;
   }
 
-
   const existing =
-    cart.find(
+    state.cart.find(
       item => item.id === id
     );
 
-
   if(existing){
 
-    existing.quantity =
-      Number(existing.quantity || 0) + 1;
+    existing.qty =
+      Number(existing.qty || 0) + 1;
 
-  }
+  }else{
 
-  else{
-
-    cart.push({
-      id:id,
-      quantity:1
+    state.cart.push({
+      id,
+      qty:1
     });
 
   }
 
-
-  saveCart();
+  saveJSON(
+    STORAGE.cart,
+    state.cart
+  );
 
   renderCart();
 
-  toast(
-    `${product.name} ajouté au panier`
+  showToast(
+    "Produit ajouté au panier"
   );
-
 }
 
 
 function removeFromCart(id){
 
-  cart =
-    cart.filter(
+  state.cart =
+    state.cart.filter(
       item => item.id !== id
     );
 
-  saveCart();
+  saveJSON(
+    STORAGE.cart,
+    state.cart
+  );
 
   renderCart();
-
 }
 
 
-function changeQuantity(
-  id,
-  quantity
-){
+function changeQuantity(id,change){
 
   const item =
-    cart.find(
+    state.cart.find(
       entry => entry.id === id
     );
 
@@ -1458,443 +1086,240 @@ function changeQuantity(
     return;
   }
 
+  item.qty =
+    Number(item.qty || 0) + change;
 
-  if(quantity <= 0){
+  if(item.qty <= 0){
 
-    removeFromCart(id);
-
-    return;
+    state.cart =
+      state.cart.filter(
+        entry => entry.id !== id
+      );
 
   }
 
-
-  item.quantity =
-    Math.floor(quantity);
-
-  saveCart();
+  saveJSON(
+    STORAGE.cart,
+    state.cart
+  );
 
   renderCart();
-
 }
 
 
-// ============================================================
-// RENDU PANIER
-// ============================================================
-
 function renderCart(){
 
-  const count =
-    getCartCount();
+  const quantity =
+    cartQuantity();
 
+  cartBadge.textContent =
+    quantity;
 
-  if(cartBadge){
+  cartBadge.style.display =
+    quantity > 0
+      ? "flex"
+      : "none";
 
-    cartBadge.textContent =
-      count;
+  const total =
+    cartAmount();
 
-    cartBadge.style.display =
-      count > 0
-        ? ""
-        : "none";
+  cartTotal.textContent =
+    money(total);
 
-  }
-
-
-  if(!cartItems){
-    return;
-  }
-
-
-  if(!cart.length){
+  if(!state.cart.length){
 
     cartItems.innerHTML = `
       <div class="empty-cart">
-        Votre panier est vide.
+        🛒 Ton panier est vide.
       </div>
     `;
 
+    checkoutBtn.disabled = true;
+
+    return;
   }
 
-  else{
+  checkoutBtn.disabled = false;
 
-    cartItems.innerHTML =
-      cart.map(item => {
+  cartItems.innerHTML =
+    state.cart.map(item => {
 
-        const product =
-          getProduct(item.id);
+      const product =
+        getProduct(item.id);
 
-        if(!product){
-          return "";
-        }
+      if(!product){
+        return "";
+      }
 
+      return `
 
-        return `
-          <div class="cart-item">
+        <div class="cart-item">
 
-            <div class="cart-item-image">
-              ${imageHTML(product)}
-            </div>
+          <div>
 
-            <div class="cart-item-info">
+            ${
+              product.image
+                ? `
+                  <img
+                    src="${escapeHTML(product.image)}"
+                    alt=""
+                    onerror="
+                      this.onerror=null;
+                      this.style.display='none';
+                    "
+                  >
+                `
+                : ""
+            }
 
-              <strong>
-                ${escapeHTML(product.name)}
-              </strong>
+          </div>
 
-              <span>
-                ${money(product.price)}
-              </span>
+          <div class="cart-item-info">
 
-              <div class="cart-quantity">
+            <strong>
+              ${escapeHTML(product.name)}
+            </strong>
 
-                <button
-                  data-minus="${escapeHTML(product.id)}"
-                >
-                  −
-                </button>
+            <span>
+              ${money(product.price)}
+            </span>
 
-                <span>
-                  ${item.quantity}
-                </span>
-
-                <button
-                  data-plus="${escapeHTML(product.id)}"
-                >
-                  +
-                </button>
-
-              </div>
+            <div class="cart-quantity">
 
               <button
-                data-remove="${escapeHTML(product.id)}"
-                class="remove-cart"
-              >
-                Supprimer
+                type="button"
+                data-minus="${escapeHTML(product.id)}">
+                −
+              </button>
+
+              <strong>
+                ${Number(item.qty || 0)}
+              </strong>
+
+              <button
+                type="button"
+                data-plus="${escapeHTML(product.id)}">
+                +
               </button>
 
             </div>
 
           </div>
-        `;
 
-      }).join("");
+          <button
+            type="button"
+            class="remove-cart"
+            data-remove="${escapeHTML(product.id)}">
 
-  }
+            ×
 
+          </button>
 
-  if(cartTotal){
+        </div>
 
-    cartTotal.textContent =
-      money(
-        getCartSubtotal()
-      );
+      `;
 
-  }
-
+    }).join("");
 
   cartItems
-    .querySelectorAll(
-      "[data-minus]"
-    )
+    .querySelectorAll("[data-minus]")
     .forEach(button => {
 
-      button.addEventListener(
-        "click",
-        () => {
+      button.onclick = () => {
 
-          const id =
-            button.dataset.minus;
+        changeQuantity(
+          button.dataset.minus,
+          -1
+        );
 
-          const item =
-            cart.find(
-              entry =>
-                entry.id === id
-            );
-
-          if(item){
-
-            changeQuantity(
-              id,
-              item.quantity - 1
-            );
-
-          }
-
-        }
-      );
+      };
 
     });
 
-
   cartItems
-    .querySelectorAll(
-      "[data-plus]"
-    )
+    .querySelectorAll("[data-plus]")
     .forEach(button => {
 
-      button.addEventListener(
-        "click",
-        () => {
+      button.onclick = () => {
 
-          const id =
-            button.dataset.plus;
+        changeQuantity(
+          button.dataset.plus,
+          1
+        );
 
-          const item =
-            cart.find(
-              entry =>
-                entry.id === id
-            );
-
-          if(item){
-
-            changeQuantity(
-              id,
-              item.quantity + 1
-            );
-
-          }
-
-        }
-      );
+      };
 
     });
 
-
   cartItems
-    .querySelectorAll(
-      "[data-remove]"
-    )
+    .querySelectorAll("[data-remove]")
     .forEach(button => {
 
-      button.addEventListener(
-        "click",
-        () => {
+      button.onclick = () => {
 
-          removeFromCart(
-            button.dataset.remove
-          );
+        removeFromCart(
+          button.dataset.remove
+        );
 
-        }
-      );
+      };
 
     });
-
 }
 
 
 // ============================================================
-// OUVRIR / FERMER PANIER
+// PANIER DRAWER
 // ============================================================
 
 function openCart(){
 
-  cartOverlay?.classList.add(
-    "active"
-  );
-
-  cartDrawer?.classList.add(
-    "active"
-  );
-
   renderCart();
 
+  cartOverlay.classList.add("open");
+  cartDrawer.classList.add("open");
 }
 
 
-function closeCart(){
+function closeCartDrawer(){
 
-  cartOverlay?.classList.remove(
-    "active"
-  );
-
-  cartDrawer?.classList.remove(
-    "active"
-  );
-
+  cartOverlay.classList.remove("open");
+  cartDrawer.classList.remove("open");
 }
 
 
-cartBtn?.addEventListener(
+cartBtn.addEventListener(
   "click",
   openCart
 );
 
-cartClose?.addEventListener(
-  "click",
-  closeCart
-);
 
-cartOverlay?.addEventListener(
+heroCartBtn.addEventListener(
   "click",
-  closeCart
+  openCart
 );
 
 
-// ============================================================
-// MODAL
-// ============================================================
-
-function showModal(
-  title,
-  content
-){
-
-  if(!modal){
-    return;
-  }
-
-
-  if(modalTitle){
-
-    modalTitle.textContent =
-      title;
-
-  }
-
-
-  if(modalContent){
-
-    modalContent.innerHTML =
-      content;
-
-  }
-
-
-  modal.classList.add(
-    "active"
-  );
-
-}
-
-
-function closeModal(){
-
-  modal?.classList.remove(
-    "active"
-  );
-
-}
-
-
-modalClose?.addEventListener(
+cartClose.addEventListener(
   "click",
-  closeModal
+  closeCartDrawer
 );
 
 
-// ============================================================
-// FICHE PRODUIT
-// ============================================================
-
-function openProduct(id){
-
-  const product =
-    getProduct(id);
-
-  if(!product){
-    return;
-  }
-
-
-  showModal(
-    product.name,
-    `
-      <div class="product-modal">
-
-        <div class="product-modal-image">
-          ${imageHTML(product)}
-        </div>
-
-        <div class="product-modal-info">
-
-          <div class="product-category">
-            ${escapeHTML(product.category)}
-          </div>
-
-          <h2>
-            ${escapeHTML(product.name)}
-          </h2>
-
-          <div class="product-rating">
-            ${ratingStars(product.rating)}
-            ${product.rating}/5
-          </div>
-
-          <div class="product-modal-price">
-            ${money(product.price)}
-          </div>
-
-          <button
-            id="modalAddProduct"
-          >
-            Ajouter au panier
-          </button>
-
-          <button
-            id="modalFavoriteProduct"
-          >
-            ${
-              favorites.includes(product.id)
-                ? "♥ Retirer des favoris"
-                : "♡ Ajouter aux favoris"
-            }
-          </button>
-
-        </div>
-
-      </div>
-    `
-  );
-
-
-  document
-    .getElementById(
-      "modalAddProduct"
-    )
-    ?.addEventListener(
-      "click",
-      () => {
-
-        addToCart(
-          product.id
-        );
-
-      }
-    );
-
-
-  document
-    .getElementById(
-      "modalFavoriteProduct"
-    )
-    ?.addEventListener(
-      "click",
-      () => {
-
-        toggleFavorite(
-          product.id
-        );
-
-        openProduct(
-          product.id
-        );
-
-      }
-    );
-
-}
+cartOverlay.addEventListener(
+  "click",
+  closeCartDrawer
+);
 
 
 // ============================================================
 // RECHERCHE
 // ============================================================
 
-searchInput?.addEventListener(
+searchInput.addEventListener(
   "input",
   event => {
 
-    searchValue =
+    state.search =
       event.target.value;
 
     renderProducts();
@@ -1907,11 +1332,11 @@ searchInput?.addEventListener(
 // TRI
 // ============================================================
 
-sortSelect?.addEventListener(
+sortSelect.addEventListener(
   "change",
   event => {
 
-    sortValue =
+    state.sort =
       event.target.value;
 
     renderProducts();
@@ -1921,43 +1346,667 @@ sortSelect?.addEventListener(
 
 
 // ============================================================
-// TOAST
+// MODAL EVENTS
 // ============================================================
 
-function toast(message){
+modalClose.addEventListener(
+  "click",
+  closeModal
+);
 
-  if(!toastContainer){
+
+modalLayer.addEventListener(
+  "click",
+  event => {
+
+    if(event.target === modalLayer){
+      closeModal();
+    }
+
+  }
+);
+
+
+document.addEventListener(
+  "keydown",
+  event => {
+
+    if(event.key === "Escape"){
+
+      closeModal();
+      closeCartDrawer();
+
+    }
+
+  }
+);
+
+
+// ============================================================
+// COMPTE
+// ============================================================
+
+function openAccount(){
+
+  const profile =
+    loadJSON(
+      STORAGE.profiles,
+      {}
+    );
+
+  openModal(
+    "👤 Mon compte",
+    `
+
+      <div style="
+        display:grid;
+        gap:15px;
+      ">
+
+        <div class="trust-card">
+
+          <strong>
+            👤 Compte NovaShop
+          </strong>
+
+          <span>
+            ${
+              profile.email
+                ? escapeHTML(profile.email)
+                : "Aucun compte connecté."
+            }
+          </span>
+
+        </div>
+
+        <button
+          type="button"
+          class="add-btn"
+          id="accountOrdersButton">
+
+          📦 Mes commandes
+
+        </button>
+
+      </div>
+
+    `
+  );
+
+  const ordersButton =
+    document.getElementById(
+      "accountOrdersButton"
+    );
+
+  if(ordersButton){
+
+    ordersButton.onclick = () => {
+
+      closeModal();
+      openOrders();
+
+    };
+
+  }
+}
+
+
+accountBtn.addEventListener(
+  "click",
+  openAccount
+);
+
+
+// ============================================================
+// COMMANDES
+// ============================================================
+
+function openOrders(){
+
+  const orders =
+    loadJSON(
+      STORAGE.orders,
+      []
+    );
+
+  if(!orders.length){
+
+    openModal(
+      "📦 Mes commandes",
+      `
+
+        <div class="empty-products">
+          Tu n'as encore aucune commande.
+        </div>
+
+      `
+    );
+
     return;
   }
 
+  openModal(
+    "📦 Mes commandes",
+    orders.map(order => `
 
-  const element =
-    document.createElement(
-      "div"
+      <div
+        class="order-card"
+        style="
+          border:1px solid var(--line);
+          border-radius:16px;
+          padding:18px;
+          margin-bottom:12px;
+        ">
+
+        <strong>
+          Commande #${escapeHTML(order.id)}
+        </strong>
+
+        <p style="
+          margin-top:8px;
+          color:var(--muted);
+        ">
+          Statut :
+          ${escapeHTML(order.status || "En préparation")}
+        </p>
+
+        <p style="
+          margin-top:5px;
+          font-weight:900;
+        ">
+          ${money(order.total)}
+        </p>
+
+      </div>
+
+    `).join("")
+  );
+}
+
+
+ordersBtn.addEventListener(
+  "click",
+  openOrders
+);
+
+
+// ============================================================
+// ADMIN
+// ============================================================
+
+function openAdmin(){
+
+  const unlocked =
+    localStorage.getItem(
+      STORAGE.admin
+    ) === "true";
+
+  if(!unlocked){
+
+    openModal(
+      "🛡️ Administration",
+      `
+
+        <div style="
+          display:grid;
+          gap:12px;
+        ">
+
+          <input
+            id="adminPassword"
+            class="input"
+            type="password"
+            placeholder="Mot de passe admin"
+          >
+
+          <button
+            type="button"
+            class="add-btn"
+            id="adminLoginButton">
+
+            Se connecter
+
+          </button>
+
+        </div>
+
+      `
     );
 
-  element.className =
-    "toast";
+    document.getElementById(
+      "adminLoginButton"
+    ).onclick = () => {
 
-  element.textContent =
-    message;
+      const password =
+        document.getElementById(
+          "adminPassword"
+        ).value;
 
-  toastContainer.appendChild(
-    element
+      if(password === "admin"){
+
+        localStorage.setItem(
+          STORAGE.admin,
+          "true"
+        );
+
+        showToast(
+          "Administration activée"
+        );
+
+        closeModal();
+
+      }else{
+
+        showToast(
+          "Mot de passe incorrect",
+          "error"
+        );
+
+      }
+
+    };
+
+    return;
+  }
+
+  const orders =
+    loadJSON(
+      STORAGE.orders,
+      []
+    );
+
+  openModal(
+    "🛡️ Administration",
+    `
+
+      <div style="
+        display:grid;
+        gap:15px;
+      ">
+
+        <div class="trust-card">
+
+          <strong>
+            Administration NovaShop
+          </strong>
+
+          <span>
+            ${orders.length} commande(s)
+          </span>
+
+        </div>
+
+        ${
+          orders.length
+            ? orders.map(order => `
+
+              <div
+                class="admin-order"
+                style="
+                  border:1px solid var(--line);
+                  border-radius:15px;
+                  padding:15px;
+                ">
+
+                <strong>
+                  #${escapeHTML(order.id)}
+                </strong>
+
+                <input
+                  class="input admin-status"
+                  data-order="${escapeHTML(order.id)}"
+                  value="${escapeHTML(order.status || "En préparation")}"
+                  style="margin-top:10px"
+                >
+
+                <button
+                  type="button"
+                  class="add-btn admin-save"
+                  data-order="${escapeHTML(order.id)}"
+                  style="margin-top:8px">
+
+                  Sauvegarder
+
+                </button>
+
+              </div>
+
+            `).join("")
+            : `
+              <div class="empty-products">
+                Aucune commande.
+              </div>
+            `
+        }
+
+      </div>
+
+    `
   );
 
+  document
+    .querySelectorAll(".admin-save")
+    .forEach(button => {
 
-  setTimeout(
-    () => element.remove(),
-    2500
-  );
+      button.onclick = () => {
 
+        const id =
+          button.dataset.order;
+
+        const input =
+          document.querySelector(
+            `.admin-status[data-order="${CSS.escape(id)}"]`
+          );
+
+        const orders =
+          loadJSON(
+            STORAGE.orders,
+            []
+          );
+
+        const order =
+          orders.find(
+            item => item.id === id
+          );
+
+        if(order && input){
+
+          order.status =
+            input.value;
+
+          saveJSON(
+            STORAGE.orders,
+            orders
+          );
+
+          showToast(
+            "Commande mise à jour"
+          );
+
+        }
+
+      };
+
+    });
 }
+
+
+adminBtn.addEventListener(
+  "click",
+  openAdmin
+);
+
+
+// ============================================================
+// PARAMÈTRES
+// ============================================================
+
+function applyTheme(){
+
+  const dark =
+    localStorage.getItem(
+      STORAGE.dark
+    ) !== "false";
+
+  document.documentElement.dataset.theme =
+    dark
+      ? "dark"
+      : "light";
+}
+
+
+function openSettings(){
+
+  const dark =
+    localStorage.getItem(
+      STORAGE.dark
+    ) !== "false";
+
+  openModal(
+    "⚙️ Paramètres",
+    `
+
+      <div style="
+        display:grid;
+        gap:12px;
+      ">
+
+        <button
+          type="button"
+          class="btn"
+          id="themeButton">
+
+          ${dark ? "☀️ Mode clair" : "🌙 Mode sombre"}
+
+        </button>
+
+        <button
+          type="button"
+          class="btn"
+          id="clearCartButton">
+
+          🗑️ Vider le panier
+
+        </button>
+
+      </div>
+
+    `
+  );
+
+  document.getElementById(
+    "themeButton"
+  ).onclick = () => {
+
+    localStorage.setItem(
+      STORAGE.dark,
+      String(!dark)
+    );
+
+    applyTheme();
+    closeModal();
+
+  };
+
+  document.getElementById(
+    "clearCartButton"
+  ).onclick = () => {
+
+    state.cart = [];
+
+    saveJSON(
+      STORAGE.cart,
+      state.cart
+    );
+
+    renderCart();
+
+    showToast(
+      "Panier vidé"
+    );
+
+  };
+}
+
+
+settingsBtn.addEventListener(
+  "click",
+  openSettings
+);
+
+
+// ============================================================
+// CHECKOUT DEMO
+// ============================================================
+
+checkoutBtn.addEventListener(
+  "click",
+  () => {
+
+    if(!state.cart.length){
+
+      showToast(
+        "Ton panier est vide",
+        "error"
+      );
+
+      return;
+    }
+
+    const total =
+      cartAmount();
+
+    openModal(
+      "💳 Passer la commande",
+      `
+
+        <div style="
+          display:grid;
+          gap:14px;
+        ">
+
+          <div class="trust-card">
+
+            <strong>
+              Total
+            </strong>
+
+            <span style="
+              font-size:24px;
+              font-weight:950;
+              color:var(--text);
+            ">
+              ${money(total)}
+            </span>
+
+          </div>
+
+          <input
+            id="checkoutName"
+            class="input"
+            placeholder="Nom complet"
+          >
+
+          <input
+            id="checkoutAddress"
+            class="input"
+            placeholder="Adresse"
+          >
+
+          <input
+            id="checkoutCity"
+            class="input"
+            placeholder="Ville"
+          >
+
+          <button
+            type="button"
+            class="add-btn"
+            id="freeOrderButton">
+
+            Confirmer la commande
+
+          </button>
+
+        </div>
+
+      `
+    );
+
+    document.getElementById(
+      "freeOrderButton"
+    ).onclick = () => {
+
+      const name =
+        document.getElementById(
+          "checkoutName"
+        ).value.trim();
+
+      const address =
+        document.getElementById(
+          "checkoutAddress"
+        ).value.trim();
+
+      const city =
+        document.getElementById(
+          "checkoutCity"
+        ).value.trim();
+
+      if(!name || !address || !city){
+
+        showToast(
+          "Remplis tous les champs",
+          "error"
+        );
+
+        return;
+      }
+
+      const orders =
+        loadJSON(
+          STORAGE.orders,
+          []
+        );
+
+      const order = {
+
+        id:
+          "NS-" +
+          Date.now()
+            .toString()
+            .slice(-8),
+
+        total,
+
+        status:
+          "Commande reçue",
+
+        destination:
+          city,
+
+        address,
+
+        name,
+
+        createdAt:
+          new Date().toISOString()
+
+      };
+
+      orders.unshift(order);
+
+      saveJSON(
+        STORAGE.orders,
+        orders
+      );
+
+      state.cart = [];
+
+      saveJSON(
+        STORAGE.cart,
+        state.cart
+      );
+
+      renderCart();
+
+      closeModal();
+      closeCartDrawer();
+
+      showToast(
+        "Commande créée avec succès"
+      );
+
+    };
+
+  }
+);
 
 
 // ============================================================
 // INITIALISATION
 // ============================================================
+
+applyTheme();
 
 renderCategories();
 
@@ -1965,13 +2014,30 @@ renderProducts();
 
 renderCart();
 
+if(
+  localStorage.getItem(
+    STORAGE.admin
+  ) === "true"
+){
+
+  adminBtn.style.display =
+    "inline-flex";
+
+}
+
 
 // ============================================================
-// DEBUG
+// EXPORT GLOBAL
 // ============================================================
 
-console.log(
-  "NovaShop :",
-  products.length,
-  "produits chargés."
-);
+window.NovaShopCatalog = {
+
+  getAll(){
+    return [...products];
+  },
+
+  getById(id){
+    return getProduct(id);
+  }
+
+};
